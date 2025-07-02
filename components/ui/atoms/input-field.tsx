@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
-    StyleSheet,
-    TextInput,
+  StyleSheet,
+  TextInput,
 } from 'react-native';
 
-const SearchField: React.FC = () => {
-  const [search, setSearch] = useState<string>('');
+const InputField: React.FC = () => {
+  const [value, setValue] = useState<string>('');
 
   return (
     <TextInput
         style={styles.searchInput}
         placeholder="Search diaries..."
-        value={search}
-        onChangeText={setSearch}
+        value={value}
+        onChangeText={setValue}
     />
   );
 };
@@ -28,4 +28,4 @@ const styles = StyleSheet.create({
   }
 }); 
 
-export default SearchField;
+export default InputField;

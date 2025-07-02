@@ -6,7 +6,7 @@ type AppTextProps = {
   variant?: keyof typeof defaultTheme.fontSizes; // "small" | "medium" | ...
 };
 
-export const AppText = styled.Text<AppTextProps>`
+const AppText = styled.Text<AppTextProps>`
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.text};
   font-size: ${({ theme, variant = "medium" }: { 
       theme: DefaultTheme; 
@@ -14,3 +14,5 @@ export const AppText = styled.Text<AppTextProps>`
     }) =>
     theme.fontSizes[variant]}px;
 `;
+
+export default AppText;
