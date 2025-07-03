@@ -2,11 +2,11 @@ import React, { PropsWithChildren } from 'react';
 import {
   GestureResponderEvent,
   StyleProp,
-  Text,
   TextStyle,
   TouchableOpacity,
   ViewStyle
 } from 'react-native';
+import AppText from './app-text';
 
 type AppButtonProps = PropsWithChildren<{
   onPress: (event: GestureResponderEvent) => void;
@@ -19,7 +19,7 @@ type AppButtonProps = PropsWithChildren<{
 const AppButton: React.FC<AppButtonProps> = ({ onPress, styles, children }: AppButtonProps) => {
   return (
     <TouchableOpacity style={styles?.button} onPress={onPress}>
-        <Text style={styles?.text}>{ children }</Text>
+        <AppText style={styles?.text}>{ children }</AppText>
     </TouchableOpacity>
   );
 };

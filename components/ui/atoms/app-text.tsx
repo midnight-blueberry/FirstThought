@@ -1,5 +1,5 @@
 // components/AppText.tsx
-import { defaultTheme, DefaultTheme } from "@/theme";
+import { AppTheme, defaultTheme } from "@/theme";
 import styled from "styled-components/native";
 
 type AppTextProps = {
@@ -7,9 +7,9 @@ type AppTextProps = {
 };
 
 const AppText = styled.Text<AppTextProps>`
-  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.text};
+  color: ${({ theme }: { theme: AppTheme }) => theme.colors.text};
   font-size: ${({ theme, variant = "medium" }: { 
-      theme: DefaultTheme; 
+      theme: AppTheme; 
       variant: keyof typeof defaultTheme.fontSizes; 
     }) =>
     theme.fontSizes[variant]}px;

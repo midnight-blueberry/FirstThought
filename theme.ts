@@ -1,4 +1,6 @@
-export interface DefaultTheme {
+import React from "react";
+
+export interface AppTheme {
   colors: {
     primary: string;
     background: string;
@@ -12,7 +14,7 @@ export interface DefaultTheme {
   };
 }
 
-export const defaultTheme: DefaultTheme = {
+export const defaultTheme: AppTheme = {
   colors: {
     primary: "#4a90e2",
     background: "#ffffff",
@@ -25,3 +27,11 @@ export const defaultTheme: DefaultTheme = {
     xlarge: 24,
   },
 };
+
+export const ThemeContext = React.createContext<{
+  theme: AppTheme;
+  setTheme: (t: AppTheme) => void;
+}>({
+  theme: defaultTheme,
+  setTheme: () => {},
+});

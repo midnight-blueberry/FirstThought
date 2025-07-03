@@ -18,7 +18,6 @@ const InputField: React.FC<TextInputProps> = (props) => {
   return (
     <StyledInput
       variant="medium"
-      placeholder="Search diaries..."
       value={value}
       onChangeText={setValue}
       {...props}
