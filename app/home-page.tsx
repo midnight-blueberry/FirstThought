@@ -1,11 +1,12 @@
-import AppButton from '@/components/ui/atoms/app-button';
+import ButtonWithIcon from '@/components/ui/atoms/button-with-icon';
 import DiaryList from '@/components/ui/organisms/diary-list';
 import { RouteProp } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   StyleSheet,
   View
 } from 'react-native';
+import { ColorsContext } from '../theme';
 
 interface Diary {
   id: string;
@@ -28,6 +29,7 @@ const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 
 const HomePage: React.FC<Props> = ({ route, navigation }) => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const { colors } = useContext(ColorsContext);
 
   const addDiary = () => {
     const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
@@ -40,11 +42,9 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[ styles.container, { backgroundColor: colors.background }]}>
       <DiaryList data={diaries} />
-      <AppButton onPress={addDiary} styles={{ button: styles.fab, text: styles.fabIcon }}>
-        +
-      </AppButton>
+      <ButtonWithIcon onPress={addDiary} iconName='add' />
     </View>
   );
 };
@@ -52,50 +52,7 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2'
   },
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4
-  },
-  buttonIncrease: {
-    position: 'absolute',
-    bottom: 96,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4
-  },
-  buttonDecrease: {
-    position: 'absolute',
-    bottom: 168,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4
-  },
-  fabIcon: {
-    color: '#fff',
-    fontSize: 28,
-    lineHeight: 28,
-    textAlign: 'center'
-  }
 });
 
 export default HomePage;

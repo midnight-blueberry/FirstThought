@@ -1,18 +1,38 @@
-// components/AppText.tsx
-import { AppTheme, defaultTheme } from "@/theme";
+import { ColorsContext, defaultSizes, SizesContext } from "@/theme";
+import React, { useContext } from "react";
+import { StyleProp, TextStyle } from "react-native";
 import styled from "styled-components/native";
 
 type AppTextProps = {
-  variant?: keyof typeof defaultTheme.fontSizes; // "small" | "medium" | ...
+  variant?: keyof typeof defaultSizes.fontSizes;
+  children: React.ReactNode;
+  style?: StyleProp<TextStyle>;
 };
 
-const AppText = styled.Text<AppTextProps>`
-  color: ${({ theme }: { theme: AppTheme }) => theme.colors.text};
-  font-size: ${({ theme, variant = "medium" }: { 
-      theme: AppTheme; 
-      variant: keyof typeof defaultTheme.fontSizes; 
-    }) =>
-    theme.fontSizes[variant]}px;
+// Типы пропсов для StyledText
+interface StyledTextProps {
+  fontSize: number;
+  textColor: string;
+}
+
+const StyledText = styled.Text<StyledTextProps>`
+  color: ${(props: StyledTextProps) => props.textColor};
+  font-size: ${(props: StyledTextProps) => props.fontSize}px;
 `;
+
+const AppText: React.FC<AppTextProps> = ({ variant = "medium", children, style }) => {
+  const { colors } = useContext(ColorsContext);
+  const { sizes } = useContext(SizesContext);
+
+  return (
+    <StyledText
+      style={style}
+      textColor={colors.text}
+      fontSize={sizes.fontSizes[variant]}
+    >
+      {children}
+    </StyledText>
+  );
+};
 
 export default AppText;

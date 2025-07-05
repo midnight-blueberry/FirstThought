@@ -8,7 +8,7 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider } from "styled-components/native";
 import Header from '../components/ui/organisms/header';
-import { AppTheme, defaultTheme, ThemeContext } from '../theme';
+import { AppColors, ColorsContext, themes } from '../theme';
 
 // Собственный контент для бокового меню
 function CustomDrawerContent(props: any) {
@@ -23,7 +23,7 @@ function CustomDrawerContent(props: any) {
 }
 
 export default function RootLayout() {
-  const [theme, setTheme] = useState<AppTheme>(defaultTheme);
+  const [colors, setColors] = useState<AppColors>(themes[0]);
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -31,9 +31,12 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-          <ThemeProvider theme={theme}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+        edges={['top', 'bottom']}
+      >
+        <ColorsContext.Provider value={{ colors, setColors }}>
+          <ThemeProvider theme={colors}>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <Drawer
                 initialRouteName="home-page"
@@ -45,7 +48,7 @@ export default function RootLayout() {
               </Drawer>
             </GestureHandlerRootView>
           </ThemeProvider>
-        </ThemeContext.Provider>
+        </ColorsContext.Provider>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -54,6 +57,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
 });

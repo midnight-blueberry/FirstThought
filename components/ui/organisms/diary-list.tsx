@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    View
+  FlatList,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
