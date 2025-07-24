@@ -1,46 +1,28 @@
 import AppText from '@/components/ui/atoms/app-text';
+import AppButton from '@/components/ui/atoms/button-with-text';
+import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
-import { Button, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ColorsContext, SizesContext, themes } from '../theme';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useTheme } from 'styled-components/native';
+import { themes } from '../theme';
 
 export default function Settings() {
-  const { sizes, setSizes } = useContext(SizesContext);
-  const { colors, setColors } = useContext(ColorsContext);
-  const [selectedThemeName, setSelectedThemeName] = useState(colors.name);
+  const theme = useTheme();
+  const context = useContext(ThemeContext);
+  const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
+  if (!context) throw new Error('ThemeContext is missing');
+
+  const { setTheme } = context;
 
   const handleSave = () => {
     const chosenTheme = themes.find(t => t.name === selectedThemeName);
     if (chosenTheme) {
-      setColors(chosenTheme);
+      setTheme(chosenTheme);
     }
   };
 
-  const increaseFont = () => {
-    setSizes({
-      ...sizes,
-      fontSizes: {
-        small: sizes.fontSizes.small + 2,
-        medium: sizes.fontSizes.medium + 2,
-        large: sizes.fontSizes.large + 2,
-        xlarge: sizes.fontSizes.xlarge + 2,
-      },
-    });
-  };
-
-  const decreaseFont = () => {
-    setSizes({
-      ...sizes,
-      fontSizes: {
-        small: sizes.fontSizes.small - 2,
-        medium: sizes.fontSizes.medium - 2,
-        large: sizes.fontSizes.large - 2,
-        xlarge: sizes.fontSizes.xlarge - 2,
-      },
-    });
-  };
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.color.background }]}>
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
       <AppText variant='medium' style={styles.label}>Тема:</AppText>
@@ -59,9 +41,7 @@ export default function Settings() {
         </TouchableOpacity>
       ))}
 
-      <View style={styles.saveButton}>
-        <Button title='Сохранить' onPress={handleSave} />
-      </View>
+      <AppButton title="Сохранить" type="primary" onPress={handleSave} />
     </View>
   );
 }

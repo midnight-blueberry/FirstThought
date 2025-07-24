@@ -1,12 +1,12 @@
 import ButtonWithIcon from '@/components/ui/atoms/button-with-icon';
 import DiaryList from '@/components/ui/organisms/diary-list';
 import { RouteProp } from '@react-navigation/native';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View
 } from 'react-native';
-import { ColorsContext } from '../theme';
+import { useTheme } from 'styled-components/native';
 
 interface Diary {
   id: string;
@@ -29,7 +29,7 @@ const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 
 const HomePage: React.FC<Props> = ({ route, navigation }) => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
-  const { colors } = useContext(ColorsContext);
+  const theme = useTheme();
 
   const addDiary = () => {
     const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
@@ -42,7 +42,7 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <View style={[ styles.container, { backgroundColor: colors.background }]}>
+    <View style={[ styles.container, { backgroundColor: theme.color.background }]}>
       <DiaryList data={diaries} />
       <ButtonWithIcon onPress={addDiary} iconName='add' />
     </View>
