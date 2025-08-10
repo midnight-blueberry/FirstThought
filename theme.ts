@@ -13,7 +13,7 @@ const sizes = {
     large: 32,
     xlarge: 36,
   },
-  buttonSize: {
+  buttonSizes: {
     small: 48,
     medium: 56,
     large: 64,
