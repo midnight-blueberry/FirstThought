@@ -1,6 +1,6 @@
-import { ColorsContext, SizesContext } from '@/theme';
-import React, { useContext } from 'react';
+import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { useTheme } from 'styled-components/native';
 import AppText from './app-text';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -16,12 +16,14 @@ interface ButtonProps extends TouchableOpacityProps {
  * Кнопка с текстом и возможностью переопределить стили
  */
 const AppButton: React.FC<ButtonProps> = ({ title, type, onPress }) => {
-  const { sizes, setSizes } = useContext(SizesContext);
-  const { colors, setColors } = useContext(ColorsContext);
+  const theme = useTheme();
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: colors[type],
+        backgroundColor: theme.color[type],
+        borderRadius: theme.borderRadius,
+        paddingVertical: theme.spacing.medium,
+        paddingHorizontal: theme.padding.medium,
       }}
       activeOpacity={0.8}
       onPress={onPress}
