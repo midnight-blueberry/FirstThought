@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
-import styled, { DefaultTheme, useTheme } from "styled-components/native";
+import styledNative, { DefaultTheme, useTheme } from "styled-components/native";
 
 type AppTextProps = {
   variant?: keyof DefaultTheme["fontSize"];
@@ -15,7 +15,7 @@ interface StyledTextProps {
   textColor: string;
 }
 
-const StyledText = styled.Text<StyledTextProps>`
+const StyledText = styledNative.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
   font-family: 'MainFont';

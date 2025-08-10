@@ -20,9 +20,9 @@ const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButt
         styles.button,
         {
           backgroundColor: theme.color.primary,
-          width: theme.buttonSize.medium,
-          height: theme.buttonSize.medium,
-          borderRadius: theme.buttonSize.medium / 2,
+          width: theme.buttonSizes.medium,
+          height: theme.buttonSizes.medium,
+          borderRadius: theme.buttonSizes.medium / 2,
         },
       ]}
       onPress={onPress}
