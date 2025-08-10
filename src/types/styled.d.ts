@@ -26,7 +26,7 @@ declare module 'styled-components/native' {
         large: number
         xlarge: number
     },
-    buttonSize: {
+    buttonSizes: {
         small: number
         medium: number
         large: number
