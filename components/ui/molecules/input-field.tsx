@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
-import styled from 'styled-components/native';
+import styledNative from 'styled-components/native';
 import AppText from '../atoms/app-text';
 
 // Стилевой компонент, наследующий AppText, но рендерящийся как TextInput
-const StyledInput = styled(AppText).attrs({ as: TextInput })`
+const StyledInput = styledNative(AppText).attrs({ as: TextInput })`
   flex: 1;
   margin-left: 16px;
   padding-vertical: 8px;

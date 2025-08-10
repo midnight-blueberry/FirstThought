@@ -14,7 +14,7 @@ interface Diary {
 }
 
 type DiaryListProps = {
-    data: Array<Diary>
+  data: Diary[];
 };
 
 const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
