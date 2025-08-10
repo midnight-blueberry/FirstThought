@@ -1,11 +1,10 @@
-import { AppColors, ColorsContext, defaultSizes, SizesContext } from "@/theme";
-import React, { useContext } from "react";
+import React from "react";
 import { StyleProp, TextStyle } from "react-native";
-import styled from "styled-components/native";
+import styled, { DefaultTheme, useTheme } from "styled-components/native";
 
 type AppTextProps = {
-  variant?: keyof typeof defaultSizes.fontSizes;
-  color?: keyof AppColors;
+  variant?: keyof DefaultTheme["fontSize"];
+  color?: keyof DefaultTheme["color"];
   children: React.ReactNode;
   style?: StyleProp<TextStyle>;
 };
@@ -23,14 +22,13 @@ const StyledText = styled.Text<StyledTextProps>`
 `;
 
 const AppText: React.FC<AppTextProps> = ({ variant = "medium", color = "text", children, style }) => {
-  const { colors } = useContext(ColorsContext);
-  const { sizes } = useContext(SizesContext);
+  const theme = useTheme();
 
   return (
     <StyledText
       style={style}
-      textColor={colors[color]}
-      fontSize={sizes.fontSizes[variant]}
+      textColor={theme.color[color]}
+      fontSize={theme.fontSize[variant]}
     >
       {children}
     </StyledText>

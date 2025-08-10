@@ -1,11 +1,11 @@
-import React, { PropsWithChildren, useContext } from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   GestureResponderEvent,
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { ColorsContext, SizesContext } from '../../../theme';
+import { useTheme } from 'styled-components/native';
 
 type AppButtonProps = PropsWithChildren<{
   onPress: (event: GestureResponderEvent) => void;
@@ -13,20 +13,21 @@ type AppButtonProps = PropsWithChildren<{
 }>;
 
 const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButtonProps) => {
-  const { colors } = useContext(ColorsContext);
-  const { sizes } = useContext(SizesContext);
+  const theme = useTheme();
   return (
     <TouchableOpacity
       style={[
         styles.button,
         {
-          backgroundColor: colors.primary,
-          width: sizes.buttonSizes.medium,
-          height: sizes.buttonSizes.medium,
-          borderRadius: sizes.buttonSizes.medium / 2
-        }]}
-      onPress={onPress}>
-      <Ionicons name={iconName} size={sizes.iconSizes.medium} color={colors.text} />
+          backgroundColor: theme.color.primary,
+          width: theme.buttonSize.medium,
+          height: theme.buttonSize.medium,
+          borderRadius: theme.buttonSize.medium / 2,
+        },
+      ]}
+      onPress={onPress}
+    >
+      <Ionicons name={iconName} size={theme.iconSize.medium} color={theme.color.text} />
     </TouchableOpacity>
   );
 };

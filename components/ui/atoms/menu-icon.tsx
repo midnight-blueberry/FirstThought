@@ -1,11 +1,10 @@
-import { ColorsContext, SizesContext } from '@/theme';
-import React, { useContext } from 'react';
+import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTheme } from 'styled-components/native';
 
 const MenuIcon: React.FC = () => {
-  const { colors } = useContext(ColorsContext);
-  const { sizes } = useContext(SizesContext);
-  return <Ionicons name="menu" size={sizes.iconSizes.large} color={colors.text} />;
+  const theme = useTheme();
+  return <Ionicons name="menu" size={theme.iconSize.large} color={theme.color.text} />;
 };
 
 export default MenuIcon;
