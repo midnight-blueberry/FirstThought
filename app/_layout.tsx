@@ -15,7 +15,7 @@ import { themes } from '../theme';
 SplashScreen.preventAutoHideAsync();
 
 function CustomDrawerContent(props: any) {
-  const theme = useTheme(); 
+  const theme = useTheme();
   return (
       <DrawerContentScrollView
         {...props}
@@ -104,12 +104,14 @@ export default function RootLayout() {
                     borderColor: theme.color.primary,
                     borderWidth: theme.borderWidth,
                     borderRadius: theme.borderRadius,
+                    overflow: 'hidden',
                   },
 
                   // внутренняя обёртка контента (скролл + фон)
                   drawerContentStyle: {
                     paddingTop: 20,
                     backgroundColor: theme.color.background,
+                    borderRadius: theme.borderRadius,
                   },
 
                   // стиль текста меток
