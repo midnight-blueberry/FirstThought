@@ -14,6 +14,7 @@ type AppButtonProps = PropsWithChildren<{
 
 const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButtonProps) => {
   const theme = useTheme();
+  const iconColor = theme.colors.primaryText;
   return (
     <TouchableOpacity
       style={[
@@ -27,7 +28,7 @@ const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButt
       ]}
       onPress={onPress}
     >
-      <Ionicons name={iconName} size={theme.iconSize.medium} color={theme.colors.text} />
+      <Ionicons name={iconName} size={theme.iconSize.medium} color={iconColor} />
     </TouchableOpacity>
   );
 };
