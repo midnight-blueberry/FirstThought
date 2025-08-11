@@ -2,7 +2,7 @@ const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
   yellow: '#FFCD00',
-  gray: '#CCCCCC',
+  gray: '#999999',
 } as const;
 
 export interface ColorTokens {
