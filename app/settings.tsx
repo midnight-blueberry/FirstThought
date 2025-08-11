@@ -4,7 +4,7 @@ import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from 'styled-components/native';
-import { themeList } from '../theme';
+import { themeList } from '@/theme';
 
 export default function Settings() {
   const theme = useTheme();

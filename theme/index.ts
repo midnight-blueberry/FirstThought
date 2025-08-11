@@ -16,7 +16,7 @@ export const themes = {
   dark: darkTheme,
 } as const;
 
-export const themeList = Object.values(themes);
-
 export type Theme = typeof lightTheme;
 export type ThemeName = keyof typeof themes;
+
+export const themeList: Theme[] = Object.values(themes);
