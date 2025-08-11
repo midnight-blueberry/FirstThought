@@ -101,6 +101,9 @@ export default function RootLayout() {
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.color.background,
+                    borderColor: theme.color.primary,
+                    borderWidth: theme.borderWidth,
+                    borderRadius: theme.borderRadius,
                   },
 
                   // внутренняя обёртка контента (скролл + фон)

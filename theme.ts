@@ -32,6 +32,7 @@ const sizes = {
     xlarge: 16,
   },
   borderRadius: 8,
+  borderWidth: 2,
 };
 
 const lightTheme: DefaultTheme  = {

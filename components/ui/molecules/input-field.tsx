@@ -14,7 +14,7 @@ const StyledInput = styledNative(AppText).attrs(({ theme }) => ({
   padding-horizontal: 12px;
   background-color: ${({ theme }) => theme.color.background};
   border-radius: ${({ theme }) => theme.borderRadius}px;
-  border-width: 2px;
+  border-width: ${({ theme }) => theme.borderWidth}px;
   border-color: ${({ theme }) => theme.color.primary};
   font-family: 'MainFont';
 `;
