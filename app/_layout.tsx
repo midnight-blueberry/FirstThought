@@ -25,19 +25,19 @@ function CustomDrawerContent(props: any) {
           backgroundColor: theme.color.background, // если нужно
         }}
       >
-        <DrawerItem
-          label="Настройки"
-          onPress={() => props.navigation.navigate('settings')}
-          labelStyle={{
-            fontFamily: 'MainFont',
-            fontSize: theme.fontSize.medium,
-            color: theme.color.primaryText,         // вместо props.theme.text
-          }}
-          style={{
-            borderRadius: theme.borderRadius, // вместо “8”
-            marginVertical: theme.spacing.small,  // вместо “4”
-          }}
-        />
+          <DrawerItem
+            label="Настройки"
+            onPress={() => props.navigation.navigate('settings')}
+            labelStyle={{
+              fontFamily: 'MainFont',
+              fontSize: theme.fontSize.medium,
+              color: theme.color.primary,         // вместо props.theme.text
+            }}
+            style={{
+              borderRadius: theme.borderRadius, // вместо “8”
+              marginVertical: theme.spacing.small,  // вместо “4”
+            }}
+          />
         {/* … */}
       </DrawerContentScrollView>
     );
@@ -113,11 +113,12 @@ export default function RootLayout() {
                   drawerLabelStyle: {
                     fontFamily: 'MainFont',
                     fontSize: theme.fontSize.medium,
+                    color: theme.color.primary,
                   },
 
                   // цвет активного/неактивного пункта
-                  drawerActiveTintColor: theme.color.primaryText,
-                  drawerInactiveTintColor: theme.color.disabledText,
+                  drawerActiveTintColor: theme.color.primary,
+                  drawerInactiveTintColor: theme.color.primary,
 
                   // при желании: отступы вокруг каждого пункта
                   drawerItemStyle: {
