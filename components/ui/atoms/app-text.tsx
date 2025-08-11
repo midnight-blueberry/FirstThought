@@ -4,7 +4,7 @@ import styledNative, { DefaultTheme, useTheme } from "styled-components/native";
 
 type AppTextProps = {
   variant?: keyof DefaultTheme["fontSize"];
-  color?: keyof DefaultTheme["color"];
+  color?: keyof DefaultTheme['colors'];
   children: React.ReactNode;
   style?: StyleProp<TextStyle>;
 };
@@ -27,7 +27,7 @@ const AppText: React.FC<AppTextProps> = ({ variant = "medium", color = "text", c
   return (
     <StyledText
       style={style}
-      textColor={theme.color[color]}
+      textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
     >
       {children}

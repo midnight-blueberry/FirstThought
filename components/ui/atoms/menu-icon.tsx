@@ -8,7 +8,7 @@ const MenuIcon: React.FC = () => {
     <Ionicons
       name="menu"
       size={theme.iconSize.large}
-      color={theme.color.primary}
+      color={theme.colors.primary}
     />
   );
 };

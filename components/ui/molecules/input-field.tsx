@@ -6,16 +6,16 @@ import AppText from '../atoms/app-text';
 // Стилевой компонент, наследующий AppText, но рендерящийся как TextInput
 const StyledInput = styledNative(AppText).attrs(({ theme }) => ({
   as: TextInput,
-  placeholderTextColor: theme.color.disabledText,
+  placeholderTextColor: theme.colors.disabledText,
 }))`
   flex: 1;
   margin-left: 16px;
   padding-vertical: 8px;
   padding-horizontal: 12px;
-  background-color: ${({ theme }) => theme.color.background};
+  background-color: ${({ theme }) => theme.colors.background};
   border-radius: ${({ theme }) => theme.borderRadius}px;
   border-width: ${({ theme }) => theme.borderWidth}px;
-  border-color: ${({ theme }) => theme.color.primary};
+  border-color: ${({ theme }) => theme.colors.primary};
   font-family: 'MainFont';
 `;
 

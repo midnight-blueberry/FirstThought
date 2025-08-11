@@ -42,7 +42,7 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <View style={[ styles.container, { backgroundColor: theme.color.background }]}>
+    <View style={[ styles.container, { backgroundColor: theme.colors.background }]}>
       <DiaryList data={diaries} />
       <ButtonWithIcon onPress={addDiary} iconName='add' />
     </View>

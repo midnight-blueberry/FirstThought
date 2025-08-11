@@ -22,7 +22,7 @@ function CustomDrawerContent(props: any) {
         contentContainerStyle={{
           flexGrow: 1,
           paddingTop: theme.spacing.medium,       // вместо “20”
-          backgroundColor: theme.color.background, // если нужно
+          backgroundColor: theme.colors.background, // если нужно
         }}
       >
           <DrawerItem
@@ -31,7 +31,7 @@ function CustomDrawerContent(props: any) {
             labelStyle={{
               fontFamily: 'MainFont',
               fontSize: theme.fontSize.medium,
-              color: theme.color.text,         // вместо props.theme.text
+              color: theme.colors.text,         // вместо props.theme.text
             }}
             style={{
               borderRadius: theme.borderRadius, // вместо “8”
@@ -45,7 +45,7 @@ function CustomDrawerContent(props: any) {
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [theme, setTheme] = useState(themes[0]);
+  const [theme, setTheme] = useState(themes.light);
 
    useEffect(() => {
     async function prepare() {
@@ -86,7 +86,7 @@ export default function RootLayout() {
       <ThemeProvider theme={theme}>
         <SafeAreaProvider>
           <SafeAreaView
-            style={[styles.container, { backgroundColor: theme.color.background }]}
+            style={[styles.container, { backgroundColor: theme.colors.background }]}
             edges={['top', 'bottom']}
             onLayout={onLayoutRootView}
           >
@@ -100,8 +100,8 @@ export default function RootLayout() {
                   // ширина и фон «самого ящика»
                   drawerStyle: {
                     width: 280,
-                    backgroundColor: theme.color.background,
-                    borderColor: theme.color.secondary,
+                    backgroundColor: theme.colors.background,
+                    borderColor: theme.colors.secondary,
                     borderWidth: theme.borderWidth,
                     borderLeftWidth: 0,
                     borderRadius: theme.borderRadius,
@@ -113,7 +113,7 @@ export default function RootLayout() {
                   // внутренняя обёртка контента (скролл + фон)
                   drawerContentStyle: {
                     paddingTop: 20,
-                    backgroundColor: theme.color.background,
+                    backgroundColor: theme.colors.background,
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
@@ -123,12 +123,12 @@ export default function RootLayout() {
                   drawerLabelStyle: {
                     fontFamily: 'MainFont',
                     fontSize: theme.fontSize.medium,
-                    color: theme.color.text,
+                    color: theme.colors.text,
                   },
 
                   // цвет активного/неактивного пункта
-                  drawerActiveTintColor: theme.color.text,
-                  drawerInactiveTintColor: theme.color.text,
+                  drawerActiveTintColor: theme.colors.text,
+                  drawerInactiveTintColor: theme.colors.text,
 
                   // при желании: отступы вокруг каждого пункта
                   drawerItemStyle: {

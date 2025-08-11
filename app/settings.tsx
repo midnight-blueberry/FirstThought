@@ -4,7 +4,7 @@ import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from 'styled-components/native';
-import { themes } from '../theme';
+import { themeList } from '../theme';
 
 export default function Settings() {
   const theme = useTheme();
@@ -15,18 +15,18 @@ export default function Settings() {
   const { setTheme } = context;
 
   const handleSave = () => {
-    const chosenTheme = themes.find(t => t.name === selectedThemeName);
+    const chosenTheme = themeList.find(t => t.name === selectedThemeName);
     if (chosenTheme) {
       setTheme(chosenTheme);
     }
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.color.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
       <AppText variant='medium' style={styles.label}>Тема:</AppText>
-      {themes.map(theme => (
+      {themeList.map(theme => (
         <TouchableOpacity
           key={theme.name}
           style={styles.themeOption}
