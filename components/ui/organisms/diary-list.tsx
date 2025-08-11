@@ -51,7 +51,10 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
       data={data}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
-      contentContainerStyle={{ paddingHorizontal: theme.spacing.medium }}
+      contentContainerStyle={{
+        paddingLeft: theme.spacing.medium,
+        paddingRight: theme.padding.small,
+      }}
       style={{ backgroundColor: theme.colors.background }}
     />
   );
