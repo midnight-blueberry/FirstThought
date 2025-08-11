@@ -4,13 +4,18 @@ import styledNative from 'styled-components/native';
 import AppText from '../atoms/app-text';
 
 // Стилевой компонент, наследующий AppText, но рендерящийся как TextInput
-const StyledInput = styledNative(AppText).attrs({ as: TextInput })`
+const StyledInput = styledNative(AppText).attrs(({ theme }) => ({
+  as: TextInput,
+  placeholderTextColor: theme.color.disabledText,
+}))`
   flex: 1;
   margin-left: 16px;
   padding-vertical: 8px;
   padding-horizontal: 12px;
-  background-color: #fff;
-  border-radius: 8px;
+  background-color: ${({ theme }) => theme.color.background};
+  border-radius: ${({ theme }) => theme.borderRadius}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.color.primary};
   font-family: 'MainFont';
 `;
 
