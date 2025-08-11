@@ -51,15 +51,13 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
       data={data}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
-      contentContainerStyle={styles.listContent}
+      contentContainerStyle={{ paddingHorizontal: theme.spacing.medium }}
       style={{ backgroundColor: theme.colors.background }}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  listContent: {
-  },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
