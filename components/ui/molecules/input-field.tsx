@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
-import styledNative from 'styled-components/native';
+import styledNative, { DefaultTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 
 // Стилевой компонент, наследующий AppText, но рендерящийся как TextInput
-const StyledInput = styledNative(AppText).attrs(({ theme }) => ({
+
+const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultTheme }) => ({
   as: TextInput,
-  placeholderTextColor: theme.color.disabledText,
+  placeholderTextColor: theme.colors.disabledText,
 }))`
   flex: 1;
   margin-left: 16px;
   padding-vertical: 8px;
   padding-horizontal: 12px;
-  background-color: ${({ theme }) => theme.color.background};
-  border-radius: ${({ theme }) => theme.borderRadius}px;
-  border-width: ${({ theme }) => theme.borderWidth}px;
-  border-color: ${({ theme }) => theme.color.primary};
+  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
+  border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
+  border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
+  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primary};
   font-family: 'MainFont';
 `;
 

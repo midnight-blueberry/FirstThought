@@ -13,7 +13,7 @@ const Header: React.FC = () => {
   const theme = useTheme();
 
   return (
-    <View style={[styles.header, { backgroundColor: theme.color.background }]}>
+    <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())} hitSlop={8}>
         <MenuIcon />
       </TouchableOpacity>

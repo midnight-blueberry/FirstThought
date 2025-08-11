@@ -19,7 +19,7 @@ const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButt
       style={[
         styles.button,
         {
-          backgroundColor: theme.color.primary,
+          backgroundColor: theme.colors.primary,
           width: theme.buttonSizes.medium,
           height: theme.buttonSizes.medium,
           borderRadius: theme.buttonSizes.medium / 2,
@@ -27,7 +27,7 @@ const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButt
       ]}
       onPress={onPress}
     >
-      <Ionicons name={iconName} size={theme.iconSize.medium} color={theme.color.text} />
+      <Ionicons name={iconName} size={theme.iconSize.medium} color={theme.colors.text} />
     </TouchableOpacity>
   );
 };

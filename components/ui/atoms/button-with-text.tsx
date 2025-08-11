@@ -20,7 +20,7 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress }) => {
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: theme.color[type],
+        backgroundColor: theme.colors[type],
         borderRadius: theme.borderRadius,
         paddingVertical: theme.spacing.medium,
         paddingHorizontal: theme.padding.medium,
