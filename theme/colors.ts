@@ -5,7 +5,18 @@ const baseColors = {
   gray: '#CCCCCC',
 } as const;
 
-export const lightColors = {
+export interface ColorTokens {
+  primary: string;
+  primaryText: string;
+  secondary: string;
+  secondaryText: string;
+  background: string;
+  text: string;
+  disabled: string;
+  disabledText: string;
+}
+
+export const lightColors: ColorTokens = {
   primary: baseColors.yellow,
   primaryText: baseColors.black,
   secondary: baseColors.black,
@@ -14,9 +25,9 @@ export const lightColors = {
   text: baseColors.black,
   disabled: baseColors.gray,
   disabledText: baseColors.gray,
-} as const;
+};
 
-export const darkColors = {
+export const darkColors: ColorTokens = {
   primary: baseColors.yellow,
   primaryText: baseColors.black,
   secondary: baseColors.black,
@@ -25,6 +36,4 @@ export const darkColors = {
   text: baseColors.yellow,
   disabled: baseColors.gray,
   disabledText: baseColors.gray,
-} as const;
-
-export type ColorTokens = typeof lightColors;
+};

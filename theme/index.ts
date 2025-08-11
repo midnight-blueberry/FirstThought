@@ -1,8 +1,8 @@
 import { DefaultTheme } from 'styled-components/native';
 import { sizes } from './tokens';
-import { lightColors, darkColors } from './colors';
+import { lightColors, darkColors, ColorTokens } from './colors';
 
-const createTheme = (name: string, colors: typeof lightColors): DefaultTheme => ({
+const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   name,
   colors,
   ...sizes,
