@@ -103,7 +103,10 @@ export default function RootLayout() {
                     backgroundColor: theme.color.background,
                     borderColor: theme.color.primary,
                     borderWidth: theme.borderWidth,
+                    borderLeftWidth: 0,
                     borderRadius: theme.borderRadius,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
                     overflow: 'hidden',
                   },
 
@@ -112,6 +115,8 @@ export default function RootLayout() {
                     paddingTop: 20,
                     backgroundColor: theme.color.background,
                     borderRadius: theme.borderRadius,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
                   },
 
                   // стиль текста меток
