@@ -15,7 +15,7 @@ import { themes } from '../theme';
 SplashScreen.preventAutoHideAsync();
 
 function CustomDrawerContent(props: any) {
-  const theme = useTheme(); 
+  const theme = useTheme();
   return (
       <DrawerContentScrollView
         {...props}
@@ -31,7 +31,7 @@ function CustomDrawerContent(props: any) {
             labelStyle={{
               fontFamily: 'MainFont',
               fontSize: theme.fontSize.medium,
-              color: theme.color.primary,         // вместо props.theme.text
+              color: theme.color.text,         // вместо props.theme.text
             }}
             style={{
               borderRadius: theme.borderRadius, // вместо “8”
@@ -101,24 +101,34 @@ export default function RootLayout() {
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.color.background,
+                    borderColor: theme.color.secondary,
+                    borderWidth: theme.borderWidth,
+                    borderLeftWidth: 0,
+                    borderRadius: theme.borderRadius,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    overflow: 'hidden',
                   },
 
                   // внутренняя обёртка контента (скролл + фон)
                   drawerContentStyle: {
                     paddingTop: 20,
                     backgroundColor: theme.color.background,
+                    borderRadius: theme.borderRadius,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
                   },
 
                   // стиль текста меток
                   drawerLabelStyle: {
                     fontFamily: 'MainFont',
                     fontSize: theme.fontSize.medium,
-                    color: theme.color.primary,
+                    color: theme.color.text,
                   },
 
                   // цвет активного/неактивного пункта
-                  drawerActiveTintColor: theme.color.primary,
-                  drawerInactiveTintColor: theme.color.primary,
+                  drawerActiveTintColor: theme.color.text,
+                  drawerInactiveTintColor: theme.color.text,
 
                   // при желании: отступы вокруг каждого пункта
                   drawerItemStyle: {

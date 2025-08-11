@@ -44,6 +44,7 @@ declare module 'styled-components/native' {
         large: number
         xlarge: number
     },
-    borderRadius: number
+    borderRadius: number,
+    borderWidth: number
   }
 }
