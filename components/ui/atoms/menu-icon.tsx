@@ -4,7 +4,13 @@ import { useTheme } from 'styled-components/native';
 
 const MenuIcon: React.FC = () => {
   const theme = useTheme();
-  return <Ionicons name="menu" size={theme.iconSize.large} color={theme.color.text} />;
+  return (
+    <Ionicons
+      name="menu"
+      size={theme.iconSize.large}
+      color={theme.color.primary}
+    />
+  );
 };
 
 export default MenuIcon;
