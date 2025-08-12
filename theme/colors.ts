@@ -1,7 +1,9 @@
+import { defaultAccentColor } from '@/constants/AccentColors';
+
 const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
-  accentColor: '#FFCD00',
+  accentColor: defaultAccentColor,
   gray: '#999999',
 } as const;
 

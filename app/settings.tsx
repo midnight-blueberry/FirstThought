@@ -1,25 +1,45 @@
 import AppText from '@/components/ui/atoms/app-text';
 import AppButton from '@/components/ui/atoms/button-with-text';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
+import { useFocusEffect } from '@react-navigation/native';
+import { accentColors } from '@/constants/AccentColors';
 
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
+  const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.primary);
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
   const lift = theme.spacing.small / 2;
 
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedThemeName(theme.name);
+      setSelectedAccentColor(theme.colors.primary);
+    }, [theme.name, theme.colors.primary])
+  );
+
   const handleSave = () => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
     if (chosenTheme) {
-      setTheme(chosenTheme);
+      const updatedColors = {
+        ...chosenTheme.colors,
+        primary: selectedAccentColor,
+      };
+      if (chosenTheme.colors.secondaryText === chosenTheme.colors.primary) {
+        updatedColors.secondaryText = selectedAccentColor;
+      }
+      if (chosenTheme.colors.text === chosenTheme.colors.primary) {
+        updatedColors.text = selectedAccentColor;
+      }
+      setTheme({ ...chosenTheme, colors: updatedColors });
     }
   };
 
@@ -77,6 +97,68 @@ export default function Settings() {
         ))}
       </View>
 
+      <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
+      <View style={styles.themeList}>
+        {accentColors.map(color => (
+          <TouchableOpacity
+            key={color.hex}
+            activeOpacity={1}
+            style={[
+              styles.themeOption,
+              {
+                borderColor: theme.colors.background,
+                borderWidth: theme.borderWidth,
+                borderRadius: theme.borderRadius,
+                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
+                paddingVertical: theme.spacing.medium,
+                paddingLeft: theme.spacing.medium,
+                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
+                justifyContent: 'center',
+              },
+              color.hex === selectedAccentColor && {
+                borderColor: theme.colors.primary,
+              },
+            ]}
+            onPress={() => setSelectedAccentColor(color.hex)}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View
+                style={{
+                  width: theme.iconSize.small,
+                  height: theme.iconSize.small,
+                  backgroundColor: color.hex,
+                  borderRadius: theme.borderRadius / 2,
+                  marginRight: theme.spacing.medium,
+                }}
+              />
+              <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
+                {color.name}
+              </AppText>
+            </View>
+            <View
+              style={{
+                position: 'absolute',
+                top: theme.spacing.medium,
+                right: theme.spacing.medium,
+                bottom: theme.spacing.medium,
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: [{ translateY: -lift }],
+              }}
+            >
+              <Ionicons
+                name="checkmark-sharp"
+                size={theme.iconSize.large}
+                color={theme.colors.primary}
+                style={{
+                  opacity: color.hex === selectedAccentColor ? 1 : 0,
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <AppButton title="Сохранить" type="primary" onPress={handleSave} />
     </View>
   );
@@ -96,12 +178,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: 'bold',
   },
+  accentLabel: {
+    marginTop: 4,
+  },
   themeOption: {
     paddingVertical: 8,
     paddingHorizontal: 8,
   },
   themeList: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   saveButton: {
     marginTop: 24,
