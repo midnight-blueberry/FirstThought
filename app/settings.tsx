@@ -97,7 +97,7 @@ export default function Settings() {
         ))}
       </View>
 
-      <AppText variant='large' style={styles.label}>Акцент</AppText>
+      <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
       <View style={styles.themeList}>
         {accentColors.map(color => (
           <TouchableOpacity
@@ -177,6 +177,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 8,
     fontWeight: 'bold',
+  },
+  accentLabel: {
+    marginTop: 16,
   },
   themeOption: {
     paddingVertical: 8,
