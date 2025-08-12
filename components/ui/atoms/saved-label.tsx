@@ -24,12 +24,11 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
   const [showGlint, setShowGlint] = useState(false);
 
   useEffect(() => {
-    if (glintKey === undefined) return;
-    const overlayWidth = 40;
-    translateX.setValue(-overlayWidth);
+    if (glintKey === undefined || width === 0) return;
+    translateX.setValue(0);
     setShowGlint(true);
     Animated.timing(translateX, {
-      toValue: width + overlayWidth,
+      toValue: width,
       duration: 800,
       useNativeDriver: true,
     }).start(() => setShowGlint(false));
@@ -60,6 +59,7 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
           pointerEvents="none"
           style={{
             position: 'absolute',
+            left: 0,
             top: 0,
             bottom: 0,
             width: 40,
