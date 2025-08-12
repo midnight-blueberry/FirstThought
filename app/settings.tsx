@@ -39,6 +39,9 @@ export default function Settings() {
                 borderWidth: theme.borderWidth,
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
+                paddingVertical: theme.spacing.medium,
+                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
+                justifyContent: 'center',
               },
               themeItem.name === selectedThemeName && {
                 borderColor: theme.colors.primary,
@@ -52,14 +55,11 @@ export default function Settings() {
             <View
               style={{
                 position: 'absolute',
-                top: 0,
-                bottom: 0,
-                right: 0,
-                paddingTop: theme.spacing.medium,
-                paddingRight: theme.spacing.medium,
-                paddingBottom: theme.spacing.medium,
+                top: theme.spacing.medium,
+                right: theme.spacing.medium,
+                bottom: theme.spacing.medium,
                 justifyContent: 'center',
-                alignItems: 'flex-end',
+                alignItems: 'center',
               }}
             >
               <Ionicons
