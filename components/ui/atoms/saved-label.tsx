@@ -69,11 +69,11 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
           style={{
             position: 'absolute',
             left: 0,
-            top: 0,
-            bottom: 0,
+            top: -20,
+            bottom: -20,
             width: 40,
             backgroundColor: 'rgba(255,255,255,0.5)',
-            transform: [{ translateX }],
+            transform: [{ translateX }, { rotate: '20deg' }],
           }}
         />
       )}
