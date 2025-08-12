@@ -8,12 +8,12 @@ import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
 const accentColors = [
-  { name: 'Красный', hex: '#C62828' },
-  { name: 'Оранжевый', hex: '#EF6C00' },
-  { name: 'Желтый', hex: '#F9A825' },
-  { name: 'Зеленый', hex: '#2E7D32' },
-  { name: 'Синий', hex: '#1565C0' },
-  { name: 'Фиолетовый', hex: '#6A1B9A' },
+  { name: 'Красный', hex: '#E57373' },
+  { name: 'Оранжевый', hex: '#FFB74D' },
+  { name: 'Желтый', hex: '#FFF176' },
+  { name: 'Зеленый', hex: '#81C784' },
+  { name: 'Синий', hex: '#64B5F6' },
+  { name: 'Фиолетовый', hex: '#BA68C8' },
 ];
 
 export default function Settings() {
