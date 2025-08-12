@@ -53,15 +53,15 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
       {...props}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+          {title}
+        </AppText>
         <Ionicons
           name="checkmark-sharp"
           size={theme.iconSize.large}
           color={theme.colors.primaryText}
-          style={{ marginRight: theme.spacing.small }}
+          style={{ marginLeft: theme.spacing.small }}
         />
-        <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center' }}>
-          {title}
-        </AppText>
       </View>
       {showGlint && (
         <Animated.View
