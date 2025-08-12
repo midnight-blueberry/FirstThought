@@ -6,7 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
 
 export default function Settings() {
@@ -21,6 +21,7 @@ export default function Settings() {
 
   const { setTheme } = context;
   const lift = theme.spacing.small / 2;
+  const navigation = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
@@ -75,7 +76,19 @@ export default function Settings() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <AppText variant='large' style={styles.title}>Настройки</AppText>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Ionicons
+            name='chevron-back'
+            size={theme.iconSize.large}
+            color={theme.colors.text}
+          />
+        </TouchableOpacity>
+        <AppText variant='large' style={styles.title}>Настройки</AppText>
+      </View>
 
       <AppText variant='large' style={styles.label}>Тема</AppText>
       <View style={styles.themeList}>
@@ -205,9 +218,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  backButton: {
+    position: 'absolute',
+    left: -4,
+    padding: 4,
+  },
   title: {
     fontWeight: 'bold',
-    marginBottom: 16,
   },
   label: {
     marginTop: 24,
