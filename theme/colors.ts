@@ -1,7 +1,7 @@
 const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
-  yellow: '#FFCD00',
+  accentColor: '#FFCD00',
   gray: '#999999',
 } as const;
 
@@ -17,7 +17,7 @@ export interface ColorTokens {
 }
 
 export const lightColors: ColorTokens = {
-  primary: baseColors.yellow,
+  primary: baseColors.accentColor,
   primaryText: baseColors.black,
   secondary: baseColors.black,
   secondaryText: baseColors.white,
@@ -28,12 +28,12 @@ export const lightColors: ColorTokens = {
 };
 
 export const darkColors: ColorTokens = {
-  primary: baseColors.yellow,
+  primary: baseColors.accentColor,
   primaryText: baseColors.black,
   secondary: baseColors.black,
-  secondaryText: baseColors.yellow,
+  secondaryText: baseColors.accentColor,
   background: baseColors.black,
-  text: baseColors.yellow,
+  text: baseColors.accentColor,
   disabled: baseColors.gray,
   disabledText: baseColors.gray,
 };
