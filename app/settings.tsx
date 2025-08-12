@@ -221,14 +221,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   backButton: {
+    position: 'absolute',
+    left: -4,
     padding: 4,
   },
   title: {
     fontWeight: 'bold',
-    marginLeft: 8,
   },
   label: {
     marginTop: 24,
