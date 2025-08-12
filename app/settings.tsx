@@ -26,24 +26,29 @@ export default function Settings() {
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
       <AppText variant='large' style={styles.label}>Тема</AppText>
-      {themeList.map(themeItem => (
-        <TouchableOpacity
-          key={themeItem.name}
-          style={[
-            styles.themeOption,
-            themeItem.name === selectedThemeName && {
-              borderColor: theme.colors.primary,
-              borderWidth: theme.borderWidth,
-              borderRadius: theme.borderRadius,
-            },
-          ]}
-          onPress={() => setSelectedThemeName(themeItem.name)}
-        >
-          <AppText variant='medium'>
-            {themeItem.name}
-          </AppText>
-        </TouchableOpacity>
-      ))}
+      <View style={styles.themeList}>
+        {themeList.map(themeItem => (
+          <TouchableOpacity
+            key={themeItem.name}
+            style={[
+              styles.themeOption,
+              {
+                borderColor: theme.colors.background,
+                borderWidth: theme.borderWidth,
+                borderRadius: theme.borderRadius,
+              },
+              themeItem.name === selectedThemeName && {
+                borderColor: theme.colors.primary,
+              },
+            ]}
+            onPress={() => setSelectedThemeName(themeItem.name)}
+          >
+            <AppText variant='medium'>
+              {themeItem.name}
+            </AppText>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <AppButton title="Сохранить" type="primary" onPress={handleSave} />
     </View>
@@ -62,10 +67,14 @@ const styles = StyleSheet.create({
   label: {
     marginTop: 24,
     marginBottom: 8,
+    fontWeight: 'bold',
   },
   themeOption: {
     paddingVertical: 8,
     paddingHorizontal: 8,
+  },
+  themeList: {
+    marginBottom: 8,
   },
   saveButton: {
     marginTop: 24,
