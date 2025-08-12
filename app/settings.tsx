@@ -3,6 +3,7 @@ import AppButton from '@/components/ui/atoms/button-with-text';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
@@ -30,6 +31,7 @@ export default function Settings() {
         {themeList.map(themeItem => (
           <TouchableOpacity
             key={themeItem.name}
+            activeOpacity={1}
             style={[
               styles.themeOption,
               {
@@ -46,6 +48,18 @@ export default function Settings() {
             <AppText variant='medium'>
               {themeItem.name}
             </AppText>
+            <Ionicons
+              name="checkmark"
+              size={theme.iconSize.small}
+              color={theme.colors.primary}
+              style={{
+                position: 'absolute',
+                right: 8,
+                top: '50%',
+                opacity: themeItem.name === selectedThemeName ? 1 : 0,
+                transform: [{ translateY: -theme.iconSize.small / 2 }],
+              }}
+            />
           </TouchableOpacity>
         ))}
       </View>
@@ -72,6 +86,7 @@ const styles = StyleSheet.create({
   themeOption: {
     paddingVertical: 8,
     paddingHorizontal: 8,
+    paddingRight: 32,
   },
   themeList: {
     marginBottom: 8,
