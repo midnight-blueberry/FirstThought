@@ -1,7 +1,7 @@
 import AppText from '@/components/ui/atoms/app-text';
-import AppButton from '@/components/ui/atoms/button-with-text';
+import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
@@ -14,6 +14,9 @@ export default function Settings() {
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.primary);
+  const [ isSaved, setIsSaved ] = useState(false);
+  const [ glintKey, setGlintKey ] = useState(0);
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -26,7 +29,7 @@ export default function Settings() {
     }, [theme.name, theme.colors.primary])
   );
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
     if (chosenTheme) {
       const updatedColors = {
@@ -41,7 +44,34 @@ export default function Settings() {
       }
       setTheme({ ...chosenTheme, colors: updatedColors });
     }
-  };
+  }, [selectedThemeName, selectedAccentColor, setTheme]);
+
+  const saveWithFeedback = useCallback(() => {
+    handleSave();
+    setIsSaved(true);
+    setGlintKey(k => k + 1);
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+    saveTimerRef.current = setTimeout(() => setIsSaved(false), 5000);
+  }, [handleSave]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  const isInitialRender = useRef(true);
+  useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+      return;
+    }
+    saveWithFeedback();
+  }, [selectedThemeName, selectedAccentColor, saveWithFeedback]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -116,7 +146,7 @@ export default function Settings() {
                 justifyContent: 'center',
               },
               color.hex === selectedAccentColor && {
-                borderColor: theme.colors.primary,
+                borderColor: color.hex,
               },
             ]}
             onPress={() => setSelectedAccentColor(color.hex)}
@@ -159,12 +189,13 @@ export default function Settings() {
         ))}
       </View>
 
-      <AppButton
-        title="Сохранить"
-        type="primary"
-        onPress={handleSave}
-        style={styles.saveButton}
-      />
+      {isSaved && (
+        <SavedLabel
+          title="Сохранено"
+          style={styles.saveNotice}
+          glintKey={glintKey}
+        />
+      )}
     </View>
   );
 }
@@ -193,7 +224,7 @@ const styles = StyleSheet.create({
   themeList: {
     marginBottom: 4,
   },
-  saveButton: {
+  saveNotice: {
     marginTop: 'auto',
   },
 });

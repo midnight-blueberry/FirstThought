@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { Animated, View, ViewProps } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import AppText from './app-text';
 
-interface ButtonProps extends TouchableOpacityProps {
+interface SavedLabelProps extends ViewProps {
   /**
-   * Текст, отображаемый внутри кнопки
+   * Текст уведомления
    */
   title: string;
-  type: "primary" | "secondary";
-  onPress: () => void;
   /**
    * Изменение ключа запускает анимацию блика
    */
@@ -17,9 +15,9 @@ interface ButtonProps extends TouchableOpacityProps {
 }
 
 /**
- * Кнопка с текстом и возможностью переопределить стили
+ * Надпись со стилем кнопки и анимацией блика
  */
-const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKey, ...props }) => {
+const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...props }) => {
   const theme = useTheme();
   const [width, setWidth] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
@@ -37,10 +35,10 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
   }, [glintKey, width, translateX]);
 
   return (
-    <TouchableOpacity
+    <View
       style={[
         {
-          backgroundColor: theme.colors[type],
+          backgroundColor: theme.colors.primary,
           borderRadius: theme.borderRadius,
           paddingVertical: theme.spacing.medium,
           paddingHorizontal: theme.padding.medium,
@@ -50,15 +48,10 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
         },
         style,
       ]}
-      activeOpacity={0.8}
-      onPress={onPress}
       onLayout={e => setWidth(e.nativeEvent.layout.width)}
       {...props}
     >
-      <AppText
-        color={`${type}Text`}
-        style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}
-      >
+      <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
         {title}
       </AppText>
       {showGlint && (
@@ -75,8 +68,8 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
           }}
         />
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 
-export default AppButton;
+export default SavedLabel;
