@@ -111,6 +111,7 @@ export default function Settings() {
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
+                paddingLeft: theme.spacing.medium,
                 minHeight: theme.iconSize.large + theme.spacing.medium * 2,
                 justifyContent: 'center',
               },
@@ -120,13 +121,7 @@ export default function Settings() {
             ]}
             onPress={() => setSelectedAccentColor(color.hex)}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                transform: [{ translateY: -lift }],
-              }}
-            >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View
                 style={{
                   width: theme.iconSize.small,
@@ -136,7 +131,9 @@ export default function Settings() {
                   marginRight: theme.spacing.medium,
                 }}
               />
-              <AppText variant='medium'>{color.name}</AppText>
+              <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
+                {color.name}
+              </AppText>
             </View>
             <View
               style={{
