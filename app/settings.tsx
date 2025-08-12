@@ -8,12 +8,12 @@ import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
 const accentColors = [
-  { name: 'Красный', value: '#C62828' },
-  { name: 'Оранжевый', value: '#EF6C00' },
-  { name: 'Желтый', value: '#F9A825' },
-  { name: 'Зеленый', value: '#2E7D32' },
-  { name: 'Синий', value: '#1565C0' },
-  { name: 'Фиолетовый', value: '#6A1B9A' },
+  { name: 'Красный', hex: '#C62828' },
+  { name: 'Оранжевый', hex: '#EF6C00' },
+  { name: 'Желтый', hex: '#F9A825' },
+  { name: 'Зеленый', hex: '#2E7D32' },
+  { name: 'Синий', hex: '#1565C0' },
+  { name: 'Фиолетовый', hex: '#6A1B9A' },
 ];
 
 export default function Settings() {
@@ -101,7 +101,7 @@ export default function Settings() {
       <View style={styles.themeList}>
         {accentColors.map(color => (
           <TouchableOpacity
-            key={color.value}
+            key={color.hex}
             activeOpacity={1}
             style={[
               styles.themeOption,
@@ -114,11 +114,11 @@ export default function Settings() {
                 minHeight: theme.iconSize.large + theme.spacing.medium * 2,
                 justifyContent: 'center',
               },
-              color.value === selectedAccentColor && {
+              color.hex === selectedAccentColor && {
                 borderColor: theme.colors.primary,
               },
             ]}
-            onPress={() => setSelectedAccentColor(color.value)}
+            onPress={() => setSelectedAccentColor(color.hex)}
           >
             <View
               style={{
@@ -131,7 +131,7 @@ export default function Settings() {
                 style={{
                   width: theme.iconSize.small,
                   height: theme.iconSize.small,
-                  backgroundColor: color.value,
+                  backgroundColor: color.hex,
                   borderRadius: theme.borderRadius / 2,
                   marginRight: theme.spacing.medium,
                 }}
@@ -154,7 +154,7 @@ export default function Settings() {
                 size={theme.iconSize.large}
                 color={theme.colors.primary}
                 style={{
-                  opacity: color.value === selectedAccentColor ? 1 : 0,
+                  opacity: color.hex === selectedAccentColor ? 1 : 0,
                 }}
               />
             </View>
