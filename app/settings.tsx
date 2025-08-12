@@ -14,6 +14,7 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+  const lift = theme.spacing.small / 2;
 
   const handleSave = () => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
@@ -49,7 +50,7 @@ export default function Settings() {
             ]}
             onPress={() => setSelectedThemeName(themeItem.name)}
           >
-            <AppText variant='medium'>
+            <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
               {themeItem.name}
             </AppText>
             <View
@@ -60,6 +61,7 @@ export default function Settings() {
                 bottom: theme.spacing.medium,
                 justifyContent: 'center',
                 alignItems: 'center',
+                transform: [{ translateY: -lift }],
               }}
             >
               <Ionicons
