@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, View, ViewProps } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import AppText from './app-text';
 
@@ -51,9 +52,17 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
       onLayout={e => setWidth(e.nativeEvent.layout.width)}
       {...props}
     >
-      <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
-        {title}
-      </AppText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        <Ionicons
+          name="checkmark-sharp"
+          size={theme.iconSize.large}
+          color={theme.colors.primaryText}
+          style={{ marginRight: theme.spacing.small }}
+        />
+        <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+          {title}
+        </AppText>
+      </View>
       {showGlint && (
         <Animated.View
           pointerEvents="none"
