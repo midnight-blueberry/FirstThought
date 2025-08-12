@@ -179,14 +179,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   accentLabel: {
-    marginTop: 16,
+    marginTop: 4,
   },
   themeOption: {
     paddingVertical: 8,
     paddingHorizontal: 8,
   },
   themeList: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   saveButton: {
     marginTop: 24,
