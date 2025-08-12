@@ -7,15 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 import { useFocusEffect } from '@react-navigation/native';
-
-const accentColors = [
-  { name: 'Красный', hex: '#E57373' },
-  { name: 'Оранжевый', hex: '#FFB74D' },
-  { name: 'Желтый', hex: '#FFCD00' },
-  { name: 'Зеленый', hex: '#81C784' },
-  { name: 'Синий', hex: '#64B5F6' },
-  { name: 'Фиолетовый', hex: '#BA68C8' },
-];
+import { accentColors } from '@/constants/AccentColors';
 
 export default function Settings() {
   const theme = useTheme();
