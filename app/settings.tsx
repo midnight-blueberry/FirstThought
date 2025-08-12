@@ -120,9 +120,24 @@ export default function Settings() {
             ]}
             onPress={() => setSelectedAccentColor(color.value)}
           >
-            <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
-              {color.name}
-            </AppText>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                transform: [{ translateY: -lift }],
+              }}
+            >
+              <View
+                style={{
+                  width: theme.iconSize.small,
+                  height: theme.iconSize.small,
+                  backgroundColor: color.value,
+                  borderRadius: theme.borderRadius / 2,
+                  marginRight: theme.spacing.medium,
+                }}
+              />
+              <AppText variant='medium'>{color.name}</AppText>
+            </View>
             <View
               style={{
                 position: 'absolute',
