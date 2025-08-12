@@ -1,16 +1,17 @@
 import AppText from '@/components/ui/atoms/app-text';
 import AppButton from '@/components/ui/atoms/button-with-text';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
+import { useFocusEffect } from '@react-navigation/native';
 
 const accentColors = [
   { name: 'Красный', hex: '#E57373' },
   { name: 'Оранжевый', hex: '#FFB74D' },
-  { name: 'Желтый', hex: '#F2C94C' },
+  { name: 'Желтый', hex: '#F1C40F' },
   { name: 'Зеленый', hex: '#81C784' },
   { name: 'Синий', hex: '#64B5F6' },
   { name: 'Фиолетовый', hex: '#BA68C8' },
@@ -25,6 +26,13 @@ export default function Settings() {
 
   const { setTheme } = context;
   const lift = theme.spacing.small / 2;
+
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedThemeName(theme.name);
+      setSelectedAccentColor(theme.colors.primary);
+    }, [theme.name, theme.colors.primary])
+  );
 
   const handleSave = () => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
