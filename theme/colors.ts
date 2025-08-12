@@ -1,7 +1,7 @@
 const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
-  accentColor: '#FFF176',
+  accentColor: '#F2C94C',
   gray: '#999999',
 } as const;
 

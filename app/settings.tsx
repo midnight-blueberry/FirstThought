@@ -10,7 +10,7 @@ import { themeList } from '@/theme';
 const accentColors = [
   { name: 'Красный', hex: '#E57373' },
   { name: 'Оранжевый', hex: '#FFB74D' },
-  { name: 'Желтый', hex: '#FFF176' },
+  { name: 'Желтый', hex: '#F2C94C' },
   { name: 'Зеленый', hex: '#81C784' },
   { name: 'Синий', hex: '#64B5F6' },
   { name: 'Фиолетовый', hex: '#BA68C8' },
