@@ -15,20 +15,31 @@ interface ButtonProps extends TouchableOpacityProps {
 /**
  * Кнопка с текстом и возможностью переопределить стили
  */
-const AppButton: React.FC<ButtonProps> = ({ title, type, onPress }) => {
+const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, ...props }) => {
   const theme = useTheme();
   return (
     <TouchableOpacity
-      style={{
-        backgroundColor: theme.colors[type],
-        borderRadius: theme.borderRadius,
-        paddingVertical: theme.spacing.medium,
-        paddingHorizontal: theme.padding.medium,
-      }}
+      style={[
+        {
+          backgroundColor: theme.colors[type],
+          borderRadius: theme.borderRadius,
+          paddingVertical: theme.spacing.medium,
+          paddingHorizontal: theme.padding.medium,
+          alignItems: 'center',
+          width: '100%',
+        },
+        style,
+      ]}
       activeOpacity={0.8}
       onPress={onPress}
+      {...props}
     >
-      <AppText color={`${type}Text`}>{title}</AppText>
+      <AppText
+        color={`${type}Text`}
+        style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}
+      >
+        {title}
+      </AppText>
     </TouchableOpacity>
   );
 };

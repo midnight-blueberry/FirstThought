@@ -159,7 +159,12 @@ export default function Settings() {
         ))}
       </View>
 
-      <AppButton title="Сохранить" type="primary" onPress={handleSave} />
+      <AppButton
+        title="Сохранить"
+        type="primary"
+        onPress={handleSave}
+        style={styles.saveButton}
+      />
     </View>
   );
 }
@@ -189,6 +194,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   saveButton: {
-    marginTop: 24,
+    marginTop: 'auto',
   },
 });
