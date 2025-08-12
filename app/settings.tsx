@@ -2,7 +2,7 @@ import AppText from '@/components/ui/atoms/app-text';
 import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
@@ -17,6 +17,7 @@ export default function Settings() {
   const [ isSaved, setIsSaved ] = useState(false);
   const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -51,11 +52,26 @@ export default function Settings() {
     handleSave();
     setIsSaved(true);
     setGlintKey(k => k + 1);
+    fadeAnim.stopAnimation();
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
+    }).start();
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
-    saveTimerRef.current = setTimeout(() => setIsSaved(false), 5000);
-  }, [handleSave]);
+    saveTimerRef.current = setTimeout(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }).start(() => setIsSaved(false));
+    }, 3000);
+  }, [handleSave, fadeAnim]);
 
   useEffect(() => {
     return () => {
@@ -203,11 +219,9 @@ export default function Settings() {
       </View>
 
       {isSaved && (
-        <SavedLabel
-          title="Сохранено"
-          style={styles.saveNotice}
-          glintKey={glintKey}
-        />
+        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}>
+          <SavedLabel title="Сохранено" glintKey={glintKey} />
+        </Animated.View>
       )}
     </View>
   );
