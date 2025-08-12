@@ -2,7 +2,7 @@ import AppText from '@/components/ui/atoms/app-text';
 import AppButton from '@/components/ui/atoms/button-with-text';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
@@ -25,21 +25,14 @@ export default function Settings() {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
-      <AppText variant='medium' style={styles.label}>Тема:</AppText>
-      {themeList.map(theme => (
-        <TouchableOpacity
-          key={theme.name}
-          style={styles.themeOption}
-          onPress={() => setSelectedThemeName(theme.name)}
-        >
-          <AppText
-            variant='medium'
-            style={theme.name === selectedThemeName ? styles.selected : styles.unselected}
-          >
-            {theme.name}
-          </AppText>
-        </TouchableOpacity>
-      ))}
+      <View style={styles.switchContainer}>
+        <AppText variant='medium'>Светлая</AppText>
+        <Switch
+          value={selectedThemeName === 'Темная'}
+          onValueChange={value => setSelectedThemeName(value ? 'Темная' : 'Светлая')}
+        />
+        <AppText variant='medium'>Темная</AppText>
+      </View>
 
       <AppButton title="Сохранить" type="primary" onPress={handleSave} />
     </View>
@@ -55,18 +48,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  label: {
-    marginTop: 24,
-    marginBottom: 8,
-  },
-  themeOption: {
-    paddingVertical: 8,
-  },
-  selected: {
-    fontWeight: 'bold',
-  },
-  unselected: {},
-  saveButton: {
-    marginTop: 24,
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginVertical: 16,
   },
 });
