@@ -38,6 +38,7 @@ export default function Settings() {
                 borderColor: theme.colors.background,
                 borderWidth: theme.borderWidth,
                 borderRadius: theme.borderRadius,
+                paddingRight: theme.iconSize.medium + theme.spacing.medium * 2,
               },
               themeItem.name === selectedThemeName && {
                 borderColor: theme.colors.primary,
@@ -48,18 +49,28 @@ export default function Settings() {
             <AppText variant='medium'>
               {themeItem.name}
             </AppText>
-            <Ionicons
-              name="checkmark"
-              size={theme.iconSize.small}
-              color={theme.colors.primary}
+            <View
               style={{
                 position: 'absolute',
-                right: 8,
-                top: '50%',
-                opacity: themeItem.name === selectedThemeName ? 1 : 0,
-                transform: [{ translateY: -theme.iconSize.small / 2 }],
+                top: 0,
+                bottom: 0,
+                right: 0,
+                paddingTop: theme.spacing.medium,
+                paddingRight: theme.spacing.medium,
+                paddingBottom: theme.spacing.medium,
+                justifyContent: 'center',
+                alignItems: 'flex-end',
               }}
-            />
+            >
+              <Ionicons
+                name="checkmark"
+                size={theme.iconSize.medium}
+                color={theme.colors.primary}
+                style={{
+                  opacity: themeItem.name === selectedThemeName ? 1 : 0,
+                }}
+              />
+            </View>
           </TouchableOpacity>
         ))}
       </View>
@@ -86,7 +97,6 @@ const styles = StyleSheet.create({
   themeOption: {
     paddingVertical: 8,
     paddingHorizontal: 8,
-    paddingRight: 32,
   },
   themeList: {
     marginBottom: 8,
