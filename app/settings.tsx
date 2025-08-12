@@ -38,7 +38,7 @@ export default function Settings() {
                 borderColor: theme.colors.background,
                 borderWidth: theme.borderWidth,
                 borderRadius: theme.borderRadius,
-                paddingRight: theme.iconSize.medium + theme.spacing.medium * 2,
+                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
               },
               themeItem.name === selectedThemeName && {
                 borderColor: theme.colors.primary,
@@ -63,8 +63,8 @@ export default function Settings() {
               }}
             >
               <Ionicons
-                name="checkmark"
-                size={theme.iconSize.medium}
+                name="checkmark-sharp"
+                size={theme.iconSize.large}
                 color={theme.colors.primary}
                 style={{
                   opacity: themeItem.name === selectedThemeName ? 1 : 0,
