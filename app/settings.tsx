@@ -2,7 +2,7 @@ import AppText from '@/components/ui/atoms/app-text';
 import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
@@ -56,7 +56,8 @@ export default function Settings() {
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 200,
+      duration: 400,
+      easing: Easing.inOut(Easing.quad),
       useNativeDriver: true,
     }).start();
     if (saveTimerRef.current) {
@@ -65,7 +66,8 @@ export default function Settings() {
     saveTimerRef.current = setTimeout(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 200,
+        duration: 400,
+        easing: Easing.inOut(Easing.quad),
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
