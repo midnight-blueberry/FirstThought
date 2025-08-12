@@ -1,5 +1,5 @@
 import AppText from '@/components/ui/atoms/app-text';
-import AppButton from '@/components/ui/atoms/button-with-text';
+import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -55,6 +55,14 @@ export default function Settings() {
     }
     saveTimerRef.current = setTimeout(() => setIsSaved(false), 5000);
   }, [handleSave]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
 
   const isInitialRender = useRef(true);
   useEffect(() => {
@@ -181,13 +189,13 @@ export default function Settings() {
         ))}
       </View>
 
-      <AppButton
-        title={isSaved ? "Сохранено" : "Сохранить"}
-        type="primary"
-        onPress={saveWithFeedback}
-        style={styles.saveButton}
-        glintKey={glintKey}
-      />
+      {isSaved && (
+        <SavedLabel
+          title="Сохранено"
+          style={styles.saveNotice}
+          glintKey={glintKey}
+        />
+      )}
     </View>
   );
 }
@@ -216,7 +224,7 @@ const styles = StyleSheet.create({
   themeList: {
     marginBottom: 4,
   },
-  saveButton: {
+  saveNotice: {
     marginTop: 'auto',
   },
 });
