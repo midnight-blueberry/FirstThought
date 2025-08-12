@@ -3,6 +3,7 @@ import AppButton from '@/components/ui/atoms/button-with-text';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
@@ -13,6 +14,7 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+  const lift = theme.spacing.small / 2;
 
   const handleSave = () => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
@@ -25,21 +27,55 @@ export default function Settings() {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
-      <AppText variant='medium' style={styles.label}>Тема:</AppText>
-      {themeList.map(theme => (
-        <TouchableOpacity
-          key={theme.name}
-          style={styles.themeOption}
-          onPress={() => setSelectedThemeName(theme.name)}
-        >
-          <AppText
-            variant='medium'
-            style={theme.name === selectedThemeName ? styles.selected : styles.unselected}
+      <AppText variant='large' style={styles.label}>Тема</AppText>
+      <View style={styles.themeList}>
+        {themeList.map(themeItem => (
+          <TouchableOpacity
+            key={themeItem.name}
+            activeOpacity={1}
+            style={[
+              styles.themeOption,
+              {
+                borderColor: theme.colors.background,
+                borderWidth: theme.borderWidth,
+                borderRadius: theme.borderRadius,
+                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
+                paddingVertical: theme.spacing.medium,
+                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
+                justifyContent: 'center',
+              },
+              themeItem.name === selectedThemeName && {
+                borderColor: theme.colors.primary,
+              },
+            ]}
+            onPress={() => setSelectedThemeName(themeItem.name)}
           >
-            {theme.name}
-          </AppText>
-        </TouchableOpacity>
-      ))}
+            <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
+              {themeItem.name}
+            </AppText>
+            <View
+              style={{
+                position: 'absolute',
+                top: theme.spacing.medium,
+                right: theme.spacing.medium,
+                bottom: theme.spacing.medium,
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: [{ translateY: -lift }],
+              }}
+            >
+              <Ionicons
+                name="checkmark-sharp"
+                size={theme.iconSize.large}
+                color={theme.colors.primary}
+                style={{
+                  opacity: themeItem.name === selectedThemeName ? 1 : 0,
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <AppButton title="Сохранить" type="primary" onPress={handleSave} />
     </View>
@@ -58,14 +94,15 @@ const styles = StyleSheet.create({
   label: {
     marginTop: 24,
     marginBottom: 8,
+    fontWeight: 'bold',
   },
   themeOption: {
     paddingVertical: 8,
+    paddingHorizontal: 8,
   },
-  selected: {
-    fontWeight: 'bold',
+  themeList: {
+    marginBottom: 8,
   },
-  unselected: {},
   saveButton: {
     marginTop: 24,
   },
