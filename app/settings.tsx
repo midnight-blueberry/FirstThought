@@ -25,18 +25,22 @@ export default function Settings() {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppText variant='large' style={styles.title}>Настройки</AppText>
 
-      <AppText variant='medium' style={styles.label}>Тема:</AppText>
-      {themeList.map(theme => (
+      <AppText variant='large' style={styles.label}>Тема</AppText>
+      {themeList.map(themeItem => (
         <TouchableOpacity
-          key={theme.name}
-          style={styles.themeOption}
-          onPress={() => setSelectedThemeName(theme.name)}
+          key={themeItem.name}
+          style={[
+            styles.themeOption,
+            themeItem.name === selectedThemeName && {
+              borderColor: theme.colors.primary,
+              borderWidth: theme.borderWidth,
+              borderRadius: theme.borderRadius,
+            },
+          ]}
+          onPress={() => setSelectedThemeName(themeItem.name)}
         >
-          <AppText
-            variant='medium'
-            style={theme.name === selectedThemeName ? styles.selected : styles.unselected}
-          >
-            {theme.name}
+          <AppText variant='medium'>
+            {themeItem.name}
           </AppText>
         </TouchableOpacity>
       ))}
@@ -61,11 +65,8 @@ const styles = StyleSheet.create({
   },
   themeOption: {
     paddingVertical: 8,
+    paddingHorizontal: 8,
   },
-  selected: {
-    fontWeight: 'bold',
-  },
-  unselected: {},
   saveButton: {
     marginTop: 24,
   },
