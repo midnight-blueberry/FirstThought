@@ -54,7 +54,7 @@ export default function Settings() {
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
-    saveTimerRef.current = setTimeout(() => setIsSaved(false), 5000);
+    saveTimerRef.current = setTimeout(() => setIsSaved(false), 3000);
   }, [handleSave]);
 
   useEffect(() => {
