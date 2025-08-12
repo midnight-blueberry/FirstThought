@@ -7,10 +7,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 
+const accentColors = [
+  { name: 'Красный', value: '#C62828' },
+  { name: 'Оранжевый', value: '#EF6C00' },
+  { name: 'Желтый', value: '#F9A825' },
+  { name: 'Зеленый', value: '#2E7D32' },
+  { name: 'Синий', value: '#1565C0' },
+  { name: 'Фиолетовый', value: '#6A1B9A' },
+];
+
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
+  const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.primary);
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -19,7 +29,17 @@ export default function Settings() {
   const handleSave = () => {
     const chosenTheme = themeList.find(t => t.name === selectedThemeName);
     if (chosenTheme) {
-      setTheme(chosenTheme);
+      const updatedColors = {
+        ...chosenTheme.colors,
+        primary: selectedAccentColor,
+      };
+      if (chosenTheme.colors.secondaryText === chosenTheme.colors.primary) {
+        updatedColors.secondaryText = selectedAccentColor;
+      }
+      if (chosenTheme.colors.text === chosenTheme.colors.primary) {
+        updatedColors.text = selectedAccentColor;
+      }
+      setTheme({ ...chosenTheme, colors: updatedColors });
     }
   };
 
@@ -70,6 +90,56 @@ export default function Settings() {
                 color={theme.colors.primary}
                 style={{
                   opacity: themeItem.name === selectedThemeName ? 1 : 0,
+                }}
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <AppText variant='large' style={styles.label}>Акцент</AppText>
+      <View style={styles.themeList}>
+        {accentColors.map(color => (
+          <TouchableOpacity
+            key={color.value}
+            activeOpacity={1}
+            style={[
+              styles.themeOption,
+              {
+                borderColor: theme.colors.background,
+                borderWidth: theme.borderWidth,
+                borderRadius: theme.borderRadius,
+                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
+                paddingVertical: theme.spacing.medium,
+                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
+                justifyContent: 'center',
+              },
+              color.value === selectedAccentColor && {
+                borderColor: theme.colors.primary,
+              },
+            ]}
+            onPress={() => setSelectedAccentColor(color.value)}
+          >
+            <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
+              {color.name}
+            </AppText>
+            <View
+              style={{
+                position: 'absolute',
+                top: theme.spacing.medium,
+                right: theme.spacing.medium,
+                bottom: theme.spacing.medium,
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: [{ translateY: -lift }],
+              }}
+            >
+              <Ionicons
+                name="checkmark-sharp"
+                size={theme.iconSize.large}
+                color={theme.colors.primary}
+                style={{
+                  opacity: color.value === selectedAccentColor ? 1 : 0,
                 }}
               />
             </View>
