@@ -144,7 +144,16 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            height: theme.iconSize.large + theme.spacing.small * 2,
+            borderBottomColor: theme.colors.basic,
+            borderBottomWidth: theme.borderWidth.small,
+          },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={[
@@ -366,7 +375,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
     marginBottom: 16,
   },
   backButton: {
