@@ -55,7 +55,8 @@ export default function Settings() {
       const base = sizes.fontSize.small;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(level);
-    }, [theme.name, theme.colors.accent, theme.fontSize.small])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [theme.name, theme.fontSize.small])
   );
 
   const updateTheme = useCallback(
