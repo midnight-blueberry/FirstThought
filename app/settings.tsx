@@ -120,18 +120,20 @@ export default function Settings() {
       overlayAnim.setValue(0);
       Animated.timing(overlayAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 700,
         useNativeDriver: true,
       }).start(() => {
         performSave();
-        Animated.timing(overlayAnim, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }).start(() => {
-          setOverlayVisible(false);
-          showSaveIcon();
-        });
+        setTimeout(() => {
+          Animated.timing(overlayAnim, {
+            toValue: 0,
+            duration: 700,
+            useNativeDriver: true,
+          }).start(() => {
+            setOverlayVisible(false);
+            showSaveIcon();
+          });
+        }, 100);
       });
     } else {
       performSave();
