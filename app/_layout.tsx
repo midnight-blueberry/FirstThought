@@ -10,7 +10,8 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from 'styled-components/native';
 import Header from '../components/ui/organisms/header';
-import { themes } from '../theme';
+import { themes, themeList } from '../theme';
+import { loadSettings } from '@/src/storage/settings';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,7 +48,7 @@ export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [theme, setTheme] = useState(themes.light);
 
-   useEffect(() => {
+  useEffect(() => {
     async function prepare() {
       try {
         // 1. Загружаем шрифты
@@ -55,7 +56,27 @@ export default function RootLayout() {
           'MainFont': require('@/assets/fonts/Comfortaa-VariableFont_wght.ttf'),
         });
 
-        // 2. Здесь же можно загрузить любые другие ассеты
+        // 2. Загружаем сохраненные настройки
+        const saved = await loadSettings();
+        if (saved) {
+          const chosenTheme = themeList.find(t => t.name === saved.themeName);
+          if (chosenTheme) {
+            const updatedColors = { ...chosenTheme.colors, accent: saved.accentColor };
+            if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+              updatedColors.basic = saved.accentColor;
+            }
+            const delta = (saved.fontSizeLevel - 3) * 2;
+            const updatedFontSize = {
+              small: chosenTheme.fontSize.small + delta,
+              medium: chosenTheme.fontSize.medium + delta,
+              large: chosenTheme.fontSize.large + delta,
+              xlarge: chosenTheme.fontSize.xlarge + delta,
+            };
+            setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
+          }
+        }
+
+        // 3. Здесь же можно загрузить любые другие ассеты
         // await Asset.loadAsync(...);
 
       } catch (e) {

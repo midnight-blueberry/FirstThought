@@ -9,6 +9,7 @@ import { themeList } from '@/theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
 import { sizes } from '@/theme/tokens';
+import { saveSettings } from '@/src/storage/settings';
 
 export default function Settings() {
   const theme = useTheme();
@@ -61,6 +62,7 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback(() => {
     handleSave();
+    saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
     setGlintKey(k => k + 1);
     fadeAnim.stopAnimation();
@@ -82,7 +84,7 @@ export default function Settings() {
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
-  }, [handleSave, fadeAnim]);
+  }, [handleSave, fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel]);
 
   useEffect(() => {
     return () => {
