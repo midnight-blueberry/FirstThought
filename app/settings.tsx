@@ -280,16 +280,15 @@ export default function Settings() {
 
       <AppText variant='large' style={[styles.label, styles.fontSizeLabel]}>Размер шрифта</AppText>
       <View style={styles.fontSizeContainer}>
-        <TouchableOpacity
-          onPress={decreaseFontSize}
-          activeOpacity={1}
-        >
-          <Ionicons
-            name='remove'
-            size={theme.iconSize.large}
-            color={theme.colors.basic}
-          />
-        </TouchableOpacity>
+        <View style={styles.fontSizeSide}>
+          <TouchableOpacity onPress={decreaseFontSize} activeOpacity={1}>
+            <Ionicons
+              name='remove'
+              size={theme.iconSize.large}
+              color={theme.colors.basic}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.fontSizeBars}>
           {Array.from({ length: 6 }).map((_, i) => {
             const barStyle = {
@@ -307,16 +306,15 @@ export default function Settings() {
             return <View key={i} style={barStyle} />;
           })}
         </View>
-        <TouchableOpacity
-          onPress={increaseFontSize}
-          activeOpacity={1}
-        >
-          <Ionicons
-            name='add'
-            size={theme.iconSize.large}
-            color={theme.colors.basic}
-          />
-        </TouchableOpacity>
+        <View style={styles.fontSizeSide}>
+          <TouchableOpacity onPress={increaseFontSize} activeOpacity={1}>
+            <Ionicons
+              name='add'
+              size={theme.iconSize.large}
+              color={theme.colors.basic}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {isSaved && (
@@ -361,13 +359,17 @@ const styles = StyleSheet.create({
   fontSizeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 4,
   },
+  fontSizeSide: {
+    flex: 1,
+    alignItems: 'center',
+  },
   fontSizeBars: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginHorizontal: 16,
+    justifyContent: 'center',
   },
   themeOption: {
     paddingVertical: 8,
