@@ -43,6 +43,8 @@ export default function Settings() {
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
+  const [ overlayVisible, setOverlayVisible ] = useState(false);
+  const overlayAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -83,9 +85,7 @@ export default function Settings() {
     [fontSizeLevel, setTheme]
   );
 
-  const saveWithFeedback = useCallback(() => {
-    updateTheme(selectedThemeName, selectedAccentColor);
-    saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
+  const showSaveIcon = useCallback(() => {
     setIsSaved(true);
     fadeAnim.stopAnimation();
     fadeAnim.setValue(0);
@@ -106,9 +106,40 @@ export default function Settings() {
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
-  }, [fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme]);
+  }, [fadeAnim]);
 
-  const saveWithFeedbackRef = useRef(saveWithFeedback);
+  const saveWithFeedback = useCallback((withOverlay: boolean) => {
+    const performSave = () => {
+      updateTheme(selectedThemeName, selectedAccentColor);
+      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
+    };
+
+    if (withOverlay) {
+      setOverlayVisible(true);
+      overlayAnim.stopAnimation();
+      overlayAnim.setValue(0);
+      Animated.timing(overlayAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        performSave();
+        Animated.timing(overlayAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start(() => {
+          setOverlayVisible(false);
+          showSaveIcon();
+        });
+      });
+    } else {
+      performSave();
+      showSaveIcon();
+    }
+  }, [overlayAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme, showSaveIcon]);
+
+  const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
   useEffect(() => {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
@@ -129,7 +160,7 @@ export default function Settings() {
         useNativeDriver: false,
       }).start(() => {
         accentAnim.removeListener(id);
-        saveWithFeedbackRef.current();
+        saveWithFeedbackRef.current(false);
       });
     },
     [accentAnim, selectedAccentColor, selectedThemeName, updateTheme]
@@ -185,12 +216,16 @@ export default function Settings() {
   };
 
   const isInitialRender = useRef(true);
+  const prevFontSizeRef = useRef(fontSizeLevel);
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
+      prevFontSizeRef.current = fontSizeLevel;
       return;
     }
-    saveWithFeedbackRef.current();
+    const isFontSizeChange = prevFontSizeRef.current !== fontSizeLevel;
+    prevFontSizeRef.current = fontSizeLevel;
+    saveWithFeedbackRef.current(isFontSizeChange);
   }, [selectedThemeName, fontSizeLevel]);
 
   return (
@@ -235,6 +270,19 @@ export default function Settings() {
           blinkAnim={blinkAnim}
         />
       </ScrollView>
+      {overlayVisible && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: theme.colors.background,
+            opacity: overlayAnim,
+          }}
+        />
+      )}
     </View>
   );
 }
