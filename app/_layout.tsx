@@ -12,6 +12,7 @@ import { ThemeProvider, useTheme, DefaultTheme } from 'styled-components/native'
 import Header from '../components/ui/organisms/header';
 import { themes, themeList } from '../theme';
 import { loadSettings } from '@/src/storage/settings';
+import { fonts, defaultFontName, FontName } from '@/constants/Fonts';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +31,7 @@ function CustomDrawerContent(props: any) {
             label="Настройки"
             onPress={() => props.navigation.navigate('settings')}
             labelStyle={{
-              fontFamily: 'MainFont',
+              fontFamily: theme.fontFamily,
               fontSize: theme.fontSize.medium,
               color: theme.colors.basic,         // вместо props.theme.text
             }}
@@ -52,29 +53,35 @@ export default function RootLayout() {
     async function prepare() {
       try {
         // 1. Загружаем шрифты
-        await Font.loadAsync({
-          'MainFont': require('@/assets/fonts/Comfortaa-VariableFont_wght.ttf'),
-        });
+        await Font.loadAsync(
+          Object.fromEntries(
+            Object.entries(fonts).map(([name, f]) => [name, f.file])
+          )
+        );
 
         // 2. Загружаем сохраненные настройки
         const saved = await loadSettings();
-        if (saved) {
-          const chosenTheme = themeList.find(t => t.name === saved.themeName);
-          if (chosenTheme) {
-            const updatedColors = { ...chosenTheme.colors, accent: saved.accentColor };
-            if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-              updatedColors.basic = saved.accentColor;
-            }
-            const delta = (saved.fontSizeLevel - 3) * 2;
-            const updatedFontSize = {
-              small: chosenTheme.fontSize.small + delta,
-              medium: chosenTheme.fontSize.medium + delta,
-              large: chosenTheme.fontSize.large + delta,
-              xlarge: chosenTheme.fontSize.xlarge + delta,
-            } as DefaultTheme['fontSize'];
-            setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
-          }
+        const fontName: FontName = saved && saved.fontName && fonts[saved.fontName]
+          ? (saved.fontName as FontName)
+          : defaultFontName;
+        const chosenTheme = saved
+          ? themeList.find(t => t.name === saved.themeName) || themes.light
+          : themes.light;
+        const accentColor = saved ? saved.accentColor : chosenTheme.colors.accent;
+        const updatedColors = { ...chosenTheme.colors, accent: accentColor };
+        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+          updatedColors.basic = accentColor;
         }
+        const fontSizeLevel = saved ? saved.fontSizeLevel : 3;
+        const delta = (fontSizeLevel - 3) * 2;
+        const baseFontSize = fonts[fontName].fontSize;
+        const updatedFontSize = {
+          small: baseFontSize.small + delta,
+          medium: baseFontSize.medium + delta,
+          large: baseFontSize.large + delta,
+          xlarge: baseFontSize.xlarge + delta,
+        } as DefaultTheme['fontSize'];
+        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontFamily: fontName });
 
         // 3. Здесь же можно загрузить любые другие ассеты
         // await Asset.loadAsync(...);
@@ -142,7 +149,7 @@ export default function RootLayout() {
 
                   // стиль текста меток
                   drawerLabelStyle: {
-                    fontFamily: 'MainFont',
+                    fontFamily: theme.fontFamily,
                     fontSize: theme.fontSize.medium,
                     color: theme.colors.basic,
                   },
