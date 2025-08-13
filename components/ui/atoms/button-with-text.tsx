@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import { DefaultTheme, useTheme } from 'styled-components/native';
 import AppText from './app-text';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -21,6 +21,16 @@ interface ButtonProps extends TouchableOpacityProps {
  */
 const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKey, ...props }) => {
   const theme = useTheme();
+  const backgroundColor =
+    type === 'primary'
+      ? theme.colors.accent
+      : theme.name === 'Светлая'
+        ? theme.colors.basic
+        : theme.colors.background;
+  const textColor: keyof DefaultTheme['colors'] =
+    type === 'primary'
+      ? (theme.name === 'Светлая' ? 'basic' : 'background')
+      : (theme.name === 'Светлая' ? 'background' : 'accent');
   const [width, setWidth] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
   const [showGlint, setShowGlint] = useState(false);
@@ -40,7 +50,7 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
     <TouchableOpacity
       style={[
         {
-          backgroundColor: theme.colors[type],
+          backgroundColor,
           borderRadius: theme.borderRadius,
           paddingVertical: theme.spacing.medium,
           paddingHorizontal: theme.padding.medium,
@@ -56,7 +66,7 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
       {...props}
     >
       <AppText
-        color={`${type}Text`}
+        color={textColor}
         style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}
       >
         {title}

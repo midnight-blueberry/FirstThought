@@ -7,7 +7,7 @@ import AppText from '../atoms/app-text';
 
 const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultTheme }) => ({
   as: TextInput,
-  placeholderTextColor: theme.colors.disabledText,
+  placeholderTextColor: theme.colors.disabled,
 }))`
   flex: 1;
   margin-left: 16px;
@@ -16,7 +16,7 @@ const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultThem
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
-  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primary};
+  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.accent};
   font-family: 'MainFont';
 `;
 

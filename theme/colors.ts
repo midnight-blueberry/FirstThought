@@ -8,34 +8,22 @@ const baseColors = {
 } as const;
 
 export interface ColorTokens {
-  primary: string;
-  primaryText: string;
-  secondary: string;
-  secondaryText: string;
+  basic: string;
   background: string;
-  text: string;
+  accent: string;
   disabled: string;
-  disabledText: string;
 }
 
 export const lightColors: ColorTokens = {
-  primary: baseColors.accentColor,
-  primaryText: baseColors.black,
-  secondary: baseColors.black,
-  secondaryText: baseColors.white,
+  basic: baseColors.black,
   background: baseColors.white,
-  text: baseColors.black,
+  accent: baseColors.accentColor,
   disabled: baseColors.gray,
-  disabledText: baseColors.gray,
 };
 
 export const darkColors: ColorTokens = {
-  primary: baseColors.accentColor,
-  primaryText: baseColors.black,
-  secondary: baseColors.black,
-  secondaryText: baseColors.accentColor,
+  basic: baseColors.accentColor,
   background: baseColors.black,
-  text: baseColors.accentColor,
+  accent: baseColors.accentColor,
   disabled: baseColors.gray,
-  disabledText: baseColors.gray,
 };
