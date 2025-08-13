@@ -22,7 +22,7 @@ export const lightColors: ColorTokens = {
 };
 
 export const darkColors: ColorTokens = {
-  basic: baseColors.accentColor,
+  basic: baseColors.white,
   background: baseColors.black,
   accent: baseColors.accentColor,
   disabled: baseColors.gray,
