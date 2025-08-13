@@ -22,7 +22,7 @@ const Container = styledNative.View`
 `;
 
 const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
-  placeholderTextColor: theme.colors.basic,
+  placeholderTextColor: theme.colors.disabled,
 }))`
   flex: 1;
   font-family: 'MainFont';
