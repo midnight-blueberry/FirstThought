@@ -1,5 +1,5 @@
-import { DefaultTheme } from 'styled-components/native';
 import { TextStyle } from 'react-native';
+import { DefaultTheme } from 'styled-components/native';
 
 const createFontSize = (medium: number): DefaultTheme['fontSize'] => ({
   small: medium - 4,
@@ -30,7 +30,7 @@ const fontMap = {
   'Montserrat': {
     file: require('@/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf'),
     fontSize: createFontSize(20),
-    fontWeight: '700',
+    fontWeight: '600',
   },
   'Nata Sans': {
     file: require('@/assets/fonts/Nata_Sans/NataSans-VariableFont_wght.ttf'),
