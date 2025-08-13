@@ -38,26 +38,41 @@ export default function Settings() {
     }, [theme.name, theme.colors.accent, theme.fontSize.small])
   );
 
-  const handleSave = useCallback(() => {
-    const chosenTheme = themeList.find(t => t.name === selectedThemeName);
-    if (chosenTheme) {
-      const updatedColors = {
-        ...chosenTheme.colors,
-        accent: selectedAccentColor,
-      };
-      if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-        updatedColors.basic = selectedAccentColor;
+  const updateTheme = useCallback(
+    (themeName: string, accentColor: string) => {
+      const chosenTheme = themeList.find(t => t.name === themeName);
+      if (chosenTheme) {
+        const updatedColors = {
+          ...chosenTheme.colors,
+          accent: accentColor,
+        };
+        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+          updatedColors.basic = accentColor;
+        }
+        const delta = (fontSizeLevel - 3) * 2;
+        const updatedFontSize = {
+          small: chosenTheme.fontSize.small + delta,
+          medium: chosenTheme.fontSize.medium + delta,
+          large: chosenTheme.fontSize.large + delta,
+          xlarge: chosenTheme.fontSize.xlarge + delta,
+        } as DefaultTheme['fontSize'];
+        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
       }
-      const delta = (fontSizeLevel - 3) * 2;
-      const updatedFontSize = {
-        small: chosenTheme.fontSize.small + delta,
-        medium: chosenTheme.fontSize.medium + delta,
-        large: chosenTheme.fontSize.large + delta,
-        xlarge: chosenTheme.fontSize.xlarge + delta,
-      } as DefaultTheme['fontSize'];
-      setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
-    }
-  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, setTheme]);
+    },
+    [fontSizeLevel, setTheme]
+  );
+
+  const handleSave = useCallback(() => {
+    updateTheme(selectedThemeName, selectedAccentColor);
+  }, [selectedThemeName, selectedAccentColor, updateTheme]);
+
+  const handleAccentChange = useCallback(
+    (color: string) => {
+      setSelectedAccentColor(color);
+      updateTheme(selectedThemeName, color);
+    },
+    [selectedThemeName, updateTheme]
+  );
 
   const saveWithFeedback = useCallback(() => {
     handleSave();
@@ -171,7 +186,7 @@ export default function Settings() {
               label={color.name}
               swatchColor={color.hex}
               selected={color.hex === selectedAccentColor}
-              onPress={() => setSelectedAccentColor(color.hex)}
+              onPress={() => handleAccentChange(color.hex)}
             />
           ))}
         </View>
