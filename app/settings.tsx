@@ -43,6 +43,7 @@ export default function Settings() {
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
+  const contentOpacity = useRef(new Animated.Value(1)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -60,7 +61,7 @@ export default function Settings() {
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string) => {
+    (themeName: string, accentColor: string, level: number = fontSizeLevel) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
       if (chosenTheme) {
         const updatedColors = {
@@ -70,7 +71,7 @@ export default function Settings() {
         if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
           updatedColors.basic = accentColor;
         }
-        const delta = (fontSizeLevel - 3) * 2;
+        const delta = (level - 3) * 2;
         const updatedFontSize = {
           small: chosenTheme.fontSize.small + delta,
           medium: chosenTheme.fontSize.medium + delta,
@@ -83,9 +84,7 @@ export default function Settings() {
     [fontSizeLevel, setTheme]
   );
 
-  const saveWithFeedback = useCallback(() => {
-    updateTheme(selectedThemeName, selectedAccentColor);
-    saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
+  const showSaveIndicator = useCallback(() => {
     setIsSaved(true);
     fadeAnim.stopAnimation();
     fadeAnim.setValue(0);
@@ -106,7 +105,13 @@ export default function Settings() {
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
-  }, [fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme]);
+  }, [fadeAnim]);
+
+  const saveWithFeedback = useCallback(() => {
+    updateTheme(selectedThemeName, selectedAccentColor);
+    saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
+    showSaveIndicator();
+  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme, showSaveIndicator]);
 
   const saveWithFeedbackRef = useRef(saveWithFeedback);
   useEffect(() => {
@@ -161,27 +166,37 @@ export default function Settings() {
     blinkAnim.setValue(1);
     setBlinkIndex(null);
   }, [blinkAnim]);
+  const changeFontSize = useCallback(
+    (newLevel: number) => {
+      contentOpacity.stopAnimation();
+      Animated.timing(contentOpacity, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => {
+        setFontSizeLevel(newLevel);
+        updateTheme(selectedThemeName, selectedAccentColor, newLevel);
+        saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: newLevel });
+        Animated.timing(contentOpacity, { toValue: 1, duration: 500, useNativeDriver: true }).start(() => {
+          showSaveIndicator();
+        });
+      });
+    },
+    [contentOpacity, selectedThemeName, selectedAccentColor, updateTheme, showSaveIndicator]
+  );
 
   const decreaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l <= 1) {
-        triggerBlink(0);
-        return l;
-      }
-      return l - 1;
-    });
+    if (fontSizeLevel <= 1) {
+      triggerBlink(0);
+      return;
+    }
+    changeFontSize(fontSizeLevel - 1);
   };
 
   const increaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l >= 6) {
-        triggerBlink(5);
-        return l;
-      }
-      return l + 1;
-    });
+    if (fontSizeLevel >= 6) {
+      triggerBlink(5);
+      return;
+    }
+    changeFontSize(fontSizeLevel + 1);
   };
 
   const isInitialRender = useRef(true);
@@ -191,10 +206,10 @@ export default function Settings() {
       return;
     }
     saveWithFeedbackRef.current();
-  }, [selectedThemeName, fontSizeLevel]);
+  }, [selectedThemeName]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <Animated.View style={{ flex: 1, backgroundColor: theme.colors.background, opacity: contentOpacity }}>
       <ScreenHeader
         title="Настройки"
         onBack={() => navigation.goBack()}
@@ -235,7 +250,7 @@ export default function Settings() {
           blinkAnim={blinkAnim}
         />
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
