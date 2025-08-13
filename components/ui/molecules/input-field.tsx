@@ -31,7 +31,7 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
-  padding-top: 2px;
+  padding-top: 3px;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
