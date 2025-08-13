@@ -7,7 +7,7 @@ import AppText from '../atoms/app-text';
 
 const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultTheme }) => ({
   as: TextInput,
-  placeholderTextColor: theme.colors.basic,
+  placeholderTextColor: theme.colors.disabled,
 }))`
   flex: 1;
   margin-left: 16px;
