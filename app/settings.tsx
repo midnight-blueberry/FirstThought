@@ -12,6 +12,25 @@ import { accentColors } from '@/constants/AccentColors';
 import { sizes } from '@/theme/tokens';
 import { saveSettings } from '@/src/storage/settings';
 
+const interpolateColor = (from: string, to: string, t: number) => {
+  const f = parseInt(from.slice(1), 16);
+  const tVal = parseInt(to.slice(1), 16);
+
+  const r1 = (f >> 16) & 0xff;
+  const g1 = (f >> 8) & 0xff;
+  const b1 = f & 0xff;
+
+  const r2 = (tVal >> 16) & 0xff;
+  const g2 = (tVal >> 8) & 0xff;
+  const b2 = tVal & 0xff;
+
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
+
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
+
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
@@ -23,6 +42,7 @@ export default function Settings() {
   const [ isSaved, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const accentAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -35,32 +55,36 @@ export default function Settings() {
       const base = sizes.fontSize.small;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(level);
-    }, [theme.name, theme.colors.accent, theme.fontSize.small])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [theme.name, theme.fontSize.small])
   );
 
-  const handleSave = useCallback(() => {
-    const chosenTheme = themeList.find(t => t.name === selectedThemeName);
-    if (chosenTheme) {
-      const updatedColors = {
-        ...chosenTheme.colors,
-        accent: selectedAccentColor,
-      };
-      if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-        updatedColors.basic = selectedAccentColor;
+  const updateTheme = useCallback(
+    (themeName: string, accentColor: string) => {
+      const chosenTheme = themeList.find(t => t.name === themeName);
+      if (chosenTheme) {
+        const updatedColors = {
+          ...chosenTheme.colors,
+          accent: accentColor,
+        };
+        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+          updatedColors.basic = accentColor;
+        }
+        const delta = (fontSizeLevel - 3) * 2;
+        const updatedFontSize = {
+          small: chosenTheme.fontSize.small + delta,
+          medium: chosenTheme.fontSize.medium + delta,
+          large: chosenTheme.fontSize.large + delta,
+          xlarge: chosenTheme.fontSize.xlarge + delta,
+        } as DefaultTheme['fontSize'];
+        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
       }
-      const delta = (fontSizeLevel - 3) * 2;
-      const updatedFontSize = {
-        small: chosenTheme.fontSize.small + delta,
-        medium: chosenTheme.fontSize.medium + delta,
-        large: chosenTheme.fontSize.large + delta,
-        xlarge: chosenTheme.fontSize.xlarge + delta,
-      } as DefaultTheme['fontSize'];
-      setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
-    }
-  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, setTheme]);
+    },
+    [fontSizeLevel, setTheme]
+  );
 
   const saveWithFeedback = useCallback(() => {
-    handleSave();
+    updateTheme(selectedThemeName, selectedAccentColor);
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
     fadeAnim.stopAnimation();
@@ -82,7 +106,34 @@ export default function Settings() {
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
-  }, [handleSave, fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel]);
+  }, [fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme]);
+
+  const saveWithFeedbackRef = useRef(saveWithFeedback);
+  useEffect(() => {
+    saveWithFeedbackRef.current = saveWithFeedback;
+  }, [saveWithFeedback]);
+
+  const handleAccentChange = useCallback(
+    (color: string) => {
+      const from = selectedAccentColor;
+      setSelectedAccentColor(color);
+      accentAnim.stopAnimation();
+      accentAnim.setValue(0);
+      const id = accentAnim.addListener(({ value }) => {
+        const c = interpolateColor(from, color, value);
+        updateTheme(selectedThemeName, c);
+      });
+      Animated.timing(accentAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start(() => {
+        accentAnim.removeListener(id);
+        saveWithFeedbackRef.current();
+      });
+    },
+    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme]
+  );
 
   useEffect(() => {
     return () => {
@@ -139,8 +190,8 @@ export default function Settings() {
       isInitialRender.current = false;
       return;
     }
-    saveWithFeedback();
-  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
+    saveWithFeedbackRef.current();
+  }, [selectedThemeName, fontSizeLevel]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -171,7 +222,7 @@ export default function Settings() {
               label={color.name}
               swatchColor={color.hex}
               selected={color.hex === selectedAccentColor}
-              onPress={() => setSelectedAccentColor(color.hex)}
+              onPress={() => handleAccentChange(color.hex)}
             />
           ))}
         </View>
