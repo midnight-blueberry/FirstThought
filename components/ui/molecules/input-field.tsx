@@ -13,6 +13,7 @@ const Container = styledNative.View`
   margin-left: 16px;
   padding-vertical: 0px;
   padding-left: 12px;
+  height: ${({ theme }: { theme: DefaultTheme }) => theme.iconSize.small + theme.borderWidth * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
@@ -26,11 +27,15 @@ const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultThem
   flex: 1;
   font-family: 'MainFont';
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
+  line-height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
+  height: 100%;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
   padding-left: 8px;
   padding-right: 12px;
+  height: 100%;
+  justify-content: center;
 `;
 
 const InputField: React.FC<TextInputProps> = (props) => {
@@ -45,7 +50,7 @@ const InputField: React.FC<TextInputProps> = (props) => {
         {...props}
       />
       <SearchButton>
-        <Ionicons name="search" size={theme.iconSize.medium} color={theme.colors.basic} />
+        <Ionicons name="search" size={theme.iconSize.small} color={theme.colors.basic} />
       </SearchButton>
     </Container>
   );
