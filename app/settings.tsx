@@ -29,6 +29,7 @@ export default function Settings() {
   const lift = theme.spacing.small / 2;
   const optionPaddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
   const navigation = useNavigation();
+  const backButtonWidth = theme.iconSize.large + theme.spacing.small * 2;
 
   useFocusEffect(
     useCallback(() => {
@@ -159,7 +160,17 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        <AppText variant='large' style={styles.title}>Настройки</AppText>
+        {isSaved ? (
+          <Animated.View pointerEvents='none' style={{ opacity: fadeAnim }}>
+            <SavedLabel
+              title='Сохранено'
+              glintKey={glintKey}
+              style={{ width: undefined, alignSelf: 'center', marginRight: backButtonWidth }}
+            />
+          </Animated.View>
+        ) : (
+          <AppText variant='large' style={styles.title}>Настройки</AppText>
+        )}
       </View>
 
       <AppText variant='large' style={styles.label}>Тема</AppText>
@@ -329,14 +340,6 @@ export default function Settings() {
         </View>
       </View>
     </ScrollView>
-    {isSaved && (
-      <Animated.View
-        pointerEvents="none"
-        style={[styles.saveNotice, { opacity: fadeAnim }]}
-      >
-        <SavedLabel title="Сохранено" glintKey={glintKey} />
-      </Animated.View>
-    )}
   </View>
   );
 }
@@ -392,11 +395,5 @@ const styles = StyleSheet.create({
   },
   themeList: {
     marginBottom: 4,
-  },
-  saveNotice: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
 });
