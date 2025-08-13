@@ -157,7 +157,6 @@ export default function Settings() {
               key={themeItem.name}
               label={themeItem.name}
               swatchColor={themeItem.colors.background}
-              selectedBorderColor={themeItem.colors.accent}
               selected={themeItem.name === selectedThemeName}
               onPress={() => setSelectedThemeName(themeItem.name)}
             />

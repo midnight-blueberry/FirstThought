@@ -9,10 +9,9 @@ interface SelectableRowProps {
   swatchColor: string;
   selected: boolean;
   onPress: () => void;
-  selectedBorderColor?: string;
 }
 
-const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, selectedBorderColor }) => {
+const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress }) => {
   const theme = useTheme();
   const lift = theme.spacing.small / 2;
   const paddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
@@ -23,7 +22,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
       onPress={onPress}
       style={[
         styles.container,
-        {
+        { 
           borderColor: theme.colors.background,
           borderWidth: theme.borderWidth.medium,
           borderRadius: theme.borderRadius,
@@ -33,7 +32,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
           minHeight: theme.iconSize.large + theme.spacing.medium * 2,
           justifyContent: 'center',
         },
-        selected && { borderColor: selectedBorderColor ?? swatchColor },
+        selected && { borderColor: theme.colors.accent },
       ]}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
