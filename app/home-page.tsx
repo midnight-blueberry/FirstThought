@@ -1,4 +1,4 @@
-import ButtonWithIcon from '@/components/ui/atoms/button-with-icon';
+import IconButton from '@/components/ui/atoms/icon-button';
 import DiaryList from '@/components/ui/organisms/diary-list';
 import { RouteProp } from '@react-navigation/native';
 import React, { useState } from 'react';
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import { DefaultTheme, useTheme } from 'styled-components/native';
 
 interface Diary {
   id: string;
@@ -30,6 +30,8 @@ const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 const HomePage: React.FC<Props> = ({ route, navigation }) => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const theme = useTheme();
+  const iconColor: keyof DefaultTheme['colors'] =
+    theme.name === 'Темная' ? 'background' : 'basic';
 
   const addDiary = () => {
     const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
@@ -42,9 +44,23 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
   };
 
   return (
-    <View style={[ styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <DiaryList data={diaries} />
-      <ButtonWithIcon onPress={addDiary} iconName='add' />
+      <IconButton
+        icon='add'
+        onPress={addDiary}
+        color={iconColor}
+        size={theme.iconSize.medium}
+        style={[
+          styles.addDiaryButton,
+          {
+            backgroundColor: theme.colors.accent,
+            width: theme.buttonSizes.medium,
+            height: theme.buttonSizes.medium,
+            borderRadius: theme.buttonSizes.medium / 2,
+          },
+        ]}
+      />
     </View>
   );
 };
@@ -52,6 +68,14 @@ const HomePage: React.FC<Props> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  addDiaryButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
   },
 });
 
