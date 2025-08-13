@@ -25,6 +25,7 @@ const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultThem
 }))`
   flex: 1;
   font-family: 'MainFont';
+  font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
@@ -39,7 +40,6 @@ const InputField: React.FC<TextInputProps> = (props) => {
   return (
     <Container>
       <StyledInput
-        variant="medium"
         value={value}
         onChangeText={setValue}
         {...props}
