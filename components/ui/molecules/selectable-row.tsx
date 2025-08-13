@@ -21,7 +21,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
 
   const weight =
     labelFont && labelFont in fonts
-      ? fonts[labelFont as FontName].fontWeight || theme.fontWeight
+      ? fonts[labelFont as FontName].fontWeight || '400'
       : theme.fontWeight;
 
   return (
