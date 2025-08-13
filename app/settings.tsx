@@ -150,7 +150,7 @@ export default function Settings() {
         saveOpacity={isSaved ? fadeAnim : undefined}
       />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
-        <AppText variant='large' style={styles.label}>Тема</AppText>
+        <AppText variant='large' style={[styles.label, styles.themeLabel]}>Тема</AppText>
         <View style={styles.themeList}>
           {themeList.map(themeItem => (
             <SelectableRow
@@ -197,6 +197,9 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontWeight: 'bold',
+  },
+  themeLabel: {
+    marginTop: 8,
   },
   accentLabel: {
     marginTop: 4,
