@@ -22,7 +22,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
       onPress={onPress}
       style={[
         styles.container,
-        {
+        { 
           borderColor: theme.colors.background,
           borderWidth: theme.borderWidth.medium,
           borderRadius: theme.borderRadius,
@@ -32,7 +32,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
           minHeight: theme.iconSize.large + theme.spacing.medium * 2,
           justifyContent: 'center',
         },
-        selected && { borderColor: swatchColor },
+        selected && { borderColor: theme.colors.accent },
       ]}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
