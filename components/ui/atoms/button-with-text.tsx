@@ -24,13 +24,13 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
   const backgroundColor =
     type === 'primary'
       ? theme.colors.accent
-      : theme.name === 'Светлая'
-        ? theme.colors.basic
-        : theme.colors.background;
+      : theme.name === 'Темная'
+        ? theme.colors.background
+        : theme.colors.basic;
   const textColor: keyof DefaultTheme['colors'] =
     type === 'primary'
-      ? (theme.name === 'Светлая' ? 'basic' : 'background')
-      : (theme.name === 'Светлая' ? 'background' : 'accent');
+      ? (theme.name === 'Темная' ? 'background' : 'basic')
+      : (theme.name === 'Темная' ? 'accent' : 'background');
   const [width, setWidth] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
   const [showGlint, setShowGlint] = useState(false);

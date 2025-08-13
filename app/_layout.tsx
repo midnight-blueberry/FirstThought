@@ -101,7 +101,7 @@ export default function RootLayout() {
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.colors.background,
-                    borderColor: theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background,
+                    borderColor: theme.name === 'Темная' ? theme.colors.background : theme.colors.basic,
                     borderWidth: theme.borderWidth.medium,
                     borderLeftWidth: 0,
                     borderRadius: theme.borderRadius,

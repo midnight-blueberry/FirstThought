@@ -31,6 +31,7 @@ export const sizes = {
   },
   borderRadius: 8,
   borderWidth: {
+    xsmall: 1,
     small: 2,
     medium: 3,
     large: 4,

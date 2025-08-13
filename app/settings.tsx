@@ -117,6 +117,7 @@ export default function Settings() {
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
+                paddingLeft: theme.spacing.medium,
                 minHeight: theme.iconSize.large + theme.spacing.medium * 2,
                 justifyContent: 'center',
               },
@@ -126,9 +127,22 @@ export default function Settings() {
             ]}
             onPress={() => setSelectedThemeName(themeItem.name)}
           >
-            <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
-              {themeItem.name}
-            </AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View
+                style={{
+                  width: theme.iconSize.small,
+                  height: theme.iconSize.small,
+                  backgroundColor: themeItem.colors.background,
+                  borderRadius: theme.borderRadius / 2,
+                  marginRight: theme.spacing.medium,
+                  borderColor: theme.colors.basic,
+                  borderWidth: theme.borderWidth.xsmall,
+                }}
+              />
+              <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
+                {themeItem.name}
+              </AppText>
+            </View>
             <View
               style={{
                 position: 'absolute',
@@ -185,6 +199,8 @@ export default function Settings() {
                   backgroundColor: color.hex,
                   borderRadius: theme.borderRadius / 2,
                   marginRight: theme.spacing.medium,
+                  borderColor: theme.colors.basic,
+                  borderWidth: theme.borderWidth.xsmall,
                 }}
               />
               <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>

@@ -14,7 +14,7 @@ type AppButtonProps = PropsWithChildren<{
 
 const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButtonProps) => {
   const theme = useTheme();
-  const iconColor = theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background;
+  const iconColor = theme.name === 'Темная' ? theme.colors.background : theme.colors.basic;
   return (
     <TouchableOpacity
       style={[
