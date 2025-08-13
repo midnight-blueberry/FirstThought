@@ -2,7 +2,7 @@ import AppText from '@/components/ui/atoms/app-text';
 import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
@@ -146,7 +146,10 @@ export default function Settings() {
   }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -329,17 +332,17 @@ export default function Settings() {
       </View>
 
       {isSaved && (
-        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}> 
+        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}>
           <SavedLabel title="Сохранено" glintKey={glintKey} />
         </Animated.View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
   },
   header: {
