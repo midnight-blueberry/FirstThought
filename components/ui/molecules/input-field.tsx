@@ -9,11 +9,11 @@ const Container = styledNative.View`
   flex: 1;
   margin-left: 16px;
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.spacing.medium + theme.spacing.small}px;
+    theme.spacing.small}px;
   padding-left: 12px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.fontSize.medium +
-    (theme.spacing.medium + theme.spacing.small) * 2 +
+    theme.iconSize.small +
+    theme.spacing.small * 2 +
     theme.borderWidth * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
@@ -29,14 +29,15 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   line-height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
-  height: 100%;
+  text-align-vertical: center;
+  padding-vertical: 0px;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
   padding-left: 8px;
   padding-right: 12px;
-  height: 100%;
   justify-content: center;
+  align-items: center;
 `;
 
 const InputField: React.FC<TextInputProps> = (props) => {
