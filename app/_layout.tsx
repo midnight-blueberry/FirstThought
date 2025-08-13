@@ -102,7 +102,7 @@ export default function RootLayout() {
                     width: 280,
                     backgroundColor: theme.colors.background,
                     borderColor: theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background,
-                    borderWidth: theme.borderWidth,
+                    borderWidth: theme.borderWidth.medium,
                     borderLeftWidth: 0,
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,

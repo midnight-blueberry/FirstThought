@@ -113,7 +113,7 @@ export default function Settings() {
               styles.themeOption,
               {
                 borderColor: theme.colors.background,
-                borderWidth: theme.borderWidth,
+                borderWidth: theme.borderWidth.medium,
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
@@ -163,7 +163,7 @@ export default function Settings() {
               styles.themeOption,
               {
                 borderColor: theme.colors.background,
-                borderWidth: theme.borderWidth,
+                borderWidth: theme.borderWidth.medium,
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
