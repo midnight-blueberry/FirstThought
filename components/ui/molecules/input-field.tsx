@@ -19,7 +19,7 @@ const Container = styledNative.View`
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
-  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
+  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.disabled};
 `;
 
 const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
@@ -56,7 +56,7 @@ const InputField: React.FC<TextInputProps> = (props) => {
         {...props}
       />
       <SearchButton>
-        <Ionicons name="search" size={theme.iconSize.small} color={theme.colors.basic} />
+        <Ionicons name="search" size={theme.iconSize.small} color={theme.colors.disabled} />
       </SearchButton>
     </Container>
   );
