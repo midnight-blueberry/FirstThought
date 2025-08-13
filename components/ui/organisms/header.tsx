@@ -17,7 +17,7 @@ const Header: React.FC = () => {
       <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())} hitSlop={8}>
         <MenuIcon />
       </TouchableOpacity>
-      <SearchField placeholder="Искать по всем дневникам..." />
+      <SearchField placeholder="Поиск по всем дневникам..." />
     </View>
   );
 };
