@@ -144,7 +144,6 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -170,9 +169,9 @@ export default function Settings() {
           </Animated.View>
         )}
       </View>
-
-      <AppText variant='large' style={styles.label}>Тема</AppText>
-      <View style={styles.themeList}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
+        <AppText variant='large' style={styles.label}>Тема</AppText>
+        <View style={styles.themeList}>
         {themeList.map(themeItem => (
           <TouchableOpacity
             key={themeItem.name}
@@ -345,12 +344,15 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 16,
+    paddingHorizontal: 16,
     marginBottom: 16,
   },
   backButton: {
