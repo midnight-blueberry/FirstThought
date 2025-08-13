@@ -11,9 +11,9 @@ const Container = styledNative.View`
   align-items: center;
   flex: 1;
   margin-left: 16px;
-  padding-vertical: 0px;
+  padding-vertical: ${({ theme }: { theme: DefaultTheme }) => theme.spacing.medium}px;
   padding-left: 12px;
-  height: ${({ theme }: { theme: DefaultTheme }) => theme.iconSize.small + theme.borderWidth * 2}px;
+  height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium + theme.spacing.medium * 2 + theme.borderWidth * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
