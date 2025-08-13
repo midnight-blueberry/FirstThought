@@ -37,6 +37,7 @@ export default function Settings() {
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
+  const fontSizeAnim = useRef(new Animated.Value(3)).current;
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
@@ -55,12 +56,13 @@ export default function Settings() {
       const base = sizes.fontSize.small;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(level);
+      fontSizeAnim.setValue(level);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [theme.name, theme.fontSize.small])
+    }, [theme.name, theme.fontSize.small, fontSizeAnim])
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string) => {
+    (themeName: string, accentColor: string, level: number) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
       if (chosenTheme) {
         const updatedColors = {
@@ -70,7 +72,7 @@ export default function Settings() {
         if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
           updatedColors.basic = accentColor;
         }
-        const delta = (fontSizeLevel - 3) * 2;
+        const delta = (level - 3) * 2;
         const updatedFontSize = {
           small: chosenTheme.fontSize.small + delta,
           medium: chosenTheme.fontSize.medium + delta,
@@ -80,11 +82,11 @@ export default function Settings() {
         setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
       }
     },
-    [fontSizeLevel, setTheme]
+    [setTheme]
   );
 
   const saveWithFeedback = useCallback(() => {
-    updateTheme(selectedThemeName, selectedAccentColor);
+    updateTheme(selectedThemeName, selectedAccentColor, fontSizeLevel);
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
     fadeAnim.stopAnimation();
@@ -121,7 +123,7 @@ export default function Settings() {
       accentAnim.setValue(0);
       const id = accentAnim.addListener(({ value }) => {
         const c = interpolateColor(from, color, value);
-        updateTheme(selectedThemeName, c);
+        updateTheme(selectedThemeName, c, fontSizeLevel);
       });
       Animated.timing(accentAnim, {
         toValue: 1,
@@ -132,7 +134,7 @@ export default function Settings() {
         saveWithFeedbackRef.current();
       });
     },
-    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme]
+    [accentAnim, selectedAccentColor, selectedThemeName, fontSizeLevel, updateTheme]
   );
 
   useEffect(() => {
@@ -162,26 +164,43 @@ export default function Settings() {
     setBlinkIndex(null);
   }, [blinkAnim]);
 
+  const animateFontSizeChange = useCallback(
+    (newLevel: number) => {
+      fontSizeAnim.stopAnimation();
+      const from = fontSizeLevel;
+      setFontSizeLevel(newLevel);
+      fontSizeAnim.setValue(from);
+      const id = fontSizeAnim.addListener(({ value }) => {
+        updateTheme(selectedThemeName, selectedAccentColor, value);
+      });
+      Animated.timing(fontSizeAnim, {
+        toValue: newLevel,
+        duration: 300,
+        useNativeDriver: false,
+      }).start(() => {
+        fontSizeAnim.removeListener(id);
+        saveWithFeedbackRef.current();
+      });
+    },
+    [fontSizeAnim, fontSizeLevel, selectedThemeName, selectedAccentColor, updateTheme]
+  );
+
   const decreaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l <= 1) {
-        triggerBlink(0);
-        return l;
-      }
-      return l - 1;
-    });
+    if (fontSizeLevel <= 1) {
+      triggerBlink(0);
+      return;
+    }
+    animateFontSizeChange(fontSizeLevel - 1);
   };
 
   const increaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l >= 6) {
-        triggerBlink(5);
-        return l;
-      }
-      return l + 1;
-    });
+    if (fontSizeLevel >= 6) {
+      triggerBlink(5);
+      return;
+    }
+    animateFontSizeChange(fontSizeLevel + 1);
   };
 
   const isInitialRender = useRef(true);
@@ -191,7 +210,7 @@ export default function Settings() {
       return;
     }
     saveWithFeedbackRef.current();
-  }, [selectedThemeName, fontSizeLevel]);
+  }, [selectedThemeName]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
