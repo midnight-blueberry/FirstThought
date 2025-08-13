@@ -11,7 +11,7 @@ const Container = styledNative.View`
   align-items: center;
   flex: 1;
   margin-left: 16px;
-  padding-vertical: 4px;
+  padding-vertical: 0px;
   padding-left: 12px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
