@@ -156,29 +156,19 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        <View style={{ position: 'relative' }}>
-          <AppText variant='large' style={styles.title}>Настройки</AppText>
-          {isSaved && (
-            <Animated.View
-              pointerEvents='none'
-              style={{
-                opacity: fadeAnim,
-                position: 'absolute',
-                left: '100%',
-                marginLeft: theme.spacing.small,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-              }}
-            >
-              <Ionicons
-                name='save-outline'
-                size={theme.iconSize.large}
-                color={theme.colors.basic}
-              />
-            </Animated.View>
-          )}
-        </View>
+        <AppText variant='large' style={styles.title}>Настройки</AppText>
+        {isSaved && (
+          <Animated.View
+            pointerEvents='none'
+            style={[styles.saveIcon, { opacity: fadeAnim }]}
+          >
+            <Ionicons
+              name='save-outline'
+              size={theme.iconSize.large}
+              color={theme.colors.basic}
+            />
+          </Animated.View>
+        )}
       </View>
 
       <AppText variant='large' style={styles.label}>Тема</AppText>
@@ -366,6 +356,11 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: -4,
+    padding: 4,
+  },
+  saveIcon: {
+    position: 'absolute',
+    right: -4,
     padding: 4,
   },
   title: {
