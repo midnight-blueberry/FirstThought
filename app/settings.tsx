@@ -16,6 +16,8 @@ export default function Settings() {
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
+  const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
+  const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
   const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -89,6 +91,39 @@ export default function Settings() {
       }
     };
   }, []);
+
+  const triggerBlink = useCallback((index: number) => {
+    blinkAnim.stopAnimation();
+    setBlinkIndex(index);
+    blinkAnim.setValue(1);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(blinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        Animated.timing(blinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
+      ]),
+      { iterations: 5 }
+    ).start(() => setBlinkIndex(null));
+  }, [blinkAnim]);
+
+  const decreaseFontSize = () => {
+    setFontSizeLevel(l => {
+      if (l <= 1) {
+        triggerBlink(0);
+        return l;
+      }
+      return l - 1;
+    });
+  };
+
+  const increaseFontSize = () => {
+    setFontSizeLevel(l => {
+      if (l >= 6) {
+        triggerBlink(5);
+        return l;
+      }
+      return l + 1;
+    });
+  };
 
   const isInitialRender = useRef(true);
   useEffect(() => {
@@ -246,7 +281,7 @@ export default function Settings() {
       <AppText variant='large' style={[styles.label, styles.fontSizeLabel]}>Размер шрифта</AppText>
       <View style={styles.fontSizeContainer}>
         <TouchableOpacity
-          onPress={() => setFontSizeLevel(l => Math.max(1, l - 1))}
+          onPress={decreaseFontSize}
           activeOpacity={1}
         >
           <Ionicons
@@ -256,23 +291,24 @@ export default function Settings() {
           />
         </TouchableOpacity>
         <View style={styles.fontSizeBars}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <View
-              key={i}
-              style={{
-                width: theme.iconSize.small,
-                height: theme.iconSize.small * (0.5 + i * 0.25),
-                marginHorizontal: theme.spacing.small / 2,
-                backgroundColor: i < fontSizeLevel ? theme.colors.basic : 'transparent',
-                borderColor: theme.colors.basic,
-                borderWidth: theme.borderWidth.xsmall,
-                borderRadius: theme.borderRadius / 2,
-              }}
-            />
-          ))}
+          {Array.from({ length: 6 }).map((_, i) => {
+            const barStyle = {
+              width: theme.iconSize.small,
+              height: theme.iconSize.small * (0.5 + i * 0.25),
+              marginHorizontal: theme.spacing.small / 2,
+              backgroundColor: i < fontSizeLevel ? theme.colors.basic : 'transparent',
+              borderColor: theme.colors.basic,
+              borderWidth: theme.borderWidth.xsmall,
+              borderRadius: theme.borderRadius / 2,
+            };
+            if (blinkIndex === i) {
+              return <Animated.View key={i} style={[barStyle, { opacity: blinkAnim }]} />;
+            }
+            return <View key={i} style={barStyle} />;
+          })}
         </View>
         <TouchableOpacity
-          onPress={() => setFontSizeLevel(l => Math.min(5, l + 1))}
+          onPress={increaseFontSize}
           activeOpacity={1}
         >
           <Ionicons
