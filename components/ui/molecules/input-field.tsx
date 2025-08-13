@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
-import { TextInput, TextInputProps } from 'react-native';
+import { TextInputProps } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styledNative, { DefaultTheme, useTheme } from 'styled-components/native';
-import AppText from '../atoms/app-text';
-
-// Стилевой компонент, наследующий AppText, но рендерящийся как TextInput
 
 const Container = styledNative.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
   margin-left: 16px;
-  padding-vertical: ${({ theme }: { theme: DefaultTheme }) => theme.spacing.medium}px;
+  padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.spacing.medium + theme.spacing.small}px;
   padding-left: 12px;
-  height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium + theme.spacing.medium * 2 + theme.borderWidth * 2}px;
+  height: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.fontSize.medium +
+    (theme.spacing.medium + theme.spacing.small) * 2 +
+    theme.borderWidth * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
   border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
 `;
 
-const StyledInput = styledNative(AppText).attrs(({ theme }: { theme: DefaultTheme }) => ({
-  as: TextInput,
+const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
   placeholderTextColor: theme.colors.basic,
 }))`
   flex: 1;
   font-family: 'MainFont';
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   line-height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   height: 100%;
 `;
 
