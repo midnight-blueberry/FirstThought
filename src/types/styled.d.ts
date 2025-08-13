@@ -6,5 +6,6 @@ declare module 'styled-components/native' {
   export interface DefaultTheme extends SizeTokens {
     name: string;
     colors: ColorTokens;
+    fontName: string;
   }
 }

@@ -6,15 +6,19 @@ import AppText from '../atoms/app-text';
 
 interface SelectableRowProps {
   label: string;
-  swatchColor: string;
+  swatchColor?: string;
   selected: boolean;
   onPress: () => void;
+  fontFamily?: string;
 }
 
-const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress }) => {
+const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily }) => {
   const theme = useTheme();
   const lift = theme.spacing.small / 2;
-  const paddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
+  const hasSwatch = !!swatchColor;
+  const paddingLeft = hasSwatch
+    ? theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2
+    : theme.spacing.medium;
 
   return (
     <TouchableOpacity
@@ -36,18 +40,20 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
       ]}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <View
-          style={{
-            width: theme.iconSize.small,
-            height: theme.iconSize.small,
-            backgroundColor: swatchColor,
-            borderRadius: theme.borderRadius / 2,
-            marginRight: paddingLeft,
-            borderColor: theme.colors.basic,
-            borderWidth: theme.borderWidth.xsmall,
-          }}
-        />
-        <AppText variant="medium" style={{ transform: [{ translateY: -lift }] }}>
+        {hasSwatch && (
+          <View
+            style={{
+              width: theme.iconSize.small,
+              height: theme.iconSize.small,
+              backgroundColor: swatchColor,
+              borderRadius: theme.borderRadius / 2,
+              marginRight: paddingLeft,
+              borderColor: theme.colors.basic,
+              borderWidth: theme.borderWidth.xsmall,
+            }}
+          />
+        )}
+        <AppText variant="medium" fontFamily={fontFamily} style={{ transform: [{ translateY: -lift }] }}>
           {label}
         </AppText>
       </View>

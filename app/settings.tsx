@@ -9,7 +9,7 @@ import { useTheme, DefaultTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
-import { sizes } from '@/theme/tokens';
+import { fonts } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
 
 const interpolateColor = (from: string, to: string, t: number) => {
@@ -36,6 +36,7 @@ export default function Settings() {
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
+  const [ selectedFontName, setSelectedFontName ] = useState(theme.fontName);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
@@ -54,16 +55,19 @@ export default function Settings() {
     useCallback(() => {
       setSelectedThemeName(theme.name);
       setSelectedAccentColor(theme.colors.accent);
-      const base = sizes.fontSize.small;
+      setSelectedFontName(theme.fontName);
+      const fontInfo = fonts.find(f => f.name === theme.fontName) ?? fonts[0];
+      const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(level);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [theme.name, theme.fontSize.small])
+    }, [theme.name, theme.fontSize.small, theme.fontName])
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string) => {
+    (themeName: string, accentColor: string, fontName: string) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
+      const chosenFont = fonts.find(f => f.name === fontName) ?? fonts[0];
       if (chosenTheme) {
         const updatedColors = {
           ...chosenTheme.colors,
@@ -73,13 +77,14 @@ export default function Settings() {
           updatedColors.basic = accentColor;
         }
         const delta = (fontSizeLevel - 3) * 2;
+        const medium = chosenFont.defaultSize + delta;
         const updatedFontSize = {
-          small: chosenTheme.fontSize.small + delta,
-          medium: chosenTheme.fontSize.medium + delta,
-          large: chosenTheme.fontSize.large + delta,
-          xlarge: chosenTheme.fontSize.xlarge + delta,
+          small: medium - 4,
+          medium,
+          large: medium + 4,
+          xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
+        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontName });
       }
     },
     [fontSizeLevel, setTheme]
@@ -119,8 +124,8 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback((withOverlay: boolean) => {
     const performSave = () => {
-      updateTheme(selectedThemeName, selectedAccentColor);
-      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
+      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName);
+      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel, fontName: selectedFontName });
     };
 
     if (withOverlay) {
@@ -149,7 +154,7 @@ export default function Settings() {
       performSave();
       showSaveIcon();
     }
-  }, [overlayAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme, showSaveIcon, hideSaveIcon]);
+  }, [overlayAnim, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, updateTheme, showSaveIcon, hideSaveIcon]);
 
   const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
   useEffect(() => {
@@ -164,7 +169,7 @@ export default function Settings() {
       accentAnim.setValue(0);
       const id = accentAnim.addListener(({ value }) => {
         const c = interpolateColor(from, color, value);
-        updateTheme(selectedThemeName, c);
+        updateTheme(selectedThemeName, c, selectedFontName);
       });
       Animated.timing(accentAnim, {
         toValue: 1,
@@ -175,7 +180,7 @@ export default function Settings() {
         saveWithFeedbackRef.current(false);
       });
     },
-    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme]
+    [accentAnim, selectedAccentColor, selectedThemeName, selectedFontName, updateTheme]
   );
 
   useEffect(() => {
@@ -229,16 +234,20 @@ export default function Settings() {
 
   const isInitialRender = useRef(true);
   const prevFontSizeRef = useRef(fontSizeLevel);
+  const prevFontNameRef = useRef(selectedFontName);
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
       prevFontSizeRef.current = fontSizeLevel;
+      prevFontNameRef.current = selectedFontName;
       return;
     }
     const isFontSizeChange = prevFontSizeRef.current !== fontSizeLevel;
+    const isFontChange = prevFontNameRef.current !== selectedFontName;
     prevFontSizeRef.current = fontSizeLevel;
-    saveWithFeedbackRef.current(isFontSizeChange);
-  }, [selectedThemeName, fontSizeLevel]);
+    prevFontNameRef.current = selectedFontName;
+    saveWithFeedbackRef.current(isFontSizeChange || isFontChange);
+  }, [selectedThemeName, fontSizeLevel, selectedFontName]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -270,6 +279,19 @@ export default function Settings() {
               swatchColor={color.hex}
               selected={color.hex === selectedAccentColor}
               onPress={() => handleAccentChange(color.hex)}
+            />
+          ))}
+        </View>
+
+        <AppText variant='large' style={[styles.label, styles.fontLabel]}>Шрифт</AppText>
+        <View style={styles.themeList}>
+          {fonts.map(f => (
+            <SelectableRow
+              key={f.name}
+              label={f.name}
+              selected={f.name === selectedFontName}
+              onPress={() => setSelectedFontName(f.name)}
+              fontFamily={f.name}
             />
           ))}
         </View>
@@ -313,6 +335,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   accentLabel: {
+    marginTop: 4,
+  },
+  fontLabel: {
     marginTop: 4,
   },
   themeList: {
