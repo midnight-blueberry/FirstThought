@@ -192,7 +192,7 @@ export default function Settings() {
                   height: theme.iconSize.small,
                   backgroundColor: themeItem.colors.background,
                   borderRadius: theme.borderRadius / 2,
-                  marginRight: theme.spacing.medium,
+                  marginRight: optionPaddingLeft,
                   borderColor: theme.colors.basic,
                   borderWidth: theme.borderWidth.xsmall,
                 }}
@@ -256,7 +256,7 @@ export default function Settings() {
                   height: theme.iconSize.small,
                   backgroundColor: color.hex,
                   borderRadius: theme.borderRadius / 2,
-                  marginRight: theme.spacing.medium,
+                  marginRight: optionPaddingLeft,
                   borderColor: theme.colors.basic,
                   borderWidth: theme.borderWidth.xsmall,
                 }}
