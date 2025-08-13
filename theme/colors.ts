@@ -4,7 +4,7 @@ const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
   accentColor: defaultAccentColor,
-  gray: '#999999',
+  gray: '#BBBBBB',
 } as const;
 
 export interface ColorTokens {
