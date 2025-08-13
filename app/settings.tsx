@@ -27,6 +27,7 @@ export default function Settings() {
 
   const { setTheme } = context;
   const lift = theme.spacing.small / 2;
+  const optionPaddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -174,7 +175,7 @@ export default function Settings() {
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
-                paddingLeft: theme.spacing.medium,
+                paddingLeft: optionPaddingLeft,
                 minHeight: theme.iconSize.large + theme.spacing.medium * 2,
                 justifyContent: 'center',
               },
@@ -191,7 +192,7 @@ export default function Settings() {
                   height: theme.iconSize.small,
                   backgroundColor: themeItem.colors.background,
                   borderRadius: theme.borderRadius / 2,
-                  marginRight: theme.spacing.medium,
+                  marginRight: optionPaddingLeft,
                   borderColor: theme.colors.basic,
                   borderWidth: theme.borderWidth.xsmall,
                 }}
@@ -238,7 +239,7 @@ export default function Settings() {
                 borderRadius: theme.borderRadius,
                 paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
                 paddingVertical: theme.spacing.medium,
-                paddingLeft: theme.spacing.medium,
+                paddingLeft: optionPaddingLeft,
                 minHeight: theme.iconSize.large + theme.spacing.medium * 2,
                 justifyContent: 'center',
               },
@@ -255,7 +256,7 @@ export default function Settings() {
                   height: theme.iconSize.small,
                   backgroundColor: color.hex,
                   borderRadius: theme.borderRadius / 2,
-                  marginRight: theme.spacing.medium,
+                  marginRight: optionPaddingLeft,
                   borderColor: theme.colors.basic,
                   borderWidth: theme.borderWidth.xsmall,
                 }}
