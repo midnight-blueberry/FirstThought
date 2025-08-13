@@ -8,12 +8,14 @@ import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
+import { sizes } from '@/theme/tokens';
 
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
+  const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ isSaved, setIsSaved ] = useState(false);
   const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,7 +30,10 @@ export default function Settings() {
     useCallback(() => {
       setSelectedThemeName(theme.name);
       setSelectedAccentColor(theme.colors.accent);
-    }, [theme.name, theme.colors.accent])
+      const base = sizes.fontSize.small;
+      const level = Math.round((theme.fontSize.small - base) / 2) + 3;
+      setFontSizeLevel(level);
+    }, [theme.name, theme.colors.accent, theme.fontSize.small])
   );
 
   const handleSave = useCallback(() => {
@@ -41,9 +46,16 @@ export default function Settings() {
       if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
         updatedColors.basic = selectedAccentColor;
       }
-      setTheme({ ...chosenTheme, colors: updatedColors });
+      const delta = (fontSizeLevel - 3) * 2;
+      const updatedFontSize = {
+        small: chosenTheme.fontSize.small + delta,
+        medium: chosenTheme.fontSize.medium + delta,
+        large: chosenTheme.fontSize.large + delta,
+        xlarge: chosenTheme.fontSize.xlarge + delta,
+      };
+      setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
     }
-  }, [selectedThemeName, selectedAccentColor, setTheme]);
+  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, setTheme]);
 
   const saveWithFeedback = useCallback(() => {
     handleSave();
@@ -85,7 +97,7 @@ export default function Settings() {
       return;
     }
     saveWithFeedback();
-  }, [selectedThemeName, selectedAccentColor, saveWithFeedback]);
+  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -231,8 +243,48 @@ export default function Settings() {
         ))}
       </View>
 
+      <AppText variant='large' style={[styles.label, styles.fontSizeLabel]}>Размер шрифта</AppText>
+      <View style={styles.fontSizeContainer}>
+        <TouchableOpacity
+          onPress={() => setFontSizeLevel(l => Math.max(1, l - 1))}
+          activeOpacity={1}
+        >
+          <Ionicons
+            name='remove'
+            size={theme.iconSize.large}
+            color={theme.colors.basic}
+          />
+        </TouchableOpacity>
+        <View style={styles.fontSizeBars}>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <View
+              key={i}
+              style={{
+                width: theme.iconSize.small,
+                height: theme.iconSize.small * (0.5 + i * 0.25),
+                marginHorizontal: theme.spacing.small / 2,
+                backgroundColor: i < fontSizeLevel ? theme.colors.basic : 'transparent',
+                borderColor: theme.colors.basic,
+                borderWidth: theme.borderWidth.xsmall,
+                borderRadius: theme.borderRadius / 2,
+              }}
+            />
+          ))}
+        </View>
+        <TouchableOpacity
+          onPress={() => setFontSizeLevel(l => Math.min(5, l + 1))}
+          activeOpacity={1}
+        >
+          <Ionicons
+            name='add'
+            size={theme.iconSize.large}
+            color={theme.colors.basic}
+          />
+        </TouchableOpacity>
+      </View>
+
       {isSaved && (
-        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}>
+        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}> 
           <SavedLabel title="Сохранено" glintKey={glintKey} />
         </Animated.View>
       )}
@@ -266,6 +318,20 @@ const styles = StyleSheet.create({
   },
   accentLabel: {
     marginTop: 4,
+  },
+  fontSizeLabel: {
+    marginTop: 4,
+  },
+  fontSizeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  fontSizeBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginHorizontal: 16,
   },
   themeOption: {
     paddingVertical: 8,
