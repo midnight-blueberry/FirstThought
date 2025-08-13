@@ -30,7 +30,11 @@ export const sizes = {
     xlarge: 16,
   },
   borderRadius: 8,
-  borderWidth: 3,
+  borderWidth: {
+    small: 2,
+    medium: 3,
+    large: 4,
+  },
 } as const;
 
 export type SizeTokens = typeof sizes;

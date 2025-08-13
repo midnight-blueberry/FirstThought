@@ -30,7 +30,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
           backgroundColor: theme.colors.background,
           borderRadius: theme.borderRadius,
           borderColor: theme.colors.accent,
-          borderWidth: theme.borderWidth,
+          borderWidth: theme.borderWidth.medium,
           marginBottom: theme.spacing.medium,
         },
       ]}
