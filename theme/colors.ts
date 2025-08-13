@@ -14,6 +14,10 @@ export interface ColorTokens {
   background: string;
   accent: string;
   disabled: string;
+  onBasic: string;
+  onBackground: string;
+  onAccent: string;
+  onDisabled: string;
 }
 
 export const lightColors: ColorTokens = {
@@ -21,6 +25,10 @@ export const lightColors: ColorTokens = {
   background: baseColors.white,
   accent: baseColors.accentColor,
   disabled: baseColors.grayLight,
+  onBasic: baseColors.white,
+  onBackground: baseColors.black,
+  onAccent: baseColors.black,
+  onDisabled: baseColors.grayDark,
 };
 
 export const darkColors: ColorTokens = {
@@ -28,6 +36,10 @@ export const darkColors: ColorTokens = {
   background: baseColors.black,
   accent: baseColors.accentColor,
   disabled: baseColors.grayDark,
+  onBasic: baseColors.black,
+  onBackground: baseColors.white,
+  onAccent: baseColors.black,
+  onDisabled: baseColors.grayLight,
 };
 
 export const creamColors: ColorTokens = {
@@ -35,4 +47,8 @@ export const creamColors: ColorTokens = {
   background: baseColors.cream,
   accent: baseColors.accentColor,
   disabled: baseColors.grayLight,
+  onBasic: baseColors.white,
+  onBackground: baseColors.black,
+  onAccent: baseColors.black,
+  onDisabled: baseColors.grayDark,
 };

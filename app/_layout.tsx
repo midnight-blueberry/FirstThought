@@ -8,7 +8,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeProvider, useTheme } from 'styled-components/native';
+import { ThemeProvider, useTheme, DefaultTheme } from 'styled-components/native';
 import Header from '../components/ui/organisms/header';
 import { themes, themeList } from '../theme';
 import { loadSettings } from '@/src/storage/settings';
@@ -71,7 +71,7 @@ export default function RootLayout() {
               medium: chosenTheme.fontSize.medium + delta,
               large: chosenTheme.fontSize.large + delta,
               xlarge: chosenTheme.fontSize.xlarge + delta,
-            };
+            } as DefaultTheme['fontSize'];
             setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
           }
         }
