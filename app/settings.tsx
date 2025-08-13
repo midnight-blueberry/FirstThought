@@ -13,7 +13,7 @@ export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
-  const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.primary);
+  const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const [ isSaved, setIsSaved ] = useState(false);
   const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -27,8 +27,8 @@ export default function Settings() {
   useFocusEffect(
     useCallback(() => {
       setSelectedThemeName(theme.name);
-      setSelectedAccentColor(theme.colors.primary);
-    }, [theme.name, theme.colors.primary])
+      setSelectedAccentColor(theme.colors.accent);
+    }, [theme.name, theme.colors.accent])
   );
 
   const handleSave = useCallback(() => {
@@ -36,13 +36,10 @@ export default function Settings() {
     if (chosenTheme) {
       const updatedColors = {
         ...chosenTheme.colors,
-        primary: selectedAccentColor,
+        accent: selectedAccentColor,
       };
-      if (chosenTheme.colors.secondaryText === chosenTheme.colors.primary) {
-        updatedColors.secondaryText = selectedAccentColor;
-      }
-      if (chosenTheme.colors.text === chosenTheme.colors.primary) {
-        updatedColors.text = selectedAccentColor;
+      if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+        updatedColors.basic = selectedAccentColor;
       }
       setTheme({ ...chosenTheme, colors: updatedColors });
     }
@@ -100,7 +97,7 @@ export default function Settings() {
           <Ionicons
             name='chevron-back'
             size={theme.iconSize.large}
-            color={theme.colors.text}
+            color={theme.colors.basic}
           />
         </TouchableOpacity>
         <AppText variant='large' style={styles.title}>Настройки</AppText>
@@ -124,7 +121,7 @@ export default function Settings() {
                 justifyContent: 'center',
               },
               themeItem.name === selectedThemeName && {
-                borderColor: theme.colors.primary,
+                borderColor: theme.colors.accent,
               },
             ]}
             onPress={() => setSelectedThemeName(themeItem.name)}
@@ -146,7 +143,7 @@ export default function Settings() {
               <Ionicons
                 name="checkmark-sharp"
                 size={theme.iconSize.large}
-                color={theme.colors.primary}
+                color={theme.colors.accent}
                 style={{
                   opacity: themeItem.name === selectedThemeName ? 1 : 0,
                 }}
@@ -208,7 +205,7 @@ export default function Settings() {
               <Ionicons
                 name="checkmark-sharp"
                 size={theme.iconSize.large}
-                color={theme.colors.primary}
+                color={theme.colors.accent}
                 style={{
                   opacity: color.hex === selectedAccentColor ? 1 : 0,
                 }}

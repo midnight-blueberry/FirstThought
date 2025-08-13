@@ -14,13 +14,13 @@ type AppButtonProps = PropsWithChildren<{
 
 const ButtonWithIcon: React.FC<AppButtonProps> = ({ onPress, iconName }: AppButtonProps) => {
   const theme = useTheme();
-  const iconColor = theme.colors.primaryText;
+  const iconColor = theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background;
   return (
     <TouchableOpacity
       style={[
         styles.button,
         {
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.colors.accent,
           width: theme.buttonSizes.medium,
           height: theme.buttonSizes.medium,
           borderRadius: theme.buttonSizes.medium / 2,

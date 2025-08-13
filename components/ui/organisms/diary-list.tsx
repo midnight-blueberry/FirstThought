@@ -29,7 +29,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
           padding: theme.spacing.large,
           backgroundColor: theme.colors.background,
           borderRadius: theme.borderRadius,
-          borderColor: theme.colors.primary,
+          borderColor: theme.colors.accent,
           borderWidth: theme.borderWidth,
           marginBottom: theme.spacing.medium,
         },
@@ -38,9 +38,9 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
       <Ionicons
         name={item.icon}
         size={theme.iconSize.small}
-        color={theme.colors.text}
+        color={theme.colors.basic}
       />
-      <AppText style={{ marginLeft: theme.spacing.large }} color="text">
+      <AppText style={{ marginLeft: theme.spacing.large }} color="basic">
         {item.title}
       </AppText>
     </View>

@@ -39,7 +39,7 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
     <View
       style={[
         {
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.colors.accent,
           borderRadius: theme.borderRadius,
           paddingVertical: theme.spacing.medium,
           paddingHorizontal: theme.padding.medium,
@@ -53,13 +53,16 @@ const SavedLabel: React.FC<SavedLabelProps> = ({ title, style, glintKey, ...prop
       {...props}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-        <AppText color="primaryText" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+        <AppText
+          color={theme.name === 'Светлая' ? 'basic' : 'background'}
+          style={{ fontWeight: 'bold', textAlign: 'center' }}
+        >
           {title}
         </AppText>
         <Ionicons
           name="checkmark-sharp"
           size={theme.iconSize.large}
-          color={theme.colors.primaryText}
+          color={theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background}
           style={{ marginLeft: theme.spacing.small }}
         />
       </View>

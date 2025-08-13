@@ -31,7 +31,7 @@ function CustomDrawerContent(props: any) {
             labelStyle={{
               fontFamily: 'MainFont',
               fontSize: theme.fontSize.medium,
-              color: theme.colors.text,         // вместо props.theme.text
+              color: theme.colors.basic,         // вместо props.theme.text
             }}
             style={{
               borderRadius: theme.borderRadius, // вместо “8”
@@ -101,7 +101,7 @@ export default function RootLayout() {
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.colors.background,
-                    borderColor: theme.colors.secondary,
+                    borderColor: theme.name === 'Светлая' ? theme.colors.basic : theme.colors.background,
                     borderWidth: theme.borderWidth,
                     borderLeftWidth: 0,
                     borderRadius: theme.borderRadius,
@@ -123,12 +123,12 @@ export default function RootLayout() {
                   drawerLabelStyle: {
                     fontFamily: 'MainFont',
                     fontSize: theme.fontSize.medium,
-                    color: theme.colors.text,
+                    color: theme.colors.basic,
                   },
 
                   // цвет активного/неактивного пункта
-                  drawerActiveTintColor: theme.colors.text,
-                  drawerInactiveTintColor: theme.colors.text,
+                  drawerActiveTintColor: theme.colors.basic,
+                  drawerInactiveTintColor: theme.colors.basic,
 
                   // при желании: отступы вокруг каждого пункта
                   drawerItemStyle: {
