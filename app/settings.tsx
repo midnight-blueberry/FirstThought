@@ -303,7 +303,7 @@ export default function Settings() {
               width: theme.iconSize.small,
               height: theme.iconSize.small * (0.5 + i * 0.25),
               marginHorizontal: theme.spacing.small / 2,
-              backgroundColor: i < fontSizeLevel ? theme.colors.basic : 'transparent',
+              backgroundColor: i < fontSizeLevel ? theme.colors.accent : 'transparent',
               borderColor: theme.colors.basic,
               borderWidth: theme.borderWidth.xsmall,
               borderRadius: theme.borderRadius / 2,
