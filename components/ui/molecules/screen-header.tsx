@@ -25,7 +25,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
     backgroundColor: theme.colors.background,
     shadowColor: theme.colors.basic,
     shadowOffset: { width: 0, height: theme.borderWidth.small },
-    shadowOpacity: theme.name === 'Темная' ? 0.2 : 0.6,
+    shadowOpacity: 0.5,
     shadowRadius: 3,
     elevation: 4,
   } as const;
