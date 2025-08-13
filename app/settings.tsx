@@ -147,7 +147,13 @@ export default function Settings() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              left: theme.padding.small,
+              padding: theme.spacing.small,
+            },
+          ]}
         >
           <Ionicons
             name='chevron-back'
@@ -155,16 +161,20 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        <AppText
-          variant='large'
-          style={[styles.title, { transform: [{ translateY: -lift }] }]}
-        >
+        <AppText variant='large' style={styles.title}>
           Настройки
         </AppText>
         {isSaved && (
           <Animated.View
             pointerEvents='none'
-            style={[styles.saveIcon, { opacity: fadeAnim }]}
+            style={[
+              styles.saveIcon,
+              {
+                right: theme.padding.small,
+                padding: theme.spacing.small,
+                opacity: fadeAnim,
+              },
+            ]}
           >
             <Ionicons
               name='save-outline'
@@ -356,21 +366,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 16,
-    paddingHorizontal: 16,
+    paddingVertical: 16,
     marginBottom: 16,
   },
   backButton: {
     position: 'absolute',
-    left: -4,
-    top: -4,
-    padding: 4,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
   },
   saveIcon: {
     position: 'absolute',
-    right: -4,
-    top: -4,
-    padding: 4,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
   },
   title: {
     fontWeight: 'bold',
