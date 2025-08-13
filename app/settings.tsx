@@ -165,7 +165,12 @@ export default function Settings() {
             <SavedLabel
               title='Сохранено'
               glintKey={glintKey}
-              style={{ width: undefined, alignSelf: 'center', marginRight: backButtonWidth }}
+              style={{
+                width: undefined,
+                flex: 1,
+                marginLeft: backButtonWidth,
+                marginRight: backButtonWidth,
+              }}
             />
           </Animated.View>
         ) : (
