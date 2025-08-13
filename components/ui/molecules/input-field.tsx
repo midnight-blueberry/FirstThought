@@ -14,7 +14,8 @@ const Container = styledNative.View`
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small +
     (theme.spacing.small + 2) * 2 +
-    theme.borderWidth * 2}px;
+    theme.borderWidth * 2 +
+    4}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth}px;
