@@ -1,5 +1,4 @@
 import AppText from '@/components/ui/atoms/app-text';
-import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -20,7 +19,6 @@ export default function Settings() {
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
-  const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
@@ -29,7 +27,6 @@ export default function Settings() {
   const lift = theme.spacing.small / 2;
   const optionPaddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
   const navigation = useNavigation();
-  const backButtonWidth = theme.iconSize.large + theme.spacing.small * 2;
 
   useFocusEffect(
     useCallback(() => {
@@ -66,7 +63,6 @@ export default function Settings() {
     handleSave();
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
-    setGlintKey(k => k + 1);
     fadeAnim.stopAnimation();
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
@@ -160,22 +156,29 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        {isSaved ? (
-          <Animated.View pointerEvents='none' style={{ opacity: fadeAnim }}>
-            <SavedLabel
-              title='Сохранено'
-              glintKey={glintKey}
-              style={{
-                width: undefined,
-                flex: 1,
-                marginLeft: backButtonWidth,
-                marginRight: backButtonWidth,
-              }}
-            />
-          </Animated.View>
-        ) : (
+        <View style={{ position: 'relative' }}>
           <AppText variant='large' style={styles.title}>Настройки</AppText>
-        )}
+          {isSaved && (
+            <Animated.View
+              pointerEvents='none'
+              style={{
+                opacity: fadeAnim,
+                position: 'absolute',
+                left: '100%',
+                marginLeft: theme.spacing.small,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons
+                name='save-outline'
+                size={theme.iconSize.large}
+                color={theme.colors.basic}
+              />
+            </Animated.View>
+          )}
+        </View>
       </View>
 
       <AppText variant='large' style={styles.label}>Тема</AppText>
