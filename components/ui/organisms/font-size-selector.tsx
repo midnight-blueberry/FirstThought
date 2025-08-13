@@ -10,14 +10,28 @@ interface FontSizeSelectorProps {
   onDecrease: () => void;
   blinkIndex: number | null;
   blinkAnim: Animated.Value;
+  labelFontSizeAnim?: Animated.AnimatedInterpolation<number> | Animated.Value;
 }
 
-const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({ level, onIncrease, onDecrease, blinkIndex, blinkAnim }) => {
+const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
+  level,
+  onIncrease,
+  onDecrease,
+  blinkIndex,
+  blinkAnim,
+  labelFontSizeAnim,
+}) => {
   const theme = useTheme();
 
   return (
     <>
-      <AppText variant='large' style={{ marginBottom: 8, fontWeight: 'bold', marginTop: 4 }}>Размер шрифта</AppText>
+      <AppText
+        variant='large'
+        style={{ marginBottom: 8, fontWeight: 'bold', marginTop: 4 }}
+        animatedFontSize={labelFontSizeAnim}
+      >
+        Размер шрифта
+      </AppText>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <IconButton icon='remove' onPress={onDecrease} size={theme.iconSize.large} />

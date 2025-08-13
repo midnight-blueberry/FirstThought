@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, TextStyle } from "react-native";
+import { Animated, StyleProp, TextStyle } from "react-native";
 import styledNative, { DefaultTheme, useTheme } from "styled-components/native";
 
 type AppTextProps = {
@@ -7,31 +7,36 @@ type AppTextProps = {
   color?: keyof DefaultTheme['colors'];
   children: React.ReactNode;
   style?: StyleProp<TextStyle>;
+  animatedFontSize?: Animated.AnimatedInterpolation<number> | Animated.Value;
 };
 
-// Типы пропсов для StyledText
-interface StyledTextProps {
-  fontSize: number;
+interface BaseTextProps {
   textColor: string;
 }
 
-const StyledText = styledNative.Text<StyledTextProps>`
-  color: ${(props: StyledTextProps) => props.textColor};
-  font-size: ${(props: StyledTextProps) => props.fontSize}px;
+const BaseText = styledNative.Text<BaseTextProps>`
+  color: ${(props: BaseTextProps) => props.textColor};
   font-family: 'MainFont';
 `;
 
-const AppText: React.FC<AppTextProps> = ({ variant = "medium", color = "basic", children, style }) => {
+const AnimatedText = Animated.createAnimatedComponent(BaseText);
+
+const AppText: React.FC<AppTextProps> = ({
+  variant = "medium",
+  color = "basic",
+  children,
+  style,
+  animatedFontSize,
+}) => {
   const theme = useTheme();
 
   return (
-    <StyledText
-      style={style}
+    <AnimatedText
+      style={[{ fontSize: animatedFontSize ?? theme.fontSize[variant] }, style]}
       textColor={theme.colors[color]}
-      fontSize={theme.fontSize[variant]}
     >
       {children}
-    </StyledText>
+    </AnimatedText>
   );
 };
 

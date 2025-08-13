@@ -3,7 +3,7 @@ import ScreenHeader from '@/components/ui/molecules/screen-header';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme, DefaultTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
@@ -38,6 +38,9 @@ export default function Settings() {
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const fontSizeAnim = useRef(new Animated.Value(3)).current;
+  const deltaAnim = useMemo(() => Animated.multiply(Animated.subtract(fontSizeAnim, 3), 2), [fontSizeAnim]);
+  const mediumFontSizeAnim = useMemo(() => Animated.add(sizes.fontSize.medium, deltaAnim), [deltaAnim]);
+  const largeFontSizeAnim = useMemo(() => Animated.add(sizes.fontSize.large, deltaAnim), [deltaAnim]);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
@@ -170,19 +173,16 @@ export default function Settings() {
       const from = fontSizeLevel;
       setFontSizeLevel(newLevel);
       fontSizeAnim.setValue(from);
-      const id = fontSizeAnim.addListener(({ value }) => {
-        updateTheme(selectedThemeName, selectedAccentColor, value);
-      });
       Animated.timing(fontSizeAnim, {
         toValue: newLevel,
-        duration: 300,
+        duration: 400,
+        easing: Easing.inOut(Easing.quad),
         useNativeDriver: false,
       }).start(() => {
-        fontSizeAnim.removeListener(id);
         saveWithFeedbackRef.current();
       });
     },
-    [fontSizeAnim, fontSizeLevel, selectedThemeName, selectedAccentColor, updateTheme]
+    [fontSizeAnim, fontSizeLevel]
   );
 
   const decreaseFontSize = () => {
@@ -218,9 +218,16 @@ export default function Settings() {
         title="Настройки"
         onBack={() => navigation.goBack()}
         saveOpacity={isSaved ? fadeAnim : undefined}
+        titleFontSizeAnim={largeFontSizeAnim}
       />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
-        <AppText variant='large' style={[styles.label, styles.themeLabel]}>Тема</AppText>
+        <AppText
+          variant='large'
+          style={[styles.label, styles.themeLabel]}
+          animatedFontSize={largeFontSizeAnim}
+        >
+          Тема
+        </AppText>
         <View style={styles.themeList}>
           {themeList.map(themeItem => (
             <SelectableRow
@@ -229,11 +236,18 @@ export default function Settings() {
               swatchColor={themeItem.colors.background}
               selected={themeItem.name === selectedThemeName}
               onPress={() => setSelectedThemeName(themeItem.name)}
+              fontSizeAnim={mediumFontSizeAnim}
             />
           ))}
         </View>
 
-        <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
+        <AppText
+          variant='large'
+          style={[styles.label, styles.accentLabel]}
+          animatedFontSize={largeFontSizeAnim}
+        >
+          Акцент
+        </AppText>
         <View style={styles.themeList}>
           {accentColors.map(color => (
             <SelectableRow
@@ -242,6 +256,7 @@ export default function Settings() {
               swatchColor={color.hex}
               selected={color.hex === selectedAccentColor}
               onPress={() => handleAccentChange(color.hex)}
+              fontSizeAnim={mediumFontSizeAnim}
             />
           ))}
         </View>
@@ -252,6 +267,7 @@ export default function Settings() {
           onDecrease={decreaseFontSize}
           blinkIndex={blinkIndex}
           blinkAnim={blinkAnim}
+          labelFontSizeAnim={largeFontSizeAnim}
         />
       </ScrollView>
     </View>

@@ -9,9 +9,10 @@ interface ScreenHeaderProps {
   title: string;
   onBack?: () => void;
   saveOpacity?: Animated.Value;
+  titleFontSizeAnim?: Animated.AnimatedInterpolation<number> | Animated.Value;
 }
 
-const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity }) => {
+const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity, titleFontSizeAnim }) => {
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -48,7 +49,13 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
           style={[styles.left, leftStyle]}
         />
       )}
-      <AppText variant="large" style={{ fontWeight: 'bold' }}>{title}</AppText>
+      <AppText
+        variant="large"
+        style={{ fontWeight: 'bold' }}
+        animatedFontSize={titleFontSizeAnim}
+      >
+        {title}
+      </AppText>
       {saveOpacity && (
         <Animated.View pointerEvents="none" style={[styles.right, rightStyle, { opacity: saveOpacity }]}> 
           <IconButton icon="save-outline" size={theme.iconSize.large} />
