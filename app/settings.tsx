@@ -146,10 +146,8 @@ export default function Settings() {
   }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      contentContainerStyle={styles.container}
-    >
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -330,13 +328,16 @@ export default function Settings() {
           </TouchableOpacity>
         </View>
       </View>
-
-      {isSaved && (
-        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}>
-          <SavedLabel title="Сохранено" glintKey={glintKey} />
-        </Animated.View>
-      )}
     </ScrollView>
+    {isSaved && (
+      <Animated.View
+        pointerEvents="none"
+        style={[styles.saveNotice, { opacity: fadeAnim }]}
+      >
+        <SavedLabel title="Сохранено" glintKey={glintKey} />
+      </Animated.View>
+    )}
+  </View>
   );
 }
 
@@ -393,6 +394,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   saveNotice: {
-    marginTop: 'auto',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
