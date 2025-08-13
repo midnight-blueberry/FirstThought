@@ -82,28 +82,6 @@ export default function Settings() {
     [fontSizeLevel, setTheme]
   );
 
-  const handleAccentChange = useCallback(
-    (color: string) => {
-      const from = selectedAccentColor;
-      setSelectedAccentColor(color);
-      accentAnim.stopAnimation();
-      accentAnim.setValue(0);
-      const id = accentAnim.addListener(({ value }) => {
-        const c = interpolateColor(from, color, value);
-        updateTheme(selectedThemeName, c);
-      });
-      Animated.timing(accentAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: false,
-      }).start(() => {
-        accentAnim.removeListener(id);
-        saveWithFeedback();
-      });
-    },
-    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme, saveWithFeedback]
-  );
-
   const saveWithFeedback = useCallback(() => {
     updateTheme(selectedThemeName, selectedAccentColor);
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
@@ -133,6 +111,28 @@ export default function Settings() {
   useEffect(() => {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
+
+  const handleAccentChange = useCallback(
+    (color: string) => {
+      const from = selectedAccentColor;
+      setSelectedAccentColor(color);
+      accentAnim.stopAnimation();
+      accentAnim.setValue(0);
+      const id = accentAnim.addListener(({ value }) => {
+        const c = interpolateColor(from, color, value);
+        updateTheme(selectedThemeName, c);
+      });
+      Animated.timing(accentAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start(() => {
+        accentAnim.removeListener(id);
+        saveWithFeedbackRef.current();
+      });
+    },
+    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme]
+  );
 
   useEffect(() => {
     return () => {
