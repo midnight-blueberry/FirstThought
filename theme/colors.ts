@@ -4,7 +4,8 @@ const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
   accentColor: defaultAccentColor,
-  gray: '#BBBBBB',
+  grayLight: '#888888',
+  grayDark: '#BBBBBB',
 } as const;
 
 export interface ColorTokens {
@@ -18,12 +19,12 @@ export const lightColors: ColorTokens = {
   basic: baseColors.black,
   background: baseColors.white,
   accent: baseColors.accentColor,
-  disabled: baseColors.gray,
+  disabled: baseColors.grayLight,
 };
 
 export const darkColors: ColorTokens = {
   basic: baseColors.white,
   background: baseColors.black,
   accent: baseColors.accentColor,
-  disabled: baseColors.gray,
+  disabled: baseColors.grayDark,
 };
