@@ -155,7 +155,12 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        <AppText variant='large' style={styles.title}>Настройки</AppText>
+        <AppText
+          variant='large'
+          style={[styles.title, { transform: [{ translateY: -lift }] }]}
+        >
+          Настройки
+        </AppText>
         {isSaved && (
           <Animated.View
             pointerEvents='none'
@@ -358,11 +363,13 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: -4,
+    top: -4,
     padding: 4,
   },
   saveIcon: {
     position: 'absolute',
     right: -4,
+    top: -4,
     padding: 4,
   },
   title: {
