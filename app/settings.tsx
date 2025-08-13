@@ -1,8 +1,10 @@
 import AppText from '@/components/ui/atoms/app-text';
+import ScreenHeader from '@/components/ui/molecules/screen-header';
+import SelectableRow from '@/components/ui/molecules/selectable-row';
+import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -24,8 +26,6 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
-  const lift = theme.spacing.small / 2;
-  const optionPaddingLeft = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -144,226 +144,47 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <View
-        style={[
-          styles.header,
-          {
-            height: theme.iconSize.large + theme.spacing.small * 2.5,
-            paddingTop: theme.spacing.small,
-            paddingBottom: theme.spacing.small * 1.5,
-            borderBottomColor: theme.colors.basic,
-            borderBottomWidth: theme.borderWidth.small,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={[
-            styles.backButton,
-            {
-              left: theme.padding.small,
-              paddingHorizontal: theme.spacing.small,
-            },
-          ]}
-        >
-          <Ionicons
-            name='chevron-back'
-            size={theme.iconSize.large}
-            color={theme.colors.basic}
-          />
-        </TouchableOpacity>
-        <AppText variant='large' style={styles.title}>
-          Настройки
-        </AppText>
-        {isSaved && (
-          <Animated.View
-            pointerEvents='none'
-            style={[
-              styles.saveIcon,
-              {
-                right: theme.padding.small,
-                paddingHorizontal: theme.spacing.small,
-                opacity: fadeAnim,
-              },
-            ]}
-          >
-            <Ionicons
-              name='save-outline'
-              size={theme.iconSize.large}
-              color={theme.colors.basic}
-            />
-          </Animated.View>
-        )}
-      </View>
+      <ScreenHeader
+        title="Настройки"
+        onBack={() => navigation.goBack()}
+        saveOpacity={isSaved ? fadeAnim : undefined}
+      />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
         <AppText variant='large' style={styles.label}>Тема</AppText>
         <View style={styles.themeList}>
-        {themeList.map(themeItem => (
-          <TouchableOpacity
-            key={themeItem.name}
-            activeOpacity={1}
-            style={[
-              styles.themeOption,
-              {
-                borderColor: theme.colors.background,
-                borderWidth: theme.borderWidth.medium,
-                borderRadius: theme.borderRadius,
-                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
-                paddingVertical: theme.spacing.medium,
-                paddingLeft: optionPaddingLeft,
-                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
-                justifyContent: 'center',
-              },
-              themeItem.name === selectedThemeName && {
-                borderColor: theme.colors.accent,
-              },
-            ]}
-            onPress={() => setSelectedThemeName(themeItem.name)}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View
-                style={{
-                  width: theme.iconSize.small,
-                  height: theme.iconSize.small,
-                  backgroundColor: themeItem.colors.background,
-                  borderRadius: theme.borderRadius / 2,
-                  marginRight: optionPaddingLeft,
-                  borderColor: theme.colors.basic,
-                  borderWidth: theme.borderWidth.xsmall,
-                }}
-              />
-              <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
-                {themeItem.name}
-              </AppText>
-            </View>
-            <View
-              style={{
-                position: 'absolute',
-                top: theme.spacing.medium,
-                right: theme.spacing.medium,
-                bottom: theme.spacing.medium,
-                justifyContent: 'center',
-                alignItems: 'center',
-                transform: [{ translateY: -lift }],
-              }}
-            >
-              <Ionicons
-                name="checkmark-sharp"
-                size={theme.iconSize.large}
-                color={theme.colors.accent}
-                style={{
-                  opacity: themeItem.name === selectedThemeName ? 1 : 0,
-                }}
-              />
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
-      <View style={styles.themeList}>
-        {accentColors.map(color => (
-          <TouchableOpacity
-            key={color.hex}
-            activeOpacity={1}
-            style={[
-              styles.themeOption,
-              {
-                borderColor: theme.colors.background,
-                borderWidth: theme.borderWidth.medium,
-                borderRadius: theme.borderRadius,
-                paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
-                paddingVertical: theme.spacing.medium,
-                paddingLeft: optionPaddingLeft,
-                minHeight: theme.iconSize.large + theme.spacing.medium * 2,
-                justifyContent: 'center',
-              },
-              color.hex === selectedAccentColor && {
-                borderColor: color.hex,
-              },
-            ]}
-            onPress={() => setSelectedAccentColor(color.hex)}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View
-                style={{
-                  width: theme.iconSize.small,
-                  height: theme.iconSize.small,
-                  backgroundColor: color.hex,
-                  borderRadius: theme.borderRadius / 2,
-                  marginRight: optionPaddingLeft,
-                  borderColor: theme.colors.basic,
-                  borderWidth: theme.borderWidth.xsmall,
-                }}
-              />
-              <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
-                {color.name}
-              </AppText>
-            </View>
-            <View
-              style={{
-                position: 'absolute',
-                top: theme.spacing.medium,
-                right: theme.spacing.medium,
-                bottom: theme.spacing.medium,
-                justifyContent: 'center',
-                alignItems: 'center',
-                transform: [{ translateY: -lift }],
-              }}
-            >
-              <Ionicons
-                name="checkmark-sharp"
-                size={theme.iconSize.large}
-                color={theme.colors.accent}
-                style={{
-                  opacity: color.hex === selectedAccentColor ? 1 : 0,
-                }}
-              />
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <AppText variant='large' style={[styles.label, styles.fontSizeLabel]}>Размер шрифта</AppText>
-      <View style={styles.fontSizeContainer}>
-        <View style={styles.fontSizeSide}>
-          <TouchableOpacity onPress={decreaseFontSize} activeOpacity={1}>
-            <Ionicons
-              name='remove'
-              size={theme.iconSize.large}
-              color={theme.colors.basic}
+          {themeList.map(themeItem => (
+            <SelectableRow
+              key={themeItem.name}
+              label={themeItem.name}
+              swatchColor={themeItem.colors.background}
+              selected={themeItem.name === selectedThemeName}
+              onPress={() => setSelectedThemeName(themeItem.name)}
             />
-          </TouchableOpacity>
+          ))}
         </View>
-        <View style={styles.fontSizeBars}>
-          {Array.from({ length: 6 }).map((_, i) => {
-            const barStyle = {
-              width: theme.iconSize.small,
-              height: theme.iconSize.small * (0.5 + i * 0.25),
-              marginHorizontal: theme.spacing.small / 2,
-              backgroundColor: i < fontSizeLevel ? theme.colors.accent : 'transparent',
-              borderColor: theme.colors.basic,
-              borderWidth: theme.borderWidth.xsmall,
-              borderRadius: theme.borderRadius / 2,
-            };
-            if (blinkIndex === i) {
-              return <Animated.View key={i} style={[barStyle, { opacity: blinkAnim }]} />;
-            }
-            return <View key={i} style={barStyle} />;
-          })}
-        </View>
-        <View style={styles.fontSizeSide}>
-          <TouchableOpacity onPress={increaseFontSize} activeOpacity={1}>
-            <Ionicons
-              name='add'
-              size={theme.iconSize.large}
-              color={theme.colors.basic}
+
+        <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
+        <View style={styles.themeList}>
+          {accentColors.map(color => (
+            <SelectableRow
+              key={color.hex}
+              label={color.name}
+              swatchColor={color.hex}
+              selected={color.hex === selectedAccentColor}
+              onPress={() => setSelectedAccentColor(color.hex)}
             />
-          </TouchableOpacity>
+          ))}
         </View>
-      </View>
-    </ScrollView>
-  </View>
+
+        <FontSizeSelector
+          level={fontSizeLevel}
+          onIncrease={increaseFontSize}
+          onDecrease={decreaseFontSize}
+          blinkIndex={blinkIndex}
+          blinkAnim={blinkAnim}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -373,54 +194,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-  },
-  saveIcon: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
   label: {
     marginBottom: 8,
     fontWeight: 'bold',
   },
   accentLabel: {
     marginTop: 4,
-  },
-  fontSizeLabel: {
-    marginTop: 4,
-  },
-  fontSizeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  fontSizeSide: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  fontSizeBars: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  themeOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
   },
   themeList: {
     marginBottom: 4,

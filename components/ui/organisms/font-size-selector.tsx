@@ -1,0 +1,50 @@
+import React from 'react';
+import { View, Animated } from 'react-native';
+import { useTheme } from 'styled-components/native';
+import AppText from '../atoms/app-text';
+import IconButton from '../atoms/icon-button';
+
+interface FontSizeSelectorProps {
+  level: number;
+  onIncrease: () => void;
+  onDecrease: () => void;
+  blinkIndex: number | null;
+  blinkAnim: Animated.Value;
+}
+
+const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({ level, onIncrease, onDecrease, blinkIndex, blinkAnim }) => {
+  const theme = useTheme();
+
+  return (
+    <>
+      <AppText variant='large' style={{ marginBottom: 8, fontWeight: 'bold', marginTop: 4 }}>Размер шрифта</AppText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <IconButton icon='remove' onPress={onDecrease} size={theme.iconSize.large} />
+        </View>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
+          {Array.from({ length: 6 }).map((_, i) => {
+            const barStyle = {
+              width: theme.iconSize.small,
+              height: theme.iconSize.small * (0.5 + i * 0.25),
+              marginHorizontal: theme.spacing.small / 2,
+              backgroundColor: i < level ? theme.colors.accent : 'transparent',
+              borderColor: theme.colors.basic,
+              borderWidth: theme.borderWidth.xsmall,
+              borderRadius: theme.borderRadius / 2,
+            } as const;
+            if (blinkIndex === i) {
+              return <Animated.View key={i} style={[barStyle, { opacity: blinkAnim }]} />;
+            }
+            return <View key={i} style={barStyle} />;
+          })}
+        </View>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <IconButton icon='add' onPress={onIncrease} size={theme.iconSize.large} />
+        </View>
+      </View>
+    </>
+  );
+};
+
+export default FontSizeSelector;
