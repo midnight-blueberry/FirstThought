@@ -12,6 +12,25 @@ import { accentColors } from '@/constants/AccentColors';
 import { sizes } from '@/theme/tokens';
 import { saveSettings } from '@/src/storage/settings';
 
+const interpolateColor = (from: string, to: string, t: number) => {
+  const f = parseInt(from.slice(1), 16);
+  const tVal = parseInt(to.slice(1), 16);
+
+  const r1 = (f >> 16) & 0xff;
+  const g1 = (f >> 8) & 0xff;
+  const b1 = f & 0xff;
+
+  const r2 = (tVal >> 16) & 0xff;
+  const g2 = (tVal >> 8) & 0xff;
+  const b2 = tVal & 0xff;
+
+  const r = Math.round(r1 + (r2 - r1) * t);
+  const g = Math.round(g1 + (g2 - g1) * t);
+  const b = Math.round(b1 + (b2 - b1) * t);
+
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
+
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
@@ -23,6 +42,7 @@ export default function Settings() {
   const [ isSaved, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const accentAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -68,10 +88,24 @@ export default function Settings() {
 
   const handleAccentChange = useCallback(
     (color: string) => {
+      const from = selectedAccentColor;
       setSelectedAccentColor(color);
-      updateTheme(selectedThemeName, color);
+      accentAnim.stopAnimation();
+      accentAnim.setValue(0);
+      const id = accentAnim.addListener(({ value }) => {
+        const c = interpolateColor(from, color, value);
+        updateTheme(selectedThemeName, c);
+      });
+      Animated.timing(accentAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start(() => {
+        accentAnim.removeListener(id);
+        saveWithFeedback();
+      });
     },
-    [selectedThemeName, updateTheme]
+    [accentAnim, selectedAccentColor, selectedThemeName, updateTheme, saveWithFeedback]
   );
 
   const saveWithFeedback = useCallback(() => {
@@ -155,7 +189,7 @@ export default function Settings() {
       return;
     }
     saveWithFeedback();
-  }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
+  }, [selectedThemeName, fontSizeLevel, saveWithFeedback]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
