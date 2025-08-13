@@ -148,9 +148,9 @@ export default function Settings() {
         style={[
           styles.header,
           {
-            height: theme.iconSize.large + theme.spacing.small * 2,
+            height: theme.iconSize.large + theme.spacing.small * 2.5,
             paddingTop: theme.spacing.small,
-            paddingBottom: theme.spacing.small,
+            paddingBottom: theme.spacing.small * 1.5,
             borderBottomColor: theme.colors.basic,
             borderBottomWidth: theme.borderWidth.small,
           },
