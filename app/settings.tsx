@@ -375,7 +375,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
   backButton: {
     position: 'absolute',
@@ -393,7 +392,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   label: {
-    marginTop: 24,
     marginBottom: 8,
     fontWeight: 'bold',
   },
