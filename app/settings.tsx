@@ -82,10 +82,6 @@ export default function Settings() {
     [fontSizeLevel, setTheme]
   );
 
-  const handleSave = useCallback(() => {
-    updateTheme(selectedThemeName, selectedAccentColor);
-  }, [selectedThemeName, selectedAccentColor, updateTheme]);
-
   const handleAccentChange = useCallback(
     (color: string) => {
       const from = selectedAccentColor;
@@ -109,7 +105,7 @@ export default function Settings() {
   );
 
   const saveWithFeedback = useCallback(() => {
-    handleSave();
+    updateTheme(selectedThemeName, selectedAccentColor);
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
     fadeAnim.stopAnimation();
@@ -131,7 +127,12 @@ export default function Settings() {
         useNativeDriver: true,
       }).start(() => setIsSaved(false));
     }, 3000);
-  }, [handleSave, fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel]);
+  }, [fadeAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme]);
+
+  const saveWithFeedbackRef = useRef(saveWithFeedback);
+  useEffect(() => {
+    saveWithFeedbackRef.current = saveWithFeedback;
+  }, [saveWithFeedback]);
 
   useEffect(() => {
     return () => {
@@ -188,8 +189,8 @@ export default function Settings() {
       isInitialRender.current = false;
       return;
     }
-    saveWithFeedback();
-  }, [selectedThemeName, fontSizeLevel, saveWithFeedback]);
+    saveWithFeedbackRef.current();
+  }, [selectedThemeName, fontSizeLevel]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
