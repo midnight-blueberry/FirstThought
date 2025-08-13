@@ -28,11 +28,13 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   flex: 1;
   font-family: 'MainFont';
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
-  line-height: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
+  height: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.fontSize.medium + 4}px;
+  line-height: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.fontSize.medium + 4}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
-  padding-top: 3px;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
