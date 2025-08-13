@@ -33,6 +33,7 @@ function CustomDrawerContent(props: any) {
             labelStyle={{
               fontFamily: theme.fontName,
               fontSize: theme.fontSize.medium,
+              fontWeight: theme.fontWeight,
               color: theme.colors.basic,         // вместо props.theme.text
             }}
             style={{
@@ -77,7 +78,13 @@ export default function RootLayout() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontName: font.name });
+        setTheme({
+          ...chosenTheme,
+          colors: updatedColors,
+          fontSize: updatedFontSize,
+          fontName: font.name,
+          fontWeight: font.defaultWeight,
+        });
 
         // 3. Здесь же можно загрузить любые другие ассеты
         // await Asset.loadAsync(...);
@@ -147,6 +154,7 @@ export default function RootLayout() {
                   drawerLabelStyle: {
                     fontFamily: theme.fontName,
                     fontSize: theme.fontSize.medium,
+                    fontWeight: theme.fontWeight,
                     color: theme.colors.basic,
                   },
 

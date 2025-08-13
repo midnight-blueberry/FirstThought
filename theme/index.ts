@@ -8,6 +8,7 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   colors,
   ...sizes,
   fontName: defaultFontName,
+  fontWeight: 'normal',
 });
 
 export const lightTheme: DefaultTheme = createTheme('Светлая', lightColors);

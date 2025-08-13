@@ -27,6 +27,7 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
 }))`
   flex: 1;
   font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
+  font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.fontSize.medium + 4}px;

@@ -1,7 +1,7 @@
 export const fontData = {
   Bad_Script: {
     file: require('@/assets/fonts/Bad_Script/BadScript-Regular.ttf'),
-    defaultSize: 20,
+    defaultSize: 22,
   },
   Comfortaa: {
     file: require('@/assets/fonts/Comfortaa/Comfortaa-VariableFont_wght.ttf'),
@@ -14,6 +14,7 @@ export const fontData = {
   Montserrat: {
     file: require('@/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf'),
     defaultSize: 18,
+    defaultWeight: 'bold',
   },
   Nata_Sans: {
     file: require('@/assets/fonts/Nata_Sans/NataSans-VariableFont_wght.ttf'),
@@ -26,6 +27,7 @@ export const fontData = {
   Raleway: {
     file: require('@/assets/fonts/Raleway/Raleway-VariableFont_wght.ttf'),
     defaultSize: 18,
+    defaultWeight: 'bold',
   },
   Roboto_Condensed: {
     file: require('@/assets/fonts/Roboto_Condensed/RobotoCondensed-VariableFont_wght.ttf'),
@@ -41,6 +43,7 @@ export const fonts = Object.entries(fontData).map(([folder, info]) => ({
   name: folder.replace(/_/g, ' '),
   file: info.file,
   defaultSize: info.defaultSize,
+  defaultWeight: info.defaultWeight ?? 'normal',
 }));
 
 export const defaultFontName = 'Comfortaa';

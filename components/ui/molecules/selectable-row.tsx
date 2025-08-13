@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, TextStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
@@ -10,9 +10,10 @@ interface SelectableRowProps {
   selected: boolean;
   onPress: () => void;
   fontFamily?: string;
+  fontWeight?: TextStyle['fontWeight'];
 }
 
-const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily }) => {
+const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily, fontWeight }) => {
   const theme = useTheme();
   const lift = theme.spacing.small / 2;
   const hasSwatch = !!swatchColor;
@@ -53,7 +54,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
             }}
           />
         )}
-        <AppText variant="medium" fontFamily={fontFamily} style={{ transform: [{ translateY: -lift }] }}>
+        <AppText variant="medium" fontFamily={fontFamily} fontWeight={fontWeight} style={{ transform: [{ translateY: -lift }] }}>
           {label}
         </AppText>
       </View>

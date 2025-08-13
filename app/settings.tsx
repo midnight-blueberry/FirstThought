@@ -84,7 +84,13 @@ export default function Settings() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontName });
+        setTheme({
+          ...chosenTheme,
+          colors: updatedColors,
+          fontSize: updatedFontSize,
+          fontName,
+          fontWeight: chosenFont.defaultWeight,
+        });
       }
     },
     [fontSizeLevel, setTheme]
@@ -292,6 +298,7 @@ export default function Settings() {
               selected={f.name === selectedFontName}
               onPress={() => setSelectedFontName(f.name)}
               fontFamily={f.name}
+              fontWeight={f.defaultWeight}
             />
           ))}
         </View>
