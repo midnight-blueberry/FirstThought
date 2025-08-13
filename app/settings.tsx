@@ -199,6 +199,8 @@ export default function Settings() {
                   backgroundColor: color.hex,
                   borderRadius: theme.borderRadius / 2,
                   marginRight: theme.spacing.medium,
+                  borderColor: theme.colors.basic,
+                  borderWidth: theme.borderWidth.xsmall,
                 }}
               />
               <AppText variant='medium' style={{ transform: [{ translateY: -lift }] }}>
