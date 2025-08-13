@@ -108,6 +108,15 @@ export default function Settings() {
     }, 3000);
   }, [fadeAnim]);
 
+  const hideSaveIcon = useCallback(() => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    fadeAnim.stopAnimation();
+    setIsSaved(false);
+  }, [fadeAnim]);
+
   const saveWithFeedback = useCallback((withOverlay: boolean) => {
     const performSave = () => {
       updateTheme(selectedThemeName, selectedAccentColor);
@@ -123,6 +132,7 @@ export default function Settings() {
         duration: 700,
         useNativeDriver: true,
       }).start(() => {
+        hideSaveIcon();
         performSave();
         setTimeout(() => {
           Animated.timing(overlayAnim, {
@@ -139,7 +149,7 @@ export default function Settings() {
       performSave();
       showSaveIcon();
     }
-  }, [overlayAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme, showSaveIcon]);
+  }, [overlayAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, updateTheme, showSaveIcon, hideSaveIcon]);
 
   const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
   useEffect(() => {
