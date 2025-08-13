@@ -8,7 +8,8 @@ interface ButtonProps extends TouchableOpacityProps {
    * Текст, отображаемый внутри кнопки
    */
   title: string;
-  type: "primary" | "secondary";
+  backgroundColor?: keyof DefaultTheme['colors'];
+  textColor?: keyof DefaultTheme['colors'];
   onPress: () => void;
   /**
    * Изменение ключа запускает анимацию блика
@@ -19,18 +20,16 @@ interface ButtonProps extends TouchableOpacityProps {
 /**
  * Кнопка с текстом и возможностью переопределить стили
  */
-const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKey, ...props }) => {
+const AppButton: React.FC<ButtonProps> = ({
+  title,
+  onPress,
+  style,
+  glintKey,
+  backgroundColor = 'accent',
+  textColor = 'onAccent',
+  ...props
+}) => {
   const theme = useTheme();
-  const backgroundColor =
-    type === 'primary'
-      ? theme.colors.accent
-      : theme.name === 'Темная'
-        ? theme.colors.background
-        : theme.colors.basic;
-  const textColor: keyof DefaultTheme['colors'] =
-    type === 'primary'
-      ? (theme.name === 'Темная' ? 'background' : 'basic')
-      : (theme.name === 'Темная' ? 'accent' : 'background');
   const [width, setWidth] = useState(0);
   const translateX = useRef(new Animated.Value(0)).current;
   const [showGlint, setShowGlint] = useState(false);
@@ -50,7 +49,7 @@ const AppButton: React.FC<ButtonProps> = ({ title, type, onPress, style, glintKe
     <TouchableOpacity
       style={[
         {
-          backgroundColor,
+          backgroundColor: theme.colors[backgroundColor],
           borderRadius: theme.borderRadius,
           paddingVertical: theme.spacing.medium,
           paddingHorizontal: theme.padding.medium,

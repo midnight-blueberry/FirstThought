@@ -5,7 +5,7 @@ import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import { useTheme, DefaultTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
@@ -54,7 +54,7 @@ export default function Settings() {
         medium: chosenTheme.fontSize.medium + delta,
         large: chosenTheme.fontSize.large + delta,
         xlarge: chosenTheme.fontSize.xlarge + delta,
-      };
+      } as DefaultTheme['fontSize'];
       setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize });
     }
   }, [selectedThemeName, selectedAccentColor, fontSizeLevel, setTheme]);
