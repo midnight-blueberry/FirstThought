@@ -14,7 +14,7 @@ type FontConfig = {
   fontWeight?: TextStyle['fontWeight'];
 };
 
-export const fonts = {
+const fontMap = {
   'Comfortaa': {
     file: require('@/assets/fonts/Comfortaa/Comfortaa-VariableFont_wght.ttf'),
     fontSize: createFontSize(18),
@@ -53,8 +53,9 @@ export const fonts = {
     file: require('@/assets/fonts/Roboto_Slab/RobotoSlab-VariableFont_wght.ttf'),
     fontSize: createFontSize(20),
   },
-} as const satisfies Record<string, FontConfig>;
+} as const;
 
-export type FontName = keyof typeof fonts;
-export const fontNames = Object.keys(fonts) as FontName[];
+export type FontName = keyof typeof fontMap;
+export const fonts: Record<FontName, FontConfig> = fontMap;
+export const fontNames = Object.keys(fontMap) as FontName[];
 export const defaultFontName: FontName = 'Comfortaa';

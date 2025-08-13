@@ -3,7 +3,7 @@ import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
-import { fonts } from '@/constants/Fonts';
+import { fonts, FontName } from '@/constants/Fonts';
 
 interface SelectableRowProps {
   label: string;
@@ -19,7 +19,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
   const paddingLeftBase = theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2;
   const paddingLeft = swatchColor ? paddingLeftBase : theme.spacing.medium;
 
-  const weight = labelFont ? fonts[labelFont as keyof typeof fonts]?.fontWeight || theme.fontWeight : theme.fontWeight;
+  const weight =
+    labelFont && labelFont in fonts
+      ? fonts[labelFont as FontName].fontWeight || theme.fontWeight
+      : theme.fontWeight;
 
   return (
     <TouchableOpacity

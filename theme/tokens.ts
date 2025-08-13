@@ -1,10 +1,17 @@
+export type FontSizeTokens = {
+  readonly small: number;
+  readonly medium: number;
+  readonly large: number;
+  readonly xlarge: number;
+};
+
 export const sizes = {
   fontSize: {
     small: 14,
     medium: 18,
     large: 22,
     xlarge: 26,
-  },
+  } as FontSizeTokens,
   iconSize: {
     small: 24,
     medium: 28,

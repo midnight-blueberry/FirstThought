@@ -61,9 +61,10 @@ export default function RootLayout() {
 
         // 2. Загружаем сохраненные настройки
         const saved = await loadSettings();
-        const fontName: FontName = saved && saved.fontName && fonts[saved.fontName]
-          ? (saved.fontName as FontName)
-          : defaultFontName;
+        const fontName: FontName =
+          saved && saved.fontName && saved.fontName in fonts
+            ? (saved.fontName as FontName)
+            : defaultFontName;
         const chosenTheme = saved
           ? themeList.find(t => t.name === saved.themeName) || themes.light
           : themes.light;
