@@ -81,7 +81,13 @@ export default function RootLayout() {
           large: baseFontSize.large + delta,
           xlarge: baseFontSize.xlarge + delta,
         } as DefaultTheme['fontSize'];
-        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontFamily: fontName });
+        setTheme({
+          ...chosenTheme,
+          colors: updatedColors,
+          fontSize: updatedFontSize,
+          fontFamily: fontName,
+          fontWeight: fonts[fontName].fontWeight || '400',
+        });
 
         // 3. Здесь же можно загрузить любые другие ассеты
         // await Asset.loadAsync(...);

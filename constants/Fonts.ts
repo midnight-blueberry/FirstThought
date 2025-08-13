@@ -1,4 +1,5 @@
 import { DefaultTheme } from 'styled-components/native';
+import { TextStyle } from 'react-native';
 
 const createFontSize = (medium: number): DefaultTheme['fontSize'] => ({
   small: medium - 4,
@@ -7,6 +8,12 @@ const createFontSize = (medium: number): DefaultTheme['fontSize'] => ({
   xlarge: medium + 8,
 });
 
+type FontConfig = {
+  file: any;
+  fontSize: DefaultTheme['fontSize'];
+  fontWeight?: TextStyle['fontWeight'];
+};
+
 export const fonts = {
   'Comfortaa': {
     file: require('@/assets/fonts/Comfortaa/Comfortaa-VariableFont_wght.ttf'),
@@ -14,7 +21,7 @@ export const fonts = {
   },
   'Bad Script': {
     file: require('@/assets/fonts/Bad_Script/BadScript-Regular.ttf'),
-    fontSize: createFontSize(22),
+    fontSize: createFontSize(24),
   },
   'Lora': {
     file: require('@/assets/fonts/Lora/Lora-VariableFont_wght.ttf'),
@@ -23,6 +30,7 @@ export const fonts = {
   'Montserrat': {
     file: require('@/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf'),
     fontSize: createFontSize(20),
+    fontWeight: '700',
   },
   'Nata Sans': {
     file: require('@/assets/fonts/Nata_Sans/NataSans-VariableFont_wght.ttf'),
@@ -35,6 +43,7 @@ export const fonts = {
   'Raleway': {
     file: require('@/assets/fonts/Raleway/Raleway-VariableFont_wght.ttf'),
     fontSize: createFontSize(20),
+    fontWeight: '700',
   },
   'Roboto Condensed': {
     file: require('@/assets/fonts/Roboto_Condensed/RobotoCondensed-VariableFont_wght.ttf'),
@@ -44,7 +53,7 @@ export const fonts = {
     file: require('@/assets/fonts/Roboto_Slab/RobotoSlab-VariableFont_wght.ttf'),
     fontSize: createFontSize(20),
   },
-} as const;
+} as const satisfies Record<string, FontConfig>;
 
 export type FontName = keyof typeof fonts;
 export const fontNames = Object.keys(fonts) as FontName[];

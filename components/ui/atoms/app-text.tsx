@@ -19,6 +19,7 @@ const StyledText = styledNative.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
   font-family: ${(props) => props.theme.fontFamily};
+  font-weight: ${(props) => props.theme.fontWeight};
 `;
 
 const AppText: React.FC<AppTextProps> = ({ variant = "medium", color = "basic", children, style }) => {

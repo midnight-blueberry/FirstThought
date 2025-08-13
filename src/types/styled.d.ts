@@ -7,5 +7,6 @@ declare module 'styled-components/native' {
     name: string;
     colors: ColorTokens;
     fontFamily: string;
+    fontWeight: string;
   }
 }

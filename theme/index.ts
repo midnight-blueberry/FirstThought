@@ -9,6 +9,7 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   ...sizes,
   fontSize: fonts[defaultFontName].fontSize,
   fontFamily: defaultFontName,
+  fontWeight: fonts[defaultFontName].fontWeight || '400',
 });
 
 export const lightTheme: DefaultTheme = createTheme('Светлая', lightColors);

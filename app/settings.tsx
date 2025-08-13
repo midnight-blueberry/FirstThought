@@ -46,6 +46,10 @@ export default function Settings() {
   const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
   const overlayAnim = useRef(new Animated.Value(0)).current;
+  const selectedThemeRef = useRef(selectedThemeName);
+  const selectedAccentRef = useRef(selectedAccentColor);
+  const selectedFontRef = useRef(selectedFontName);
+  const fontSizeLevelRef = useRef(fontSizeLevel);
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -82,7 +86,13 @@ export default function Settings() {
           large: baseFont.large + delta,
           xlarge: baseFont.xlarge + delta,
         } as DefaultTheme['fontSize'];
-        setTheme({ ...chosenTheme, colors: updatedColors, fontSize: updatedFontSize, fontFamily: fontName });
+        setTheme({
+          ...chosenTheme,
+          colors: updatedColors,
+          fontSize: updatedFontSize,
+          fontFamily: fontName,
+          fontWeight: fonts[fontName].fontWeight || '400',
+        });
       }
     },
     [fontSizeLevel, setTheme]
@@ -122,8 +132,12 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback((withOverlay: boolean) => {
     const performSave = () => {
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName);
-      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel, fontName: selectedFontName });
+      const themeName = selectedThemeRef.current;
+      const accentColor = selectedAccentRef.current;
+      const fontName = selectedFontRef.current;
+      const level = fontSizeLevelRef.current;
+      updateTheme(themeName, accentColor, fontName);
+      saveSettings({ themeName, accentColor, fontSizeLevel: level, fontName });
     };
 
     if (withOverlay) {
@@ -152,12 +166,17 @@ export default function Settings() {
       performSave();
       showSaveIcon();
     }
-  }, [overlayAnim, selectedThemeName, selectedAccentColor, fontSizeLevel, selectedFontName, updateTheme, showSaveIcon, hideSaveIcon]);
+  }, [overlayAnim, updateTheme, showSaveIcon, hideSaveIcon]);
 
   const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
   useEffect(() => {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
+
+  useEffect(() => { selectedThemeRef.current = selectedThemeName; }, [selectedThemeName]);
+  useEffect(() => { selectedAccentRef.current = selectedAccentColor; }, [selectedAccentColor]);
+  useEffect(() => { selectedFontRef.current = selectedFontName; }, [selectedFontName]);
+  useEffect(() => { fontSizeLevelRef.current = fontSizeLevel; }, [fontSizeLevel]);
 
   const handleAccentChange = useCallback(
     (color: string) => {
