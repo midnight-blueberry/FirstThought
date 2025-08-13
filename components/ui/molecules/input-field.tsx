@@ -9,11 +9,11 @@ const Container = styledNative.View`
   flex: 1;
   margin-left: 16px;
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.spacing.small}px;
+    theme.spacing.small + 2}px;
   padding-left: 12px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small +
-    theme.spacing.small * 2 +
+    (theme.spacing.small + 2) * 2 +
     theme.borderWidth * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
@@ -31,6 +31,7 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
+  padding-top: 2px;
 `;
 
 const SearchButton = styledNative.TouchableOpacity`
