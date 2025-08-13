@@ -105,7 +105,14 @@ export default function Settings() {
     ).start(() => setBlinkIndex(null));
   }, [blinkAnim]);
 
+  const stopBlink = useCallback(() => {
+    blinkAnim.stopAnimation();
+    blinkAnim.setValue(1);
+    setBlinkIndex(null);
+  }, [blinkAnim]);
+
   const decreaseFontSize = () => {
+    if (blinkIndex !== null) stopBlink();
     setFontSizeLevel(l => {
       if (l <= 1) {
         triggerBlink(0);
@@ -116,6 +123,7 @@ export default function Settings() {
   };
 
   const increaseFontSize = () => {
+    if (blinkIndex !== null) stopBlink();
     setFontSizeLevel(l => {
       if (l >= 6) {
         triggerBlink(5);
