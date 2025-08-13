@@ -24,19 +24,32 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({ level, onIncrease, 
         </View>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
           {Array.from({ length: 6 }).map((_, i) => {
-            const barStyle = {
+            const containerStyle = {
               width: theme.iconSize.small,
               height: theme.iconSize.small * (0.5 + i * 0.25),
               marginHorizontal: theme.spacing.small / 2,
-              backgroundColor: i < level ? theme.colors.accent : 'transparent',
               borderColor: theme.colors.basic,
               borderWidth: theme.borderWidth.xsmall,
               borderRadius: theme.borderRadius / 2,
+              overflow: 'hidden',
+            } as const;
+            const innerStyle = {
+              width: '100%',
+              height: '100%',
+              backgroundColor: theme.colors.accent,
             } as const;
             if (blinkIndex === i) {
-              return <Animated.View key={i} style={[barStyle, { opacity: blinkAnim }]} />;
+              return (
+                <View key={i} style={containerStyle}>
+                  {i < level && <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />}
+                </View>
+              );
             }
-            return <View key={i} style={barStyle} />;
+            return (
+              <View key={i} style={containerStyle}>
+                {i < level && <View style={innerStyle} />}
+              </View>
+            );
           })}
         </View>
         <View style={{ flex: 1, alignItems: 'center' }}>
