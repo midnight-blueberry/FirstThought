@@ -22,9 +22,16 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
 
   const containerStyle = {
     paddingVertical: theme.padding.small,
-    paddingHorizontal: theme.padding.small,
-    borderBottomWidth: theme.borderWidth.xsmall,
+    borderBottomWidth: theme.borderWidth.small,
     borderBottomColor: theme.colors.basic,
+  } as const;
+
+  const leftStyle = {
+    left: theme.padding.small,
+  } as const;
+
+  const rightStyle = {
+    right: theme.padding.small,
   } as const;
 
   return (
@@ -34,12 +41,12 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
           icon="chevron-back"
           onPress={handleBack}
           size={theme.iconSize.xlarge}
-          style={styles.left}
+          style={[styles.left, leftStyle]}
         />
       )}
       <AppText variant="large" style={{ fontWeight: 'bold' }}>{title}</AppText>
       {saveOpacity && (
-        <Animated.View pointerEvents="none" style={[styles.right, { opacity: saveOpacity }]}>
+        <Animated.View pointerEvents="none" style={[styles.right, rightStyle, { opacity: saveOpacity }]}> 
           <IconButton icon="save-outline" size={theme.iconSize.large} />
         </Animated.View>
       )}
@@ -53,7 +60,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    marginBottom: 8,
   },
   left: {
     position: 'absolute',
