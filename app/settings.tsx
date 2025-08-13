@@ -149,6 +149,8 @@ export default function Settings() {
           styles.header,
           {
             height: theme.iconSize.large + theme.spacing.small * 2,
+            paddingTop: theme.spacing.small,
+            paddingBottom: theme.spacing.small,
             borderBottomColor: theme.colors.basic,
             borderBottomWidth: theme.borderWidth.small,
           },
@@ -160,7 +162,7 @@ export default function Settings() {
             styles.backButton,
             {
               left: theme.padding.small,
-              padding: theme.spacing.small,
+              paddingHorizontal: theme.spacing.small,
             },
           ]}
         >
@@ -180,7 +182,7 @@ export default function Settings() {
               styles.saveIcon,
               {
                 right: theme.padding.small,
-                padding: theme.spacing.small,
+                paddingHorizontal: theme.spacing.small,
                 opacity: fadeAnim,
               },
             ]}
