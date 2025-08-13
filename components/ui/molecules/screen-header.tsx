@@ -25,9 +25,9 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
     backgroundColor: theme.colors.background,
     shadowColor: theme.colors.basic,
     shadowOffset: { width: 0, height: theme.borderWidth.small },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.35,
     shadowRadius: 3,
-    elevation: 3,
+    elevation: 4,
   } as const;
 
   const leftStyle = {
