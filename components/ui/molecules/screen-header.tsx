@@ -20,10 +20,22 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
     else navigation.goBack();
   };
 
+  const containerStyle = {
+    paddingVertical: theme.padding.small,
+    paddingHorizontal: theme.padding.small,
+    borderBottomWidth: theme.borderWidth.xsmall,
+    borderBottomColor: theme.colors.basic,
+  } as const;
+
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, containerStyle]}>
       {onBack !== null && (
-        <IconButton icon="chevron-back" onPress={handleBack} size={theme.iconSize.xlarge} style={styles.left} />
+        <IconButton
+          icon="chevron-back"
+          onPress={handleBack}
+          size={theme.iconSize.xlarge}
+          style={styles.left}
+        />
       )}
       <AppText variant="large" style={{ fontWeight: 'bold' }}>{title}</AppText>
       {saveOpacity && (
