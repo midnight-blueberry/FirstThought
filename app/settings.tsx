@@ -1,8 +1,7 @@
 import AppText from '@/components/ui/atoms/app-text';
-import SavedLabel from '@/components/ui/atoms/saved-label';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import { themeList } from '@/theme';
@@ -20,7 +19,6 @@ export default function Settings() {
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
-  const [ glintKey, setGlintKey ] = useState(0);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
@@ -65,7 +63,6 @@ export default function Settings() {
     handleSave();
     saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel });
     setIsSaved(true);
-    setGlintKey(k => k + 1);
     fadeAnim.stopAnimation();
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
@@ -146,11 +143,28 @@ export default function Settings() {
   }, [selectedThemeName, selectedAccentColor, fontSizeLevel, saveWithFeedback]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View
+        style={[
+          styles.header,
+          {
+            height: theme.iconSize.large + theme.spacing.small * 2.5,
+            paddingTop: theme.spacing.small,
+            paddingBottom: theme.spacing.small * 1.5,
+            borderBottomColor: theme.colors.basic,
+            borderBottomWidth: theme.borderWidth.small,
+          },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              left: theme.padding.small,
+              paddingHorizontal: theme.spacing.small,
+            },
+          ]}
         >
           <Ionicons
             name='chevron-back'
@@ -158,11 +172,32 @@ export default function Settings() {
             color={theme.colors.basic}
           />
         </TouchableOpacity>
-        <AppText variant='large' style={styles.title}>Настройки</AppText>
+        <AppText variant='large' style={styles.title}>
+          Настройки
+        </AppText>
+        {isSaved && (
+          <Animated.View
+            pointerEvents='none'
+            style={[
+              styles.saveIcon,
+              {
+                right: theme.padding.small,
+                paddingHorizontal: theme.spacing.small,
+                opacity: fadeAnim,
+              },
+            ]}
+          >
+            <Ionicons
+              name='save-outline'
+              size={theme.iconSize.large}
+              color={theme.colors.basic}
+            />
+          </Animated.View>
+        )}
       </View>
-
-      <AppText variant='large' style={styles.label}>Тема</AppText>
-      <View style={styles.themeList}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
+        <AppText variant='large' style={styles.label}>Тема</AppText>
+        <View style={styles.themeList}>
         {themeList.map(themeItem => (
           <TouchableOpacity
             key={themeItem.name}
@@ -327,37 +362,38 @@ export default function Settings() {
           </TouchableOpacity>
         </View>
       </View>
-
-      {isSaved && (
-        <Animated.View style={[styles.saveNotice, { opacity: fadeAnim, width: '100%' }]}> 
-          <SavedLabel title="Сохранено" glintKey={glintKey} />
-        </Animated.View>
-      )}
-    </View>
+    </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
   backButton: {
     position: 'absolute',
-    left: -4,
-    padding: 4,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  saveIcon: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
   },
   title: {
     fontWeight: 'bold',
   },
   label: {
-    marginTop: 24,
     marginBottom: 8,
     fontWeight: 'bold',
   },
@@ -388,8 +424,5 @@ const styles = StyleSheet.create({
   },
   themeList: {
     marginBottom: 4,
-  },
-  saveNotice: {
-    marginTop: 'auto',
   },
 });
