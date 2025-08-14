@@ -12,7 +12,7 @@ import { ThemeProvider, useTheme, DefaultTheme } from 'styled-components/native'
 import Header from '../components/ui/organisms/header';
 import { themes, themeList } from '../theme';
 import { loadSettings } from '@/src/storage/settings';
-import { fonts, defaultFontName } from '@/constants/Fonts';
+import { fonts, defaultFontName, getFontFamily } from '@/constants/Fonts';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -55,13 +55,18 @@ export default function RootLayout() {
       try {
         // 1. Загружаем шрифты
         await Font.loadAsync(
-          Object.fromEntries(fonts.map(f => [f.name, f.file]))
+          Object.fromEntries(
+            fonts.flatMap(f =>
+              f.weights.map(w => [getFontFamily(f.family, w), f.files[w]])
+            )
+          )
         );
 
         // 2. Загружаем сохраненные настройки
         const saved = await loadSettings();
         const fontName = saved?.fontName ?? defaultFontName;
         const font = fonts.find(f => f.name === fontName) ?? fonts[0];
+        const weight = saved?.fontWeight ?? font.defaultWeight;
         const chosenTheme = saved
           ? themeList.find(t => t.name === saved.themeName) ?? themes.light
           : themes.light;
@@ -82,8 +87,8 @@ export default function RootLayout() {
           ...chosenTheme,
           colors: updatedColors,
           fontSize: updatedFontSize,
-          fontName: font.name,
-          fontWeight: font.defaultWeight,
+          fontName: getFontFamily(font.family, weight),
+          fontWeight: weight,
         });
 
         // 3. Здесь же можно загрузить любые другие ассеты
