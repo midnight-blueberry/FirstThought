@@ -48,7 +48,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
           style={[styles.left, leftStyle]}
         />
       )}
-      <AppText variant="large" style={{ fontWeight: 'bold' }}>{title}</AppText>
+      <AppText variant="large">{title}</AppText>
       {saveOpacity && (
         <Animated.View pointerEvents="none" style={[styles.right, rightStyle, { opacity: saveOpacity }]}> 
           <IconButton icon="save-outline" size={theme.iconSize.large} />
