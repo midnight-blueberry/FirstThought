@@ -291,16 +291,21 @@ export default function Settings() {
 
         <AppText variant='large' style={[styles.label, styles.fontLabel]}>Шрифт</AppText>
         <View style={styles.themeList}>
-          {fonts.map(f => (
-            <SelectableRow
-              key={f.name}
-              label={f.name}
-              selected={f.name === selectedFontName}
-              onPress={() => setSelectedFontName(f.name)}
-              fontFamily={f.name}
-              fontWeight={f.defaultWeight}
-            />
-          ))}
+          {fonts.map(f => {
+            const delta = (fontSizeLevel - 3) * 2;
+            const medium = f.defaultSize + delta;
+            return (
+              <SelectableRow
+                key={f.name}
+                label={f.name}
+                selected={f.name === selectedFontName}
+                onPress={() => setSelectedFontName(f.name)}
+                fontFamily={f.name}
+                fontWeight={f.defaultWeight}
+                fontSize={medium}
+              />
+            );
+          })}
         </View>
 
         <FontSizeSelector
@@ -336,7 +341,6 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-    fontWeight: 'bold',
   },
   themeLabel: {
     marginTop: 8,

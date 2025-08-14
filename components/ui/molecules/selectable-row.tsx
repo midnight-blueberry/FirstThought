@@ -11,9 +11,10 @@ interface SelectableRowProps {
   onPress: () => void;
   fontFamily?: string;
   fontWeight?: TextStyle['fontWeight'];
+  fontSize?: number;
 }
 
-const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily, fontWeight }) => {
+const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily, fontWeight, fontSize }) => {
   const theme = useTheme();
   const lift = theme.spacing.small / 2;
   const hasSwatch = !!swatchColor;
@@ -54,7 +55,12 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
             }}
           />
         )}
-        <AppText variant="medium" fontFamily={fontFamily} fontWeight={fontWeight} style={{ transform: [{ translateY: -lift }] }}>
+        <AppText
+          variant="medium"
+          fontFamily={fontFamily}
+          fontWeight={fontWeight}
+          style={[{ transform: [{ translateY: -lift }] }, fontSize ? { fontSize } : null]}
+        >
           {label}
         </AppText>
       </View>

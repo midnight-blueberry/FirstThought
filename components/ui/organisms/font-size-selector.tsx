@@ -17,7 +17,7 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({ level, onIncrease, 
 
   return (
     <>
-      <AppText variant='large' style={{ marginBottom: 8, fontWeight: 'bold', marginTop: 4 }}>Размер шрифта</AppText>
+      <AppText variant='large' style={{ marginBottom: 8, marginTop: 4 }}>Размер шрифта</AppText>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <IconButton icon='remove' onPress={onDecrease} size={theme.iconSize.large} />

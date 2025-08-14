@@ -66,7 +66,7 @@ const AppButton: React.FC<ButtonProps> = ({
     >
       <AppText
         color={textColor}
-        style={{ fontWeight: 'bold', textAlign: 'center', width: '100%' }}
+        style={{ textAlign: 'center', width: '100%' }}
       >
         {title}
       </AppText>
