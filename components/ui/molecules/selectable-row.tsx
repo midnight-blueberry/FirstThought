@@ -24,7 +24,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
 }) => {
   const theme = useTheme();
-  const drop = theme.spacing.small / 2;
+  const drop = theme.spacing.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
     ? theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2
