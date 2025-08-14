@@ -108,3 +108,13 @@ export const defaultFontName = 'Comfortaa';
 
 export const getFontFamily = (family: string, weight: string) => `${family}_${weight}`;
 
+export const getNextFontWeight = (family: string, currentWeight: string) => {
+  const font = fonts.find(f => f.family === family);
+  if (!font) return currentWeight;
+  const index = font.weights.indexOf(currentWeight);
+  if (index !== -1 && index < font.weights.length - 1) {
+    return font.weights[index + 1];
+  }
+  return currentWeight;
+};
+

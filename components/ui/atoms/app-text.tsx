@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styledNative, { DefaultTheme, useTheme } from "styled-components/native";
+import { getFontFamily, getNextFontWeight } from "@/constants/Fonts";
 
 type AppTextProps = {
   variant?: keyof DefaultTheme["fontSize"];
@@ -26,16 +27,36 @@ const StyledText = styledNative.Text<StyledTextProps>`
   font-weight: ${(props: StyledTextProps) => props.fontWeight};
 `;
 
-const AppText: React.FC<AppTextProps> = ({ variant = "medium", color = "basic", children, style, fontFamily, fontWeight }) => {
+const AppText: React.FC<AppTextProps> = ({
+  variant = "medium",
+  color = "basic",
+  children,
+  style,
+  fontFamily,
+  fontWeight,
+}) => {
   const theme = useTheme();
+
+  const familyString = fontFamily ?? theme.fontName;
+  const parts = familyString.split("_");
+  const baseFamily = parts.slice(0, -1).join("_");
+  const baseWeight = (fontWeight ?? parts[parts.length - 1]) as string;
+
+  let resolvedWeight = (fontWeight ?? theme.fontWeight) as TextStyle['fontWeight'];
+  let resolvedFamily = fontFamily ?? theme.fontName;
+
+  if ((variant === "large" || variant === "xlarge") && !fontWeight) {
+    resolvedWeight = getNextFontWeight(baseFamily, baseWeight) as TextStyle['fontWeight'];
+    resolvedFamily = getFontFamily(baseFamily, resolvedWeight as string);
+  }
 
   return (
     <StyledText
       style={style}
       textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
-      fontFamily={fontFamily ?? theme.fontName}
-      fontWeight={fontWeight ?? theme.fontWeight}
+      fontFamily={resolvedFamily}
+      fontWeight={resolvedWeight}
     >
       {children}
     </StyledText>
