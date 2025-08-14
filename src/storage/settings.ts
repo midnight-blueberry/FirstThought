@@ -6,6 +6,7 @@ export type AppSettings = {
   themeName: string;
   accentColor: string;
   fontSizeLevel: number;
+  fontName: string;
 };
 
 export async function loadSettings(): Promise<AppSettings | null> {

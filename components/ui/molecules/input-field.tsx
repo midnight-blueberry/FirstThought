@@ -26,12 +26,19 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   placeholderTextColor: theme.colors.disabled,
 }))`
   flex: 1;
-  font-family: 'MainFont';
+  font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
+  font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.fontSize.medium + 4}px;
+    theme.iconSize.small +
+    (theme.spacing.small + 2) * 2 +
+    theme.borderWidth.small * 2 +
+    4}px;
   line-height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.fontSize.medium + 4}px;
+    theme.iconSize.small +
+    (theme.spacing.small + 2) * 2 +
+    theme.borderWidth.small * 2 +
+    4}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
