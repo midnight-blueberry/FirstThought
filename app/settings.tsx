@@ -43,6 +43,8 @@ export default function Settings() {
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
+  const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
+  const weightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -244,16 +246,45 @@ export default function Settings() {
     });
   };
 
+  const triggerWeightBlink = useCallback((index: number) => {
+    weightBlinkAnim.stopAnimation();
+    setWeightBlinkIndex(index);
+    weightBlinkAnim.setValue(1);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(weightBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        Animated.timing(weightBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
+      ]),
+      { iterations: 5 }
+    ).start(() => setWeightBlinkIndex(null));
+  }, [weightBlinkAnim]);
+
+  const stopWeightBlink = useCallback(() => {
+    weightBlinkAnim.stopAnimation();
+    weightBlinkAnim.setValue(1);
+    setWeightBlinkIndex(null);
+  }, [weightBlinkAnim]);
+
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
     const idx = font.weights.indexOf(fontWeight);
-    if (idx > 0) setFontWeight(font.weights[idx - 1]);
+    if (weightBlinkIndex !== null) stopWeightBlink();
+    if (idx > 0) {
+      setFontWeight(font.weights[idx - 1]);
+    } else {
+      triggerWeightBlink(0);
+    }
   };
 
   const increaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
     const idx = font.weights.indexOf(fontWeight);
-    if (idx < font.weights.length - 1) setFontWeight(font.weights[idx + 1]);
+    if (weightBlinkIndex !== null) stopWeightBlink();
+    if (idx < font.weights.length - 1) {
+      setFontWeight(font.weights[idx + 1]);
+    } else {
+      triggerWeightBlink(font.weights.length - 1);
+    }
   };
 
   const isInitialRender = useRef(true);
@@ -345,6 +376,8 @@ export default function Settings() {
           selectedIndex={selectedFont.weights.indexOf(fontWeight)}
           onIncrease={increaseFontWeight}
           onDecrease={decreaseFontWeight}
+          blinkIndex={weightBlinkIndex}
+          blinkAnim={weightBlinkAnim}
         />
       </ScrollView>
       {overlayVisible && (

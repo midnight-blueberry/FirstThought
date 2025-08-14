@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Animated } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 import IconButton from '../atoms/icon-button';
@@ -9,9 +9,18 @@ interface FontWeightSelectorProps {
   selectedIndex: number;
   onIncrease: () => void;
   onDecrease: () => void;
+  blinkIndex: number | null;
+  blinkAnim: Animated.Value;
 }
 
-const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ weights, selectedIndex, onIncrease, onDecrease }) => {
+const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
+  weights,
+  selectedIndex,
+  onIncrease,
+  onDecrease,
+  blinkIndex,
+  blinkAnim,
+}) => {
   const theme = useTheme();
   const hasMultiple = weights.length > 1;
   const columns = hasMultiple ? weights.length : 5;
@@ -45,6 +54,13 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ weights, select
               backgroundColor: theme.colors[hasMultiple ? 'accent' : 'disabled'],
             } as const;
             const shouldFill = hasMultiple && i <= selectedIndex;
+            if (blinkIndex === i) {
+              return (
+                <View key={i} style={containerStyle}>
+                  {shouldFill && <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />}
+                </View>
+              );
+            }
             return (
               <View key={i} style={containerStyle}>
                 {shouldFill && <View style={innerStyle} />}
