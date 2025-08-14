@@ -14,9 +14,17 @@ interface SelectableRowProps {
   fontSize?: number;
 }
 
-const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selected, onPress, fontFamily, fontWeight, fontSize }) => {
+const SelectableRow: React.FC<SelectableRowProps> = ({
+  label,
+  swatchColor,
+  selected,
+  onPress,
+  fontFamily,
+  fontWeight,
+  fontSize,
+}) => {
   const theme = useTheme();
-  const lift = theme.spacing.small / 2;
+  const drop = theme.spacing.small / 2;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
     ? theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2
@@ -60,8 +68,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
           fontFamily={fontFamily}
           fontWeight={fontWeight}
           style={[
-            { transform: [{ translateY: -lift }] },
-            fontSize ? { fontSize, lineHeight: fontSize } : null,
+            { transform: [{ translateY: drop }] },
+            fontSize
+              ? { fontSize, lineHeight: fontSize + theme.spacing.small }
+              : null,
           ]}
         >
           {label}
@@ -75,7 +85,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
           bottom: theme.spacing.medium,
           justifyContent: 'center',
           alignItems: 'center',
-          transform: [{ translateY: -lift }],
+          transform: [{ translateY: drop }],
         }}
       >
         <Ionicons
