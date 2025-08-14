@@ -32,6 +32,8 @@ const interpolateColor = (from: string, to: string, t: number) => {
   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 };
 
+const THEME_TRANSITION_DURATION = 1500;
+
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
@@ -222,7 +224,8 @@ export default function Settings() {
       });
       Animated.timing(themeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: THEME_TRANSITION_DURATION,
+        easing: Easing.linear,
         useNativeDriver: false,
       }).start(() => {
         themeAnim.removeListener(id);
