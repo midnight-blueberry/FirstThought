@@ -24,7 +24,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
 }) => {
   const theme = useTheme();
-  const drop = theme.spacing.small / 4;
+  const drop = -theme.spacing.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
     ? theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2
@@ -82,7 +82,8 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           position: 'absolute',
           top: theme.spacing.medium,
           right: theme.spacing.medium,
-          bottom: theme.spacing.medium,
+          width: theme.iconSize.large,
+          height: theme.iconSize.large,
           justifyContent: 'center',
           alignItems: 'center',
         }}
@@ -91,7 +92,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           name="checkmark-sharp"
           size={theme.iconSize.large}
           color={theme.colors.accent}
-          style={{ opacity: selected ? 1 : 0 }}
+          style={{
+            opacity: selected ? 1 : 0,
+            transform: [{ translateY: -theme.spacing.small / 4 }],
+          }}
         />
       </View>
     </TouchableOpacity>
