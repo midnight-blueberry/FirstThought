@@ -70,7 +70,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           style={[
             { transform: [{ translateY: drop }] },
             fontSize
-              ? { fontSize, lineHeight: fontSize + theme.spacing.small }
+              ? { fontSize, lineHeight: fontSize + theme.spacing.medium }
               : null,
           ]}
         >
@@ -85,7 +85,6 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           bottom: theme.spacing.medium,
           justifyContent: 'center',
           alignItems: 'center',
-          transform: [{ translateY: drop }],
         }}
       >
         <Ionicons
