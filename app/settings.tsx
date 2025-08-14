@@ -32,7 +32,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 };
 
-const THEME_TRANSITION_DURATION = 1500;
+const THEME_TRANSITION_DURATION = 3000;
 
 export default function Settings() {
   const theme = useTheme();
