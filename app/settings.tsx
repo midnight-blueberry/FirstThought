@@ -72,7 +72,7 @@ export default function Settings() {
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string, fontName: string, weight: string) => {
+    (themeName: string, accentColor: string, fontName: string, weight: string, level: number) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
       const chosenFont = fonts.find(f => f.name === fontName) ?? fonts[0];
       if (chosenTheme) {
@@ -83,7 +83,7 @@ export default function Settings() {
         if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
           updatedColors.basic = accentColor;
         }
-        const delta = (fontSizeLevel - 3) * 2;
+        const delta = (level - 3) * 2;
         const medium = chosenFont.defaultSize + delta;
         const updatedFontSize = {
           small: medium - 4,
@@ -101,7 +101,7 @@ export default function Settings() {
         });
       }
     },
-    [fontSizeLevel, setTheme]
+    [setTheme]
   );
 
   const showSaveIcon = useCallback(() => {
@@ -136,39 +136,43 @@ export default function Settings() {
     setIsSaved(false);
   }, [fadeAnim]);
 
+  const runWithOverlay = useCallback((action: () => void) => {
+    setOverlayVisible(true);
+    overlayAnim.stopAnimation();
+    overlayAnim.setValue(0);
+    Animated.timing(overlayAnim, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: true,
+    }).start(() => {
+      hideSaveIcon();
+      action();
+      setTimeout(() => {
+        Animated.timing(overlayAnim, {
+          toValue: 0,
+          duration: 700,
+          useNativeDriver: true,
+        }).start(() => {
+          setOverlayVisible(false);
+          showSaveIcon();
+        });
+      }, 100);
+    });
+  }, [overlayAnim, hideSaveIcon, showSaveIcon]);
+
   const saveWithFeedback = useCallback((withOverlay: boolean) => {
     const performSave = () => {
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight);
+      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
       saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel, fontName: selectedFontName, fontWeight });
     };
 
     if (withOverlay) {
-      setOverlayVisible(true);
-      overlayAnim.stopAnimation();
-      overlayAnim.setValue(0);
-      Animated.timing(overlayAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }).start(() => {
-        hideSaveIcon();
-        performSave();
-        setTimeout(() => {
-          Animated.timing(overlayAnim, {
-            toValue: 0,
-            duration: 700,
-            useNativeDriver: true,
-          }).start(() => {
-            setOverlayVisible(false);
-            showSaveIcon();
-          });
-        }, 100);
-      });
+      runWithOverlay(performSave);
     } else {
       performSave();
       showSaveIcon();
     }
-  }, [overlayAnim, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, updateTheme, showSaveIcon, hideSaveIcon]);
+  }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, updateTheme, showSaveIcon]);
 
   const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
   useEffect(() => {
@@ -181,10 +185,10 @@ export default function Settings() {
       setSelectedAccentColor(color);
       accentAnim.stopAnimation();
       accentAnim.setValue(0);
-      const id = accentAnim.addListener(({ value }) => {
-        const c = interpolateColor(from, color, value);
-        updateTheme(selectedThemeName, c, selectedFontName, fontWeight);
-      });
+        const id = accentAnim.addListener(({ value }) => {
+          const c = interpolateColor(from, color, value);
+          updateTheme(selectedThemeName, c, selectedFontName, fontWeight, fontSizeLevel);
+        });
       Animated.timing(accentAnim, {
         toValue: 1,
         duration: 1000,
@@ -194,7 +198,7 @@ export default function Settings() {
         saveWithFeedbackRef.current(false);
       });
     },
-    [accentAnim, selectedAccentColor, selectedThemeName, selectedFontName, fontWeight, updateTheme]
+    [accentAnim, selectedAccentColor, selectedThemeName, selectedFontName, fontWeight, fontSizeLevel, updateTheme]
   );
 
   useEffect(() => {
@@ -224,26 +228,30 @@ export default function Settings() {
     setBlinkIndex(null);
   }, [blinkAnim]);
 
+  const applyFontSizeLevel = (level: number) => {
+    runWithOverlay(() => {
+      setFontSizeLevel(level);
+      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
+      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
+    });
+  };
+
   const decreaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l <= 1) {
-        triggerBlink(0);
-        return l;
-      }
-      return l - 1;
-    });
+    if (fontSizeLevel <= 1) {
+      triggerBlink(0);
+      return;
+    }
+    applyFontSizeLevel(fontSizeLevel - 1);
   };
 
   const increaseFontSize = () => {
     if (blinkIndex !== null) stopBlink();
-    setFontSizeLevel(l => {
-      if (l >= 6) {
-        triggerBlink(5);
-        return l;
-      }
-      return l + 1;
-    });
+    if (fontSizeLevel >= 6) {
+      triggerBlink(5);
+      return;
+    }
+    applyFontSizeLevel(fontSizeLevel + 1);
   };
 
   const triggerWeightBlink = useCallback((index: number) => {
@@ -288,25 +296,21 @@ export default function Settings() {
   };
 
   const isInitialRender = useRef(true);
-  const prevFontSizeRef = useRef(fontSizeLevel);
   const prevFontNameRef = useRef(selectedFontName);
   const prevFontWeightRef = useRef(fontWeight);
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
-      prevFontSizeRef.current = fontSizeLevel;
       prevFontNameRef.current = selectedFontName;
       prevFontWeightRef.current = fontWeight;
       return;
     }
-    const isFontSizeChange = prevFontSizeRef.current !== fontSizeLevel;
     const isFontChange = prevFontNameRef.current !== selectedFontName;
     const isWeightChange = prevFontWeightRef.current !== fontWeight;
-    prevFontSizeRef.current = fontSizeLevel;
     prevFontNameRef.current = selectedFontName;
     prevFontWeightRef.current = fontWeight;
-    saveWithFeedbackRef.current(isFontSizeChange || isFontChange || isWeightChange);
-  }, [selectedThemeName, fontSizeLevel, selectedFontName, fontWeight]);
+    saveWithFeedbackRef.current(isFontChange || isWeightChange);
+  }, [selectedThemeName, selectedFontName, fontWeight]);
 
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
 
