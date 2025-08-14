@@ -53,20 +53,18 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // 1. Загружаем шрифты
-        await Font.loadAsync(
-          Object.fromEntries(
-            fonts.flatMap(f =>
-              f.weights.map(w => [getFontFamily(f.family, w), f.files[w]])
-            )
-          )
-        );
-
-        // 2. Загружаем сохраненные настройки
+        // 1. Загружаем сохраненные настройки
         const saved = await loadSettings();
         const fontName = saved?.fontName ?? defaultFontName;
         const font = fonts.find(f => f.name === fontName) ?? fonts[0];
         const weight = saved?.fontWeight ?? font.defaultWeight;
+
+        // 2. Загружаем только выбранный вариант шрифта
+        await Font.loadAsync({
+          [getFontFamily(font.family, weight)]: (font.files as Record<string, any>)[weight],
+        });
+
+        // 3. Применяем остальные сохраненные настройки
         const chosenTheme = saved
           ? themeList.find(t => t.name === saved.themeName) ?? themes.light
           : themes.light;
@@ -88,10 +86,10 @@ export default function RootLayout() {
           colors: updatedColors,
           fontSize: updatedFontSize,
           fontName: getFontFamily(font.family, weight),
-          fontWeight: weight,
+          fontWeight: weight as any,
         });
 
-        // 3. Здесь же можно загрузить любые другие ассеты
+        // 4. Здесь же можно загрузить любые другие ассеты
         // await Asset.loadAsync(...);
 
       } catch (e) {

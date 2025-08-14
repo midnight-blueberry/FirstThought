@@ -12,6 +12,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
+import * as Font from 'expo-font';
 
 const interpolateColor = (from: string, to: string, t: number) => {
   const f = parseInt(from.slice(1), 16);
@@ -39,7 +40,7 @@ export default function Settings() {
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
-  const [ fontWeight, setFontWeight ] = useState(theme.fontWeight);
+  const [ fontWeight, setFontWeight ] = useState<string>(theme.fontWeight as any);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
@@ -63,7 +64,7 @@ export default function Settings() {
       setSelectedAccentColor(theme.colors.accent);
       const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
       setSelectedFontName(baseName);
-      setFontWeight(theme.fontWeight);
+        setFontWeight(theme.fontWeight as string);
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
@@ -73,7 +74,7 @@ export default function Settings() {
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string, fontName: string, weight: string, level: number) => {
+    async (themeName: string, accentColor: string, fontName: string, weight: string, level: number) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
       const chosenFont = fonts.find(f => f.name === fontName) ?? fonts[0];
       if (chosenTheme) {
@@ -93,16 +94,20 @@ export default function Settings() {
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
         const w = chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight;
-        setTheme({
-          ...chosenTheme,
-          colors: updatedColors,
-          fontSize: updatedFontSize,
-          fontName: getFontFamily(chosenFont.family, w),
-          fontWeight: w,
-        });
+        const fontFamily = getFontFamily(chosenFont.family, w);
+        if (theme.fontName !== fontFamily) {
+          await Font.loadAsync({ [fontFamily]: (chosenFont.files as Record<string, any>)[w] });
+        }
+          setTheme({
+            ...chosenTheme,
+            colors: updatedColors,
+            fontSize: updatedFontSize,
+            fontName: fontFamily,
+            fontWeight: w as any,
+          });
       }
     },
-    [setTheme]
+    [setTheme, theme.fontName]
   );
 
   const showSaveIcon = useCallback(() => {
@@ -137,7 +142,7 @@ export default function Settings() {
     setIsSaved(false);
   }, [fadeAnim]);
 
-  const runWithOverlay = useCallback((action: () => void, color?: string) => {
+  const runWithOverlay = useCallback((action: () => Promise<void>, color?: string) => {
     setOverlayColor(color ?? theme.colors.background);
     setOverlayVisible(true);
     overlayAnim.stopAnimation();
@@ -146,9 +151,9 @@ export default function Settings() {
       toValue: 1,
       duration: 700,
       useNativeDriver: true,
-    }).start(() => {
+    }).start(async () => {
       hideSaveIcon();
-      action();
+      await action();
       setTimeout(() => {
         Animated.timing(overlayAnim, {
           toValue: 0,
@@ -163,9 +168,9 @@ export default function Settings() {
   }, [overlayAnim, hideSaveIcon, showSaveIcon, theme.colors.background]);
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
-    const performSave = () => {
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
-      saveSettings({
+    const performSave = async () => {
+      await updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
+      await saveSettings({
         themeName: selectedThemeName,
         accentColor: selectedAccentColor,
         fontSizeLevel,
@@ -177,8 +182,7 @@ export default function Settings() {
     if (withOverlay) {
       runWithOverlay(performSave, color);
     } else {
-      performSave();
-      showSaveIcon();
+      performSave().then(() => showSaveIcon());
     }
   }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, updateTheme, showSaveIcon]);
 
@@ -195,7 +199,7 @@ export default function Settings() {
       accentAnim.setValue(0);
         const id = accentAnim.addListener(({ value }) => {
           const c = interpolateColor(from, color, value);
-          updateTheme(selectedThemeName, c, selectedFontName, fontWeight, fontSizeLevel);
+          void updateTheme(selectedThemeName, c, selectedFontName, fontWeight, fontSizeLevel);
         });
       Animated.timing(accentAnim, {
         toValue: 1,
@@ -237,10 +241,10 @@ export default function Settings() {
   }, [blinkAnim]);
 
   const applyFontSizeLevel = (level: number) => {
-    runWithOverlay(() => {
+    runWithOverlay(async () => {
       setFontSizeLevel(level);
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
-      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
+      await updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
+      await saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
     });
   };
 
