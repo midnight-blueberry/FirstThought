@@ -14,7 +14,7 @@ export const fontData = {
   Montserrat: {
     file: require('@/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf'),
     defaultSize: 18,
-    defaultWeight: 'bold',
+    defaultWeight: '600',
   },
   Nata_Sans: {
     file: require('@/assets/fonts/Nata_Sans/NataSans-VariableFont_wght.ttf'),
@@ -27,7 +27,7 @@ export const fontData = {
   Raleway: {
     file: require('@/assets/fonts/Raleway/Raleway-VariableFont_wght.ttf'),
     defaultSize: 18,
-    defaultWeight: 'bold',
+    defaultWeight: '600',
   },
   Roboto_Condensed: {
     file: require('@/assets/fonts/Roboto_Condensed/RobotoCondensed-VariableFont_wght.ttf'),

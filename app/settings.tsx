@@ -298,6 +298,7 @@ export default function Settings() {
               <SelectableRow
                 key={f.name}
                 label={f.name}
+                swatchColor={theme.colors.basic}
                 selected={f.name === selectedFontName}
                 onPress={() => setSelectedFontName(f.name)}
                 fontFamily={f.name}

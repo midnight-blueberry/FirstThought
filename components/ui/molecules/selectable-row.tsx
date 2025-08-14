@@ -59,7 +59,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({ label, swatchColor, selec
           variant="medium"
           fontFamily={fontFamily}
           fontWeight={fontWeight}
-          style={[{ transform: [{ translateY: -lift }] }, fontSize ? { fontSize } : null]}
+          style={[
+            { transform: [{ translateY: -lift }] },
+            fontSize ? { fontSize, lineHeight: fontSize } : null,
+          ]}
         >
           {label}
         </AppText>
