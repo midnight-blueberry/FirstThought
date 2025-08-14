@@ -50,6 +50,7 @@ export default function Settings() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
+  const [ overlayColor, setOverlayColor ] = useState(theme.colors.background);
   const overlayAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
@@ -136,7 +137,8 @@ export default function Settings() {
     setIsSaved(false);
   }, [fadeAnim]);
 
-  const runWithOverlay = useCallback((action: () => void) => {
+  const runWithOverlay = useCallback((action: () => void, color?: string) => {
+    setOverlayColor(color ?? theme.colors.background);
     setOverlayVisible(true);
     overlayAnim.stopAnimation();
     overlayAnim.setValue(0);
@@ -158,23 +160,29 @@ export default function Settings() {
         });
       }, 100);
     });
-  }, [overlayAnim, hideSaveIcon, showSaveIcon]);
+  }, [overlayAnim, hideSaveIcon, showSaveIcon, theme.colors.background]);
 
-  const saveWithFeedback = useCallback((withOverlay: boolean) => {
+  const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
       updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
-      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel, fontName: selectedFontName, fontWeight });
+      saveSettings({
+        themeName: selectedThemeName,
+        accentColor: selectedAccentColor,
+        fontSizeLevel,
+        fontName: selectedFontName,
+        fontWeight,
+      });
     };
 
     if (withOverlay) {
-      runWithOverlay(performSave);
+      runWithOverlay(performSave, color);
     } else {
       performSave();
       showSaveIcon();
     }
   }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, updateTheme, showSaveIcon]);
 
-  const saveWithFeedbackRef = useRef<(withOverlay: boolean) => void>(saveWithFeedback);
+  const saveWithFeedbackRef = useRef<(withOverlay: boolean, color?: string) => void>(saveWithFeedback);
   useEffect(() => {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
@@ -298,18 +306,25 @@ export default function Settings() {
   const isInitialRender = useRef(true);
   const prevFontNameRef = useRef(selectedFontName);
   const prevFontWeightRef = useRef(fontWeight);
+  const prevThemeNameRef = useRef(selectedThemeName);
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
       prevFontNameRef.current = selectedFontName;
       prevFontWeightRef.current = fontWeight;
+      prevThemeNameRef.current = selectedThemeName;
       return;
     }
     const isFontChange = prevFontNameRef.current !== selectedFontName;
     const isWeightChange = prevFontWeightRef.current !== fontWeight;
+    const isThemeChange = prevThemeNameRef.current !== selectedThemeName;
     prevFontNameRef.current = selectedFontName;
     prevFontWeightRef.current = fontWeight;
-    saveWithFeedbackRef.current(isFontChange || isWeightChange);
+    prevThemeNameRef.current = selectedThemeName;
+    const newOverlayColor = isThemeChange
+      ? themeList.find(t => t.name === selectedThemeName)?.colors.background
+      : undefined;
+    saveWithFeedbackRef.current(isFontChange || isWeightChange || isThemeChange, newOverlayColor);
   }, [selectedThemeName, selectedFontName, fontWeight]);
 
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
@@ -392,7 +407,7 @@ export default function Settings() {
             top: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: theme.colors.background,
+            backgroundColor: overlayColor,
             opacity: overlayAnim,
           }}
         />
