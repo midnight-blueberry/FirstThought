@@ -49,6 +49,7 @@ export default function Settings() {
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
+  const themeAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
   const overlayAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
@@ -178,6 +179,58 @@ export default function Settings() {
   useEffect(() => {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
+
+  const handleThemeChange = useCallback(
+    (name: string) => {
+      const fromColors = theme.colors;
+      const chosenTheme = themeList.find(t => t.name === name);
+      if (!chosenTheme) return;
+      setSelectedThemeName(name);
+      const updatedColors = {
+        ...chosenTheme.colors,
+        accent: selectedAccentColor,
+      };
+      if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
+        updatedColors.basic = selectedAccentColor;
+      }
+      const chosenFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
+      const delta = (fontSizeLevel - 3) * 2;
+      const medium = chosenFont.defaultSize + delta;
+      const updatedFontSize = {
+        small: medium - 4,
+        medium,
+        large: medium + 4,
+        xlarge: medium + 8,
+      } as DefaultTheme['fontSize'];
+      themeAnim.stopAnimation();
+      themeAnim.setValue(0);
+      const baseTheme = {
+        ...chosenTheme,
+        colors: updatedColors,
+        fontSize: updatedFontSize,
+        fontName: getFontFamily(chosenFont.family, fontWeight),
+        fontWeight,
+      };
+      const id = themeAnim.addListener(({ value }) => {
+        const interpolatedColors = Object.fromEntries(
+          Object.entries(fromColors).map(([key, from]) => {
+            const to = (updatedColors as any)[key];
+            return [key, interpolateColor(from as string, to as string, value)];
+          })
+        ) as DefaultTheme['colors'];
+        setTheme({ ...baseTheme, colors: interpolatedColors });
+      });
+      Animated.timing(themeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start(() => {
+        themeAnim.removeListener(id);
+        saveWithFeedbackRef.current(false);
+      });
+    },
+    [theme, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, setTheme, themeAnim]
+  );
 
   const handleAccentChange = useCallback(
     (color: string) => {
@@ -330,7 +383,7 @@ export default function Settings() {
               label={themeItem.name}
               swatchColor={themeItem.colors.background}
               selected={themeItem.name === selectedThemeName}
-              onPress={() => setSelectedThemeName(themeItem.name)}
+              onPress={() => handleThemeChange(themeItem.name)}
             />
           ))}
         </View>
