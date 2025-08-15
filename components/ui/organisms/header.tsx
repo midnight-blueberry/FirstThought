@@ -11,15 +11,13 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) => {
   const theme = useTheme();
 
-  const shadowStyle = showShadow
-    ? {
-        shadowColor: theme.colors.basic,
-        shadowOffset: { width: 0, height: theme.borderWidth.small },
-        shadowOpacity: 0.5,
-        shadowRadius: 3,
-        elevation: 4,
-      }
-    : undefined;
+  const shadowStyle = {
+    shadowColor: showShadow ? theme.colors.basic : 'transparent',
+    shadowOffset: { width: 0, height: showShadow ? theme.borderWidth.small : 0 },
+    shadowOpacity: showShadow ? 0.5 : 0,
+    shadowRadius: showShadow ? 3 : 0,
+    elevation: showShadow ? 4 : 0,
+  };
 
   return (
     <View
@@ -28,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) 
         {
           padding: theme.padding.small,
           backgroundColor: theme.colors.background,
-          borderColor: 'transparent',
+          borderColor: theme.colors.background,
           borderWidth: 0,
           borderTopWidth: 0,
           borderBottomWidth: 0,
