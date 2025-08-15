@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Animated } from 'react-native';
+import { Animated } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
-import IconButton from '../atoms/icon-button';
+import SelectorRow from '../atoms/selector-row';
+import BarIndicator from '../atoms/bar-indicator';
 
 interface FontWeightSelectorProps {
   weights: string[];
@@ -28,55 +29,22 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   return (
     <>
       <AppText variant='large' style={{ marginBottom: 8, marginTop: 4 }}>Жирность шрифта</AppText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, opacity: hasMultiple ? 1 : 0.5 }}>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <IconButton
-            icon='remove'
-            onPress={hasMultiple ? onDecrease : undefined}
-            size={theme.iconSize.large}
-            color={hasMultiple ? 'basic' : 'disabled'}
-          />
-        </View>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
-          {Array.from({ length: columns }).map((_, i) => {
-            const containerStyle = {
-              width: theme.iconSize.small,
-              height: theme.iconSize.small * (0.5 + i * 0.25),
-              marginHorizontal: theme.spacing.small / 2,
-              borderColor: theme.colors[hasMultiple ? 'basic' : 'disabled'],
-              borderWidth: theme.borderWidth.xsmall,
-              borderRadius: theme.borderRadius / 2,
-              overflow: 'hidden',
-            } as const;
-            const innerStyle = {
-              width: '100%',
-              height: '100%',
-              backgroundColor: theme.colors[hasMultiple ? 'accent' : 'disabled'],
-            } as const;
-            const shouldFill = hasMultiple && i <= selectedIndex;
-            if (blinkIndex === i) {
-              return (
-                <View key={i} style={containerStyle}>
-                  {shouldFill && <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />}
-                </View>
-              );
-            }
-            return (
-              <View key={i} style={containerStyle}>
-                {shouldFill && <View style={innerStyle} />}
-              </View>
-            );
-          })}
-        </View>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <IconButton
-            icon='add'
-            onPress={hasMultiple ? onIncrease : undefined}
-            size={theme.iconSize.large}
-            color={hasMultiple ? 'basic' : 'disabled'}
-          />
-        </View>
-      </View>
+      <SelectorRow
+        onIncrease={hasMultiple ? onIncrease : undefined}
+        onDecrease={hasMultiple ? onDecrease : undefined}
+        increaseColor={hasMultiple ? 'basic' : 'disabled'}
+        decreaseColor={hasMultiple ? 'basic' : 'disabled'}
+        opacity={hasMultiple ? 1 : 0.5}
+      >
+        <BarIndicator
+          total={columns}
+          filledCount={hasMultiple ? selectedIndex + 1 : 0}
+          blinkIndex={blinkIndex}
+          blinkAnim={blinkAnim}
+          containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
+          fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
+        />
+      </SelectorRow>
       {!hasMultiple && (
         <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
           Недоступно для данного шрифта
