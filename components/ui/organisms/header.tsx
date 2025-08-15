@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { useTheme } from 'styled-components/native';
 
 interface HeaderProps {
   children: ReactNode;
   showShadow?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) => {
