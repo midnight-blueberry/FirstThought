@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated, StyleProp, ViewStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
@@ -30,8 +30,13 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity,
     right: theme.padding.small,
   } as const;
 
+  const headerStyle: StyleProp<ViewStyle> = [
+    styles.header,
+    { paddingHorizontal: 0, paddingVertical: theme.padding.small },
+  ];
+
   return (
-    <Header showShadow={showShadow} style={[styles.header, { paddingHorizontal: 0, paddingVertical: theme.padding.small }]}>
+    <Header showShadow={showShadow} style={headerStyle}>
       {onBack !== null && (
         <IconButton
           icon="chevron-back"
