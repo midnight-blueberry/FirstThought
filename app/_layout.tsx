@@ -137,13 +137,16 @@ export default function RootLayout() {
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.colors.background,
-                    borderColor: theme.name === 'Темная' ? theme.colors.background : theme.colors.basic,
-                    borderWidth: theme.borderWidth.medium,
-                    borderLeftWidth: 0,
+                    borderColor: theme.colors.background,
+                    borderWidth: 0,
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                     overflow: 'hidden',
+                  },
+
+                  sceneContainerStyle: {
+                    backgroundColor: theme.colors.background,
                   },
 
                   // внутренняя обёртка контента (скролл + фон)

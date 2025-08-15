@@ -15,11 +15,12 @@ const Container = styled.View`
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small +
     (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.small * 2 +
+    theme.borderWidth.medium * 2 +
     4}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
-  border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth.small}px;
+  border-width: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.borderWidth.medium}px;
   border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
 `;
 
@@ -33,12 +34,12 @@ const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) 
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small +
     (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.small * 2 +
+    theme.borderWidth.medium * 2 +
     4}px;
   line-height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small +
     (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.small * 2 +
+    theme.borderWidth.medium * 2 +
     4}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
