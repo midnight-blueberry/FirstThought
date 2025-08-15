@@ -26,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) 
         {
           padding: theme.padding.small,
           backgroundColor: theme.colors.background,
-          borderTopColor: 'transparent',
-          borderBottomColor: 'transparent',
+          borderColor: theme.colors.background,
+          borderWidth: 0,
           borderTopWidth: 0,
           borderBottomWidth: 0,
         },
