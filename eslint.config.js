@@ -1,23 +1,22 @@
-import tseslint from 'typescript-eslint';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 
-export default tseslint.config(
-  // Другие твои конфиги, если есть
+export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser: tseslint.parser,
+      parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json', // важно для проверки типов
+        project: './tsconfig.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
+      '@typescript-eslint': tsPlugin,
     },
     rules: {
-      // Рекомендованные правила с проверкой типов
-      ...tseslint.configs.recommendedTypeChecked.rules,
-      // (опционально) без строгих проверок стиля
+      ...tsPlugin.configs['recommended-type-checked'].rules,
     },
-  }
-);
+  },
+];
+

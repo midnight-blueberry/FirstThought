@@ -1,11 +1,7 @@
 import IconButton from '@/components/ui/atoms/icon-button';
 import DiaryList from '@/components/ui/organisms/diary-list';
-import { RouteProp } from '@react-navigation/native';
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 interface Diary {
@@ -14,20 +10,9 @@ interface Diary {
   title: string;
 }
 
-type RootStackParamList = {
-  Home: { onIncreaseFont: () => void; onDecreaseFont: () => void };
-};
-
-type HomeRouteProp = RouteProp<RootStackParamList, 'Home'>;
-
-type Props = {
-  route: HomeRouteProp;
-  navigation: any;
-};
-
 const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 
-const HomePage: React.FC<Props> = ({ route, navigation }) => {
+const HomePage: React.FC = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const theme = useTheme();
   const iconColor: keyof DefaultTheme['colors'] =

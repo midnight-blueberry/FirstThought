@@ -68,7 +68,6 @@ export default function Settings() {
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(level);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight])
   );
 
@@ -164,14 +163,14 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
-      saveSettings({
-        themeName: selectedThemeName,
-        accentColor: selectedAccentColor,
-        fontSizeLevel,
-        fontName: selectedFontName,
-        fontWeight,
-      });
+        updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
+        void saveSettings({
+          themeName: selectedThemeName,
+          accentColor: selectedAccentColor,
+          fontSizeLevel,
+          fontName: selectedFontName,
+          fontWeight,
+        });
     };
 
     if (withOverlay) {
@@ -240,7 +239,7 @@ export default function Settings() {
     runWithOverlay(() => {
       setFontSizeLevel(level);
       updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
-      saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
+      void saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
     });
   };
 

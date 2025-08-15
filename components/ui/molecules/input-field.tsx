@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import React, { useState } from 'react';
 import { TextInputProps } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styledNative, { DefaultTheme, useTheme } from 'styled-components/native';
+import styled, { DefaultTheme, useTheme } from 'styled-components/native';
 
-const Container = styledNative.View`
+const Container = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
@@ -22,7 +23,7 @@ const Container = styledNative.View`
   border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
 `;
 
-const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
+const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
   placeholderTextColor: theme.colors.disabled,
 }))`
   flex: 1;
@@ -44,7 +45,7 @@ const StyledInput = styledNative.TextInput.attrs(({ theme }: { theme: DefaultThe
   padding-vertical: 0px;
 `;
 
-const SearchButton = styledNative.TouchableOpacity`
+const SearchButton = styled.TouchableOpacity`
   padding-left: 8px;
   padding-right: 12px;
   justify-content: center;

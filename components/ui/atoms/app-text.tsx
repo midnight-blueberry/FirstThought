@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
-import styledNative, { DefaultTheme, useTheme } from "styled-components/native";
+import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { getFontFamily, getNextFontWeight } from "@/constants/Fonts";
 
 type AppTextProps = {
@@ -20,7 +21,7 @@ interface StyledTextProps {
   fontWeight: TextStyle['fontWeight'];
 }
 
-const StyledText = styledNative.Text<StyledTextProps>`
+const StyledText = styled.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
   font-family: ${(props: StyledTextProps) => props.fontFamily};
@@ -40,14 +41,14 @@ const AppText: React.FC<AppTextProps> = ({
   const familyString = fontFamily ?? theme.fontName;
   const parts = familyString.split("_");
   const baseFamily = parts.slice(0, -1).join("_");
-  const baseWeight = (fontWeight ?? parts[parts.length - 1]) as string;
+  const baseWeight: string = fontWeight ?? parts[parts.length - 1];
 
-  let resolvedWeight = (fontWeight ?? theme.fontWeight) as TextStyle['fontWeight'];
+  let resolvedWeight: TextStyle['fontWeight'] = fontWeight ?? theme.fontWeight;
   let resolvedFamily = fontFamily ?? theme.fontName;
 
   if ((variant === "large" || variant === "xlarge") && !fontWeight) {
-    resolvedWeight = getNextFontWeight(baseFamily, baseWeight) as TextStyle['fontWeight'];
-    resolvedFamily = getFontFamily(baseFamily, resolvedWeight as string);
+    resolvedWeight = getNextFontWeight(baseFamily, baseWeight);
+    resolvedFamily = getFontFamily(baseFamily, resolvedWeight);
   }
 
   return (
