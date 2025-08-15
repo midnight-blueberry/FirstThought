@@ -19,8 +19,8 @@ const Container = styled.View`
     4}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
-  border-width: ${({ theme }: { theme: DefaultTheme }) => theme.borderWidth.small}px;
-  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
+  border-width: 0px;
+  border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
 `;
 
 const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
