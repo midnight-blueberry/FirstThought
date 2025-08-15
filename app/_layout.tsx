@@ -1,5 +1,6 @@
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
@@ -14,9 +15,9 @@ import { themes, themeList } from '../theme';
 import { loadSettings } from '@/src/storage/settings';
 import { fonts, defaultFontName, getFontFamily } from '@/constants/Fonts';
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync();
 
-function CustomDrawerContent(props: any) {
+function CustomDrawerContent(props: DrawerContentComponentProps) {
   const theme = useTheme();
   return (
       <DrawerContentScrollView
@@ -102,12 +103,12 @@ export default function RootLayout() {
       }
     }
 
-    prepare();
+    void prepare();
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
+  const onLayoutRootView = useCallback(() => {
     if (appIsReady) {
-      await SplashScreen.hideAsync();
+      void SplashScreen.hideAsync();
     }
   }, [appIsReady]);
 
