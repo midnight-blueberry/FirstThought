@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 import IconButton from '../atoms/icon-button';
+import Header from '../organisms/header';
 
 interface ScreenHeaderProps {
   title: string;
   onBack?: () => void;
   saveOpacity?: Animated.Value;
+  showShadow?: boolean;
 }
 
-const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity }) => {
+const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity, showShadow = false }) => {
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -19,16 +21,6 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
     if (onBack) onBack();
     else navigation.goBack();
   };
-
-  const containerStyle = {
-    paddingVertical: theme.padding.small,
-    backgroundColor: theme.colors.background,
-    shadowColor: theme.colors.basic,
-    shadowOffset: { width: 0, height: theme.borderWidth.small },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-    elevation: 4,
-  } as const;
 
   const leftStyle = {
     left: theme.padding.small,
@@ -39,7 +31,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
   } as const;
 
   return (
-    <View style={[styles.header, containerStyle]}>
+    <Header showShadow={showShadow} style={[styles.header, { paddingHorizontal: 0, paddingVertical: theme.padding.small }]}>
       {onBack !== null && (
         <IconButton
           icon="chevron-back"
@@ -54,14 +46,12 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, onBack, saveOpacity 
           <IconButton icon="save-outline" size={theme.iconSize.large} />
         </Animated.View>
       )}
-    </View>
+    </Header>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },

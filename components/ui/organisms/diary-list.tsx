@@ -2,7 +2,11 @@ import React from 'react';
 import {
   FlatList,
   StyleSheet,
-  View
+  View,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
@@ -16,9 +20,11 @@ interface Diary {
 
 type DiaryListProps = {
   data: Diary[];
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  style?: StyleProp<ViewStyle>;
 };
 
-const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
+const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryListProps) => {
   const theme = useTheme();
 
   const renderItem = ({ item }: { item: Diary }) => (
@@ -55,7 +61,9 @@ const DiaryList: React.FC<DiaryListProps> = ({ data }: DiaryListProps) => {
         paddingLeft: theme.spacing.medium,
         paddingRight: theme.padding.small,
       }}
-      style={{ backgroundColor: theme.colors.background }}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+      style={[{ backgroundColor: theme.colors.background }, style]}
     />
   );
 };

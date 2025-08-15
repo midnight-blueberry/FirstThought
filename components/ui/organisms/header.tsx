@@ -1,23 +1,41 @@
-// header.tsx
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-// берём навигацию из expo-router (он проксирует react-navigation)
-import { DrawerActions } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
+import React, { ReactNode } from 'react';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from 'styled-components/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SearchField from '../molecules/input-field';
 
-const Header: React.FC = () => {
-  const navigation = useNavigation();
+interface HeaderProps {
+  children: ReactNode;
+  showShadow?: boolean;
+  style?: ViewStyle;
+}
+
+const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) => {
   const theme = useTheme();
 
+  const shadowStyle = showShadow
+    ? {
+        shadowColor: theme.colors.basic,
+        shadowOffset: { width: 0, height: theme.borderWidth.small },
+        shadowOpacity: 0.5,
+        shadowRadius: 3,
+        elevation: 4,
+      }
+    : undefined;
+
   return (
-    <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
-      <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())} hitSlop={8}>
-        <Ionicons name="menu" size={theme.iconSize.large} color={theme.colors.basic} />
-      </TouchableOpacity>
-      <SearchField placeholder="Поиск по всем дневникам..." />
+    <View
+      style={[
+        styles.header,
+        {
+          padding: theme.padding.small,
+          backgroundColor: theme.colors.background,
+          borderColor: theme.colors.background,
+          borderWidth: 0,
+        },
+        shadowStyle,
+        style,
+      ]}
+    >
+      {children}
     </View>
   );
 };
@@ -26,7 +44,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    position: 'relative',
   },
 });
 

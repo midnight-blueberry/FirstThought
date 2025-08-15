@@ -10,7 +10,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme, DefaultTheme } from 'styled-components/native';
-import Header from '../components/ui/organisms/header';
 import { themes, themeList } from '../theme';
 import { loadSettings } from '@/src/storage/settings';
 import { fonts, defaultFontName, getFontFamily } from '@/constants/Fonts';
@@ -132,19 +131,22 @@ export default function RootLayout() {
                 initialRouteName="home-page"
                 // Здесь задаём общие опции для всех экранов и самого меню
                 screenOptions={{
-                  header: () => <Header />,
+                  headerShown: false,
 
                   // ширина и фон «самого ящика»
                   drawerStyle: {
                     width: 280,
                     backgroundColor: theme.colors.background,
-                    borderColor: theme.name === 'Темная' ? theme.colors.background : theme.colors.basic,
-                    borderWidth: theme.borderWidth.medium,
-                    borderLeftWidth: 0,
+                    borderColor: theme.colors.background,
+                    borderWidth: 0,
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                     overflow: 'hidden',
+                  },
+
+                  sceneContainerStyle: {
+                    backgroundColor: theme.colors.background,
                   },
 
                   // внутренняя обёртка контента (скролл + фон)
