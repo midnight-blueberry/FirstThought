@@ -35,6 +35,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
+  const [showShadow, setShowShadow] = useState(false);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
@@ -334,8 +335,14 @@ export default function Settings() {
         title="Настройки"
         onBack={() => navigation.goBack()}
         saveOpacity={isSaved ? fadeAnim : undefined}
+        showShadow={showShadow}
       />
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.container}
+        onScroll={(e) => setShowShadow(e.nativeEvent.contentOffset.y > 0)}
+        scrollEventThrottle={16}
+      >
         <AppText variant='large' style={[styles.label, styles.themeLabel]}>Тема</AppText>
         <View style={styles.themeList}>
           {themeList.map(themeItem => (
