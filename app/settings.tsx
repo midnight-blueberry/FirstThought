@@ -46,7 +46,7 @@ export default function Settings() {
   const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
   const weightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
-  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
