@@ -12,11 +12,6 @@ const Container = styled.View`
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
     theme.spacing.small + 2}px;
   padding-left: 12px;
-  height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.medium * 2 +
-    4}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) =>
@@ -31,16 +26,6 @@ const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) 
   font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
   font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
-  height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.medium * 2 +
-    4}px;
-  line-height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.medium * 2 +
-    4}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
