@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
-    overflow: 'hidden',
   },
 });
 
