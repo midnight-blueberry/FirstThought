@@ -1,5 +1,5 @@
 import AppText from '@/components/ui/atoms/app-text';
-import ScreenHeader from '@/components/ui/molecules/screen-header';
+import Header from '@/components/ui/organisms/header';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
@@ -331,7 +331,7 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScreenHeader
+      <Header
         title="Настройки"
         onBack={() => navigation.goBack()}
         saveOpacity={isSaved ? fadeAnim : undefined}
