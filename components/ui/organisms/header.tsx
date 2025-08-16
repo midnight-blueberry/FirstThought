@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { useTheme } from 'styled-components/native';
 
 interface HeaderProps {
   children: ReactNode;
   showShadow?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) => {
@@ -19,7 +19,13 @@ const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) 
         shadowRadius: 3,
         elevation: 4,
       }
-    : undefined;
+    : {
+        shadowColor: 'transparent',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
+      };
 
   return (
     <View
@@ -30,11 +36,20 @@ const Header: React.FC<HeaderProps> = ({ children, showShadow = false, style }) 
           backgroundColor: theme.colors.background,
           borderColor: theme.colors.background,
           borderWidth: 0,
+          borderTopWidth: 0,
+          borderBottomWidth: 0,
         },
         shadowStyle,
         style,
       ]}
     >
+      <View
+        pointerEvents="none"
+        style={[
+          StyleSheet.absoluteFillObject,
+          { top: -1, bottom: -1, backgroundColor: theme.colors.background },
+        ]}
+      />
       {children}
     </View>
   );
