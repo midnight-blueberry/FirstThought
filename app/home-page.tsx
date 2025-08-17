@@ -1,11 +1,11 @@
 import IconButton from '@/components/ui/atoms/icon-button';
+import SearchField from '@/components/ui/molecules/input-field';
 import DiaryList from '@/components/ui/organisms/diary-list';
 import Header from '@/components/ui/organisms/header';
-import SearchField from '@/components/ui/molecules/input-field';
-import React, { useState } from 'react';
-import { StyleSheet, View, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
+import React, { useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 interface Diary {
@@ -44,11 +44,6 @@ const HomePage: React.FC = () => {
         <IconButton
           icon="menu"
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          style={{
-            borderWidth: 0,
-            borderColor: 'transparent',
-            backgroundColor: 'transparent',
-          }}
         />
         <SearchField placeholder="Поиск по всем дневникам..." />
       </Header>

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle, Animated } from 'react-native';
+import { Platform, StyleSheet, View, ViewStyle, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
@@ -77,6 +77,19 @@ const Header: React.FC<HeaderProps> = ({
       style={[
         styles.header,
         paddingStyle,
+        {
+          Platform.OS === 'android'
+          ? {
+              backgroundColor: theme.colors.background, // полностью непрозрачный
+              height: 56,                                // целые dp
+              flexDirection: 'row',
+              alignItems: 'center',
+              // склеиваем ВЕСЬ ряд в один слой:
+              needsOffscreenAlphaCompositing: true,
+              renderToHardwareTextureAndroid: true,
+            }
+          : undefined
+        },
         {
           backgroundColor: theme.colors.background,
           borderColor: theme.colors.background,
