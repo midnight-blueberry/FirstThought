@@ -41,14 +41,14 @@ export default function Settings() {
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
-  const [ fontWeight, setFontWeight ] = useState(theme.fontWeight);
+  const [ fontWeight, setFontWeight ] = useState<DefaultTheme['fontWeight']>(theme.fontWeight);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
   const weightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
-  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
@@ -74,7 +74,13 @@ export default function Settings() {
   );
 
   const updateTheme = useCallback(
-    (themeName: string, accentColor: string, fontName: string, weight: string, level: number) => {
+    (
+      themeName: string,
+      accentColor: string,
+      fontName: string,
+      weight: DefaultTheme['fontWeight'],
+      level: number,
+    ) => {
       const chosenTheme = themeList.find(t => t.name === themeName);
       const chosenFont = fonts.find(f => f.name === fontName) ?? fonts[0];
       if (chosenTheme) {
@@ -93,7 +99,9 @@ export default function Settings() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        const w = chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight;
+        const w: DefaultTheme['fontWeight'] = chosenFont.weights.includes(String(weight))
+          ? weight
+          : (chosenFont.defaultWeight as DefaultTheme['fontWeight']);
         setTheme({
           ...chosenTheme,
           colors: updatedColors,
@@ -165,14 +173,14 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
-        updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
-        void saveSettings({
-          themeName: selectedThemeName,
-          accentColor: selectedAccentColor,
-          fontSizeLevel,
-          fontName: selectedFontName,
-          fontWeight,
-        });
+      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
+      void saveSettings({
+        themeName: selectedThemeName,
+        accentColor: selectedAccentColor,
+        fontSizeLevel,
+        fontName: selectedFontName,
+        fontWeight,
+      });
     };
 
     if (withOverlay) {
@@ -241,7 +249,13 @@ export default function Settings() {
     runWithOverlay(() => {
       setFontSizeLevel(level);
       updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
-      void saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
+      void saveSettings({
+        themeName: selectedThemeName,
+        accentColor: selectedAccentColor,
+        fontSizeLevel: level,
+        fontName: selectedFontName,
+        fontWeight,
+      });
     });
   };
 
@@ -284,10 +298,10 @@ export default function Settings() {
 
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-    const idx = font.weights.indexOf(fontWeight);
+    const idx = font.weights.indexOf(String(fontWeight));
     if (weightBlinkIndex !== null) stopWeightBlink();
     if (idx > 0) {
-      setFontWeight(font.weights[idx - 1]);
+      setFontWeight(font.weights[idx - 1] as DefaultTheme['fontWeight']);
     } else {
       triggerWeightBlink(0);
     }
@@ -295,10 +309,10 @@ export default function Settings() {
 
   const increaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-    const idx = font.weights.indexOf(fontWeight);
+    const idx = font.weights.indexOf(String(fontWeight));
     if (weightBlinkIndex !== null) stopWeightBlink();
     if (idx < font.weights.length - 1) {
-      setFontWeight(font.weights[idx + 1]);
+      setFontWeight(font.weights[idx + 1] as DefaultTheme['fontWeight']);
     } else {
       triggerWeightBlink(font.weights.length - 1);
     }
@@ -389,7 +403,10 @@ export default function Settings() {
                 label={f.name}
                 swatchColor={theme.colors.basic}
                 selected={f.name === selectedFontName}
-                onPress={() => { setSelectedFontName(f.name); setFontWeight(f.defaultWeight); }}
+                onPress={() => {
+                  setSelectedFontName(f.name);
+                  setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
+                }}
                 fontFamily={getFontFamily(f.family, f.defaultWeight)}
                 fontWeight='normal'
                 fontSize={medium}
@@ -407,7 +424,7 @@ export default function Settings() {
         />
         <FontWeightSelector
           weights={selectedFont.weights}
-          selectedIndex={selectedFont.weights.indexOf(fontWeight)}
+            selectedIndex={selectedFont.weights.indexOf(String(fontWeight))}
           onIncrease={increaseFontWeight}
           onDecrease={decreaseFontWeight}
           blinkIndex={weightBlinkIndex}
