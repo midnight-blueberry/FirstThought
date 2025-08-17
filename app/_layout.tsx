@@ -19,11 +19,6 @@ import { themeList, themes } from '../theme';
 
 void SplashScreen.preventAutoHideAsync();
 
-function getStatusBarHeight() {
-  const { top } = useSafeAreaInsets(); // логические px (dp)
-  return top; // это и есть высота статус-бара/выреза
-}
-
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const theme = useTheme();
   return (
@@ -52,6 +47,141 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         {/* … */}
       </DrawerContentScrollView>
     );
+}
+
+type DrawerNavigatorProps = {
+  theme: DefaultTheme;
+  homePageHeaderTitle: string;
+  homePageHeaderElevation: number;
+  settingsPageHeaderTitle: string;
+  settingsPageHeaderElevation: number;
+};
+
+function DrawerNavigator({
+  theme,
+  homePageHeaderTitle,
+  homePageHeaderElevation,
+  settingsPageHeaderTitle,
+  settingsPageHeaderElevation,
+}: DrawerNavigatorProps) {
+  const { top } = useSafeAreaInsets();
+
+  return (
+    <Drawer
+      initialRouteName="home-page"
+      // Здесь задаём общие опции для всех экранов и самого меню
+      screenOptions={{
+        headerShown: true,
+
+        // ширина и фон «самого ящика»
+        drawerStyle: {
+          marginTop: top,
+          width: 280,
+          backgroundColor: theme.colors.background,
+          borderColor: theme.colors.basic,
+          borderWidth: theme.borderWidth.medium,
+          borderRadius: theme.borderRadius,
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+          overflow: 'hidden',
+        },
+
+        // внутренняя обёртка контента (скролл + фон)
+        drawerContentStyle: {
+          paddingTop: 20,
+          backgroundColor: theme.colors.background,
+          borderRadius: theme.borderRadius,
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+          borderColor: theme.colors.basic,
+          borderWidth: theme.borderWidth.medium,
+        },
+
+        // стиль текста меток
+        drawerLabelStyle: {
+          fontFamily: theme.fontName,
+          fontSize: theme.fontSize.medium,
+          fontWeight: theme.fontWeight,
+          color: theme.colors.basic,
+        },
+
+        // цвет активного/неактивного пункта
+        drawerActiveTintColor: theme.colors.basic,
+        drawerInactiveTintColor: theme.colors.basic,
+
+        // при желании: отступы вокруг каждого пункта
+        drawerItemStyle: {
+          marginVertical: 4,
+          marginHorizontal: 8,
+        },
+      }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen
+        name="home-page"
+        options={{
+          title: homePageHeaderTitle,
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontFamily: theme.fontName,
+            fontSize: theme.fontSize.large,
+            color: theme.colors.basic,
+            fontWeight: theme.fontWeight,
+          },
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+            elevation: homePageHeaderElevation,
+          },
+          // iOS/web (React Navigation 6) — отключает линию под хедером
+          headerShadowVisible: false,
+          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
+          headerLeft: () => {
+            const navigation = useNavigation();
+            return (
+              <IconButton
+                icon="menu"
+                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+              />
+            );
+          },
+          headerRight: () => (
+            <IconButton
+              icon="search"
+              onPress={() => null}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="settings"
+        options={{
+          title: settingsPageHeaderTitle,
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontFamily: theme.fontName,
+            fontSize: theme.fontSize.large,
+            color: theme.colors.basic,
+            fontWeight: theme.fontWeight,
+          },
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+            elevation: settingsPageHeaderElevation,
+          },
+          headerShadowVisible: false,
+          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
+          headerLeft: () => {
+            const navigation = useNavigation();
+            return (
+              <IconButton
+                icon="chevron-back"
+                onPress={() => navigation.goBack()}
+              />
+            );
+          },
+        }}
+      />
+    </Drawer>
+  );
 }
 
 export default function RootLayout() {
@@ -144,120 +274,13 @@ export default function RootLayout() {
             edges={['left', 'right', 'bottom']}
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <Drawer
-                initialRouteName="home-page"
-                // Здесь задаём общие опции для всех экранов и самого меню
-                screenOptions={{
-                  headerShown: true,
-
-                  // ширина и фон «самого ящика»
-                  drawerStyle: {
-                    marginTop: getStatusBarHeight(),
-                    width: 280,
-                    backgroundColor: theme.colors.background,
-                    borderColor: theme.colors.basic,
-                    borderWidth: theme.borderWidth.medium,
-                    borderRadius: theme.borderRadius,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    overflow: 'hidden',
-                  },
-
-                  // внутренняя обёртка контента (скролл + фон)
-                  drawerContentStyle: {
-                    paddingTop: 20,
-                    backgroundColor: theme.colors.background,
-                    borderRadius: theme.borderRadius,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    borderColor: theme.colors.basic,
-                    borderWidth: theme.borderWidth.medium,
-                  },
-
-                  // стиль текста меток
-                  drawerLabelStyle: {
-                    fontFamily: theme.fontName,
-                    fontSize: theme.fontSize.medium,
-                    fontWeight: theme.fontWeight,
-                    color: theme.colors.basic,
-                  },
-
-                  // цвет активного/неактивного пункта
-                  drawerActiveTintColor: theme.colors.basic,
-                  drawerInactiveTintColor: theme.colors.basic,
-
-                  // при желании: отступы вокруг каждого пункта
-                  drawerItemStyle: {
-                    marginVertical: 4,
-                    marginHorizontal: 8,
-                  },
-                }}
-                drawerContent={(props) => <CustomDrawerContent {...props} />}
-              >
-                <Drawer.Screen
-                  name="home-page"
-                  options={{
-                    title: homePageHeaderTitle,
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: {
-                      fontFamily: theme.fontName,
-                      fontSize: theme.fontSize.large,
-                      color: theme.colors.basic,
-                      fontWeight: theme.fontWeight,
-                    },
-                    headerStyle: {
-                      backgroundColor: theme.colors.background,
-                      elevation: homePageHeaderElevation,
-                    },
-                    // iOS/web (React Navigation 6) — отключает линию под хедером
-                    headerShadowVisible: false,
-                    headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-                    headerLeft: () => {
-                      const navigation = useNavigation();
-                      return (
-                        <IconButton
-                          icon="menu"
-                          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-                        />
-                      )
-                    },
-                    headerRight: () => (
-                      <IconButton
-                        icon="search"
-                        onPress={() => null}
-                      />
-                    ),
-                  }}
-                />
-                <Drawer.Screen
-                  name="settings"
-                  options={{
-                    title: settingsPageHeaderTitle,
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: {
-                      fontFamily: theme.fontName,
-                      fontSize: theme.fontSize.large,
-                      color: theme.colors.basic,
-                      fontWeight: theme.fontWeight,
-                    },
-                    headerStyle: {
-                      backgroundColor: theme.colors.background,
-                      elevation: settingsPageHeaderElevation,
-                    },
-                    headerShadowVisible: false,
-                    headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-                    headerLeft: () => {
-                      const navigation = useNavigation();
-                      return (
-                        <IconButton
-                          icon="chevron-back"
-                          onPress={() => navigation.goBack()}
-                        />
-                      )
-                    },
-                  }}
-                />
-              </Drawer>
+              <DrawerNavigator
+                theme={theme}
+                homePageHeaderTitle={homePageHeaderTitle}
+                homePageHeaderElevation={homePageHeaderElevation}
+                settingsPageHeaderTitle={settingsPageHeaderTitle}
+                settingsPageHeaderElevation={settingsPageHeaderElevation}
+              />
             </GestureHandlerRootView>
           </SafeAreaView>
         </SafeAreaProvider>
