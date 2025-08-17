@@ -40,14 +40,14 @@ export default function Settings() {
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
-  const [ fontWeight, setFontWeight ] = useState(theme.fontWeight);
+  const [ fontWeight, setFontWeight ] = useState<string>(String(theme.fontWeight));
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
   const weightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ isSaved, setIsSaved ] = useState(false);
-  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
@@ -64,7 +64,7 @@ export default function Settings() {
       setSelectedAccentColor(theme.colors.accent);
       const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
       setSelectedFontName(baseName);
-      setFontWeight(theme.fontWeight);
+      setFontWeight(String(theme.fontWeight));
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
@@ -92,12 +92,12 @@ export default function Settings() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        const w = chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight;
+        const w = (chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight) as DefaultTheme['fontWeight'];
         setTheme({
           ...chosenTheme,
           colors: updatedColors,
           fontSize: updatedFontSize,
-          fontName: getFontFamily(chosenFont.family, w),
+          fontName: getFontFamily(chosenFont.family, w as string),
           fontWeight: w,
         });
       }
