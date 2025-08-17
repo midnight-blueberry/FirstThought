@@ -1,5 +1,6 @@
 import IconButton from '@/components/ui/atoms/icon-button';
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
+import { HEADER_HEIGHT } from '@/constants/Layout';
 import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
@@ -72,6 +73,9 @@ function DrawerNavigator({
       // Здесь задаём общие опции для всех экранов и самого меню
       screenOptions={{
         headerShown: true,
+        headerStyle: {
+          height: HEADER_HEIGHT,
+        },
 
         // ширина и фон «самого ящика»
         drawerStyle: {
@@ -131,6 +135,7 @@ function DrawerNavigator({
           headerStyle: {
             backgroundColor: theme.colors.background,
             elevation: homePageHeaderElevation,
+            height: HEADER_HEIGHT,
           },
           // iOS/web (React Navigation 6) — отключает линию под хедером
           headerShadowVisible: false,
@@ -166,6 +171,7 @@ function DrawerNavigator({
           headerStyle: {
             backgroundColor: theme.colors.background,
             elevation: settingsPageHeaderElevation,
+            height: HEADER_HEIGHT,
           },
           headerShadowVisible: false,
           headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»

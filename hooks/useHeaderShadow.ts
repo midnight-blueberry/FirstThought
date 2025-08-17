@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { HEADER_HEIGHT } from '@/constants/Layout';
 import { useNavigation } from 'expo-router';
 import { useTheme } from 'styled-components/native';
 
@@ -15,6 +16,7 @@ export default function useHeaderShadow() {
         headerStyle: {
           backgroundColor: theme.colors.background,
           elevation: hasShadow ? 4 : 0,
+          height: HEADER_HEIGHT,
         },
         headerShadowVisible: hasShadow,
       });
