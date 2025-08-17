@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+ 
 import React, { useMemo, useState } from 'react';
 import { LayoutChangeEvent, TextInputProps } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';

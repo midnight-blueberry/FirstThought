@@ -57,10 +57,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [theme, setTheme] = useState(themes.light);
-  const [homePageHeaderTitle, setHomePageHeaderTitle] = useState(() => 'Мои дневники');
-  const [homePageHeaderElevation, setHomePageHeaderElevation] = useState(0);
-  const [settingsPageHeaderTitle, setSettingsPageHeaderTitle] = useState(() => 'Настройки');
-  const [settingsPageHeaderElevation, setSettingsPageHeaderElevation] = useState(0);
+  const [homePageHeaderTitle] = useState(() => 'Мои дневники');
+  const [homePageHeaderElevation] = useState(0);
+  const [settingsPageHeaderTitle] = useState(() => 'Настройки');
+  const [settingsPageHeaderElevation] = useState(0);
 
   useEffect(() => {
     async function prepare() {
@@ -221,15 +221,12 @@ export default function RootLayout() {
                         />
                       )
                     },
-                    headerRight: () => {
-                      const navigation = useNavigation();
-                      return (
+                    headerRight: () => (
                       <IconButton
                         icon="search"
                         onPress={() => null}
                       />
-                      )
-                    },
+                    ),
                   }}
                 />
                 <Drawer.Screen
@@ -245,7 +242,7 @@ export default function RootLayout() {
                     },
                     headerStyle: {
                       backgroundColor: theme.colors.background,
-                      elevation: homePageHeaderElevation,
+                      elevation: settingsPageHeaderElevation,
                     },
                     headerShadowVisible: false,
                     headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
+ 
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styled, { DefaultTheme, useTheme } from "styled-components/native";

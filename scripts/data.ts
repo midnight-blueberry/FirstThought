@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
 import * as SecureStore from 'expo-secure-store';
-import * as Random from 'expo-random';
 
 // Ключи для индексов
 const DIARIES_KEY      = '__encrypted_diaries__';    // список ваших дневников
@@ -20,7 +19,7 @@ async function generateId(): Promise<string> {
 
 // Генерируем настоящий 256-битный ключ (в формате Base64)
 async function generateKey() {
-  const bytes = await Random.getRandomBytesAsync(32); // 32 * 8 = 256 бит
+  const bytes = crypto.getRandomValues(new Uint8Array(32)); // 32 * 8 = 256 бит
   const key = CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.create(bytes));
   await SecureStore.setItemAsync('enc_key', key, {
     keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
