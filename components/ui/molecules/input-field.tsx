@@ -13,11 +13,11 @@ const Container = styled.View`
     theme.spacing.large}px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
     theme.iconSize.small + theme.spacing.large * 2 +
-    theme.borderWidth.medium * 2}px;
+    theme.borderWidth.large * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.borderWidth.medium}px;
+    theme.borderWidth.large}px;
   border-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
 `;
 
