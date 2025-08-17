@@ -9,9 +9,11 @@ const Container = styled.View`
   align-items: center;
   flex: 1;
   margin-left: 16px;
-  padding-left: 12px;
+  padding-left: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.spacing.large}px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.buttonSizes.large}px;
+    theme.iconSize.small + theme.spacing.large * 2 +
+    theme.borderWidth.medium * 2}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) =>
@@ -28,15 +30,17 @@ const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) 
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   height: 100%;
   line-height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.buttonSizes.large - theme.borderWidth.medium * 2}px;
+    theme.iconSize.small + theme.spacing.large * 2}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
 `;
 
 const SearchButton = styled.TouchableOpacity`
-  padding-left: 8px;
-  padding-right: 12px;
+  padding-left: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.spacing.medium}px;
+  padding-right: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.spacing.large}px;
   justify-content: center;
   align-items: center;
   height: 100%;
