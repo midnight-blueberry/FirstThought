@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import React, { useMemo, useState } from 'react';
-import { TextInputProps, LayoutChangeEvent } from 'react-native';
+import { TextInputProps } from 'react-native';
+import Svg, { Rect } from 'react-native-svg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled, { DefaultTheme, useTheme } from 'styled-components/native';
-import Svg, { Rect } from 'react-native-svg';
 
 const FlattenRow = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
   margin-left: 16px;
-  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
 `;
 
 const Container = styled.View`
@@ -20,12 +19,8 @@ const Container = styled.View`
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
     theme.spacing.small + 2}px;
   padding-left: 12px;
-  height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.small + 2) * 2 +
-    theme.borderWidth.medium * 2 +
-    4}px;
-  background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
+  border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
+  overflow: hidden;
 `;
 
 const BorderSvg: React.FC<{ w: number; h: number; bw: number; r: number; color: string }> = ({ w, h, bw, r, color }) => {
@@ -57,10 +52,9 @@ const BorderSvg: React.FC<{ w: number; h: number; bw: number; r: number; color: 
 const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
   placeholderTextColor: theme.colors.disabled,
   includeFontPadding: false,
+  underlineColorAndroid: 'transparent',
 }))`
   flex: 1;
-  height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small + (theme.spacing.small + 2) * 2 + theme.borderWidth.medium * 2 + 4}px;
   text-align-vertical: center;
   padding-vertical: 0px;
   font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
@@ -87,16 +81,14 @@ const InputField: React.FC<TextInputProps> = (props) => {
       (theme.spacing.small + 2) * 2 +
       theme.borderWidth.medium * 2 +
       4;
-    return Math.round(h); // целые dp
+    return Math.round(h);
   }, [theme]);
 
   return (
     <FlattenRow>
       <Container
-        onLayout={(e: LayoutChangeEvent) =>
-          setW(Math.round(e.nativeEvent.layout.width))
-        }
-        style={{ height: FIELD_H, backgroundColor: theme.colors.background }}
+        onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))}
+        style={{ height: FIELD_H }}
       >
         {w > 0 && (
           <BorderSvg

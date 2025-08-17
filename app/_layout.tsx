@@ -1,20 +1,28 @@
+import IconButton from '@/components/ui/atoms/icon-button';
+import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
+import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
+import { useNavigation } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, TextStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ThemeProvider, useTheme, DefaultTheme } from 'styled-components/native';
-import { themes, themeList } from '../theme';
-import { loadSettings } from '@/src/storage/settings';
-import { fonts, defaultFontName, getFontFamily } from '@/constants/Fonts';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
+import { themeList, themes } from '../theme';
 
 void SplashScreen.preventAutoHideAsync();
+
+function getStatusBarHeight() {
+  const { top } = useSafeAreaInsets(); // логические px (dp)
+  return top; // это и есть высота статус-бара/выреза
+}
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const theme = useTheme();
@@ -23,8 +31,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         {...props}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingTop: theme.spacing.medium,       // вместо “20”
-          backgroundColor: theme.colors.background, // если нужно
+          paddingTop: theme.spacing.medium,
+          backgroundColor: theme.colors.background,
         }}
       >
           <DrawerItem
@@ -49,6 +57,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [theme, setTheme] = useState(themes.light);
+  const [homePageHeaderTitle, setHomePageHeaderTitle] = useState(() => 'Мои дневники');
+  const [homePageHeaderElevation, setHomePageHeaderElevation] = useState(0);
+  const [settingsPageHeaderTitle, setSettingsPageHeaderTitle] = useState(() => 'Настройки');
+  const [settingsPageHeaderElevation, setSettingsPageHeaderElevation] = useState(0);
 
   useEffect(() => {
     async function prepare() {
@@ -128,22 +140,23 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <SafeAreaView
             style={[styles.container, { backgroundColor: theme.colors.background }]}
-            edges={['top', 'bottom']}
             onLayout={onLayoutRootView}
+            edges={['left', 'right', 'bottom']}
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
               <Drawer
                 initialRouteName="home-page"
                 // Здесь задаём общие опции для всех экранов и самого меню
                 screenOptions={{
-                  headerShown: false,
+                  headerShown: true,
 
                   // ширина и фон «самого ящика»
                   drawerStyle: {
+                    marginTop: getStatusBarHeight(),
                     width: 280,
                     backgroundColor: theme.colors.background,
-                    borderColor: theme.colors.background,
-                    borderWidth: 0,
+                    borderColor: theme.colors.basic,
+                    borderWidth: theme.borderWidth.medium,
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
@@ -157,6 +170,8 @@ export default function RootLayout() {
                     borderRadius: theme.borderRadius,
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
+                    borderColor: theme.colors.basic,
+                    borderWidth: theme.borderWidth.medium,
                   },
 
                   // стиль текста меток
@@ -179,8 +194,72 @@ export default function RootLayout() {
                 }}
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
               >
-                <Drawer.Screen name="home-page" />
-                <Drawer.Screen name="settings" options={{ headerShown: false }} />
+                <Drawer.Screen
+                  name="home-page"
+                  options={{
+                    title: homePageHeaderTitle,
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                      fontFamily: theme.fontName,
+                      fontSize: theme.fontSize.large,
+                      color: theme.colors.basic,
+                      fontWeight: theme.fontWeight,
+                    },
+                    headerStyle: {
+                      backgroundColor: theme.colors.background,
+                      elevation: homePageHeaderElevation,
+                    },
+                    // iOS/web (React Navigation 6) — отключает линию под хедером
+                    headerShadowVisible: false,
+                    headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
+                    headerLeft: () => {
+                      const navigation = useNavigation();
+                      return (
+                        <IconButton
+                          icon="menu"
+                          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+                        />
+                      )
+                    },
+                    headerRight: () => {
+                      const navigation = useNavigation();
+                      return (
+                      <IconButton
+                        icon="search"
+                        onPress={() => null}
+                      />
+                      )
+                    },
+                  }}
+                />
+                <Drawer.Screen
+                  name="settings"
+                  options={{
+                    title: settingsPageHeaderTitle,
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                      fontFamily: theme.fontName,
+                      fontSize: theme.fontSize.large,
+                      color: theme.colors.basic,
+                      fontWeight: theme.fontWeight,
+                    },
+                    headerStyle: {
+                      backgroundColor: theme.colors.background,
+                      elevation: homePageHeaderElevation,
+                    },
+                    headerShadowVisible: false,
+                    headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
+                    headerLeft: () => {
+                      const navigation = useNavigation();
+                      return (
+                        <IconButton
+                          icon="chevron-back"
+                          onPress={() => navigation.goBack()}
+                        />
+                      )
+                    },
+                  }}
+                />
               </Drawer>
             </GestureHandlerRootView>
           </SafeAreaView>
