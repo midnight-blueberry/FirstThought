@@ -44,11 +44,7 @@ const HomePage: React.FC = () => {
         <IconButton
           icon="menu"
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          style={{
-            borderWidth: 0,
-            borderColor: 'transparent',
-            backgroundColor: 'transparent',
-          }}
+          size={theme.iconSize.xlarge}
         />
         <SearchField placeholder="Поиск по всем дневникам..." />
       </Header>
