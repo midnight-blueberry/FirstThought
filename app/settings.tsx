@@ -144,33 +144,55 @@ export default function Settings() {
       saveTimerRef.current = null;
     }
     fadeAnim.stopAnimation();
+    fadeAnim.setValue(0);
     setIsSaved(false);
   }, [fadeAnim]);
 
-  const runWithOverlay = useCallback((action: () => void, color?: string) => {
-    setOverlayColor(color ?? theme.colors.background);
-    setOverlayVisible(true);
-    overlayAnim.stopAnimation();
-    overlayAnim.setValue(0);
-    Animated.timing(overlayAnim, {
-      toValue: 1,
-      duration: 700,
-      useNativeDriver: true,
-    }).start(() => {
+  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const runWithOverlay = useCallback(
+    (action: () => void, color?: string) => {
+      setOverlayColor(color ?? theme.colors.background);
+      overlayAnim.stopAnimation();
       hideSaveIcon();
-      action();
-      setTimeout(() => {
+      if (overlayTimerRef.current) {
+        clearTimeout(overlayTimerRef.current);
+        overlayTimerRef.current = null;
+      }
+
+      const startFadeOut = () => {
+        overlayTimerRef.current = setTimeout(() => {
+          Animated.timing(overlayAnim, {
+            toValue: 0,
+            duration: 700,
+            useNativeDriver: true,
+          }).start(() => {
+            setOverlayVisible(false);
+            overlayTimerRef.current = null;
+            showSaveIcon();
+          });
+        }, 100);
+      };
+
+      if (!overlayVisible) {
+        setOverlayVisible(true);
+        overlayAnim.setValue(0);
         Animated.timing(overlayAnim, {
-          toValue: 0,
+          toValue: 1,
           duration: 700,
           useNativeDriver: true,
         }).start(() => {
-          setOverlayVisible(false);
-          showSaveIcon();
+          action();
+          startFadeOut();
         });
-      }, 100);
-    });
-  }, [overlayAnim, hideSaveIcon, showSaveIcon, theme.colors.background]);
+      } else {
+        overlayAnim.setValue(1);
+        action();
+        startFadeOut();
+      }
+    },
+    [overlayAnim, hideSaveIcon, overlayVisible, showSaveIcon, theme.colors.background]
+  );
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
@@ -223,6 +245,9 @@ export default function Settings() {
     return () => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
+      }
+      if (overlayTimerRef.current) {
+        clearTimeout(overlayTimerRef.current);
       }
     };
   }, []);
