@@ -10,12 +10,10 @@ const Container = styled.View`
   flex: 1;
   margin-left: 16px;
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.spacing.medium + 2}px;
+    theme.spacing.medium}px;
   padding-left: 12px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.medium + 2) * 2 +
-    theme.borderWidth.medium * 2}px;
+    theme.buttonSizes.medium}px;
   background-color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.background};
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   border-width: ${({ theme }: { theme: DefaultTheme }) =>
@@ -31,13 +29,9 @@ const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) 
   font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.medium + 2) * 2 +
-    theme.borderWidth.medium * 2}px;
+    theme.buttonSizes.medium}px;
   line-height: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.iconSize.small +
-    (theme.spacing.medium + 2) * 2 +
-    theme.borderWidth.medium * 2}px;
+    theme.buttonSizes.medium}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
   text-align-vertical: center;
   padding-vertical: 0px;
@@ -48,6 +42,7 @@ const SearchButton = styled.TouchableOpacity`
   padding-right: 12px;
   justify-content: center;
   align-items: center;
+  height: 100%;
 `;
 
 const InputField: React.FC<TextInputProps> = (props) => {
