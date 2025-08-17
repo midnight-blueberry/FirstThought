@@ -43,25 +43,22 @@ const Header: React.FC<HeaderProps> = ({
   ];
 
   if (childrenArray.length === 3) {
-    const leftStyle = { left: theme.padding.small } as const;
-    const rightStyle = { right: theme.padding.small } as const;
-    const [leftChild, centerChild, rightChild] = childrenArray;
+    const [leftChild, middleChild, rightChild] = childrenArray;
     return (
       <View style={[...baseStyle, styles.screenHeader]}>
-        <View style={[styles.left, leftStyle]}>{leftChild}</View>
-        {centerChild}
-        <View style={[styles.right, rightStyle]}>{rightChild}</View>
+        <View style={styles.fixed}>{leftChild}</View>
+        <View style={styles.flexible}>{middleChild}</View>
+        <View style={styles.fixed}>{rightChild}</View>
       </View>
     );
   }
 
   if (childrenArray.length === 2) {
-    const leftStyle = { left: theme.padding.small } as const;
-    const [leftChild, middleChild] = childrenArray;
+    const [leftChild, rightChild] = childrenArray;
     return (
       <View style={[...baseStyle, styles.screenHeader]}>
-        <View style={[styles.left, leftStyle]}>{leftChild}</View>
-        {middleChild}
+        <View style={styles.fixed}>{leftChild}</View>
+        <View style={styles.flexible}>{rightChild}</View>
       </View>
     );
   }
@@ -73,23 +70,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative',
   },
-  screenHeader: {
+  screenHeader: {},
+  fixed: {
     justifyContent: 'center',
   },
-  left: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-  },
-  right: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
+  flexible: {
+    flex: 1,
     justifyContent: 'center',
   },
 });
