@@ -1,4 +1,5 @@
 import AppText from '@/components/ui/atoms/app-text';
+import IconButton from '@/components/ui/atoms/icon-button';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
@@ -8,7 +9,8 @@ import { saveSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigation } from 'expo-router';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View, Modal, StatusBar } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
@@ -33,6 +35,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
 
 export default function Settings() {
   const theme = useTheme();
+  const navigation = useNavigation();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
@@ -54,6 +57,16 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
+          <IconButton icon="save-outline" />
+        </Animated.View>
+      ),
+    });
+  }, [navigation, fadeAnim, theme]);
 
   useFocusEffect(
     useCallback(() => {
@@ -131,33 +144,60 @@ export default function Settings() {
       saveTimerRef.current = null;
     }
     fadeAnim.stopAnimation();
+    fadeAnim.setValue(0);
     setIsSaved(false);
   }, [fadeAnim]);
 
-  const runWithOverlay = useCallback((action: () => void, color?: string) => {
-    setOverlayColor(color ?? theme.colors.background);
-    setOverlayVisible(true);
-    overlayAnim.stopAnimation();
-    overlayAnim.setValue(0);
-    Animated.timing(overlayAnim, {
-      toValue: 1,
-      duration: 700,
-      useNativeDriver: true,
-    }).start(() => {
-      hideSaveIcon();
-      action();
-      setTimeout(() => {
+  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const runWithOverlay = useCallback(
+    (action: () => void, color?: string) => {
+      setOverlayColor(color ?? theme.colors.background);
+      overlayAnim.stopAnimation();
+      fadeAnim.stopAnimation();
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+      if (overlayTimerRef.current) {
+        clearTimeout(overlayTimerRef.current);
+        overlayTimerRef.current = null;
+      }
+
+      const startFadeOut = () => {
+        hideSaveIcon();
+        overlayTimerRef.current = setTimeout(() => {
+          Animated.timing(overlayAnim, {
+            toValue: 0,
+            duration: 700,
+            useNativeDriver: true,
+          }).start(() => {
+            setOverlayVisible(false);
+            overlayTimerRef.current = null;
+            showSaveIcon();
+          });
+        }, 100);
+      };
+
+      if (!overlayVisible) {
+        setOverlayVisible(true);
+        overlayAnim.setValue(0);
         Animated.timing(overlayAnim, {
-          toValue: 0,
+          toValue: 1,
           duration: 700,
           useNativeDriver: true,
         }).start(() => {
-          setOverlayVisible(false);
-          showSaveIcon();
+          action();
+          startFadeOut();
         });
-      }, 100);
-    });
-  }, [overlayAnim, hideSaveIcon, showSaveIcon, theme.colors.background]);
+      } else {
+        overlayAnim.setValue(1);
+        action();
+        startFadeOut();
+      }
+    },
+    [overlayAnim, fadeAnim, hideSaveIcon, overlayVisible, showSaveIcon, theme.colors.background]
+  );
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
@@ -210,6 +250,9 @@ export default function Settings() {
     return () => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
+      }
+      if (overlayTimerRef.current) {
+        clearTimeout(overlayTimerRef.current);
       }
     };
   }, []);
