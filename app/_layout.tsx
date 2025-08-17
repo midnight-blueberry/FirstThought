@@ -10,7 +10,7 @@ import { useNavigation } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet, Text, TextInput, TextStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -54,13 +54,50 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     );
 }
 
+function DefaultHomePageTitle() {
+  const theme = useTheme();
+  return (
+    <Text
+      style={{
+        fontFamily: theme.fontName,
+        fontSize: theme.fontSize.large,
+        color: theme.colors.basic,
+        fontWeight: theme.fontWeight,
+      }}
+    >
+      Мои дневники
+    </Text>
+  );
+}
+
+function HeaderSearchInput() {
+  const theme = useTheme();
+  return (
+    <TextInput
+      placeholder="Поиск по всем дневникам..."
+      placeholderTextColor={theme.colors.disabled}
+      style={{
+        flex: 1,
+        borderWidth: theme.borderWidth.medium,
+        borderColor: theme.colors.basic,
+        borderRadius: theme.borderRadius,
+        paddingHorizontal: theme.spacing.small,
+        paddingVertical: 0,
+        fontFamily: theme.fontName,
+        fontSize: theme.fontSize.medium,
+        fontWeight: theme.fontWeight,
+        color: theme.colors.basic,
+      }}
+    />
+  );
+}
+
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [theme, setTheme] = useState(themes.light);
-  const [homePageHeaderTitle, setHomePageHeaderTitle] = useState(() => 'Мои дневники');
-  const [homePageHeaderElevation, setHomePageHeaderElevation] = useState(0);
-  const [settingsPageHeaderTitle, setSettingsPageHeaderTitle] = useState(() => 'Настройки');
-  const [settingsPageHeaderElevation, setSettingsPageHeaderElevation] = useState(0);
+  const [homePageHeaderTitle, setHomePageHeaderTitle] = useState<React.ReactNode>(<DefaultHomePageTitle />);
+  const [homePageHeaderElevation] = useState(0);
+  const [settingsPageHeaderTitle] = useState('Настройки');
 
   useEffect(() => {
     async function prepare() {
@@ -197,14 +234,9 @@ export default function RootLayout() {
                 <Drawer.Screen
                   name="home-page"
                   options={{
-                    title: homePageHeaderTitle,
+                    title: 'Мои дневники',
+                    headerTitle: () => homePageHeaderTitle,
                     headerTitleAlign: 'center',
-                    headerTitleStyle: {
-                      fontFamily: theme.fontName,
-                      fontSize: theme.fontSize.large,
-                      color: theme.colors.basic,
-                      fontWeight: theme.fontWeight,
-                    },
                     headerStyle: {
                       backgroundColor: theme.colors.background,
                       elevation: homePageHeaderElevation,
@@ -221,15 +253,12 @@ export default function RootLayout() {
                         />
                       )
                     },
-                    headerRight: () => {
-                      const navigation = useNavigation();
-                      return (
+                    headerRight: () => (
                       <IconButton
                         icon="search"
-                        onPress={() => null}
+                        onPress={() => setHomePageHeaderTitle(<HeaderSearchInput />)}
                       />
-                      )
-                    },
+                    ),
                   }}
                 />
                 <Drawer.Screen

@@ -87,7 +87,7 @@ const InputField: React.FC<TextInputProps> = (props) => {
   return (
     <FlattenRow>
       <Container
-        onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))}
+        onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width as number))}
         style={{ height: FIELD_H }}
       >
         {w > 0 && (

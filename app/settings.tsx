@@ -7,7 +7,7 @@ import { fonts, getFontFamily } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
@@ -34,7 +34,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
 export default function Settings() {
   const theme = useTheme();
   const context = useContext(ThemeContext);
-  const [showShadow, setShowShadow] = useState(false);
+  const [, setShowShadow] = useState(false);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
@@ -45,7 +45,7 @@ export default function Settings() {
   const blinkAnim = useRef(new Animated.Value(1)).current;
   const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
   const weightBlinkAnim = useRef(new Animated.Value(1)).current;
-  const [ isSaved, setIsSaved ] = useState(false);
+  const [, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const accentAnim = useRef(new Animated.Value(0)).current;
@@ -55,7 +55,6 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
-  const navigation = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
