@@ -5,7 +5,7 @@ import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -56,8 +56,11 @@ export default function RootLayout() {
         // 1. Загружаем шрифты
         await Font.loadAsync(
           Object.fromEntries(
-            fonts.flatMap(f =>
-              f.weights.map(w => [getFontFamily(f.family, w), f.files[w]])
+            fonts.flatMap((f) =>
+              (f.weights as (keyof typeof f.files)[]).map((w) => [
+                getFontFamily(f.family, w),
+                f.files[w],
+              ])
             )
           )
         );
@@ -66,7 +69,9 @@ export default function RootLayout() {
         const saved = await loadSettings();
         const fontName = saved?.fontName ?? defaultFontName;
         const font = fonts.find(f => f.name === fontName) ?? fonts[0];
-        const weight = saved?.fontWeight ?? font.defaultWeight;
+        const weight: TextStyle['fontWeight'] =
+          (saved?.fontWeight as TextStyle['fontWeight']) ??
+          (font.defaultWeight as TextStyle['fontWeight']);
         const chosenTheme = saved
           ? themeList.find(t => t.name === saved.themeName) ?? themes.light
           : themes.light;
@@ -87,7 +92,7 @@ export default function RootLayout() {
           ...chosenTheme,
           colors: updatedColors,
           fontSize: updatedFontSize,
-          fontName: getFontFamily(font.family, weight),
+          fontName: getFontFamily(font.family, weight as string),
           fontWeight: weight,
         });
 
@@ -143,10 +148,6 @@ export default function RootLayout() {
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                     overflow: 'hidden',
-                  },
-
-                  sceneContainerStyle: {
-                    backgroundColor: theme.colors.background,
                   },
 
                   // внутренняя обёртка контента (скролл + фон)
