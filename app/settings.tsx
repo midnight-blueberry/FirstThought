@@ -9,7 +9,7 @@ import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, View, Modal } from 'react-native';
+import { Animated, Easing, ScrollView, StyleSheet, View, Modal, StatusBar } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 const interpolateColor = (from: string, to: string, t: number) => {
@@ -395,7 +395,8 @@ export default function Settings() {
         />
       </ScrollView>
       {overlayVisible && (
-        <Modal transparent animationType="none">
+        <Modal transparent statusBarTranslucent animationType="none">
+          <StatusBar translucent backgroundColor="transparent" />
           <Animated.View
             style={[
               StyleSheet.absoluteFillObject,
