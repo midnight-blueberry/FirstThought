@@ -99,16 +99,16 @@ export default function Settings() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
-        const w: DefaultTheme['fontWeight'] = chosenFont.weights.includes(String(weight))
-          ? weight
-          : (chosenFont.defaultWeight as DefaultTheme['fontWeight']);
-        setTheme({
-          ...chosenTheme,
-          colors: updatedColors,
-          fontSize: updatedFontSize,
-          fontName: getFontFamily(chosenFont.family, w),
-          fontWeight: w,
-        });
+          const w = chosenFont.weights.includes(String(weight))
+            ? String(weight)
+            : chosenFont.defaultWeight;
+          setTheme({
+            ...chosenTheme,
+            colors: updatedColors,
+            fontSize: updatedFontSize,
+            fontName: getFontFamily(chosenFont.family, w),
+            fontWeight: w as DefaultTheme['fontWeight'],
+          });
       }
     },
     [setTheme]
