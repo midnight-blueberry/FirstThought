@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({
     const [leftChild, middleChild] = childrenArray;
     return (
       <View style={baseStyle}>
-        <View>{leftChild}</View>
+        {leftChild}
         <View style={{ flex: 1 }}>{middleChild}</View>
       </View>
     );
