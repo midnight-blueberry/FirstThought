@@ -3,6 +3,7 @@ import IconButton from '@/components/ui/atoms/icon-button';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
+import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
@@ -36,6 +37,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
 export default function Settings() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const handleScroll = useHeaderShadow();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
@@ -374,6 +376,8 @@ export default function Settings() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.container}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <AppText variant='large' style={[styles.label, styles.themeLabel]}>Тема</AppText>
         <View style={styles.themeList}>
