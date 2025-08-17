@@ -154,13 +154,18 @@ export default function Settings() {
     (action: () => void, color?: string) => {
       setOverlayColor(color ?? theme.colors.background);
       overlayAnim.stopAnimation();
-      hideSaveIcon();
+      fadeAnim.stopAnimation();
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
       if (overlayTimerRef.current) {
         clearTimeout(overlayTimerRef.current);
         overlayTimerRef.current = null;
       }
 
       const startFadeOut = () => {
+        hideSaveIcon();
         overlayTimerRef.current = setTimeout(() => {
           Animated.timing(overlayAnim, {
             toValue: 0,
@@ -191,7 +196,7 @@ export default function Settings() {
         startFadeOut();
       }
     },
-    [overlayAnim, hideSaveIcon, overlayVisible, showSaveIcon, theme.colors.background]
+    [overlayAnim, fadeAnim, hideSaveIcon, overlayVisible, showSaveIcon, theme.colors.background]
   );
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
