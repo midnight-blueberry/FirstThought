@@ -65,6 +65,10 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
+  const baseHeaderStyle = {
+    backgroundColor: theme.colors.background,
+    height: theme.buttonSizes.small,
+  };
 
   return (
     <Drawer
@@ -72,6 +76,7 @@ function DrawerNavigator({
       // Здесь задаём общие опции для всех экранов и самого меню
       screenOptions={{
         headerShown: true,
+        headerStyle: baseHeaderStyle,
 
         // ширина и фон «самого ящика»
         drawerStyle: {
@@ -104,7 +109,6 @@ function DrawerNavigator({
           fontWeight: theme.fontWeight,
           color: theme.colors.basic,
         },
-
         // цвет активного/неактивного пункта
         drawerActiveTintColor: theme.colors.basic,
         drawerInactiveTintColor: theme.colors.basic,
@@ -129,7 +133,7 @@ function DrawerNavigator({
             fontWeight: theme.fontWeight,
           },
           headerStyle: {
-            backgroundColor: theme.colors.background,
+            ...baseHeaderStyle,
             elevation: homePageHeaderElevation,
           },
           // iOS/web (React Navigation 6) — отключает линию под хедером
@@ -164,7 +168,7 @@ function DrawerNavigator({
             fontWeight: theme.fontWeight,
           },
           headerStyle: {
-            backgroundColor: theme.colors.background,
+            ...baseHeaderStyle,
             elevation: settingsPageHeaderElevation,
           },
           headerShadowVisible: false,
