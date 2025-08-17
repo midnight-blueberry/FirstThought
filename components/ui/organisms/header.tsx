@@ -56,11 +56,12 @@ const Header: React.FC<HeaderProps> = ({
   }
 
   if (childrenArray.length === 2) {
+    const leftStyle = { left: theme.padding.small } as const;
     const [leftChild, middleChild] = childrenArray;
     return (
-      <View style={baseStyle}>
-        {leftChild}
-        <View style={{ flex: 1 }}>{middleChild}</View>
+      <View style={[...baseStyle, styles.screenHeader]}>
+        <View style={[styles.left, leftStyle]}>{leftChild}</View>
+        {middleChild}
       </View>
     );
   }
