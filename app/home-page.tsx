@@ -1,5 +1,6 @@
 import IconButton from '@/components/ui/atoms/icon-button';
 import DiaryList from '@/components/ui/organisms/diary-list';
+import useHeaderShadow from '@/hooks/useHeaderShadow';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
@@ -16,6 +17,7 @@ const HomePage: React.FC = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const theme = useTheme();
   const iconColor: keyof DefaultTheme['colors'] = 'onAccent';
+  const handleScroll = useHeaderShadow();
 
   const addDiary = () => {
     const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
@@ -29,7 +31,7 @@ const HomePage: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <DiaryList data={diaries} style={{ flex: 1 }} />
+      <DiaryList data={diaries} style={{ flex: 1 }} onScroll={handleScroll} />
       <IconButton
         icon='add'
         onPress={addDiary}
