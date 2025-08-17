@@ -1,4 +1,5 @@
 import AppText from '@/components/ui/atoms/app-text';
+import IconButton from '@/components/ui/atoms/icon-button';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
@@ -8,7 +9,8 @@ import { saveSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigation } from 'expo-router';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View, Modal, StatusBar } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
@@ -33,6 +35,7 @@ const interpolateColor = (from: string, to: string, t: number) => {
 
 export default function Settings() {
   const theme = useTheme();
+  const navigation = useNavigation();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
@@ -54,6 +57,16 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
+          <IconButton icon="save-outline" />
+        </Animated.View>
+      ),
+    });
+  }, [navigation, fadeAnim, theme]);
 
   useFocusEffect(
     useCallback(() => {
