@@ -1,34 +1,19 @@
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle, Animated } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from 'styled-components/native';
-import { useNavigation } from '@react-navigation/native';
-import AppText from '../atoms/app-text';
-import IconButton from '../atoms/icon-button';
 
 interface HeaderProps {
   children?: ReactNode;
-  title?: string;
-  onBack?: (() => void) | null;
-  saveOpacity?: Animated.Value;
   showShadow?: boolean;
   style?: ViewStyle;
 }
 
 const Header: React.FC<HeaderProps> = ({
   children,
-  title,
-  onBack,
-  saveOpacity,
   showShadow = false,
   style,
 }) => {
   const theme = useTheme();
-  const navigation = useNavigation();
-
-  const handleBack = () => {
-    if (typeof onBack === 'function') onBack();
-    else navigation.goBack();
-  };
 
   const shadowStyle = showShadow
     ? {
@@ -40,49 +25,47 @@ const Header: React.FC<HeaderProps> = ({
       }
     : undefined;
 
-  const leftStyle = { left: theme.padding.small } as const;
-  const rightStyle = { right: theme.padding.small } as const;
+  const childrenArray = React.Children.toArray(children);
+  if (childrenArray.length > 3) {
+    console.warn('Header supports up to 3 children.');
+  }
 
-  return (
-    <View
-      style={[
-        styles.header,
-        title && styles.screenHeader,
-        {
-          padding: theme.padding.small,
-          backgroundColor: theme.colors.background,
-          borderColor: theme.colors.background,
-          borderWidth: 0,
-        },
-        shadowStyle,
-        style,
-      ]}
-    >
-      {title ? (
-        <>
-          {onBack !== null && (
-            <IconButton
-              icon="chevron-back"
-              onPress={handleBack}
-              size={theme.iconSize.xlarge}
-              style={[styles.left, leftStyle]}
-            />
-          )}
-          <AppText variant="large">{title}</AppText>
-          {saveOpacity && (
-            <Animated.View
-              pointerEvents="none"
-              style={[styles.right, rightStyle, { opacity: saveOpacity }]}
-            >
-              <IconButton icon="save-outline" size={theme.iconSize.large} />
-            </Animated.View>
-          )}
-        </>
-      ) : (
-        children
-      )}
-    </View>
-  );
+  const baseStyle = [
+    styles.header,
+    {
+      padding: theme.padding.small,
+      backgroundColor: theme.colors.background,
+      borderColor: theme.colors.background,
+      borderWidth: 0,
+    },
+    shadowStyle,
+    style,
+  ];
+
+  if (childrenArray.length === 3) {
+    const leftStyle = { left: theme.padding.small } as const;
+    const rightStyle = { right: theme.padding.small } as const;
+    const [leftChild, centerChild, rightChild] = childrenArray;
+    return (
+      <View style={[...baseStyle, styles.screenHeader]}>
+        <View style={[styles.left, leftStyle]}>{leftChild}</View>
+        {centerChild}
+        <View style={[styles.right, rightStyle]}>{rightChild}</View>
+      </View>
+    );
+  }
+
+  if (childrenArray.length === 2) {
+    const [leftChild, middleChild] = childrenArray;
+    return (
+      <View style={baseStyle}>
+        <View>{leftChild}</View>
+        <View style={{ flex: 1 }}>{middleChild}</View>
+      </View>
+    );
+  }
+
+  return <View style={baseStyle}>{children}</View>;
 };
 
 const styles = StyleSheet.create({

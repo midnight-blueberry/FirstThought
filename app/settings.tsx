@@ -3,6 +3,7 @@ import Header from '@/components/ui/organisms/header';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
+import IconButton from '@/components/ui/atoms/icon-button';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
@@ -331,12 +332,20 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <Header
-        title="Настройки"
-        onBack={() => navigation.goBack()}
-        saveOpacity={isSaved ? fadeAnim : undefined}
-        showShadow={showShadow}
-      />
+      <Header showShadow={showShadow}>
+        <IconButton
+          icon="chevron-back"
+          onPress={() => navigation.goBack()}
+          size={theme.iconSize.xlarge}
+        />
+        <AppText variant="large">Настройки</AppText>
+        <Animated.View
+          pointerEvents="none"
+          style={{ opacity: isSaved ? fadeAnim : 0 }}
+        >
+          <IconButton icon="save-outline" size={theme.iconSize.large} />
+        </Animated.View>
+      </Header>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.container}
