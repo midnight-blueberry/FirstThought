@@ -1,17 +1,16 @@
 import AppText from '@/components/ui/atoms/app-text';
-import Header from '@/components/ui/organisms/header';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
-import { ThemeContext } from '@/src/theme/ThemeContext';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
-import { useTheme, DefaultTheme } from 'styled-components/native';
-import { themeList } from '@/theme';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
+import { ThemeContext } from '@/src/theme/ThemeContext';
+import { themeList } from '@/theme';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
+import { DefaultTheme, useTheme } from 'styled-components/native';
 
 const interpolateColor = (from: string, to: string, t: number) => {
   const f = parseInt(from.slice(1), 16);
@@ -331,12 +330,6 @@ export default function Settings() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <Header
-        title="Настройки"
-        onBack={() => navigation.goBack()}
-        saveOpacity={isSaved ? fadeAnim : undefined}
-        showShadow={showShadow}
-      />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.container}

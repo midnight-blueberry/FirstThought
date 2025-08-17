@@ -1,11 +1,8 @@
 import IconButton from '@/components/ui/atoms/icon-button';
 import DiaryList from '@/components/ui/organisms/diary-list';
-import Header from '@/components/ui/organisms/header';
-import SearchField from '@/components/ui/molecules/input-field';
-import React, { useState } from 'react';
-import { StyleSheet, View, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
-import { DrawerActions } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
+import React, { useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 interface Diary {
@@ -21,8 +18,7 @@ const HomePage: React.FC = () => {
   const [showShadow, setShowShadow] = useState(false);
   const navigation = useNavigation();
   const theme = useTheme();
-  const iconColor: keyof DefaultTheme['colors'] =
-    theme.name === 'Темная' ? 'background' : 'basic';
+  const iconColor: keyof DefaultTheme['colors'] = 'onAccent';
 
   const addDiary = () => {
     const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
@@ -40,18 +36,6 @@ const HomePage: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Header showShadow={showShadow}>
-        <IconButton
-          icon="menu"
-          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-          style={{
-            borderWidth: 0,
-            borderColor: 'transparent',
-            backgroundColor: 'transparent',
-          }}
-        />
-        <SearchField placeholder="Поиск по всем дневникам..." />
-      </Header>
       <DiaryList data={diaries} onScroll={handleScroll} style={{ flex: 1 }} />
       <IconButton
         icon='add'

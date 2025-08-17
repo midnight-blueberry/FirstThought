@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
@@ -15,7 +15,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, onPress, size, color = 'b
   const theme = useTheme();
 
   return (
-    <TouchableOpacity onPress={onPress} style={style} hitSlop={8}>
+    <TouchableOpacity onPress={onPress} style={[ styles.button, style ]} hitSlop={8}>
       <Ionicons
         name={icon}
         size={size ?? theme.iconSize.large}
@@ -24,5 +24,11 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, onPress, size, color = 'b
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    paddingHorizontal: 16
+  },
+});
 
 export default IconButton;

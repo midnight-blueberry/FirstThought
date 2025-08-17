@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleProp,
   StyleSheet,
   View,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  StyleProp,
   ViewStyle,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -63,7 +63,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
       }}
       onScroll={onScroll}
       scrollEventThrottle={16}
-      style={[{ backgroundColor: theme.colors.background }, style]}
+      style={[style]}
     />
   );
 };

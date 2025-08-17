@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React, { ReactNode } from 'react';
+import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 import IconButton from '../atoms/icon-button';
@@ -68,9 +68,9 @@ const Header: React.FC<HeaderProps> = ({
       </>
     );
 
-  const paddingStyle = children
-    ? { padding: theme.padding.small }
-    : { paddingVertical: theme.padding.small, paddingHorizontal: 0 };
+const paddingStyle = children
+  ? { paddingHorizontal: theme.padding.small, paddingVertical: 0 }
+  : { paddingVertical: theme.padding.small, paddingHorizontal: 0 };
 
   return (
     <View
@@ -78,11 +78,10 @@ const Header: React.FC<HeaderProps> = ({
         styles.header,
         paddingStyle,
         {
-          backgroundColor: theme.colors.background,
-          borderColor: theme.colors.background,
-          borderWidth: 0,
+          minHeight: 56,
+          flexDirection: 'row',
+          alignItems: 'center',
         },
-        !children && styles.center,
         shadowStyle,
         style,
       ]}
