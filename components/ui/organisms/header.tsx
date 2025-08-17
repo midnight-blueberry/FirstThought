@@ -77,19 +77,14 @@ const Header: React.FC<HeaderProps> = ({
       style={[
         styles.header,
         paddingStyle,
-        {
-          Platform.OS === 'android'
+        Platform.OS === 'android'
           ? {
               backgroundColor: theme.colors.background, // полностью непрозрачный
-              height: 56,                                // целые dp
+              height: 56, // целые dp
               flexDirection: 'row',
               alignItems: 'center',
-              // склеиваем ВЕСЬ ряд в один слой:
-              needsOffscreenAlphaCompositing: true,
-              renderToHardwareTextureAndroid: true,
             }
-          : undefined
-        },
+          : undefined,
         {
           backgroundColor: theme.colors.background,
           borderColor: theme.colors.background,
@@ -99,6 +94,12 @@ const Header: React.FC<HeaderProps> = ({
         shadowStyle,
         style,
       ]}
+      {...(Platform.OS === 'android'
+        ? {
+            needsOffscreenAlphaCompositing: true,
+            renderToHardwareTextureAndroid: true,
+          }
+        : undefined)}
     >
       {content}
     </View>

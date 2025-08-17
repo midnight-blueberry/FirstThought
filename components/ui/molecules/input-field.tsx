@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import React, { useMemo, useState } from 'react';
-import { TextInputProps } from 'react-native';
+import { TextInputProps, LayoutChangeEvent } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styled, { DefaultTheme, useTheme } from 'styled-components/native';
 import Svg, { Rect } from 'react-native-svg';
@@ -93,7 +93,9 @@ const InputField: React.FC<TextInputProps> = (props) => {
   return (
     <FlattenRow>
       <Container
-        onLayout={e => setW(Math.round(e.nativeEvent.layout.width))}
+        onLayout={(e: LayoutChangeEvent) =>
+          setW(Math.round(e.nativeEvent.layout.width))
+        }
         style={{ height: FIELD_H, backgroundColor: theme.colors.background }}
       >
         {w > 0 && (
