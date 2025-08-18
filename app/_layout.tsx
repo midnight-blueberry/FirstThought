@@ -27,7 +27,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         {...props}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingTop: theme.spacing.medium,
+          paddingTop: theme.padding.medium,
           backgroundColor: theme.colors.background,
         }}
       >

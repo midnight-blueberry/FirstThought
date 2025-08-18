@@ -474,7 +474,7 @@ export default function Settings() {
             borderColor: theme.colors.accent,
             borderWidth: theme.borderWidth.medium,
             borderRadius: theme.borderRadius,
-            padding: theme.spacing.medium,
+            padding: theme.padding.medium,
             alignSelf: 'stretch',
           }}
         >
