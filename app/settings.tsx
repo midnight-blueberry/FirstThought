@@ -467,6 +467,20 @@ export default function Settings() {
           blinkIndex={weightBlinkIndex}
           blinkAnim={weightBlinkAnim}
         />
+        <View
+          style={{
+            marginTop: theme.spacing.medium,
+            borderColor: theme.colors.accent,
+            borderWidth: theme.borderWidth.medium,
+            borderRadius: theme.borderRadius,
+            padding: theme.spacing.medium,
+            alignSelf: 'stretch',
+          }}
+        >
+          <AppText color='basic' fontFamily={getFontFamily(selectedFont.family, fontWeight)}>
+            Так будет выглядеть ваша заметка в выбранном формате
+          </AppText>
+        </View>
       </ScrollView>
       {overlayVisible && (
         <Modal transparent statusBarTranslucent animationType="none">
