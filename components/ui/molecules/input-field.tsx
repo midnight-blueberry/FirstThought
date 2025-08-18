@@ -9,7 +9,7 @@ const FlattenRow = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
-  margin-left: 16px;
+  margin-left: ${({ theme }: { theme: DefaultTheme }) => theme.margin.xlarge}px;
 `;
 
 const Container = styled.View`

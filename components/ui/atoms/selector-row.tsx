@@ -24,14 +24,20 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
 
   return (
     <View
-      style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, opacity }}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: theme.margin.small,
+        opacity,
+      }}
     >
       <IconButton
         icon='remove'
         onPress={onDecrease}
         size={theme.iconSize.large}
         color={decreaseColor}
-        style={{ marginRight: theme.spacing.medium }}
+        style={{ marginRight: theme.margin.medium }}
       />
       <View
         style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}
@@ -43,7 +49,7 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
         onPress={onIncrease}
         size={theme.iconSize.large}
         color={increaseColor}
-        style={{ marginLeft: theme.spacing.medium }}
+        style={{ marginLeft: theme.margin.medium }}
       />
     </View>
   );

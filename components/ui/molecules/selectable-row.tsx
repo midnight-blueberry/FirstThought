@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet, TextStyle } from 'react-native';
+import { TouchableOpacity, View, TextStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
@@ -27,16 +27,16 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   const drop = -theme.spacing.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
-    ? theme.spacing.medium + (theme.iconSize.large - theme.iconSize.small) / 2
-    : theme.spacing.medium;
+    ? theme.margin.medium + (theme.iconSize.large - theme.iconSize.small) / 2
+    : theme.margin.medium;
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
       style={[
-        styles.container,
-        { 
+        {
+          marginBottom: theme.margin.small,
           borderColor: theme.colors.background,
           borderWidth: theme.borderWidth.medium,
           borderRadius: theme.borderRadius,
@@ -101,11 +101,5 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 4,
-  },
-});
 
 export default SelectableRow;
