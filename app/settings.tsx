@@ -60,6 +60,7 @@ export default function Settings() {
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -469,7 +470,7 @@ export default function Settings() {
         />
         <View
           style={{
-            marginTop: theme.spacing.medium,
+            marginTop: theme.margin.medium,
             borderColor: theme.colors.accent,
             borderWidth: theme.borderWidth.medium,
             borderRadius: theme.borderRadius,
@@ -500,25 +501,26 @@ export default function Settings() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  label: {
-    marginBottom: 8,
-  },
-  themeLabel: {
-    marginTop: 8,
-  },
-  accentLabel: {
-    marginTop: 4,
-  },
-  fontLabel: {
-    marginTop: 4,
-  },
-  themeList: {
-    marginBottom: 4,
-  },
-});
+const createStyles = (theme: DefaultTheme) =>
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+    },
+    label: {
+      marginBottom: theme.margin.medium,
+    },
+    themeLabel: {
+      marginTop: theme.margin.medium,
+    },
+    accentLabel: {
+      marginTop: theme.margin.small,
+    },
+    fontLabel: {
+      marginTop: theme.margin.small,
+    },
+    themeList: {
+      marginBottom: theme.margin.small,
+    },
+  });

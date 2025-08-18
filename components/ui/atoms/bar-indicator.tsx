@@ -27,7 +27,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
         const containerStyle = {
           width: theme.iconSize.xsmall,
           height: theme.iconSize.small * (0.5 + i * 0.25),
-          marginHorizontal: theme.spacing.small / 2,
+          marginHorizontal: theme.margin.small / 2,
           borderColor: containerColor,
           borderWidth: theme.borderWidth.xsmall,
           borderRadius: theme.borderRadius / 2,

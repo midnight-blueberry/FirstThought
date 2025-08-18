@@ -18,7 +18,7 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({ level, onIncrease, 
 
   return (
     <>
-      <AppText variant='large' style={{ marginBottom: 8, marginTop: 4 }}>Размер шрифта</AppText>
+      <AppText variant='large' style={{ marginBottom: theme.margin.medium, marginTop: theme.margin.small }}>Размер шрифта</AppText>
       <SelectorRow onIncrease={onIncrease} onDecrease={onDecrease}>
         <BarIndicator
           total={6}

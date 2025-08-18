@@ -37,7 +37,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
           borderRadius: theme.borderRadius,
           borderColor: theme.colors.accent,
           borderWidth: theme.borderWidth.medium,
-          marginBottom: theme.spacing.medium,
+          marginBottom: theme.margin.medium,
         },
       ]}
     >
@@ -46,7 +46,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
         size={theme.iconSize.small}
         color={theme.colors.basic}
       />
-      <AppText style={{ marginLeft: theme.spacing.large }} color="basic">
+      <AppText style={{ marginLeft: theme.margin.large }} color="basic">
         {item.title}
       </AppText>
     </View>

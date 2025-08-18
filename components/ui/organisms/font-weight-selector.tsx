@@ -28,7 +28,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 
   return (
     <>
-      <AppText variant='large' style={{ marginBottom: 8, marginTop: 4 }}>Жирность шрифта</AppText>
+      <AppText variant='large' style={{ marginBottom: theme.margin.medium, marginTop: theme.margin.small }}>Жирность шрифта</AppText>
       <SelectorRow
         onIncrease={hasMultiple ? onIncrease : undefined}
         onDecrease={hasMultiple ? onDecrease : undefined}

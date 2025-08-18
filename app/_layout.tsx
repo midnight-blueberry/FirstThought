@@ -42,7 +42,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             }}
             style={{
               borderRadius: theme.borderRadius, // вместо “8”
-              marginVertical: theme.spacing.small,  // вместо “4”
+              marginVertical: theme.margin.small,  // вместо “4”
             }}
           />
         {/* … */}
@@ -117,8 +117,8 @@ function DrawerNavigator({
 
         // при желании: отступы вокруг каждого пункта
         drawerItemStyle: {
-          marginVertical: 4,
-          marginHorizontal: 8,
+          marginVertical: theme.margin.small,
+          marginHorizontal: theme.margin.medium,
         },
 
         // общие опции заголовков
