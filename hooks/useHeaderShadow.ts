@@ -8,7 +8,7 @@ export default function useHeaderShadow() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { top } = useSafeAreaInsets();
-  const headerHeight = top + theme.iconSize.medium + theme.spacing.large * 2;
+  const headerHeight = top + theme.iconSize.medium + theme.padding.large * 2;
 
   return useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {

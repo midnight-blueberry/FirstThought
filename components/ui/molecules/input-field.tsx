@@ -17,7 +17,7 @@ const Container = styled.View`
   align-items: center;
   flex: 1;
   padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.spacing.small + 2}px;
+    theme.padding.small + 2}px;
   padding-left: 12px;
   border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
   overflow: hidden;
@@ -78,7 +78,7 @@ const InputField: React.FC<TextInputProps> = (props) => {
   const FIELD_H = useMemo(() => {
     const h =
       theme.iconSize.small +
-      (theme.spacing.small + 2) * 2 +
+      (theme.padding.small + 2) * 2 +
       theme.borderWidth.medium * 2 +
       4;
     return Math.round(h);

@@ -27,7 +27,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         {...props}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingTop: theme.spacing.medium,
+          paddingTop: theme.padding.medium,
           backgroundColor: theme.colors.background,
         }}
       >
@@ -66,7 +66,7 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
-  const headerHeight = top + theme.iconSize.medium + theme.spacing.large * 2;
+  const headerHeight = top + theme.iconSize.medium + theme.padding.large * 2;
   const baseHeaderStyle = {
     height: headerHeight,
     backgroundColor: theme.colors.background,

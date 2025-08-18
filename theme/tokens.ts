@@ -19,12 +19,6 @@ export const sizes = {
     xlarge: 72,
   },
   padding: {
-    small: 16,
-    medium: 20,
-    large: 24,
-    xlarge: 28,
-  },
-  spacing: {
     small: 4,
     medium: 8,
     large: 12,

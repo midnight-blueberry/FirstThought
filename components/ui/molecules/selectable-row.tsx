@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, TextStyle } from 'react-native';
+import { TextStyle, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
@@ -24,7 +24,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
 }) => {
   const theme = useTheme();
-  const drop = -theme.spacing.small / 4;
+  const drop = -theme.padding.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
     ? theme.margin.medium + (theme.iconSize.large - theme.iconSize.small) / 2
@@ -40,10 +40,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           borderColor: theme.colors.background,
           borderWidth: theme.borderWidth.medium,
           borderRadius: theme.borderRadius,
-          paddingRight: theme.iconSize.large + theme.spacing.medium * 2,
-          paddingVertical: theme.spacing.medium,
+          paddingRight: theme.iconSize.large + theme.padding.medium * 2,
+          paddingVertical: theme.padding.medium,
           paddingLeft,
-          minHeight: theme.iconSize.large + theme.spacing.medium * 2,
+          minHeight: theme.iconSize.large + theme.padding.medium * 2,
           justifyContent: 'center',
         },
         selected && { borderColor: theme.colors.accent },
@@ -70,7 +70,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           style={[
             { transform: [{ translateY: drop }] },
             fontSize
-              ? { fontSize, lineHeight: fontSize + theme.spacing.medium }
+              ? { fontSize, lineHeight: fontSize + theme.padding.medium }
               : null,
           ]}
         >
@@ -80,8 +80,8 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
       <View
         style={{
           position: 'absolute',
-          top: theme.spacing.medium,
-          right: theme.spacing.medium,
+          top: theme.padding.medium,
+          right: theme.padding.medium,
           width: theme.iconSize.large,
           height: theme.iconSize.large,
           justifyContent: 'center',
@@ -94,7 +94,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           color={theme.colors.accent}
           style={{
             opacity: selected ? 1 : 0,
-            transform: [{ translateY: -theme.spacing.small / 4 }],
+            transform: [{ translateY: drop }],
           }}
         />
       </View>
