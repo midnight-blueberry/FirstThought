@@ -23,16 +23,28 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
   const theme = useTheme();
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, opacity }}>
-      <View style={{ flex: 1, alignItems: 'center' }}>
-        <IconButton icon='remove' onPress={onDecrease} size={theme.iconSize.large} color={decreaseColor} />
-      </View>
-      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
+    <View
+      style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 4, opacity }}
+    >
+      <IconButton
+        icon='remove'
+        onPress={onDecrease}
+        size={theme.iconSize.large}
+        color={decreaseColor}
+        style={{ marginRight: theme.spacing.medium }}
+      />
+      <View
+        style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}
+      >
         {children}
       </View>
-      <View style={{ flex: 1, alignItems: 'center' }}>
-        <IconButton icon='add' onPress={onIncrease} size={theme.iconSize.large} color={increaseColor} />
-      </View>
+      <IconButton
+        icon='add'
+        onPress={onIncrease}
+        size={theme.iconSize.large}
+        color={increaseColor}
+        style={{ marginLeft: theme.spacing.medium }}
+      />
     </View>
   );
 };
