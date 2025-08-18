@@ -64,13 +64,17 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
+  const headerHeight = theme.buttonSizes.medium * 0.8;
 
   return (
     <Drawer
       initialRouteName="home-page"
       // Здесь задаём общие опции для всех экранов и самого меню
-      screenOptions={({ route, navigation }) => ({
+      screenOptions={() => ({
         headerShown: true,
+        headerStyle: {
+          height: headerHeight,
+        },
 
         // ширина и фон «самого ящика»
         drawerStyle: {
@@ -129,20 +133,21 @@ function DrawerNavigator({
     >
       <Drawer.Screen
         name="home-page"
-        options={({ navigation }) => ({
+        options={({ navigation }: { navigation: { dispatch: (action: unknown) => void } }) => ({
           title: homePageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="menu"
-              onPress={() =>
-                navigation.dispatch(DrawerActions.openDrawer())
-              }
+              onPress={() => {
+                navigation.dispatch(DrawerActions.openDrawer());
+              }}
             />
           ),
           headerRight: () => (
-            <IconButton icon="search" onPress={() => null} />
+            <IconButton icon="search" onPress={() => {}} />
           ),
           headerStyle: {
+            height: headerHeight,
             elevation: homePageHeaderElevation,
             backgroundColor: theme.colors.background,
           },
@@ -150,15 +155,18 @@ function DrawerNavigator({
       />
       <Drawer.Screen
         name="settings"
-        options={({ navigation }) => ({
+        options={({ navigation }: { navigation: { goBack: () => void } }) => ({
           title: settingsPageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="chevron-back"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.goBack();
+              }}
             />
           ),
           headerStyle: {
+            height: headerHeight,
             elevation: settingsPageHeaderElevation,
             backgroundColor: theme.colors.background,
           },

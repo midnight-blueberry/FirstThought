@@ -6,6 +6,7 @@ import { useTheme } from 'styled-components/native';
 export default function useHeaderShadow() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const headerHeight = theme.buttonSizes.medium * 0.8;
 
   return useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -13,12 +14,13 @@ export default function useHeaderShadow() {
       const hasShadow = y > 0;
       navigation.setOptions({
         headerStyle: {
+          height: headerHeight,
           backgroundColor: theme.colors.background,
           elevation: hasShadow ? 4 : 0,
         },
         headerShadowVisible: hasShadow,
       });
     },
-    [navigation, theme]
+    [navigation, theme, headerHeight]
   );
 }
