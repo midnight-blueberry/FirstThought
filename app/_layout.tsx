@@ -2,8 +2,9 @@ import IconButton from '@/components/ui/atoms/icon-button';
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import type { DrawerContentComponentProps } from '@react-navigation/drawer';
+import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import type { ParamListBase } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
@@ -14,8 +15,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
-import type { DrawerNavigationProp } from '@react-navigation/drawer';
-import type { ParamListBase } from '@react-navigation/native';
 import { themeList, themes } from '../theme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -66,7 +65,7 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
-  const headerHeight = theme.iconSize.medium + theme.spacing.medium * 2;
+  const headerHeight = top + theme.iconSize.medium + theme.spacing.large * 2;
   const baseHeaderStyle = {
     height: headerHeight,
     backgroundColor: theme.colors.background,

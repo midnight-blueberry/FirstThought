@@ -1,12 +1,14 @@
+import { useNavigation } from 'expo-router';
 import { useCallback } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
-import { useNavigation } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components/native';
 
 export default function useHeaderShadow() {
   const navigation = useNavigation();
   const theme = useTheme();
-  const headerHeight = theme.iconSize.medium + theme.spacing.medium * 2;
+  const { top } = useSafeAreaInsets();
+  const headerHeight = top + theme.iconSize.medium + theme.spacing.large * 2;
 
   return useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
