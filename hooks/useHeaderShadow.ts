@@ -6,6 +6,7 @@ import { useTheme } from 'styled-components/native';
 export default function useHeaderShadow() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const headerHeight = theme.iconSize.medium + theme.spacing.medium * 2;
 
   return useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -15,10 +16,11 @@ export default function useHeaderShadow() {
         headerStyle: {
           backgroundColor: theme.colors.background,
           elevation: hasShadow ? 4 : 0,
+          height: headerHeight,
         },
         headerShadowVisible: hasShadow,
       });
     },
-    [navigation, theme]
+    [navigation, theme, headerHeight]
   );
 }

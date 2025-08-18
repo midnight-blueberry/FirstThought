@@ -14,6 +14,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
+import type { DrawerNavigationProp } from '@react-navigation/drawer';
+import type { ParamListBase } from '@react-navigation/native';
 import { themeList, themes } from '../theme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -64,12 +66,17 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
+  const headerHeight = theme.iconSize.medium + theme.spacing.medium * 2;
+  const baseHeaderStyle = {
+    height: headerHeight,
+    backgroundColor: theme.colors.background,
+  };
 
   return (
     <Drawer
       initialRouteName="home-page"
       // Здесь задаём общие опции для всех экранов и самого меню
-      screenOptions={({ route, navigation }) => ({
+      screenOptions={() => ({
         headerShown: true,
 
         // ширина и фон «самого ящика»
@@ -124,43 +131,46 @@ function DrawerNavigator({
         },
         headerShadowVisible: false,
         headerTintColor: theme.colors.basic,
+        headerStyle: baseHeaderStyle,
       })}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen
-        name="home-page"
-        options={({ navigation }) => ({
+        <Drawer.Screen
+          name="home-page"
+          options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
           title: homePageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="menu"
-              onPress={() =>
-                navigation.dispatch(DrawerActions.openDrawer())
-              }
+              onPress={() => {
+                navigation.dispatch(DrawerActions.openDrawer());
+              }}
             />
           ),
           headerRight: () => (
             <IconButton icon="search" onPress={() => null} />
           ),
           headerStyle: {
+            ...baseHeaderStyle,
             elevation: homePageHeaderElevation,
-            backgroundColor: theme.colors.background,
           },
         })}
       />
-      <Drawer.Screen
-        name="settings"
-        options={({ navigation }) => ({
+        <Drawer.Screen
+          name="settings"
+          options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
           title: settingsPageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="chevron-back"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.goBack();
+              }}
             />
           ),
           headerStyle: {
+            ...baseHeaderStyle,
             elevation: settingsPageHeaderElevation,
-            backgroundColor: theme.colors.background,
           },
         })}
       />
