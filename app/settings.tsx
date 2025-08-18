@@ -9,6 +9,7 @@ import { fonts, getFontFamily } from '@/constants/Fonts';
 import { saveSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
+import { sizes } from '@/theme/tokens';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -104,11 +105,19 @@ export default function Settings() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
+        const iconDelta = (level - 3) * 4;
+        const updatedIconSize = {
+          small: sizes.iconSize.small + iconDelta,
+          medium: sizes.iconSize.medium + iconDelta,
+          large: sizes.iconSize.large + iconDelta,
+          xlarge: sizes.iconSize.xlarge + iconDelta,
+        } as DefaultTheme['iconSize'];
         const w = (chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight) as DefaultTheme['fontWeight'];
         setTheme({
           ...chosenTheme,
           colors: updatedColors,
           fontSize: updatedFontSize,
+          iconSize: updatedIconSize,
           fontName: getFontFamily(chosenFont.family, w as string),
           fontWeight: w,
         });
