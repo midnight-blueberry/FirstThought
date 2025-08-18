@@ -9,6 +9,8 @@ import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -215,6 +217,10 @@ export default function RootLayout() {
   void prepare();
 }, []);
 
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(theme.colors.background);
+  }, [theme.colors.background]);
+
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {
       void SplashScreen.hideAsync();
@@ -230,6 +236,7 @@ export default function RootLayout() {
   return (
     <ThemeContext.Provider value={{ setTheme }}>
       <ThemeProvider theme={theme}>
+        <StatusBar style={theme.name === themes.dark.name ? 'light' : 'dark'} />
         <SafeAreaProvider>
           <SafeAreaView
             style={[styles.container, { backgroundColor: theme.colors.background }]}

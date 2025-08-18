@@ -10,12 +10,13 @@ import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
 import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import { themeList } from '@/theme';
+import { themeList, themes } from '@/theme';
 import { sizes } from '@/theme/tokens';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Modal, ScrollView, StyleSheet, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 const interpolateColor = (from: string, to: string, t: number) => {
@@ -533,7 +534,11 @@ export default function Settings() {
 
       {overlayVisible && (
         <Modal transparent statusBarTranslucent animationType="none">
-          <StatusBar translucent backgroundColor="transparent" />
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            style={theme.name === themes.dark.name ? 'light' : 'dark'}
+          />
           <Animated.View
             style={[
               StyleSheet.absoluteFillObject,
