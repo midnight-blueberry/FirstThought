@@ -1,11 +1,12 @@
 import AppText from '@/components/ui/atoms/app-text';
+import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import IconButton from '@/components/ui/atoms/icon-button';
+import SelectorRow from '@/components/ui/atoms/selector-row';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
-import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
-import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
-import useHeaderShadow from '@/hooks/useHeaderShadow';
+import Section from '@/components/ui/organisms/settings-section';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
+import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
@@ -13,7 +14,7 @@ import { sizes } from '@/theme/tokens';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, View, Modal, StatusBar } from 'react-native';
+import { Animated, Easing, Modal, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 const interpolateColor = (from: string, to: string, t: number) => {
@@ -64,6 +65,13 @@ export default function Settings() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerStyle: { backgroundColor: theme.colors.background },
+      headerTintColor: theme.colors.basic,
+      headerTitleStyle: {
+        color: theme.colors.basic,
+        fontFamily: theme.fontName, // если нужно синхронизировать шрифт
+        fontWeight: 'normal',
+      },
       headerRight: () => (
         <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
           <IconButton icon="save-outline" />
@@ -310,7 +318,14 @@ export default function Settings() {
         large: sizes.iconSize.large + iconDelta,
         xlarge: sizes.iconSize.xlarge + iconDelta,
       };
-      void saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight, iconSize });
+      void saveSettings({
+        themeName: selectedThemeName,
+        accentColor: selectedAccentColor,
+        fontSizeLevel: level,
+        fontName: selectedFontName,
+        fontWeight,
+        iconSize,
+      });
     });
   };
 
@@ -398,6 +413,8 @@ export default function Settings() {
   }, [selectedThemeName, selectedFontName, fontWeight]);
 
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
+  const hasMultiple = selectedFont.weights.length > 1;
+  const columns = hasMultiple ? selectedFont.weights.length : 5;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -407,82 +424,110 @@ export default function Settings() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <AppText variant='large' style={[styles.label, styles.themeLabel]}>Тема</AppText>
-        <View style={styles.themeList}>
-          {themeList.map(themeItem => (
-            <SelectableRow
-              key={themeItem.name}
-              label={themeItem.name}
-              swatchColor={themeItem.colors.background}
-              selected={themeItem.name === selectedThemeName}
-              onPress={() => setSelectedThemeName(themeItem.name)}
-            />
-          ))}
-        </View>
-
-        <AppText variant='large' style={[styles.label, styles.accentLabel]}>Акцент</AppText>
-        <View style={styles.themeList}>
-          {accentColors.map(color => (
-            <SelectableRow
-              key={color.hex}
-              label={color.name}
-              swatchColor={color.hex}
-              selected={color.hex === selectedAccentColor}
-              onPress={() => handleAccentChange(color.hex)}
-            />
-          ))}
-        </View>
-
-        <AppText variant='large' style={[styles.label, styles.fontLabel]}>Шрифт</AppText>
-        <View style={styles.themeList}>
-          {fonts.map(f => {
-            const delta = (fontSizeLevel - 3) * 2;
-            const medium = f.defaultSize + delta;
-            return (
+        <Section title="Тема">
+          <View>
+            {themeList.map(themeItem => (
               <SelectableRow
-                key={f.name}
-                label={f.name}
-                swatchColor={theme.colors.basic}
-                selected={f.name === selectedFontName}
-                onPress={() => { setSelectedFontName(f.name); setFontWeight(f.defaultWeight); }}
-                fontFamily={getFontFamily(f.family, f.defaultWeight)}
-                fontWeight='normal'
-                fontSize={medium}
+                key={themeItem.name}
+                label={themeItem.name}
+                swatchColor={themeItem.colors.background}
+                selected={themeItem.name === selectedThemeName}
+                onPress={() => setSelectedThemeName(themeItem.name)}
               />
-            );
-          })}
-        </View>
-
-        <FontSizeSelector
-          level={fontSizeLevel}
-          onIncrease={increaseFontSize}
-          onDecrease={decreaseFontSize}
-          blinkIndex={blinkIndex}
-          blinkAnim={blinkAnim}
-        />
-        <FontWeightSelector
-          weights={selectedFont.weights}
-          selectedIndex={selectedFont.weights.indexOf(fontWeight)}
-          onIncrease={increaseFontWeight}
-          onDecrease={decreaseFontWeight}
-          blinkIndex={weightBlinkIndex}
-          blinkAnim={weightBlinkAnim}
-        />
-        <View
-          style={{
-            marginTop: theme.margin.medium,
-            borderColor: theme.colors.accent,
-            borderWidth: theme.borderWidth.medium,
-            borderRadius: theme.borderRadius,
-            padding: theme.padding.medium,
-            alignSelf: 'stretch',
-          }}
-        >
-          <AppText color='basic' fontFamily={getFontFamily(selectedFont.family, fontWeight)}>
-            Так будет выглядеть ваша заметка в выбранном формате
-          </AppText>
-        </View>
+            ))}
+          </View>
+        </Section>
+        
+        <Section title="Акцент">
+          <View>
+            {accentColors.map(color => (
+              <SelectableRow
+                key={color.hex}
+                label={color.name}
+                swatchColor={color.hex}
+                selected={color.hex === selectedAccentColor}
+                onPress={() => handleAccentChange(color.hex)}
+              />
+            ))}
+          </View>
+        </Section>
+        
+        <Section title="Шрифт">
+          <View>
+            {fonts.map(f => {
+              const delta = (fontSizeLevel - 3) * 2;
+              const medium = f.defaultSize + delta;
+              return (
+                <SelectableRow
+                  key={f.name}
+                  label={f.name}
+                  swatchColor={theme.colors.basic}
+                  selected={f.name === selectedFontName}
+                  onPress={() => { setSelectedFontName(f.name); setFontWeight(f.defaultWeight); }}
+                  fontFamily={getFontFamily(f.family, f.defaultWeight)}
+                  fontWeight='normal'
+                  fontSize={medium}
+                />
+              );
+            })}
+          </View>
+        </Section>
+        
+        <Section title="Размер шрифта">
+          <SelectorRow onIncrease={increaseFontSize} onDecrease={decreaseFontSize}>
+            <BarIndicator
+              total={6}
+              filledCount={fontSizeLevel}
+              blinkIndex={blinkIndex}
+              blinkAnim={blinkAnim}
+              containerColor={theme.colors.basic}
+              fillColor={theme.colors.accent}
+            />
+          </SelectorRow>
+        </Section>
+        
+        <Section title="Жирность шрифта">
+          <SelectorRow
+            onIncrease={hasMultiple ? increaseFontWeight : undefined}
+            onDecrease={hasMultiple ? decreaseFontWeight : undefined}
+            increaseColor={hasMultiple ? 'basic' : 'disabled'}
+            decreaseColor={hasMultiple ? 'basic' : 'disabled'}
+            opacity={hasMultiple ? 1 : 0.5}
+          >
+            <BarIndicator
+              total={columns}
+              filledCount={hasMultiple ? selectedFont.weights.indexOf(fontWeight) + 1 : 0}
+              blinkIndex={blinkIndex}
+              blinkAnim={blinkAnim}
+              containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
+              fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
+            />
+          </SelectorRow>
+          {!hasMultiple && (
+            <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
+              Недоступно для данного шрифта
+            </AppText>
+          )}
+        </Section>
+        
+        <Section>
+          <View
+            style={{
+              marginTop: theme.margin.large,
+              borderColor: theme.colors.accent,
+              borderWidth: theme.borderWidth.medium,
+              borderRadius: theme.borderRadius,
+              padding: theme.padding.medium,
+              alignSelf: 'stretch',
+            }}
+          >
+            <AppText color='basic' fontFamily={getFontFamily(selectedFont.family, fontWeight)}>
+              Так будет выглядеть ваша заметка в выбранном формате
+            </AppText>
+          </View>
+        </Section>
       </ScrollView>
+
       {overlayVisible && (
         <Modal transparent statusBarTranslucent animationType="none">
           <StatusBar translucent backgroundColor="transparent" />
@@ -505,22 +550,13 @@ const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
-      paddingHorizontal: 16,
-      paddingBottom: 16,
+      paddingHorizontal: theme.padding.xlarge,
+      paddingBottom: theme.padding.xlarge,
     },
     label: {
       marginBottom: theme.margin.medium,
     },
-    themeLabel: {
-      marginTop: theme.margin.medium,
-    },
-    accentLabel: {
-      marginTop: theme.margin.small,
-    },
-    fontLabel: {
-      marginTop: theme.margin.small,
-    },
-    themeList: {
-      marginBottom: theme.margin.small,
-    },
+    section: {
+      marginBottom: theme.margin.medium,
+    }
   });
