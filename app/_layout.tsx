@@ -1,5 +1,5 @@
 import IconButton from '@/components/ui/atoms/icon-button';
-import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
+import { fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
@@ -10,13 +10,12 @@ import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
-import { themeList, themes } from '../theme';
-import { sizes } from '../theme/tokens';
+import { themes } from '../theme';
 import { buildTheme } from '@/src/theme/buildTheme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -206,7 +205,7 @@ export default function RootLayout() {
       const saved = await loadSettings();
 
       // 3. Собираем тему из saved через общий хелпер
-      setTheme(buildTheme(saved)); // <— единая точка сборки
+      setTheme(buildTheme(saved ?? undefined)); // <— единая точка сборки
     } catch (e) {
       console.warn(e);
     } finally {

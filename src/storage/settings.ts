@@ -8,7 +8,7 @@ export type AppSettings = {
   accentColor: string;
   fontSizeLevel: number;
   fontName: string;
-  fontWeight: string;
+  fontWeight: DefaultTheme['fontWeight'];
   iconSize: DefaultTheme['iconSize'];
 };
 
