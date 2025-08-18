@@ -15,7 +15,7 @@ import { sizes } from '@/theme/tokens';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Modal, ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
@@ -36,6 +36,43 @@ const interpolateColor = (from: string, to: string, t: number) => {
   const b = Math.round(b1 + (b2 - b1) * t);
 
   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
+
+const TextAlignIcon = ({
+  variant,
+  color,
+}: {
+  variant: 'left' | 'justify';
+  color: string;
+}) => (
+  <View style={{ width: 24, height: 24, justifyContent: 'space-between' }}>
+    {[0, 1, 2].map(i => (
+      <View
+        key={i}
+        style={{
+          height: 2,
+          width: variant === 'left' ? [16, 20, 12][i] : 24,
+          backgroundColor: color,
+          alignSelf: 'flex-start',
+        }}
+      />
+    ))}
+  </View>
+);
+
+const TextAlignButton = ({
+  variant,
+  onPress,
+}: {
+  variant: 'left' | 'justify';
+  onPress?: () => void;
+}) => {
+  const theme = useTheme();
+  return (
+    <TouchableOpacity onPress={onPress} hitSlop={8}>
+      <TextAlignIcon variant={variant} color={theme.colors.basic} />
+    </TouchableOpacity>
+  );
 };
 
 export default function Settings() {
@@ -510,7 +547,21 @@ export default function Settings() {
             </AppText>
           )}
         </Section>
-        
+
+        <Section title="Выравнивание текста в заметках">
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              alignSelf: 'stretch',
+            }}
+          >
+            <TextAlignButton variant="left" />
+            <TextAlignButton variant="justify" />
+          </View>
+        </Section>
+
         <Section>
           <View
             style={{
