@@ -1,6 +1,7 @@
 // src/theme/buildTheme.ts
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
 import { themeList, themes } from '@/theme';
+import { sizes } from '@/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
 
 type SavedSettings = {
@@ -27,9 +28,8 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
   // 2) Шрифт (семейство + начертание)
   const savedFontName = saved?.fontName ?? defaultFontName;
   const fontMeta = fonts.find(f => f.name === savedFontName) ?? fonts[0];
-  const weight =
-    (saved?.fontWeight as DefaultTheme['fontWeight']) ??
-    (fontMeta.defaultWeight as DefaultTheme['fontWeight']);
+  const weight: DefaultTheme['fontWeight'] =
+    saved?.fontWeight ?? (fontMeta.defaultWeight as DefaultTheme['fontWeight']);
 
   // 3) Размеры шрифта (с учётом уровня)
   // В твоём коде: delta = (level - 3) * 2; medium = font.defaultSize + delta
@@ -61,7 +61,7 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
     colors: updatedColors,
     fontSize: updatedFontSize,
     iconSize: updatedIconSize,
-    fontName: getFontFamily(fontMeta.family, weight as string),
+    fontName: getFontFamily(fontMeta.family, String(weight)),
     fontWeight: weight,
   } as DefaultTheme;
 }
