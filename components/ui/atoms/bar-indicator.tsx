@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 import { useTheme } from 'styled-components/native';
 
 interface BarIndicatorProps {
@@ -25,7 +25,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
     <>
       {Array.from({ length: total }).map((_, i) => {
         const containerStyle = {
-          width: theme.iconSize.small,
+          width: theme.iconSize.xsmall,
           height: theme.iconSize.small * (0.5 + i * 0.25),
           marginHorizontal: theme.spacing.small / 2,
           borderColor: containerColor,
