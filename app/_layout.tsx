@@ -17,6 +17,7 @@ import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
 import { themeList, themes } from '../theme';
 import { sizes } from '../theme/tokens';
+import { buildTheme } from '@/src/theme/buildTheme';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -187,73 +188,33 @@ export default function RootLayout() {
   const [settingsPageHeaderElevation] = useState(0);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // 1. Загружаем шрифты
-        await Font.loadAsync(
-          Object.fromEntries(
-            fonts.flatMap((f) =>
-              (f.weights as (keyof typeof f.files)[]).map((w) => [
-                getFontFamily(f.family, w),
-                f.files[w],
-              ])
-            )
+  async function prepare() {
+    try {
+      // 1. Шрифты (как и было)
+      await Font.loadAsync(
+        Object.fromEntries(
+          fonts.flatMap((f) =>
+            (f.weights as (keyof typeof f.files)[]).map((w) => [
+              getFontFamily(f.family, w),
+              f.files[w],
+            ])
           )
-        );
+        )
+      );
 
-        // 2. Загружаем сохраненные настройки
-        const saved = await loadSettings();
-        const fontName = saved?.fontName ?? defaultFontName;
-        const font = fonts.find(f => f.name === fontName) ?? fonts[0];
-        const weight: TextStyle['fontWeight'] =
-          (saved?.fontWeight as TextStyle['fontWeight']) ??
-          (font.defaultWeight as TextStyle['fontWeight']);
-        const chosenTheme = saved
-          ? themeList.find(t => t.name === saved.themeName) ?? themes.light
-          : themes.light;
-        const accentColor = saved?.accentColor ?? chosenTheme.colors.accent;
-        const updatedColors = { ...chosenTheme.colors, accent: accentColor };
-        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-          updatedColors.basic = accentColor;
-        }
-        const delta = saved ? (saved.fontSizeLevel - 3) * 2 : 0;
-        const medium = font.defaultSize + delta;
-        const updatedFontSize = {
-          small: medium - 4,
-          medium,
-          large: medium + 4,
-          xlarge: medium + 8,
-        } as DefaultTheme['fontSize'];
-        const iconDelta = saved ? (saved.fontSizeLevel - 3) * 4 : 0;
-        const updatedIconSize = saved?.iconSize ?? ({
-          xsmall: sizes.iconSize.xsmall + iconDelta,
-          small: sizes.iconSize.small + iconDelta,
-          medium: sizes.iconSize.medium + iconDelta,
-          large: sizes.iconSize.large + iconDelta,
-          xlarge: sizes.iconSize.xlarge + iconDelta,
-        } as DefaultTheme['iconSize']);
-        setTheme({
-          ...chosenTheme,
-          colors: updatedColors,
-          fontSize: updatedFontSize,
-          iconSize: updatedIconSize,
-          fontName: getFontFamily(font.family, weight as string),
-          fontWeight: weight,
-        });
+      // 2. Настройки
+      const saved = await loadSettings();
 
-        // 3. Здесь же можно загрузить любые другие ассеты
-        // await Asset.loadAsync(...);
-
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Даем понять, что всё готово
-        setAppIsReady(true);
-      }
+      // 3. Собираем тему из saved через общий хелпер
+      setTheme(buildTheme(saved)); // <— единая точка сборки
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setAppIsReady(true);
     }
-
-    void prepare();
-  }, []);
+  }
+  void prepare();
+}, []);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {
