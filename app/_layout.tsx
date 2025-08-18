@@ -2,8 +2,9 @@ import IconButton from '@/components/ui/atoms/icon-button';
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import type { DrawerContentComponentProps } from '@react-navigation/drawer';
+import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import type { ParamListBase } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
@@ -64,12 +65,17 @@ function DrawerNavigator({
   settingsPageHeaderElevation,
 }: DrawerNavigatorProps) {
   const { top } = useSafeAreaInsets();
+  const headerHeight = top + theme.iconSize.medium + theme.spacing.large * 2;
+  const baseHeaderStyle = {
+    height: headerHeight,
+    backgroundColor: theme.colors.background,
+  };
 
   return (
     <Drawer
       initialRouteName="home-page"
       // Здесь задаём общие опции для всех экранов и самого меню
-      screenOptions={({ route, navigation }) => ({
+      screenOptions={() => ({
         headerShown: true,
 
         // ширина и фон «самого ящика»
@@ -124,43 +130,46 @@ function DrawerNavigator({
         },
         headerShadowVisible: false,
         headerTintColor: theme.colors.basic,
+        headerStyle: baseHeaderStyle,
       })}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen
-        name="home-page"
-        options={({ navigation }) => ({
+        <Drawer.Screen
+          name="home-page"
+          options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
           title: homePageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="menu"
-              onPress={() =>
-                navigation.dispatch(DrawerActions.openDrawer())
-              }
+              onPress={() => {
+                navigation.dispatch(DrawerActions.openDrawer());
+              }}
             />
           ),
           headerRight: () => (
             <IconButton icon="search" onPress={() => null} />
           ),
           headerStyle: {
+            ...baseHeaderStyle,
             elevation: homePageHeaderElevation,
-            backgroundColor: theme.colors.background,
           },
         })}
       />
-      <Drawer.Screen
-        name="settings"
-        options={({ navigation }) => ({
+        <Drawer.Screen
+          name="settings"
+          options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
           title: settingsPageHeaderTitle,
           headerLeft: () => (
             <IconButton
               icon="chevron-back"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.goBack();
+              }}
             />
           ),
           headerStyle: {
+            ...baseHeaderStyle,
             elevation: settingsPageHeaderElevation,
-            backgroundColor: theme.colors.background,
           },
         })}
       />
