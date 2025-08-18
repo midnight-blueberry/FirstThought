@@ -6,7 +6,6 @@ import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
-import { useNavigation } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -70,7 +69,7 @@ function DrawerNavigator({
     <Drawer
       initialRouteName="home-page"
       // Здесь задаём общие опции для всех экранов и самого меню
-      screenOptions={{
+      screenOptions={({ route, navigation }) => ({
         headerShown: true,
 
         // ширина и фон «самого ящика»
@@ -114,72 +113,53 @@ function DrawerNavigator({
           marginVertical: 4,
           marginHorizontal: 8,
         },
-      }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      <Drawer.Screen
-        name="home-page"
-        options={{
-          title: homePageHeaderTitle,
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontFamily: theme.fontName,
-            fontSize: theme.fontSize.large,
-            color: theme.colors.basic,
-            fontWeight: theme.fontWeight,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.background,
-            elevation: homePageHeaderElevation,
-          },
-          // iOS/web (React Navigation 6) — отключает линию под хедером
-          headerShadowVisible: false,
-          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <IconButton
-                icon="menu"
-                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-              />
-            );
-          },
-          headerRight: () => (
+
+        // общие опции заголовков
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: theme.fontName,
+          fontSize: theme.fontSize.large,
+          color: theme.colors.basic,
+          fontWeight: theme.fontWeight,
+        },
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+          elevation:
+            route.name === 'home-page'
+              ? homePageHeaderElevation
+              : settingsPageHeaderElevation,
+        },
+        headerShadowVisible: false,
+        headerTintColor: theme.colors.basic,
+        title:
+          route.name === 'home-page'
+            ? homePageHeaderTitle
+            : settingsPageHeaderTitle,
+        headerLeft: () =>
+          route.name === 'home-page' ? (
             <IconButton
-              icon="search"
-              onPress={() => null}
+              icon="menu"
+              onPress={() =>
+                navigation.dispatch(DrawerActions.openDrawer())
+              }
+            />
+          ) : (
+            <IconButton
+              icon="chevron-back"
+              onPress={() => navigation.goBack()}
             />
           ),
-        }}
-      />
-      <Drawer.Screen
-        name="settings"
-        options={{
-          title: settingsPageHeaderTitle,
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontFamily: theme.fontName,
-            fontSize: theme.fontSize.large,
-            color: theme.colors.basic,
-            fontWeight: theme.fontWeight,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.background,
-            elevation: settingsPageHeaderElevation,
-          },
-          headerShadowVisible: false,
-          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <IconButton
-                icon="chevron-back"
-                onPress={() => navigation.goBack()}
-              />
-            );
-          },
-        }}
-      />
+        headerRight:
+          route.name === 'home-page'
+            ? () => (
+                <IconButton icon="search" onPress={() => null} />
+              )
+            : undefined,
+      })}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen name="home-page" />
+      <Drawer.Screen name="settings" />
     </Drawer>
   );
 }
