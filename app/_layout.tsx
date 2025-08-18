@@ -226,6 +226,7 @@ export default function RootLayout() {
         } as DefaultTheme['fontSize'];
         const iconDelta = saved ? (saved.fontSizeLevel - 3) * 4 : 0;
         const updatedIconSize = saved?.iconSize ?? ({
+          xsmall: sizes.iconSize.xsmall + iconDelta,
           small: sizes.iconSize.small + iconDelta,
           medium: sizes.iconSize.medium + iconDelta,
           large: sizes.iconSize.large + iconDelta,

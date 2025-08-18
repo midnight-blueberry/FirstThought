@@ -6,6 +6,7 @@ export const sizes = {
     xlarge: 26,
   },
   iconSize: {
+    xsmall: 20,
     small: 24,
     medium: 28,
     large: 32,
