@@ -6,7 +6,6 @@ import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import * as Font from 'expo-font';
-import { useNavigation } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -70,7 +69,7 @@ function DrawerNavigator({
     <Drawer
       initialRouteName="home-page"
       // Здесь задаём общие опции для всех экранов и самого меню
-      screenOptions={{
+      screenOptions={({ route, navigation }) => ({
         headerShown: true,
 
         // ширина и фон «самого ящика»
@@ -107,78 +106,63 @@ function DrawerNavigator({
 
         // цвет активного/неактивного пункта
         drawerActiveTintColor: theme.colors.basic,
-        drawerInactiveTintColor: theme.colors.basic,
+        drawerInactiveTintColor: theme.colors.disabled,
 
         // при желании: отступы вокруг каждого пункта
         drawerItemStyle: {
           marginVertical: 4,
           marginHorizontal: 8,
         },
-      }}
+
+        // общие опции заголовков
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: theme.fontName,
+          fontSize: theme.fontSize.large,
+          color: theme.colors.basic,
+          fontWeight: theme.fontWeight,
+        },
+        headerShadowVisible: false,
+        headerTintColor: theme.colors.basic,
+      })}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
         name="home-page"
-        options={{
+        options={({ navigation }) => ({
           title: homePageHeaderTitle,
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontFamily: theme.fontName,
-            fontSize: theme.fontSize.large,
-            color: theme.colors.basic,
-            fontWeight: theme.fontWeight,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.background,
-            elevation: homePageHeaderElevation,
-          },
-          // iOS/web (React Navigation 6) — отключает линию под хедером
-          headerShadowVisible: false,
-          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <IconButton
-                icon="menu"
-                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-              />
-            );
-          },
-          headerRight: () => (
+          headerLeft: () => (
             <IconButton
-              icon="search"
-              onPress={() => null}
+              icon="menu"
+              onPress={() =>
+                navigation.dispatch(DrawerActions.openDrawer())
+              }
             />
           ),
-        }}
+          headerRight: () => (
+            <IconButton icon="search" onPress={() => null} />
+          ),
+          headerStyle: {
+            elevation: homePageHeaderElevation,
+            backgroundColor: theme.colors.background,
+          },
+        })}
       />
       <Drawer.Screen
         name="settings"
-        options={{
+        options={({ navigation }) => ({
           title: settingsPageHeaderTitle,
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontFamily: theme.fontName,
-            fontSize: theme.fontSize.large,
-            color: theme.colors.basic,
-            fontWeight: theme.fontWeight,
-          },
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-back"
+              onPress={() => navigation.goBack()}
+            />
+          ),
           headerStyle: {
-            backgroundColor: theme.colors.background,
             elevation: settingsPageHeaderElevation,
+            backgroundColor: theme.colors.background,
           },
-          headerShadowVisible: false,
-          headerTintColor: theme.colors.basic, // цвет иконок/стрелки «назад»
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <IconButton
-                icon="chevron-back"
-                onPress={() => navigation.goBack()}
-              />
-            );
-          },
-        }}
+        })}
       />
     </Drawer>
   );
