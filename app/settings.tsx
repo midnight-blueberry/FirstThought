@@ -47,10 +47,10 @@ export default function Settings() {
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
   const [ fontWeight, setFontWeight ] = useState<string>(String(theme.fontWeight));
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
-  const [ blinkIndex, setBlinkIndex ] = useState<number | null>(null);
-  const blinkAnim = useRef(new Animated.Value(1)).current;
-  const [ weightBlinkIndex, setWeightBlinkIndex ] = useState<number | null>(null);
-  const weightBlinkAnim = useRef(new Animated.Value(1)).current;
+  const [ fontSizeBlinkIndex, setFontSizeBlinkIndex ] = useState<number | null>(null);
+  const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
+  const [ fontWeightBlinkIndex, setFontWeightBlinkIndex ] = useState<number | null>(null);
+  const fontWeightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -288,23 +288,23 @@ export default function Settings() {
   }, []);
 
   const triggerBlink = useCallback((index: number) => {
-    blinkAnim.stopAnimation();
-    setBlinkIndex(index);
-    blinkAnim.setValue(1);
+    fontSizeBlinkAnim.stopAnimation();
+    setFontSizeBlinkIndex(index);
+    fontSizeBlinkAnim.setValue(1);
     Animated.loop(
       Animated.sequence([
-        Animated.timing(blinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-        Animated.timing(blinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
+        Animated.timing(fontSizeBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        Animated.timing(fontSizeBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
       ]),
       { iterations: 5 }
-    ).start(() => setBlinkIndex(null));
-  }, [blinkAnim]);
+    ).start(() => setFontSizeBlinkIndex(null));
+  }, [fontSizeBlinkAnim]);
 
   const stopBlink = useCallback(() => {
-    blinkAnim.stopAnimation();
-    blinkAnim.setValue(1);
-    setBlinkIndex(null);
-  }, [blinkAnim]);
+    fontSizeBlinkAnim.stopAnimation();
+    fontSizeBlinkAnim.setValue(1);
+    setFontSizeBlinkIndex(null);
+  }, [fontSizeBlinkAnim]);
 
   const applyFontSizeLevel = (level: number) => {
     runWithOverlay(() => {
@@ -330,7 +330,7 @@ export default function Settings() {
   };
 
   const decreaseFontSize = () => {
-    if (blinkIndex !== null) stopBlink();
+    if (fontSizeBlinkIndex !== null) stopBlink();
     if (fontSizeLevel <= 1) {
       triggerBlink(0);
       return;
@@ -339,7 +339,7 @@ export default function Settings() {
   };
 
   const increaseFontSize = () => {
-    if (blinkIndex !== null) stopBlink();
+    if (fontSizeBlinkIndex !== null) stopBlink();
     if (fontSizeLevel >= 6) {
       triggerBlink(5);
       return;
@@ -348,28 +348,28 @@ export default function Settings() {
   };
 
   const triggerWeightBlink = useCallback((index: number) => {
-    weightBlinkAnim.stopAnimation();
-    setWeightBlinkIndex(index);
-    weightBlinkAnim.setValue(1);
+    fontWeightBlinkAnim.stopAnimation();
+    setFontWeightBlinkIndex(index);
+    fontWeightBlinkAnim.setValue(1);
     Animated.loop(
       Animated.sequence([
-        Animated.timing(weightBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-        Animated.timing(weightBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
+        Animated.timing(fontWeightBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        Animated.timing(fontWeightBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
       ]),
       { iterations: 5 }
-    ).start(() => setWeightBlinkIndex(null));
-  }, [weightBlinkAnim]);
+    ).start(() => setFontWeightBlinkIndex(null));
+  }, [fontWeightBlinkAnim]);
 
   const stopWeightBlink = useCallback(() => {
-    weightBlinkAnim.stopAnimation();
-    weightBlinkAnim.setValue(1);
-    setWeightBlinkIndex(null);
-  }, [weightBlinkAnim]);
+    fontWeightBlinkAnim.stopAnimation();
+    fontWeightBlinkAnim.setValue(1);
+    setFontWeightBlinkIndex(null);
+  }, [fontWeightBlinkAnim]);
 
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
     const idx = font.weights.indexOf(fontWeight);
-    if (weightBlinkIndex !== null) stopWeightBlink();
+    if (fontWeightBlinkIndex !== null) stopWeightBlink();
     if (idx > 0) {
       setFontWeight(font.weights[idx - 1]);
     } else {
@@ -380,7 +380,7 @@ export default function Settings() {
   const increaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
     const idx = font.weights.indexOf(fontWeight);
-    if (weightBlinkIndex !== null) stopWeightBlink();
+    if (fontWeightBlinkIndex !== null) stopWeightBlink();
     if (idx < font.weights.length - 1) {
       setFontWeight(font.weights[idx + 1]);
     } else {
@@ -478,8 +478,8 @@ export default function Settings() {
             <BarIndicator
               total={6}
               filledCount={fontSizeLevel}
-              blinkIndex={blinkIndex}
-              blinkAnim={blinkAnim}
+              blinkIndex={fontSizeBlinkIndex}
+              blinkAnim={fontSizeBlinkAnim}
               containerColor={theme.colors.basic}
               fillColor={theme.colors.accent}
             />
@@ -497,8 +497,8 @@ export default function Settings() {
             <BarIndicator
               total={columns}
               filledCount={hasMultiple ? selectedFont.weights.indexOf(fontWeight) + 1 : 0}
-              blinkIndex={blinkIndex}
-              blinkAnim={blinkAnim}
+              blinkIndex={fontWeightBlinkIndex}
+              blinkAnim={fontWeightBlinkAnim}
               containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
               fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
             />
