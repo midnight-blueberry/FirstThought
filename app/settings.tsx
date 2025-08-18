@@ -213,12 +213,20 @@ export default function Settings() {
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
         updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
+        const iconDelta = (fontSizeLevel - 3) * 4;
+        const iconSize = {
+          small: sizes.iconSize.small + iconDelta,
+          medium: sizes.iconSize.medium + iconDelta,
+          large: sizes.iconSize.large + iconDelta,
+          xlarge: sizes.iconSize.xlarge + iconDelta,
+        };
         void saveSettings({
           themeName: selectedThemeName,
           accentColor: selectedAccentColor,
           fontSizeLevel,
           fontName: selectedFontName,
           fontWeight,
+          iconSize,
         });
     };
 
@@ -291,7 +299,14 @@ export default function Settings() {
     runWithOverlay(() => {
       setFontSizeLevel(level);
       updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
-      void saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight });
+      const iconDelta = (level - 3) * 4;
+      const iconSize = {
+        small: sizes.iconSize.small + iconDelta,
+        medium: sizes.iconSize.medium + iconDelta,
+        large: sizes.iconSize.large + iconDelta,
+        xlarge: sizes.iconSize.xlarge + iconDelta,
+      };
+      void saveSettings({ themeName: selectedThemeName, accentColor: selectedAccentColor, fontSizeLevel: level, fontName: selectedFontName, fontWeight, iconSize });
     });
   };
 

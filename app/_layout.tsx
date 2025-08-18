@@ -16,6 +16,7 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
 import { themeList, themes } from '../theme';
+import { sizes } from '../theme/tokens';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -223,10 +224,18 @@ export default function RootLayout() {
           large: medium + 4,
           xlarge: medium + 8,
         } as DefaultTheme['fontSize'];
+        const iconDelta = saved ? (saved.fontSizeLevel - 3) * 4 : 0;
+        const updatedIconSize = saved?.iconSize ?? ({
+          small: sizes.iconSize.small + iconDelta,
+          medium: sizes.iconSize.medium + iconDelta,
+          large: sizes.iconSize.large + iconDelta,
+          xlarge: sizes.iconSize.xlarge + iconDelta,
+        } as DefaultTheme['iconSize']);
         setTheme({
           ...chosenTheme,
           colors: updatedColors,
           fontSize: updatedFontSize,
+          iconSize: updatedIconSize,
           fontName: getFontFamily(font.family, weight as string),
           fontWeight: weight,
         });
