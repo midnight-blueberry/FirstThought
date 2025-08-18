@@ -107,6 +107,7 @@ export default function Settings() {
         } as DefaultTheme['fontSize'];
         const iconDelta = (level - 3) * 4;
         const updatedIconSize = {
+          xsmall: sizes.iconSize.xsmall + iconDelta,
           small: sizes.iconSize.small + iconDelta,
           medium: sizes.iconSize.medium + iconDelta,
           large: sizes.iconSize.large + iconDelta,
@@ -215,6 +216,7 @@ export default function Settings() {
         updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
         const iconDelta = (fontSizeLevel - 3) * 4;
         const iconSize = {
+          xsmall: sizes.iconSize.xsmall + iconDelta,
           small: sizes.iconSize.small + iconDelta,
           medium: sizes.iconSize.medium + iconDelta,
           large: sizes.iconSize.large + iconDelta,
@@ -301,6 +303,7 @@ export default function Settings() {
       updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
       const iconDelta = (level - 3) * 4;
       const iconSize = {
+        xsmall: sizes.iconSize.xsmall + iconDelta,
         small: sizes.iconSize.small + iconDelta,
         medium: sizes.iconSize.medium + iconDelta,
         large: sizes.iconSize.large + iconDelta,
