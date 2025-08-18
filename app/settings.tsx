@@ -8,6 +8,7 @@ import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
+import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import { sizes } from '@/theme/tokens';
@@ -45,7 +46,7 @@ export default function Settings() {
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
   const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
-  const [ fontWeight, setFontWeight ] = useState<string>(String(theme.fontWeight));
+  const [ fontWeight, setFontWeight ] = useState<DefaultTheme['fontWeight']>(theme.fontWeight);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ fontSizeBlinkIndex, setFontSizeBlinkIndex ] = useState<number | null>(null);
   const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
@@ -69,8 +70,9 @@ export default function Settings() {
       headerTintColor: theme.colors.basic,
       headerTitleStyle: {
         color: theme.colors.basic,
-        fontFamily: theme.fontName, // если нужно синхронизировать шрифт
-        fontWeight: 'normal',
+        fontFamily: theme.fontName,
+        fontWeight: theme.fontWeight, // ← берём из темы
+        fontSize: theme.fontSize.large,
       },
       headerRight: () => (
         <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
@@ -86,7 +88,7 @@ export default function Settings() {
       setSelectedAccentColor(theme.colors.accent);
       const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
       setSelectedFontName(baseName);
-      setFontWeight(String(theme.fontWeight));
+      setFontWeight(theme.fontWeight);
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
@@ -94,47 +96,72 @@ export default function Settings() {
     }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight])
   );
 
-  const updateTheme = useCallback(
-    (themeName: string, accentColor: string, fontName: string, weight: string, level: number) => {
-      const chosenTheme = themeList.find(t => t.name === themeName);
-      const chosenFont = fonts.find(f => f.name === fontName) ?? fonts[0];
-      if (chosenTheme) {
-        const updatedColors = {
-          ...chosenTheme.colors,
-          accent: accentColor,
-        };
-        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-          updatedColors.basic = accentColor;
-        }
-        const delta = (level - 3) * 2;
-        const medium = chosenFont.defaultSize + delta;
-        const updatedFontSize = {
-          small: medium - 4,
-          medium,
-          large: medium + 4,
-          xlarge: medium + 8,
-        } as DefaultTheme['fontSize'];
-        const iconDelta = (level - 3) * 4;
-        const updatedIconSize = {
-          xsmall: sizes.iconSize.xsmall + iconDelta,
-          small: sizes.iconSize.small + iconDelta,
-          medium: sizes.iconSize.medium + iconDelta,
-          large: sizes.iconSize.large + iconDelta,
-          xlarge: sizes.iconSize.xlarge + iconDelta,
-        } as DefaultTheme['iconSize'];
-        const w = (chosenFont.weights.includes(weight) ? weight : chosenFont.defaultWeight) as DefaultTheme['fontWeight'];
-        setTheme({
-          ...chosenTheme,
-          colors: updatedColors,
-          fontSize: updatedFontSize,
-          iconSize: updatedIconSize,
-          fontName: getFontFamily(chosenFont.family, w as string),
-          fontWeight: w,
-        });
-      }
+ const saveAndApply = useCallback((patch: {
+  themeName?: string;
+  accentColor?: string;
+  fontName?: string;
+  fontWeight?: DefaultTheme['fontWeight'];
+  fontSizeLevel?: number;
+  iconSize?: DefaultTheme['iconSize'];
+}) => {
+  const nextSaved = {
+    themeName:        patch.themeName        ?? selectedThemeName,
+    accentColor:      patch.accentColor      ?? selectedAccentColor,
+    fontName:         patch.fontName         ?? selectedFontName,
+    fontWeight:       patch.fontWeight       ?? fontWeight,
+    fontSizeLevel:    patch.fontSizeLevel    ?? fontSizeLevel,
+    iconSize:         patch.iconSize         ?? ((): DefaultTheme['iconSize'] => {
+      const level = patch.fontSizeLevel ?? fontSizeLevel;
+      const iconDelta = (level - 3) * 4;
+      return {
+        xsmall: sizes.iconSize.xsmall + iconDelta,
+        small:  sizes.iconSize.small  + iconDelta,
+        medium: sizes.iconSize.medium + iconDelta,
+        large:  sizes.iconSize.large  + iconDelta,
+        xlarge: sizes.iconSize.xlarge + iconDelta,
+      };
+    })(),
+  };
+
+  // применяем немедленно
+  setTheme(buildTheme(nextSaved));
+  // и сохраняем на диск
+  void saveSettings(nextSaved);
+}, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, setTheme]);
+
+  // вместо ручной сборки темы
+    const updateTheme = useCallback(
+      (
+        themeName: string,
+        accentColor: string,
+        fontName: string,
+        weight: DefaultTheme['fontWeight'],
+        level: number,
+      ) => {
+      const nextSaved = {
+        themeName,
+        accentColor,
+        fontName,
+          fontWeight: weight,
+        fontSizeLevel: level,
+        // если хочешь — продолжай сохранять иконки явно (или доверь это buildTheme'у,
+        // он сам считает iconSize от level, если этого поля нет)
+        iconSize: (() => {
+          const iconDelta = (level - 3) * 4;
+          return {
+            xsmall: sizes.iconSize.xsmall + iconDelta,
+            small:  sizes.iconSize.small  + iconDelta,
+            medium: sizes.iconSize.medium + iconDelta,
+            large:  sizes.iconSize.large  + iconDelta,
+            xlarge: sizes.iconSize.xlarge + iconDelta,
+          };
+        })(),
+      };
+      setTheme(buildTheme(nextSaved));
     },
     [setTheme]
   );
+
 
   const showSaveIcon = useCallback(() => {
     setIsSaved(true);
@@ -222,23 +249,7 @@ export default function Settings() {
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
     const performSave = () => {
-        updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel);
-        const iconDelta = (fontSizeLevel - 3) * 4;
-        const iconSize = {
-          xsmall: sizes.iconSize.xsmall + iconDelta,
-          small: sizes.iconSize.small + iconDelta,
-          medium: sizes.iconSize.medium + iconDelta,
-          large: sizes.iconSize.large + iconDelta,
-          xlarge: sizes.iconSize.xlarge + iconDelta,
-        };
-        void saveSettings({
-          themeName: selectedThemeName,
-          accentColor: selectedAccentColor,
-          fontSizeLevel,
-          fontName: selectedFontName,
-          fontWeight,
-          iconSize,
-        });
+      saveAndApply({});
     };
 
     if (withOverlay) {
@@ -309,23 +320,7 @@ export default function Settings() {
   const applyFontSizeLevel = (level: number) => {
     runWithOverlay(() => {
       setFontSizeLevel(level);
-      updateTheme(selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, level);
-      const iconDelta = (level - 3) * 4;
-      const iconSize = {
-        xsmall: sizes.iconSize.xsmall + iconDelta,
-        small: sizes.iconSize.small + iconDelta,
-        medium: sizes.iconSize.medium + iconDelta,
-        large: sizes.iconSize.large + iconDelta,
-        xlarge: sizes.iconSize.xlarge + iconDelta,
-      };
-      void saveSettings({
-        themeName: selectedThemeName,
-        accentColor: selectedAccentColor,
-        fontSizeLevel: level,
-        fontName: selectedFontName,
-        fontWeight,
-        iconSize,
-      });
+      saveAndApply({ fontSizeLevel: level });
     });
   };
 
@@ -368,10 +363,10 @@ export default function Settings() {
 
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-    const idx = font.weights.indexOf(fontWeight);
+      const idx = font.weights.indexOf(fontWeight as string);
     if (fontWeightBlinkIndex !== null) stopWeightBlink();
     if (idx > 0) {
-      setFontWeight(font.weights[idx - 1]);
+        setFontWeight(font.weights[idx - 1] as DefaultTheme['fontWeight']);
     } else {
       triggerWeightBlink(0);
     }
@@ -379,10 +374,10 @@ export default function Settings() {
 
   const increaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-    const idx = font.weights.indexOf(fontWeight);
+      const idx = font.weights.indexOf(fontWeight as string);
     if (fontWeightBlinkIndex !== null) stopWeightBlink();
     if (idx < font.weights.length - 1) {
-      setFontWeight(font.weights[idx + 1]);
+        setFontWeight(font.weights[idx + 1] as DefaultTheme['fontWeight']);
     } else {
       triggerWeightBlink(font.weights.length - 1);
     }
@@ -463,7 +458,10 @@ export default function Settings() {
                   label={f.name}
                   swatchColor={theme.colors.basic}
                   selected={f.name === selectedFontName}
-                  onPress={() => { setSelectedFontName(f.name); setFontWeight(f.defaultWeight); }}
+                    onPress={() => {
+                      setSelectedFontName(f.name);
+                      setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
+                    }}
                   fontFamily={getFontFamily(f.family, f.defaultWeight)}
                   fontWeight='normal'
                   fontSize={medium}
@@ -494,14 +492,16 @@ export default function Settings() {
             decreaseColor={hasMultiple ? 'basic' : 'disabled'}
             opacity={hasMultiple ? 1 : 0.5}
           >
-            <BarIndicator
-              total={columns}
-              filledCount={hasMultiple ? selectedFont.weights.indexOf(fontWeight) + 1 : 0}
-              blinkIndex={fontWeightBlinkIndex}
-              blinkAnim={fontWeightBlinkAnim}
-              containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
-              fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
-            />
+              <BarIndicator
+                total={columns}
+                filledCount={
+                  hasMultiple ? selectedFont.weights.indexOf(fontWeight as string) + 1 : 0
+                }
+                blinkIndex={fontWeightBlinkIndex}
+                blinkAnim={fontWeightBlinkAnim}
+                containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
+                fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
+              />
           </SelectorRow>
           {!hasMultiple && (
             <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
@@ -521,7 +521,10 @@ export default function Settings() {
               alignSelf: 'stretch',
             }}
           >
-            <AppText color='basic' fontFamily={getFontFamily(selectedFont.family, fontWeight)}>
+              <AppText
+                color='basic'
+                fontFamily={getFontFamily(selectedFont.family, fontWeight as string)}
+              >
               Так будет выглядеть ваша заметка в выбранном формате
             </AppText>
           </View>

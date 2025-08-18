@@ -37,6 +37,6 @@ export const sizes = {
     medium: 3,
     large: 4,
   },
-} as const;
+};
 
 export type SizeTokens = typeof sizes;

@@ -1,5 +1,5 @@
 import IconButton from '@/components/ui/atoms/icon-button';
-import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
+import { fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
@@ -10,13 +10,13 @@ import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
-import { themeList, themes } from '../theme';
-import { sizes } from '../theme/tokens';
+import { themes } from '../theme';
+import { buildTheme } from '@/src/theme/buildTheme';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -187,73 +187,33 @@ export default function RootLayout() {
   const [settingsPageHeaderElevation] = useState(0);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // 1. Загружаем шрифты
-        await Font.loadAsync(
-          Object.fromEntries(
-            fonts.flatMap((f) =>
-              (f.weights as (keyof typeof f.files)[]).map((w) => [
-                getFontFamily(f.family, w),
-                f.files[w],
-              ])
-            )
+  async function prepare() {
+    try {
+      // 1. Шрифты (как и было)
+      await Font.loadAsync(
+        Object.fromEntries(
+          fonts.flatMap((f) =>
+            (f.weights as (keyof typeof f.files)[]).map((w) => [
+              getFontFamily(f.family, w),
+              f.files[w],
+            ])
           )
-        );
+        )
+      );
 
-        // 2. Загружаем сохраненные настройки
-        const saved = await loadSettings();
-        const fontName = saved?.fontName ?? defaultFontName;
-        const font = fonts.find(f => f.name === fontName) ?? fonts[0];
-        const weight: TextStyle['fontWeight'] =
-          (saved?.fontWeight as TextStyle['fontWeight']) ??
-          (font.defaultWeight as TextStyle['fontWeight']);
-        const chosenTheme = saved
-          ? themeList.find(t => t.name === saved.themeName) ?? themes.light
-          : themes.light;
-        const accentColor = saved?.accentColor ?? chosenTheme.colors.accent;
-        const updatedColors = { ...chosenTheme.colors, accent: accentColor };
-        if (chosenTheme.colors.basic === chosenTheme.colors.accent) {
-          updatedColors.basic = accentColor;
-        }
-        const delta = saved ? (saved.fontSizeLevel - 3) * 2 : 0;
-        const medium = font.defaultSize + delta;
-        const updatedFontSize = {
-          small: medium - 4,
-          medium,
-          large: medium + 4,
-          xlarge: medium + 8,
-        } as DefaultTheme['fontSize'];
-        const iconDelta = saved ? (saved.fontSizeLevel - 3) * 4 : 0;
-        const updatedIconSize = saved?.iconSize ?? ({
-          xsmall: sizes.iconSize.xsmall + iconDelta,
-          small: sizes.iconSize.small + iconDelta,
-          medium: sizes.iconSize.medium + iconDelta,
-          large: sizes.iconSize.large + iconDelta,
-          xlarge: sizes.iconSize.xlarge + iconDelta,
-        } as DefaultTheme['iconSize']);
-        setTheme({
-          ...chosenTheme,
-          colors: updatedColors,
-          fontSize: updatedFontSize,
-          iconSize: updatedIconSize,
-          fontName: getFontFamily(font.family, weight as string),
-          fontWeight: weight,
-        });
+      // 2. Настройки
+      const saved = await loadSettings();
 
-        // 3. Здесь же можно загрузить любые другие ассеты
-        // await Asset.loadAsync(...);
-
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Даем понять, что всё готово
-        setAppIsReady(true);
-      }
+      // 3. Собираем тему из saved через общий хелпер
+      setTheme(buildTheme(saved ?? undefined)); // <— единая точка сборки
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setAppIsReady(true);
     }
-
-    void prepare();
-  }, []);
+  }
+  void prepare();
+}, []);
 
   const onLayoutRootView = useCallback(() => {
     if (appIsReady) {
