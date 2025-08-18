@@ -30,6 +30,12 @@ export const sizes = {
     large: 12,
     xlarge: 16,
   },
+  margin: {
+    small: 4,
+    medium: 8,
+    large: 12,
+    xlarge: 16,
+  },
   borderRadius: 8,
   borderWidth: {
     xsmall: 1,
