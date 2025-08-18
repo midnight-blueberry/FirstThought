@@ -21,6 +21,8 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
   children,
 }) => {
   const theme = useTheme();
+  const getBorderColor = (colorKey: keyof DefaultTheme['colors']) =>
+    theme.colors[colorKey === 'disabled' ? 'disabled' : 'accent'];
 
   return (
     <View
@@ -37,7 +39,13 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
         onPress={onDecrease}
         size={theme.iconSize.large}
         color={decreaseColor}
-        style={{ marginRight: theme.margin.medium }}
+        style={{
+          marginRight: theme.margin.medium,
+          padding: theme.padding.small,
+          borderRadius: theme.borderRadius,
+          borderWidth: theme.borderWidth.xsmall,
+          borderColor: getBorderColor(decreaseColor),
+        }}
       />
       <View
         style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}
@@ -49,7 +57,13 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
         onPress={onIncrease}
         size={theme.iconSize.large}
         color={increaseColor}
-        style={{ marginLeft: theme.margin.medium }}
+        style={{
+          marginLeft: theme.margin.medium,
+          padding: theme.padding.small,
+          borderRadius: theme.borderRadius,
+          borderWidth: theme.borderWidth.xsmall,
+          borderColor: getBorderColor(increaseColor),
+        }}
       />
     </View>
   );
