@@ -72,6 +72,7 @@ export default function Settings() {
         color: theme.colors.basic,
         fontFamily: theme.fontName,
         fontWeight: theme.fontWeight, // ← берём из темы
+        fontSize: theme.fontSize.large,
       },
       headerRight: () => (
         <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
