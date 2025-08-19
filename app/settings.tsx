@@ -130,7 +130,7 @@ export default function Settings() {
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
-      setFontSizeLevel(level);
+      setFontSizeLevel(Math.min(Math.max(level, 1), 5));
     }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight])
   );
 
@@ -373,8 +373,8 @@ export default function Settings() {
 
   const increaseFontSize = () => {
     if (fontSizeBlinkIndex !== null) stopBlink();
-    if (fontSizeLevel >= 6) {
-      triggerBlink(5);
+    if (fontSizeLevel >= 5) {
+      triggerBlink(4);
       return;
     }
     applyFontSizeLevel(fontSizeLevel + 1);
@@ -512,7 +512,7 @@ export default function Settings() {
         <Section title="Размер шрифта">
           <SelectorRow onIncrease={increaseFontSize} onDecrease={decreaseFontSize}>
             <BarIndicator
-              total={6}
+              total={5}
               filledCount={fontSizeLevel}
               blinkIndex={fontSizeBlinkIndex}
               blinkAnim={fontSizeBlinkAnim}
