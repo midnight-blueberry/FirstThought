@@ -33,7 +33,7 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
 
   // 3) Размеры шрифта (с учётом уровня)
   // В твоём коде: delta = (level - 3) * 2; medium = font.defaultSize + delta
-  const level = saved?.fontSizeLevel ?? 3;
+  const level = Math.min(Math.max(saved?.fontSizeLevel ?? 3, 1), 5);
   const delta = (level - 3) * 2;
   const medium = fontMeta.defaultSize + delta;
   const updatedFontSize: DefaultTheme['fontSize'] = {
