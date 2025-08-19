@@ -588,7 +588,6 @@ export default function Settings() {
         <Modal transparent statusBarTranslucent animationType="none">
           <StatusBar
             translucent
-            backgroundColor="transparent"
             style={theme.name === themes.dark.name ? 'light' : 'dark'}
           />
           <Animated.View
