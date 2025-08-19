@@ -1,3 +1,4 @@
+import '@/src/fixUseInsertionEffect';
 import IconButton from '@/components/ui/atoms/icon-button';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';

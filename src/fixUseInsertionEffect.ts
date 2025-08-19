@@ -1,0 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
+import React from 'react';
+
+/**
+ * React 19 introduces `useInsertionEffect`, which is intended for injecting
+ * styles and must not schedule state updates. Some third‑party libraries used
+ * in this project haven't been updated yet and trigger warnings by calling
+ * state setters during this phase.  Until those libraries are fixed upstream,
+ * we alias `useInsertionEffect` to `useLayoutEffect` to silence the warning and
+ * preserve the previous behaviour.
+ */
+ 
+if (typeof (React as any).useInsertionEffect === 'function') {
+  // @ts-expect-error: overriding the hook to fall back to layout effect
+  (React as any).useInsertionEffect = React.useLayoutEffect as any;
+}
+
+export {}; // ensure this file is treated as a module
+
+/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
