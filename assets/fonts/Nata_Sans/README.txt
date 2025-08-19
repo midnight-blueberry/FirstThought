@@ -12,8 +12,6 @@ This means all the styles are contained in a single file:
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Nata Sans:
-  Nata_Sans/static/NataSans-Thin.ttf
-  Nata_Sans/static/NataSans-ExtraLight.ttf
   Nata_Sans/static/NataSans-Light.ttf
   Nata_Sans/static/NataSans-Regular.ttf
   Nata_Sans/static/NataSans-Medium.ttf

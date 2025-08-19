@@ -12,8 +12,6 @@ This means all the styles are contained in a single file:
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Roboto Slab:
-  Roboto_Slab/static/RobotoSlab-Thin.ttf
-  Roboto_Slab/static/RobotoSlab-ExtraLight.ttf
   Roboto_Slab/static/RobotoSlab-Light.ttf
   Roboto_Slab/static/RobotoSlab-Regular.ttf
   Roboto_Slab/static/RobotoSlab-Medium.ttf
