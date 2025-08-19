@@ -58,6 +58,7 @@ const AppText: React.FC<AppTextProps> = ({
       fontSize={theme.fontSize[variant]}
       fontFamily={resolvedFamily}
       fontWeight={resolvedWeight}
+      maxFontSizeMultiplier={3}
     >
       {children}
     </StyledText>
