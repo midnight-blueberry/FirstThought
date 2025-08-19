@@ -576,7 +576,7 @@ export default function Settings() {
           >
               <AppText
                 color='basic'
-                fontFamily={getFontFamily(selectedFont.family, fontWeight as string)}
+                fontFamily={theme.fontName}
               >
               Так будет выглядеть ваша заметка в выбранном формате
             </AppText>
