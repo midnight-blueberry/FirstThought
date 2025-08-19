@@ -53,8 +53,6 @@ export const fontData = {
   },
   Raleway: {
     files: {
-      '100': require('@/assets/fonts/Raleway/static/Raleway-Thin.ttf'),
-      '200': require('@/assets/fonts/Raleway/static/Raleway-ExtraLight.ttf'),
       '300': require('@/assets/fonts/Raleway/static/Raleway-Light.ttf'),
       '400': require('@/assets/fonts/Raleway/static/Raleway-Regular.ttf'),
       '500': require('@/assets/fonts/Raleway/static/Raleway-Medium.ttf'),
@@ -65,8 +63,6 @@ export const fontData = {
   },
   Roboto_Condensed: {
     files: {
-      '100': require('@/assets/fonts/Roboto_Condensed/static/RobotoCondensed-Thin.ttf'),
-      '200': require('@/assets/fonts/Roboto_Condensed/static/RobotoCondensed-ExtraLight.ttf'),
       '300': require('@/assets/fonts/Roboto_Condensed/static/RobotoCondensed-Light.ttf'),
       '400': require('@/assets/fonts/Roboto_Condensed/static/RobotoCondensed-Regular.ttf'),
       '500': require('@/assets/fonts/Roboto_Condensed/static/RobotoCondensed-Medium.ttf'),
@@ -77,8 +73,6 @@ export const fontData = {
   },
   Roboto_Slab: {
     files: {
-      '100': require('@/assets/fonts/Roboto_Slab/static/RobotoSlab-Thin.ttf'),
-      '200': require('@/assets/fonts/Roboto_Slab/static/RobotoSlab-ExtraLight.ttf'),
       '300': require('@/assets/fonts/Roboto_Slab/static/RobotoSlab-Light.ttf'),
       '400': require('@/assets/fonts/Roboto_Slab/static/RobotoSlab-Regular.ttf'),
       '500': require('@/assets/fonts/Roboto_Slab/static/RobotoSlab-Medium.ttf'),
