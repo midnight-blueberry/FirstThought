@@ -14,9 +14,9 @@ import { themeList, themes } from '@/theme';
 import { sizes } from '@/theme/tokens';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Animated, Easing, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 const interpolateColor = (from: string, to: string, t: number) => {
@@ -555,6 +555,7 @@ export default function Settings() {
               justifyContent: 'space-evenly',
               alignItems: 'center',
               alignSelf: 'stretch',
+              paddingTop: theme.padding.large,
             }}
           >
             <TextAlignButton variant="left" />
