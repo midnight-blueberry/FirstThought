@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import AppText from '@/components/ui/atoms/app-text';
 import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import IconButton from '@/components/ui/atoms/icon-button';
@@ -10,33 +12,15 @@ import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
 import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import { themeList, themes } from '@/theme';
+import { themeList } from '@/theme';
 import { sizes } from '@/theme/tokens';
+import { Portal } from '@gorhom/portal';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-
-const interpolateColor = (from: string, to: string, t: number) => {
-  const f = parseInt(from.slice(1), 16);
-  const tVal = parseInt(to.slice(1), 16);
-
-  const r1 = (f >> 16) & 0xff;
-  const g1 = (f >> 8) & 0xff;
-  const b1 = f & 0xff;
-
-  const r2 = (tVal >> 16) & 0xff;
-  const g2 = (tVal >> 8) & 0xff;
-  const b2 = tVal & 0xff;
-
-  const r = Math.round(r1 + (r2 - r1) * t);
-  const g = Math.round(g1 + (g2 - g1) * t);
-  const b = Math.round(b1 + (b2 - b1) * t);
-
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-};
+import { InteractionManager } from 'react-native';
 
 const TextAlignIcon = ({
   variant,
@@ -93,9 +77,9 @@ export default function Settings() {
   const [, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const accentAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
   const [ overlayColor, setOverlayColor ] = useState(theme.colors.background);
+  const [overlayBlocks, setOverlayBlocks] = useState(false);
   const overlayAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
@@ -162,7 +146,9 @@ export default function Settings() {
   };
 
   // применяем немедленно
-  setTheme(buildTheme(nextSaved));
+  InteractionManager.runAfterInteractions(() => {
+    setTheme(buildTheme(nextSaved));
+  });
   // и сохраняем на диск
   void saveSettings(nextSaved);
 }, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, setTheme]);
@@ -238,20 +224,25 @@ export default function Settings() {
 
   const runWithOverlay = useCallback(
     (action: () => void, color?: string) => {
+      // 0) Подготовка состояния/таймеров
       setOverlayColor(color ?? theme.colors.background);
+
+      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
+      if (overlayTimerRef.current) { clearTimeout(overlayTimerRef.current); overlayTimerRef.current = null; }
+
       overlayAnim.stopAnimation();
       fadeAnim.stopAnimation();
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-        saveTimerRef.current = null;
-      }
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
-        overlayTimerRef.current = null;
-      }
+
+      // 1) Всегда показываем overlay и начинаем с 0
+      setOverlayVisible(true);
+      setOverlayBlocks(true);
+      overlayAnim.setValue(0);
 
       const startFadeOut = () => {
-        hideSaveIcon();
+        // 3) Сразу после применения темы разрешаем тапы
+        setOverlayBlocks(false);
+
+        // Дадим 100мс, чтобы глаз «принял» новое состояние
         overlayTimerRef.current = setTimeout(() => {
           Animated.timing(overlayAnim, {
             toValue: 0,
@@ -260,29 +251,25 @@ export default function Settings() {
           }).start(() => {
             setOverlayVisible(false);
             overlayTimerRef.current = null;
-            showSaveIcon();
+            showSaveIcon(); // показать иконку сохранения
           });
         }, 100);
       };
 
-      if (!overlayVisible) {
-        setOverlayVisible(true);
-        overlayAnim.setValue(0);
-        Animated.timing(overlayAnim, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }).start(() => {
-          action();
-          startFadeOut();
-        });
-      } else {
-        overlayAnim.setValue(1);
-        action();
-        startFadeOut();
-      }
+      // На время затемнения прячем/сбрасываем иконку «сохранено»
+      hideSaveIcon();
+
+      // 2) Плавный fade-in → применяем изменения → fade-out
+      Animated.timing(overlayAnim, {
+        toValue: 1,
+        duration: 700,
+        useNativeDriver: true,
+      }).start(() => {
+        action();       // применяем setTheme(buildTheme(...)) внутри твоего action
+        startFadeOut(); // и уходим в fade-out
+      });
     },
-    [overlayAnim, fadeAnim, hideSaveIcon, overlayVisible, showSaveIcon, theme.colors.background]
+    [overlayAnim, fadeAnim, theme.colors.background, hideSaveIcon, showSaveIcon]
   );
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
@@ -303,27 +290,13 @@ export default function Settings() {
     saveWithFeedbackRef.current = saveWithFeedback;
   }, [saveWithFeedback]);
 
-  const handleAccentChange = useCallback(
-    (color: string) => {
-      const from = selectedAccentColor;
-      setSelectedAccentColor(color);
-      accentAnim.stopAnimation();
-      accentAnim.setValue(0);
-        const id = accentAnim.addListener(({ value }) => {
-          const c = interpolateColor(from, color, value);
-          updateTheme(selectedThemeName, c, selectedFontName, fontWeight, fontSizeLevel);
-        });
-      Animated.timing(accentAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: false,
-      }).start(() => {
-        accentAnim.removeListener(id);
-        saveWithFeedbackRef.current(false);
-      });
-    },
-    [accentAnim, selectedAccentColor, selectedThemeName, selectedFontName, fontWeight, fontSizeLevel, updateTheme]
-  );
+  const handleAccentChange = useCallback((next: string) => {
+    setSelectedAccentColor(next);
+    // затемнение + один вызов setTheme внутри saveAndApply
+    runWithOverlay(() => {
+      saveAndApply({ accentColor: next }); // setTheme(buildTheme(...)) вызовется один раз
+    }, /* overlay color*/ theme.colors.background);
+  }, [runWithOverlay, saveAndApply, selectedAccentColor, theme.colors.background]);
 
   useEffect(() => {
     return () => {
@@ -585,21 +558,15 @@ export default function Settings() {
       </ScrollView>
 
       {overlayVisible && (
-        <Modal transparent statusBarTranslucent animationType="none">
-          <StatusBar
-            translucent
-            style={theme.name === themes.dark.name ? 'light' : 'dark'}
-          />
+        <Portal>
           <Animated.View
+            pointerEvents={overlayBlocks ? 'auto' : 'none'}
             style={[
               StyleSheet.absoluteFillObject,
-              {
-                backgroundColor: overlayColor,
-                opacity: overlayAnim,
-              },
+              { opacity: overlayAnim, backgroundColor: overlayColor },
             ]}
           />
-        </Modal>
+        </Portal>
       )}
     </View>
   );

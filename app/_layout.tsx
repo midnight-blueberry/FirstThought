@@ -1,7 +1,9 @@
 import IconButton from '@/components/ui/atoms/icon-button';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import { loadSettings } from '@/src/storage/settings';
+import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
+import { PortalProvider } from '@gorhom/portal';
 import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import type { ParamListBase } from '@react-navigation/native';
@@ -18,7 +20,6 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
 import { themes } from '../theme';
-import { buildTheme } from '@/src/theme/buildTheme';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -232,7 +233,6 @@ export default function RootLayout() {
     return null;
   }
 
-
   return (
     <ThemeContext.Provider value={{ setTheme }}>
       <ThemeProvider theme={theme}>
@@ -244,13 +244,15 @@ export default function RootLayout() {
             edges={['left', 'right', 'bottom']}
           >
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <DrawerNavigator
-                theme={theme}
-                homePageHeaderTitle={homePageHeaderTitle}
-                homePageHeaderElevation={homePageHeaderElevation}
-                settingsPageHeaderTitle={settingsPageHeaderTitle}
-                settingsPageHeaderElevation={settingsPageHeaderElevation}
-              />
+              <PortalProvider>
+                <DrawerNavigator
+                  theme={theme}
+                  homePageHeaderTitle={homePageHeaderTitle}
+                  homePageHeaderElevation={homePageHeaderElevation}
+                  settingsPageHeaderTitle={settingsPageHeaderTitle}
+                  settingsPageHeaderElevation={settingsPageHeaderElevation}
+                />
+              </PortalProvider>
             </GestureHandlerRootView>
           </SafeAreaView>
         </SafeAreaProvider>
