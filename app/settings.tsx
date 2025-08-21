@@ -5,6 +5,7 @@ import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import IconButton from '@/components/ui/atoms/icon-button';
 import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
+import TextAlignIcon from '@/components/ui/atoms/text-align-icon';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import Section from '@/components/ui/organisms/settings-section';
 import { accentColors } from '@/constants/AccentColors';
@@ -23,28 +24,6 @@ import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { InteractionManager } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-const TextAlignIcon = ({
-  variant,
-  color,
-}: {
-  variant: 'left' | 'justify';
-  color: string;
-}) => (
-  <View style={{ width: 24, height: 24, justifyContent: 'space-between' }}>
-    {[0, 1, 2].map(i => (
-      <View
-        key={i}
-        style={{
-          height: 2,
-          width: variant === 'left' ? [16, 20, 12][i] : 24,
-          backgroundColor: color,
-          alignSelf: 'flex-start',
-        }}
-      />
-    ))}
-  </View>
-);
 
 const TextAlignButton = ({
   variant,
