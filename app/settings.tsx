@@ -1,15 +1,14 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import AppText from '@/components/ui/atoms/app-text';
 import SaveIcon from '@/components/ui/atoms/save-icon';
 import Divider from '@/components/ui/atoms/divider';
 import TextAlignSelector from '@/components/ui/organisms/text-align-selector';
-import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
 import FontSelector from '@/components/ui/organisms/font-selector';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
+import PreviewNote from '@/components/ui/organisms/preview-note';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
@@ -457,26 +456,11 @@ export default function Settings() {
           }}
         />
 
-        <Section>
-          <View
-            style={{
-              marginTop: theme.margin.large,
-              borderColor: theme.colors.accent,
-              borderWidth: theme.borderWidth.medium,
-              borderRadius: theme.borderRadius,
-              padding: theme.padding.medium,
-              alignSelf: 'stretch',
-            }}
-          >
-              <AppText
-                color='basic'
-                fontFamily={theme.fontName}
-                style={{ textAlign: noteTextAlign }}
-              >
-              Так будет выглядеть ваша заметка в выбранном формате
-            </AppText>
-          </View>
-        </Section>
+        <PreviewNote
+          noteTextAlign={noteTextAlign}
+          fontName={theme.fontName}
+          colors={theme.colors}
+        />
       </ScrollView>
 
       <Overlay
