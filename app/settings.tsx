@@ -56,34 +56,36 @@ const TextAlignButton = ({
 }) => {
   const theme = useTheme();
   const borderColor = selected ? theme.colors.accent : 'transparent';
-  const checkColor = selected ? theme.colors.accent : theme.colors.background;
+
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      hitSlop={8}
-      style={{
-        borderColor,
-        borderWidth: theme.borderWidth.medium,
-        borderRadius: theme.borderRadius,
-        padding: theme.padding.large,
-      }}
-    >
-      <TextAlignIcon variant={variant} color={theme.colors.basic} />
-      <View
+    <View style={{ alignItems: 'center' }}>
+      <TouchableOpacity
+        onPress={onPress}
+        hitSlop={8}
         style={{
-          position: 'absolute',
-          right: -theme.padding.small,
-          top: '50%',
-          marginTop: -(theme.iconSize.large / 2),
-          width: theme.iconSize.large,
-          height: theme.iconSize.large,
-          justifyContent: 'center',
-          alignItems: 'center',
+          borderColor,
+          borderWidth: theme.borderWidth.medium,
+          borderRadius: theme.borderRadius,
+          padding: theme.padding.large,
         }}
       >
-        <Ionicons name="checkmark-sharp" size={theme.iconSize.large} color={checkColor} />
-      </View>
-    </TouchableOpacity>
+        <TextAlignIcon variant={variant} color={theme.colors.basic} />
+      </TouchableOpacity>
+
+      {selected && (
+        <Ionicons
+          name="checkmark-sharp"
+          size={theme.iconSize.large}
+          color={theme.colors.accent}
+          style={{
+            position: 'absolute',
+            right: -(theme.iconSize.large + theme.margin.small), // регулируешь насколько вынести за кнопку
+            top: '50%',
+            marginTop: -(theme.iconSize.large / 2),
+          }}
+        />
+      )}
+    </View>
   );
 };
 
