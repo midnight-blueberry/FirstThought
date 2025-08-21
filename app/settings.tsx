@@ -4,6 +4,7 @@ import AppText from '@/components/ui/atoms/app-text';
 import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import IconButton from '@/components/ui/atoms/icon-button';
 import SelectorRow from '@/components/ui/atoms/selector-row';
+import Divider from '@/components/ui/atoms/divider';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import Section from '@/components/ui/organisms/settings-section';
 import { accentColors } from '@/constants/AccentColors';
@@ -493,15 +494,7 @@ export default function Settings() {
             </View>
           </Section>
 
-          <View
-            style={{
-              height: theme.borderWidth.small,
-              backgroundColor: theme.colors.basic,
-              alignSelf: 'stretch',
-              marginBottom: theme.margin.medium,
-              borderRadius: theme.borderWidth.medium / 2,
-            }}
-          />
+          <Divider />
 
           <Section title="Шрифт">
             <View>
