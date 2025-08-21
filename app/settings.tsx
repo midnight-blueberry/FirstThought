@@ -5,12 +5,12 @@ import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import SaveIcon from '@/components/ui/atoms/save-icon';
 import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
-import SelectableRow from '@/components/ui/molecules/selectable-row';
 import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
-import { fonts, getFontFamily } from '@/constants/Fonts';
+import FontSelector from '@/components/ui/organisms/font-selector';
+import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
 import { buildTheme } from '@/src/theme/buildTheme';
@@ -410,29 +410,11 @@ export default function Settings() {
 
         <Divider />
 
-          <Section title="Шрифт">
-            <View>
-              {fonts.map(f => {
-                const delta = (fontSizeLevel - 3) * 2;
-              const medium = f.defaultSize + delta;
-              return (
-                <SelectableRow
-                  key={f.name}
-                  label={f.name}
-                  swatchColor={theme.colors.basic}
-                  selected={f.name === selectedFontName}
-                    onPress={() => {
-                      setSelectedFontName(f.name);
-                      setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
-                    }}
-                  fontFamily={getFontFamily(f.family, f.defaultWeight)}
-                  fontWeight='normal'
-                  fontSize={medium}
-                />
-              );
-            })}
-          </View>
-        </Section>
+        <FontSelector
+          selectedFontName={selectedFontName}
+          onSelectFont={setSelectedFontName}
+          onSelectWeight={setFontWeight}
+        />
         
         <Section title="Размер шрифта">
           <SelectorRow onIncrease={increaseFontSize} onDecrease={decreaseFontSize}>
