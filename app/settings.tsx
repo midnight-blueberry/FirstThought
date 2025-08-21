@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import AppText from '@/components/ui/atoms/app-text';
 import BarIndicator from '@/components/ui/atoms/bar-indicator';
-import IconButton from '@/components/ui/atoms/icon-button';
+import SaveIcon from '@/components/ui/atoms/save-icon';
 import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
@@ -63,11 +63,7 @@ export default function Settings() {
         fontWeight: theme.fontWeight, // ← берём из темы
         fontSize: theme.fontSize.large,
       },
-      headerRight: () => (
-        <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
-          <IconButton icon="save-outline" />
-        </Animated.View>
-      ),
+      headerRight: () => <SaveIcon fadeAnim={fadeAnim} />, 
     });
   }, [navigation, fadeAnim, theme]);
 
