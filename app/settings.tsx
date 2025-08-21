@@ -10,6 +10,7 @@ import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
 import FontSelector from '@/components/ui/organisms/font-selector';
+import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
@@ -436,18 +437,13 @@ export default function Settings() {
           fontSizeLevel={fontSizeLevel}
         />
         
-        <Section title="Размер шрифта">
-          <SelectorRow onIncrease={increaseFontSize} onDecrease={decreaseFontSize}>
-            <BarIndicator
-              total={5}
-              filledCount={fontSizeLevel}
-              blinkIndex={fontSizeBlinkIndex}
-              blinkAnim={fontSizeBlinkAnim}
-              containerColor={theme.colors.basic}
-              fillColor={theme.colors.accent}
-            />
-          </SelectorRow>
-        </Section>
+        <FontSizeSelector
+          fontSizeLevel={fontSizeLevel}
+          onIncrease={increaseFontSize}
+          onDecrease={decreaseFontSize}
+          blinkIndex={fontSizeBlinkIndex}
+          blinkAnim={fontSizeBlinkAnim}
+        />
         
         <Section title="Жирность шрифта">
           <SelectorRow
