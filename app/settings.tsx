@@ -464,6 +464,7 @@ export default function Settings() {
               backgroundColor: theme.colors.basic,
               alignSelf: 'stretch',
               marginBottom: theme.margin.medium,
+              borderRadius: theme.borderWidth.medium / 2,
             }}
           />
 
