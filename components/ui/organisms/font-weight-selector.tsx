@@ -1,56 +1,58 @@
 import React from 'react';
 import { Animated } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import { DefaultTheme, useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
+import Section from './settings-section';
+import { fonts } from '@/constants/Fonts';
 
 interface FontWeightSelectorProps {
-  weights: string[];
-  selectedIndex: number;
+  fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;
-  blinkIndex: number | null;
   blinkAnim: Animated.Value;
+  disabled: boolean;
 }
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
-  weights,
-  selectedIndex,
+  fontWeight,
   onIncrease,
   onDecrease,
-  blinkIndex,
   blinkAnim,
+  disabled,
 }) => {
   const theme = useTheme();
-  const hasMultiple = weights.length > 1;
-  const columns = hasMultiple ? weights.length : 5;
+  const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+  const font = fonts.find(f => f.name === baseName) ?? fonts[0];
+  const columns = disabled ? 5 : font.weights.length;
+  const filledCount = disabled ? 0 : font.weights.indexOf(fontWeight as string) + 1;
+  const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
 
   return (
-    <>
-      <AppText variant='large' style={{ marginBottom: theme.margin.medium, marginTop: theme.margin.small }}>Жирность шрифта</AppText>
+    <Section title="Жирность шрифта">
       <SelectorRow
-        onIncrease={hasMultiple ? onIncrease : undefined}
-        onDecrease={hasMultiple ? onDecrease : undefined}
-        increaseColor={hasMultiple ? 'basic' : 'disabled'}
-        decreaseColor={hasMultiple ? 'basic' : 'disabled'}
-        opacity={hasMultiple ? 1 : 0.5}
+        onIncrease={disabled ? undefined : onIncrease}
+        onDecrease={disabled ? undefined : onDecrease}
+        increaseColor={disabled ? 'disabled' : 'basic'}
+        decreaseColor={disabled ? 'disabled' : 'basic'}
+        opacity={disabled ? 0.5 : 1}
       >
         <BarIndicator
           total={columns}
-          filledCount={hasMultiple ? selectedIndex + 1 : 0}
+          filledCount={filledCount}
           blinkIndex={blinkIndex}
           blinkAnim={blinkAnim}
-          containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
-          fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
+          containerColor={theme.colors[disabled ? 'disabled' : 'basic']}
+          fillColor={theme.colors[disabled ? 'disabled' : 'accent']}
         />
       </SelectorRow>
-      {!hasMultiple && (
+      {disabled && (
         <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
           Недоступно для данного шрифта
         </AppText>
       )}
-    </>
+    </Section>
   );
 };
 
