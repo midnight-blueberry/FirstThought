@@ -79,7 +79,7 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
     padding: updatedPadding,
     margin: updatedMargin,
     iconSize: updatedIconSize,
-    fontName: getFontFamily(fontMeta.family, String(weight)),
+    fontName: fontMeta.family ? getFontFamily(fontMeta.family, String(weight)) : '',
     fontWeight: weight,
   } as DefaultTheme;
 }

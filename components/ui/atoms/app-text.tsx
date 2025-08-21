@@ -17,15 +17,15 @@ type AppTextProps = {
 interface StyledTextProps {
   fontSize: number;
   textColor: string;
-  fontFamily: string;
+  fontFamily?: string;
   fontWeight: TextStyle['fontWeight'];
 }
 
 const StyledText = styled.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
-  font-family: ${(props: StyledTextProps) => props.fontFamily};
   font-weight: ${(props: StyledTextProps) => props.fontWeight};
+  ${(props: StyledTextProps) => (props.fontFamily ? `font-family: ${props.fontFamily};` : '')}
 `;
 
 const AppText: React.FC<AppTextProps> = ({
@@ -41,12 +41,12 @@ const AppText: React.FC<AppTextProps> = ({
   const familyString = fontFamily ?? theme.fontName;
   const parts = familyString.split("_");
   const baseFamily = parts.slice(0, -1).join("_");
-  const baseWeight = String(fontWeight ?? parts[parts.length - 1]);
+  const baseWeight = String(fontWeight ?? (parts[parts.length - 1] || theme.fontWeight));
 
   let resolvedWeight: TextStyle['fontWeight'] = fontWeight ?? theme.fontWeight;
   let resolvedFamily = fontFamily ?? theme.fontName;
 
-  if ((variant === "large" || variant === "xlarge") && !fontWeight) {
+  if (baseFamily && (variant === "large" || variant === "xlarge") && !fontWeight) {
     resolvedWeight = getNextFontWeight(baseFamily, baseWeight) as TextStyle['fontWeight'];
     resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
   }
@@ -56,7 +56,7 @@ const AppText: React.FC<AppTextProps> = ({
       style={style}
       textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
-      fontFamily={resolvedFamily}
+      fontFamily={resolvedFamily || undefined}
       fontWeight={resolvedWeight}
       maxFontSizeMultiplier={3}
     >

@@ -196,12 +196,14 @@ export default function RootLayout() {
       // 1. Шрифты (как и было)
       await Font.loadAsync(
         Object.fromEntries(
-          fonts.flatMap((f) =>
-            (f.weights as (keyof typeof f.files)[]).map((w) => [
-              getFontFamily(f.family, w),
-              f.files[w],
-            ])
-          )
+          fonts
+            .filter(f => f.family)
+            .flatMap((f) =>
+              (f.weights as (keyof typeof f.files)[]).map((w) => [
+                getFontFamily(f.family, w),
+                f.files[w],
+              ])
+            )
         )
       );
 

@@ -57,10 +57,11 @@ const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) 
   flex: 1;
   text-align-vertical: center;
   padding-vertical: 0px;
-  font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
   font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
   font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
   color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
+  ${({ theme }: { theme: DefaultTheme }) =>
+    theme.fontName ? `font-family: ${theme.fontName};` : ''}
 `;
 
 const SearchButton = styled.TouchableOpacity`

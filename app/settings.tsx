@@ -66,7 +66,9 @@ export default function Settings() {
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
-  const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+  const initialFontName = theme.fontName
+    ? theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ')
+    : fonts[0].name;
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
   const [ fontWeight, setFontWeight ] = useState<DefaultTheme['fontWeight']>(theme.fontWeight);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
@@ -108,7 +110,9 @@ export default function Settings() {
     useCallback(() => {
       setSelectedThemeName(theme.name);
       setSelectedAccentColor(theme.colors.accent);
-      const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+      const baseName = theme.fontName
+        ? theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ')
+        : fonts[0].name;
       setSelectedFontName(baseName);
       setFontWeight(theme.fontWeight);
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
@@ -472,23 +476,23 @@ export default function Settings() {
             <View>
               {fonts.map(f => {
                 const delta = (fontSizeLevel - 3) * 2;
-              const medium = f.defaultSize + delta;
-              return (
-                <SelectableRow
-                  key={f.name}
-                  label={f.name}
-                  swatchColor={theme.colors.basic}
-                  selected={f.name === selectedFontName}
+                const medium = f.defaultSize + delta;
+                return (
+                  <SelectableRow
+                    key={f.name}
+                    label={f.name}
+                    swatchColor={theme.colors.basic}
+                    selected={f.name === selectedFontName}
                     onPress={() => {
                       setSelectedFontName(f.name);
                       setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
                     }}
-                  fontFamily={getFontFamily(f.family, f.defaultWeight)}
-                  fontWeight='normal'
-                  fontSize={medium}
-                />
-              );
-            })}
+                    fontFamily={f.family ? getFontFamily(f.family, f.defaultWeight) : undefined}
+                    fontWeight='normal'
+                    fontSize={medium}
+                  />
+                );
+              })}
           </View>
         </Section>
         

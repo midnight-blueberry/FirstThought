@@ -82,21 +82,32 @@ export const fontData = {
     defaultSize: 18,
   },
 } as const;
+const systemFont = {
+  name: 'Как в системе',
+  family: '',
+  weights: ['400'],
+  files: {},
+  defaultSize: 18,
+  defaultWeight: '400',
+};
 
-export const fonts = Object.entries(fontData).map(([folder, info]) => {
-  const name = folder.replace(/_/g, ' ');
-  const family = folder;
-  const weights = Object.keys(info.files).sort();
-  const defaultWeight = weights.includes('500') ? '500' : weights[0];
-  return {
-    name,
-    family,
-    weights,
-    files: info.files,
-    defaultSize: info.defaultSize,
-    defaultWeight,
-  };
-});
+export const fonts = [
+  systemFont,
+  ...Object.entries(fontData).map(([folder, info]) => {
+    const name = folder.replace(/_/g, ' ');
+    const family = folder;
+    const weights = Object.keys(info.files).sort();
+    const defaultWeight = weights.includes('500') ? '500' : weights[0];
+    return {
+      name,
+      family,
+      weights,
+      files: info.files,
+      defaultSize: info.defaultSize,
+      defaultWeight,
+    };
+  }),
+];
 
 export const defaultFontName = 'Comfortaa';
 
