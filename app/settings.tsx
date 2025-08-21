@@ -611,6 +611,7 @@ export default function Settings() {
               <AppText
                 color='basic'
                 fontFamily={theme.fontName}
+                style={{ textAlign: noteTextAlign }}
               >
               Так будет выглядеть ваша заметка в выбранном формате
             </AppText>
