@@ -44,18 +44,19 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
   };
 
   // 4) Отступы (margin и padding)
+  const spacingDelta = level - 3;
   const updatedPadding: DefaultTheme['padding'] = {
-    small: sizes.padding.small + delta,
-    medium: sizes.padding.medium + delta,
-    large: sizes.padding.large + delta,
-    xlarge: sizes.padding.xlarge + delta,
+    small: sizes.padding.small + spacingDelta,
+    medium: sizes.padding.medium + spacingDelta,
+    large: sizes.padding.large + spacingDelta,
+    xlarge: sizes.padding.xlarge + spacingDelta,
   };
 
   const updatedMargin: DefaultTheme['margin'] = {
-    small: sizes.margin.small + delta,
-    medium: sizes.margin.medium + delta,
-    large: sizes.margin.large + delta,
-    xlarge: sizes.margin.xlarge + delta,
+    small: sizes.margin.small + spacingDelta,
+    medium: sizes.margin.medium + spacingDelta,
+    large: sizes.margin.large + spacingDelta,
+    xlarge: sizes.margin.xlarge + spacingDelta,
   };
 
   // 5) Размеры иконок
