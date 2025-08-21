@@ -11,6 +11,7 @@ type SavedSettings = {
   fontWeight?: DefaultTheme['fontWeight']; // '400' | '700' и т.п.
   fontSizeLevel?: number;       // твоя шкала (например 1..5), 3 = базовый
   iconSize?: DefaultTheme['iconSize']; // если пользователь прямо задаёт набор размеров
+  noteTextAlign?: DefaultTheme['noteTextAlign'];
 } | undefined;
 
 export function buildTheme(saved: SavedSettings): DefaultTheme {
@@ -81,5 +82,6 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
     iconSize: updatedIconSize,
     fontName: getFontFamily(fontMeta.family, String(weight)),
     fontWeight: weight,
+    noteTextAlign: saved?.noteTextAlign ?? chosenTheme.noteTextAlign,
   } as DefaultTheme;
 }

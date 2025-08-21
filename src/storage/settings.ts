@@ -10,6 +10,7 @@ export type AppSettings = {
   fontName: string;
   fontWeight: DefaultTheme['fontWeight'];
   iconSize: DefaultTheme['iconSize'];
+  noteTextAlign: DefaultTheme['noteTextAlign'];
 };
 
 export async function loadSettings(): Promise<AppSettings | null> {

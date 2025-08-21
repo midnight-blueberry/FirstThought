@@ -21,6 +21,7 @@ import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, use
 import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { InteractionManager } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const TextAlignIcon = ({
   variant,
@@ -47,15 +48,44 @@ const TextAlignIcon = ({
 const TextAlignButton = ({
   variant,
   onPress,
+  selected,
 }: {
   variant: 'left' | 'justify';
   onPress?: () => void;
+  selected?: boolean;
 }) => {
   const theme = useTheme();
+  const borderColor = selected ? theme.colors.accent : 'transparent';
+
   return (
-    <TouchableOpacity onPress={onPress} hitSlop={8}>
-      <TextAlignIcon variant={variant} color={theme.colors.basic} />
-    </TouchableOpacity>
+    <View style={{ alignItems: 'center' }}>
+      <TouchableOpacity
+        onPress={onPress}
+        hitSlop={8}
+        style={{
+          borderColor,
+          borderWidth: theme.borderWidth.medium,
+          borderRadius: theme.borderRadius,
+          padding: theme.padding.large,
+        }}
+      >
+        <TextAlignIcon variant={variant} color={theme.colors.basic} />
+      </TouchableOpacity>
+
+      {selected && (
+        <Ionicons
+          name="checkmark-sharp"
+          size={theme.iconSize.large}
+          color={theme.colors.accent}
+          style={{
+            position: 'absolute',
+            right: -(theme.iconSize.large + theme.margin.small), // регулируешь насколько вынести за кнопку
+            top: '50%',
+            marginTop: -(theme.iconSize.large / 2),
+          }}
+        />
+      )}
+    </View>
   );
 };
 
@@ -74,6 +104,7 @@ export default function Settings() {
   const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ fontWeightBlinkIndex, setFontWeightBlinkIndex ] = useState<number | null>(null);
   const fontWeightBlinkAnim = useRef(new Animated.Value(1)).current;
+  const [ noteTextAlign, setNoteTextAlign ] = useState<DefaultTheme['noteTextAlign']>(theme.noteTextAlign);
   const [, setIsSaved ] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -115,7 +146,8 @@ export default function Settings() {
       const base = fontInfo.defaultSize - 4;
       const level = Math.round((theme.fontSize.small - base) / 2) + 3;
       setFontSizeLevel(Math.min(Math.max(level, 1), 5));
-    }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight])
+      setNoteTextAlign(theme.noteTextAlign);
+    }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight, theme.noteTextAlign])
   );
 
  const saveAndApply = useCallback((patch: {
@@ -125,6 +157,7 @@ export default function Settings() {
   fontWeight?: DefaultTheme['fontWeight'];
   fontSizeLevel?: number;
   iconSize?: DefaultTheme['iconSize'];
+  noteTextAlign?: DefaultTheme['noteTextAlign'];
 }) => {
   const nextSaved = {
     themeName:        patch.themeName        ?? selectedThemeName,
@@ -143,6 +176,7 @@ export default function Settings() {
         xlarge: sizes.iconSize.xlarge + iconDelta,
       };
     })(),
+    noteTextAlign:    patch.noteTextAlign    ?? noteTextAlign,
   };
 
   // применяем немедленно
@@ -151,7 +185,7 @@ export default function Settings() {
   });
   // и сохраняем на диск
   void saveSettings(nextSaved);
-}, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, setTheme]);
+}, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, noteTextAlign, setTheme]);
 
   // вместо ручной сборки темы
     const updateTheme = useCallback(
@@ -180,10 +214,11 @@ export default function Settings() {
             xlarge: sizes.iconSize.xlarge + iconDelta,
           };
         })(),
+        noteTextAlign,
       };
       setTheme(buildTheme(nextSaved));
     },
-    [setTheme]
+    [setTheme, noteTextAlign]
   );
 
 
@@ -283,7 +318,7 @@ export default function Settings() {
       performSave();
       showSaveIcon();
     }
-  }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, updateTheme, showSaveIcon]);
+  }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, noteTextAlign, updateTheme, showSaveIcon]);
 
   const saveWithFeedbackRef = useRef<(withOverlay: boolean, color?: string) => void>(saveWithFeedback);
   useEffect(() => {
@@ -541,8 +576,24 @@ export default function Settings() {
               paddingTop: theme.padding.large,
             }}
           >
-            <TextAlignButton variant="left" />
-            <TextAlignButton variant="justify" />
+            <TextAlignButton
+              variant="left"
+              selected={noteTextAlign === 'left'}
+              onPress={() => {
+                setNoteTextAlign('left');
+                saveAndApply({ noteTextAlign: 'left' });
+                showSaveIcon();
+              }}
+            />
+            <TextAlignButton
+              variant="justify"
+              selected={noteTextAlign === 'justify'}
+              onPress={() => {
+                setNoteTextAlign('justify');
+                saveAndApply({ noteTextAlign: 'justify' });
+                showSaveIcon();
+              }}
+            />
           </View>
         </Section>
 

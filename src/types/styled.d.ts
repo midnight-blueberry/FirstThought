@@ -9,5 +9,6 @@ declare module 'styled-components/native' {
     colors: ColorTokens;
     fontName: string;
     fontWeight: TextStyle['fontWeight'];
+    noteTextAlign: 'left' | 'justify';
   }
 }
