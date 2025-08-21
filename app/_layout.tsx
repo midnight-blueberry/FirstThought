@@ -39,8 +39,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             label="Настройки"
             onPress={() => props.navigation.navigate('settings')}
             labelStyle={{
-              fontFamily: theme.fontName,
-              fontSize: theme.fontSize.medium,
+              fontFamily: theme.fontName || undefined,
+              fontSize: theme.fontName ? theme.fontSize.medium : undefined,
               fontWeight: theme.fontWeight,
               color: theme.colors.basic,         // вместо props.theme.text
             }}
@@ -109,8 +109,8 @@ function DrawerNavigator({
 
         // стиль текста меток
         drawerLabelStyle: {
-          fontFamily: theme.fontName,
-          fontSize: theme.fontSize.medium,
+          fontFamily: theme.fontName || undefined,
+          fontSize: theme.fontName ? theme.fontSize.medium : undefined,
           fontWeight: theme.fontWeight,
           color: theme.colors.basic,
         },
@@ -128,8 +128,8 @@ function DrawerNavigator({
         // общие опции заголовков
         headerTitleAlign: 'center',
         headerTitleStyle: {
-          fontFamily: theme.fontName,
-          fontSize: theme.fontSize.large,
+          fontFamily: theme.fontName || undefined,
+          fontSize: theme.fontName ? theme.fontSize.large : undefined,
           color: theme.colors.basic,
           fontWeight: theme.fontWeight,
         },

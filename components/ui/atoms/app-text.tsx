@@ -15,7 +15,7 @@ type AppTextProps = {
 
 // Типы пропсов для StyledText
 interface StyledTextProps {
-  fontSize: number;
+  fontSize?: number;
   textColor: string;
   fontFamily?: string;
   fontWeight: TextStyle['fontWeight'];
@@ -23,7 +23,8 @@ interface StyledTextProps {
 
 const StyledText = styled.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
-  font-size: ${(props: StyledTextProps) => props.fontSize}px;
+  ${(props: StyledTextProps) =>
+    props.fontSize !== undefined ? `font-size: ${props.fontSize}px;` : ''}
   font-weight: ${(props: StyledTextProps) => props.fontWeight};
   ${(props: StyledTextProps) => (props.fontFamily ? `font-family: ${props.fontFamily};` : '')}
 `;
@@ -51,11 +52,13 @@ const AppText: React.FC<AppTextProps> = ({
     resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
   }
 
+  const size = resolvedFamily ? theme.fontSize[variant] : undefined;
+
   return (
     <StyledText
       style={style}
       textColor={theme.colors[color]}
-      fontSize={theme.fontSize[variant]}
+      fontSize={size}
       fontFamily={resolvedFamily || undefined}
       fontWeight={resolvedWeight}
       maxFontSizeMultiplier={3}

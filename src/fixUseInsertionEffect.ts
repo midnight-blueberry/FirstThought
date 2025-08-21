@@ -11,7 +11,6 @@ import React from 'react';
  */
  
 if (typeof (React as any).useInsertionEffect === 'function') {
-  // @ts-expect-error: overriding the hook to fall back to layout effect
   (React as any).useInsertionEffect = React.useLayoutEffect as any;
 }
 

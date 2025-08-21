@@ -94,9 +94,9 @@ export default function Settings() {
       headerTintColor: theme.colors.basic,
       headerTitleStyle: {
         color: theme.colors.basic,
-        fontFamily: theme.fontName,
+        fontFamily: theme.fontName || undefined,
         fontWeight: theme.fontWeight, // ← берём из темы
-        fontSize: theme.fontSize.large,
+        fontSize: theme.fontName ? theme.fontSize.large : undefined,
       },
       headerRight: () => (
         <Animated.View pointerEvents="none" style={{ opacity: fadeAnim }}>
@@ -487,9 +487,9 @@ export default function Settings() {
                       setSelectedFontName(f.name);
                       setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
                     }}
-                    fontFamily={f.family ? getFontFamily(f.family, f.defaultWeight) : undefined}
+                    fontFamily={f.family ? getFontFamily(f.family, f.defaultWeight) : ''}
                     fontWeight='normal'
-                    fontSize={medium}
+                    fontSize={f.family ? medium : undefined}
                   />
                 );
               })}
