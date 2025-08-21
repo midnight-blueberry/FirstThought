@@ -1,4 +1,5 @@
 const { spawnSync } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 
 function run(cmd, args, options = {}) {
@@ -8,7 +9,20 @@ function run(cmd, args, options = {}) {
   }
 }
 
-run('npx', ['expo', 'prebuild'], { env: { ...process.env, CI: '1' } });
+const androidDir = path.join(process.cwd(), 'android');
+if (!fs.existsSync(androidDir)) {
+  run('npx', ['expo', 'prebuild', '--platform', 'android'], {
+    env: { ...process.env, CI: '1' }
+  });
+}
 
 const gradleCmd = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
-run(gradleCmd, ['assembleRelease'], { cwd: path.join(process.cwd(), 'android') });
+run(gradleCmd, ['assembleRelease'], {
+  cwd: androidDir,
+  shell: process.platform === 'win32'
+});
+
+console.log(
+  'APK generated at',
+  path.join('android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk')
+);
