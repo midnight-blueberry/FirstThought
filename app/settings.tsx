@@ -489,7 +489,7 @@ export default function Settings() {
                     }}
                     fontFamily={f.family ? getFontFamily(f.family, f.defaultWeight) : ''}
                     fontWeight='normal'
-                    fontSize={f.family ? medium : undefined}
+                    fontSize={medium}
                   />
                 );
               })}
