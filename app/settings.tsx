@@ -54,10 +54,19 @@ const TextAlignButton = ({
   selected?: boolean;
 }) => {
   const theme = useTheme();
-  const color = selected ? theme.colors.accent : theme.colors.basic;
+  const borderColor = selected ? theme.colors.accent : 'transparent';
   return (
-    <TouchableOpacity onPress={onPress} hitSlop={8}>
-      <TextAlignIcon variant={variant} color={color} />
+    <TouchableOpacity
+      onPress={onPress}
+      hitSlop={8}
+      style={{
+        borderColor,
+        borderWidth: theme.borderWidth.medium,
+        borderRadius: theme.borderRadius,
+        padding: theme.padding.small,
+      }}
+    >
+      <TextAlignIcon variant={variant} color={theme.colors.basic} />
     </TouchableOpacity>
   );
 };
