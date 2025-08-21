@@ -11,18 +11,15 @@ import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
 import PreviewNote from '@/components/ui/organisms/preview-note';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
-import { saveSettings } from '@/src/storage/settings';
-import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
-import { sizes } from '@/theme/tokens';
 import Overlay from '@/components/ui/atoms/overlay';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
+import useThemeSaver from '@/hooks/useThemeSaver';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-import { InteractionManager } from 'react-native';
 
 
 export default function Settings() {
@@ -40,16 +37,28 @@ export default function Settings() {
   const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
   const fontWeightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ noteTextAlign, setNoteTextAlign ] = useState<DefaultTheme['noteTextAlign']>(theme.noteTextAlign);
-  const [, setIsSaved ] = useState(false);
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [ overlayVisible, setOverlayVisible ] = useState(false);
-  const [ overlayColor, setOverlayColor ] = useState(theme.colors.background);
-  const [overlayBlocks, setOverlayBlocks] = useState(false);
-  const overlayAnim = useRef(new Animated.Value(0)).current;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
+  const {
+    saveAndApply,
+    runWithOverlay,
+    showSaveIcon,
+    fadeAnim,
+    overlayAnim,
+    overlayVisible,
+    overlayColor,
+    overlayBlocks,
+    saveWithFeedbackRef,
+  } = useThemeSaver({
+    selectedThemeName,
+    selectedAccentColor,
+    selectedFontName,
+    fontWeight,
+    fontSizeLevel,
+    noteTextAlign,
+    setTheme,
+  });
   const styles = React.useMemo(() => createStyles(theme), [theme]);
 
   useLayoutEffect(() => {
@@ -80,182 +89,7 @@ export default function Settings() {
       setNoteTextAlign(theme.noteTextAlign);
     }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight, theme.noteTextAlign])
   );
-
- const saveAndApply = useCallback((patch: {
-  themeName?: string;
-  accentColor?: string;
-  fontName?: string;
-  fontWeight?: DefaultTheme['fontWeight'];
-  fontSizeLevel?: number;
-  iconSize?: DefaultTheme['iconSize'];
-  noteTextAlign?: DefaultTheme['noteTextAlign'];
-}) => {
-  const nextSaved = {
-    themeName:        patch.themeName        ?? selectedThemeName,
-    accentColor:      patch.accentColor      ?? selectedAccentColor,
-    fontName:         patch.fontName         ?? selectedFontName,
-    fontWeight:       patch.fontWeight       ?? fontWeight,
-    fontSizeLevel:    patch.fontSizeLevel    ?? fontSizeLevel,
-    iconSize:         patch.iconSize         ?? ((): DefaultTheme['iconSize'] => {
-      const level = patch.fontSizeLevel ?? fontSizeLevel;
-      const iconDelta = (level - 3) * 4;
-      return {
-        xsmall: sizes.iconSize.xsmall + iconDelta,
-        small:  sizes.iconSize.small  + iconDelta,
-        medium: sizes.iconSize.medium + iconDelta,
-        large:  sizes.iconSize.large  + iconDelta,
-        xlarge: sizes.iconSize.xlarge + iconDelta,
-      };
-    })(),
-    noteTextAlign:    patch.noteTextAlign    ?? noteTextAlign,
-  };
-
-  // применяем немедленно
-  InteractionManager.runAfterInteractions(() => {
-    setTheme(buildTheme(nextSaved));
-  });
-  // и сохраняем на диск
-  void saveSettings(nextSaved);
-}, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, noteTextAlign, setTheme]);
-
-  // вместо ручной сборки темы
-    const updateTheme = useCallback(
-      (
-        themeName: string,
-        accentColor: string,
-        fontName: string,
-        weight: DefaultTheme['fontWeight'],
-        level: number,
-      ) => {
-      const nextSaved = {
-        themeName,
-        accentColor,
-        fontName,
-          fontWeight: weight,
-        fontSizeLevel: level,
-        // если хочешь — продолжай сохранять иконки явно (или доверь это buildTheme'у,
-        // он сам считает iconSize от level, если этого поля нет)
-        iconSize: (() => {
-          const iconDelta = (level - 3) * 4;
-          return {
-            xsmall: sizes.iconSize.xsmall + iconDelta,
-            small:  sizes.iconSize.small  + iconDelta,
-            medium: sizes.iconSize.medium + iconDelta,
-            large:  sizes.iconSize.large  + iconDelta,
-            xlarge: sizes.iconSize.xlarge + iconDelta,
-          };
-        })(),
-        noteTextAlign,
-      };
-      setTheme(buildTheme(nextSaved));
-    },
-    [setTheme, noteTextAlign]
-  );
-
-
-  const showSaveIcon = useCallback(() => {
-    setIsSaved(true);
-    fadeAnim.stopAnimation();
-    fadeAnim.setValue(0);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 400,
-      easing: Easing.inOut(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-    }
-    saveTimerRef.current = setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: true,
-      }).start(() => setIsSaved(false));
-    }, 3000);
-  }, [fadeAnim]);
-
-  const hideSaveIcon = useCallback(() => {
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = null;
-    }
-    fadeAnim.stopAnimation();
-    fadeAnim.setValue(0);
-    setIsSaved(false);
-  }, [fadeAnim]);
-
-  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipFontChangeRef = useRef(false);
-
-  const runWithOverlay = useCallback(
-    (action: () => void, color?: string) => {
-      // 0) Подготовка состояния/таймеров
-      setOverlayColor(color ?? theme.colors.background);
-
-      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
-      if (overlayTimerRef.current) { clearTimeout(overlayTimerRef.current); overlayTimerRef.current = null; }
-
-      overlayAnim.stopAnimation();
-      fadeAnim.stopAnimation();
-
-      // 1) Всегда показываем overlay и начинаем с 0
-      setOverlayVisible(true);
-      setOverlayBlocks(true);
-      overlayAnim.setValue(0);
-
-      const startFadeOut = () => {
-        // 3) Сразу после применения темы разрешаем тапы
-        setOverlayBlocks(false);
-
-        // Дадим 100мс, чтобы глаз «принял» новое состояние
-        overlayTimerRef.current = setTimeout(() => {
-          Animated.timing(overlayAnim, {
-            toValue: 0,
-            duration: 700,
-            useNativeDriver: true,
-          }).start(() => {
-            setOverlayVisible(false);
-            overlayTimerRef.current = null;
-            showSaveIcon(); // показать иконку сохранения
-          });
-        }, 100);
-      };
-
-      // На время затемнения прячем/сбрасываем иконку «сохранено»
-      hideSaveIcon();
-
-      // 2) Плавный fade-in → применяем изменения → fade-out
-      Animated.timing(overlayAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }).start(() => {
-        action();       // применяем setTheme(buildTheme(...)) внутри твоего action
-        startFadeOut(); // и уходим в fade-out
-      });
-    },
-    [overlayAnim, fadeAnim, theme.colors.background, hideSaveIcon, showSaveIcon]
-  );
-
-  const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
-    const performSave = () => {
-      saveAndApply({});
-    };
-
-    if (withOverlay) {
-      runWithOverlay(performSave, color);
-    } else {
-      performSave();
-      showSaveIcon();
-    }
-  }, [runWithOverlay, selectedThemeName, selectedAccentColor, selectedFontName, fontSizeLevel, fontWeight, noteTextAlign, updateTheme, showSaveIcon]);
-
-  const saveWithFeedbackRef = useRef<(withOverlay: boolean, color?: string) => void>(saveWithFeedback);
-  useEffect(() => {
-    saveWithFeedbackRef.current = saveWithFeedback;
-  }, [saveWithFeedback]);
 
   const handleAccentChange = useCallback((next: string) => {
     setSelectedAccentColor(next);
@@ -275,17 +109,6 @@ export default function Settings() {
       saveAndApply({ fontName: name, fontWeight: weight });
     });
   }, [runWithOverlay, saveAndApply]);
-
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-      }
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
-      }
-    };
-  }, []);
 
   const triggerBlink = useCallback((index: number) => {
     fontSizeBlinkAnim.stopAnimation();
