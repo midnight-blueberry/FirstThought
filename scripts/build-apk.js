@@ -1,5 +1,6 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 function run(cmd, args, options = {}) {
   const result = spawnSync(cmd, args, { stdio: 'inherit', ...options });
@@ -8,11 +9,19 @@ function run(cmd, args, options = {}) {
   }
 }
 
-run(
-  'npx',
-  ['expo', 'run:android', '--variant', 'release', '--no-install', '--no-bundler'],
-  { env: { ...process.env, CI: '1' } }
-);
+const androidDir = path.join(process.cwd(), 'android');
+
+if (!fs.existsSync(androidDir)) {
+  run('npx', ['expo', 'prebuild', '--platform', 'android', '--no-install'], {
+    env: { ...process.env, CI: '1' },
+  });
+}
+
+const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+run(gradlew, ['assembleRelease'], {
+  cwd: androidDir,
+  shell: process.platform === 'win32',
+});
 
 console.log(
   'APK generated at',
