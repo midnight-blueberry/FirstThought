@@ -43,7 +43,23 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
     xlarge: medium + 8,
   };
 
-  // 4) Размеры иконок
+  // 4) Отступы (margin и padding)
+  const spacingDelta = level - 3;
+  const updatedPadding: DefaultTheme['padding'] = {
+    small: sizes.padding.small + spacingDelta,
+    medium: sizes.padding.medium + spacingDelta,
+    large: sizes.padding.large + spacingDelta,
+    xlarge: sizes.padding.xlarge + spacingDelta,
+  };
+
+  const updatedMargin: DefaultTheme['margin'] = {
+    small: sizes.margin.small + spacingDelta,
+    medium: sizes.margin.medium + spacingDelta,
+    large: sizes.margin.large + spacingDelta,
+    xlarge: sizes.margin.xlarge + spacingDelta,
+  };
+
+  // 5) Размеры иконок
   // Если пользователь уже сохранил iconSize — уважаем его; иначе считаем от level
   const iconDelta = (level - 3) * 4;
   const updatedIconSize: DefaultTheme['iconSize'] =
@@ -55,11 +71,13 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
       xlarge: sizes.iconSize.xlarge + iconDelta,
     };
 
-  // 5) Финальный объект темы
+  // 6) Финальный объект темы
   return {
     ...chosenTheme,
     colors: updatedColors,
     fontSize: updatedFontSize,
+    padding: updatedPadding,
+    margin: updatedMargin,
     iconSize: updatedIconSize,
     fontName: getFontFamily(fontMeta.family, String(weight)),
     fontWeight: weight,
