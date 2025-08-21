@@ -3,7 +3,7 @@ import 'react-native-reanimated';
 import AppText from '@/components/ui/atoms/app-text';
 import SaveIcon from '@/components/ui/atoms/save-icon';
 import Divider from '@/components/ui/atoms/divider';
-import TextAlignButton from '@/components/ui/molecules/text-align-button';
+import TextAlignSelector from '@/components/ui/organisms/text-align-selector';
 import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
@@ -448,36 +448,14 @@ export default function Settings() {
           disabled={!hasMultiple}
         />
 
-        <Section title="Выравнивание текста в заметках">
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              alignSelf: 'stretch',
-              paddingTop: theme.padding.large,
-            }}
-          >
-            <TextAlignButton
-              variant="left"
-              selected={noteTextAlign === 'left'}
-              onPress={() => {
-                setNoteTextAlign('left');
-                saveAndApply({ noteTextAlign: 'left' });
-                showSaveIcon();
-              }}
-            />
-            <TextAlignButton
-              variant="justify"
-              selected={noteTextAlign === 'justify'}
-              onPress={() => {
-                setNoteTextAlign('justify');
-                saveAndApply({ noteTextAlign: 'justify' });
-                showSaveIcon();
-              }}
-            />
-          </View>
-        </Section>
+        <TextAlignSelector
+          noteTextAlign={noteTextAlign}
+          onChange={(align) => {
+            setNoteTextAlign(align);
+            saveAndApply({ noteTextAlign: align });
+            showSaveIcon();
+          }}
+        />
 
         <Section>
           <View
