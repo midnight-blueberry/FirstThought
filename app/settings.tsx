@@ -460,7 +460,7 @@ export default function Settings() {
 
           <View
             style={{
-              height: theme.borderWidth.medium,
+              height: theme.borderWidth.small,
               backgroundColor: theme.colors.basic,
               alignSelf: 'stretch',
               marginBottom: theme.margin.medium,
