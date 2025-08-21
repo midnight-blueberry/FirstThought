@@ -444,24 +444,33 @@ export default function Settings() {
           </View>
         </Section>
         
-        <Section title="Акцент">
-          <View>
-            {accentColors.map(color => (
-              <SelectableRow
-                key={color.hex}
-                label={color.name}
-                swatchColor={color.hex}
-                selected={color.hex === selectedAccentColor}
-                onPress={() => handleAccentChange(color.hex)}
-              />
-            ))}
-          </View>
-        </Section>
-        
-        <Section title="Шрифт">
-          <View>
-            {fonts.map(f => {
-              const delta = (fontSizeLevel - 3) * 2;
+          <Section title="Акцент">
+            <View>
+              {accentColors.map(color => (
+                <SelectableRow
+                  key={color.hex}
+                  label={color.name}
+                  swatchColor={color.hex}
+                  selected={color.hex === selectedAccentColor}
+                  onPress={() => handleAccentChange(color.hex)}
+                />
+              ))}
+            </View>
+          </Section>
+
+          <View
+            style={{
+              height: theme.borderWidth.medium,
+              backgroundColor: theme.colors.basic,
+              alignSelf: 'stretch',
+              marginBottom: theme.margin.medium,
+            }}
+          />
+
+          <Section title="Шрифт">
+            <View>
+              {fonts.map(f => {
+                const delta = (fontSizeLevel - 3) * 2;
               const medium = f.defaultSize + delta;
               return (
                 <SelectableRow
