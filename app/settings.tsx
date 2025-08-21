@@ -16,7 +16,7 @@ import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import { sizes } from '@/theme/tokens';
-import { Portal } from '@gorhom/portal';
+import Overlay from '@/components/ui/atoms/overlay';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -547,17 +547,12 @@ export default function Settings() {
         </Section>
       </ScrollView>
 
-      {overlayVisible && (
-        <Portal>
-          <Animated.View
-            pointerEvents={overlayBlocks ? 'auto' : 'none'}
-            style={[
-              StyleSheet.absoluteFillObject,
-              { opacity: overlayAnim, backgroundColor: overlayColor },
-            ]}
-          />
-        </Portal>
-      )}
+      <Overlay
+        visible={overlayVisible}
+        color={overlayColor}
+        blocks={overlayBlocks}
+        anim={overlayAnim}
+      />
     </View>
   );
 }
