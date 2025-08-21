@@ -8,6 +8,7 @@ import Divider from '@/components/ui/atoms/divider';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
 import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
+import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
@@ -397,19 +398,10 @@ export default function Settings() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <Section title="Тема">
-          <View>
-            {themeList.map(themeItem => (
-              <SelectableRow
-                key={themeItem.name}
-                label={themeItem.name}
-                swatchColor={themeItem.colors.background}
-                selected={themeItem.name === selectedThemeName}
-                onPress={() => setSelectedThemeName(themeItem.name)}
-              />
-            ))}
-          </View>
-        </Section>
+        <ThemeSelector
+          selectedThemeName={selectedThemeName}
+          onSelectTheme={setSelectedThemeName}
+        />
         
           <Section title="Акцент">
             <View>
