@@ -11,6 +11,7 @@ import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
 import PreviewNote from '@/components/ui/organisms/preview-note';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
+import useBlinkAnimation from '@/hooks/useBlinkAnimation';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import Overlay from '@/components/ui/atoms/overlay';
@@ -18,7 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 
@@ -34,9 +35,18 @@ export default function Settings() {
   const [ fontWeight, setFontWeight ] = useState<DefaultTheme['fontWeight']>(theme.fontWeight);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ fontSizeBlinkIndex, setFontSizeBlinkIndex ] = useState<number | null>(null);
-  const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
-  const fontWeightBlinkAnim = useRef(new Animated.Value(1)).current;
+  const {
+    blinkAnim: fontSizeBlinkAnim,
+    triggerBlink: triggerFontBlink,
+    stopBlink: stopFontBlink,
+  } = useBlinkAnimation({ onEnd: () => setFontSizeBlinkIndex(null) });
+  const { blinkAnim: fontWeightBlinkAnim, triggerBlink: triggerWeightBlink, stopBlink: stopWeightBlink } = useBlinkAnimation();
   const [ noteTextAlign, setNoteTextAlign ] = useState<DefaultTheme['noteTextAlign']>(theme.noteTextAlign);
+  const triggerBlink = useCallback((index: number) => {
+    setFontSizeBlinkIndex(index);
+    triggerFontBlink();
+  }, [triggerFontBlink]);
+  const stopBlink = stopFontBlink;
   if (!context) throw new Error('ThemeContext is missing');
 
   const { setTheme } = context;
@@ -110,25 +120,6 @@ export default function Settings() {
     });
   }, [runWithOverlay, saveAndApply]);
 
-  const triggerBlink = useCallback((index: number) => {
-    fontSizeBlinkAnim.stopAnimation();
-    setFontSizeBlinkIndex(index);
-    fontSizeBlinkAnim.setValue(1);
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fontSizeBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-        Animated.timing(fontSizeBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
-      ]),
-      { iterations: 5 }
-    ).start(() => setFontSizeBlinkIndex(null));
-  }, [fontSizeBlinkAnim]);
-
-  const stopBlink = useCallback(() => {
-    fontSizeBlinkAnim.stopAnimation();
-    fontSizeBlinkAnim.setValue(1);
-    setFontSizeBlinkIndex(null);
-  }, [fontSizeBlinkAnim]);
-
   const applyFontSizeLevel = (level: number) => {
     runWithOverlay(() => {
       setFontSizeLevel(level);
@@ -153,23 +144,6 @@ export default function Settings() {
     }
     applyFontSizeLevel(fontSizeLevel + 1);
   };
-
-  const triggerWeightBlink = useCallback(() => {
-    fontWeightBlinkAnim.stopAnimation();
-    fontWeightBlinkAnim.setValue(1);
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fontWeightBlinkAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
-        Animated.timing(fontWeightBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
-      ]),
-      { iterations: 5 }
-    ).start();
-  }, [fontWeightBlinkAnim]);
-
-  const stopWeightBlink = useCallback(() => {
-    fontWeightBlinkAnim.stopAnimation();
-    fontWeightBlinkAnim.setValue(1);
-  }, [fontWeightBlinkAnim]);
 
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
