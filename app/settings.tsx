@@ -63,7 +63,7 @@ const TextAlignButton = ({
         borderColor,
         borderWidth: theme.borderWidth.medium,
         borderRadius: theme.borderRadius,
-        padding: theme.padding.small,
+        padding: theme.padding.medium,
       }}
     >
       <TextAlignIcon variant={variant} color={theme.colors.basic} />
