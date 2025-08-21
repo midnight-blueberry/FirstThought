@@ -5,8 +5,8 @@ import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import IconButton from '@/components/ui/atoms/icon-button';
 import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
-import TextAlignIcon from '@/components/ui/atoms/text-align-icon';
 import SelectableRow from '@/components/ui/molecules/selectable-row';
+import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
 import { accentColors } from '@/constants/AccentColors';
 import { fonts, getFontFamily } from '@/constants/Fonts';
@@ -20,54 +20,10 @@ import { Portal } from '@gorhom/portal';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Easing, ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { InteractionManager } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const TextAlignButton = ({
-  variant,
-  onPress,
-  selected,
-}: {
-  variant: 'left' | 'justify';
-  onPress?: () => void;
-  selected?: boolean;
-}) => {
-  const theme = useTheme();
-  const borderColor = selected ? theme.colors.accent : 'transparent';
-
-  return (
-    <View style={{ alignItems: 'center' }}>
-      <TouchableOpacity
-        onPress={onPress}
-        hitSlop={8}
-        style={{
-          borderColor,
-          borderWidth: theme.borderWidth.medium,
-          borderRadius: theme.borderRadius,
-          padding: theme.padding.large,
-        }}
-      >
-        <TextAlignIcon variant={variant} color={theme.colors.basic} />
-      </TouchableOpacity>
-
-      {selected && (
-        <Ionicons
-          name="checkmark-sharp"
-          size={theme.iconSize.large}
-          color={theme.colors.accent}
-          style={{
-            position: 'absolute',
-            right: -(theme.iconSize.large + theme.margin.small), // регулируешь насколько вынести за кнопку
-            top: '50%',
-            marginTop: -(theme.iconSize.large / 2),
-          }}
-        />
-      )}
-    </View>
-  );
-};
 
 export default function Settings() {
   const theme = useTheme();
