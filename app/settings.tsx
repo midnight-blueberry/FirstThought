@@ -5,12 +5,12 @@ import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import SaveIcon from '@/components/ui/atoms/save-icon';
 import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
-import SelectableRow from '@/components/ui/molecules/selectable-row';
 import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
-import { fonts, getFontFamily } from '@/constants/Fonts';
+import FontSelector from '@/components/ui/organisms/font-selector';
+import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
 import { buildTheme } from '@/src/theme/buildTheme';
@@ -189,6 +189,7 @@ export default function Settings() {
   }, [fadeAnim]);
 
   const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipFontChangeRef = useRef(false);
 
   const runWithOverlay = useCallback(
     (action: () => void, color?: string) => {
@@ -265,6 +266,17 @@ export default function Settings() {
       saveAndApply({ accentColor: next }); // setTheme(buildTheme(...)) вызовется один раз
     }, /* overlay color*/ theme.colors.background);
   }, [runWithOverlay, saveAndApply, selectedAccentColor, theme.colors.background]);
+
+  const handleFontSelect = useCallback((name: string) => {
+    const font = fonts.find(f => f.name === name) ?? fonts[0];
+    const weight = font.defaultWeight as DefaultTheme['fontWeight'];
+    runWithOverlay(() => {
+      skipFontChangeRef.current = true;
+      setSelectedFontName(name);
+      setFontWeight(weight);
+      saveAndApply({ fontName: name, fontWeight: weight });
+    });
+  }, [runWithOverlay, saveAndApply]);
 
   useEffect(() => {
     return () => {
@@ -374,6 +386,13 @@ export default function Settings() {
       prevThemeNameRef.current = selectedThemeName;
       return;
     }
+    if (skipFontChangeRef.current) {
+      skipFontChangeRef.current = false;
+      prevFontNameRef.current = selectedFontName;
+      prevFontWeightRef.current = fontWeight;
+      prevThemeNameRef.current = selectedThemeName;
+      return;
+    }
     const isFontChange = prevFontNameRef.current !== selectedFontName;
     const isWeightChange = prevFontWeightRef.current !== fontWeight;
     const isThemeChange = prevThemeNameRef.current !== selectedThemeName;
@@ -410,29 +429,12 @@ export default function Settings() {
 
         <Divider />
 
-          <Section title="Шрифт">
-            <View>
-              {fonts.map(f => {
-                const delta = (fontSizeLevel - 3) * 2;
-              const medium = f.defaultSize + delta;
-              return (
-                <SelectableRow
-                  key={f.name}
-                  label={f.name}
-                  swatchColor={theme.colors.basic}
-                  selected={f.name === selectedFontName}
-                    onPress={() => {
-                      setSelectedFontName(f.name);
-                      setFontWeight(f.defaultWeight as DefaultTheme['fontWeight']);
-                    }}
-                  fontFamily={getFontFamily(f.family, f.defaultWeight)}
-                  fontWeight='normal'
-                  fontSize={medium}
-                />
-              );
-            })}
-          </View>
-        </Section>
+        <FontSelector
+          selectedFontName={selectedFontName}
+          onSelectFont={handleFontSelect}
+          onSelectWeight={() => {}}
+          fontSizeLevel={fontSizeLevel}
+        />
         
         <Section title="Размер шрифта">
           <SelectorRow onIncrease={increaseFontSize} onDecrease={decreaseFontSize}>
