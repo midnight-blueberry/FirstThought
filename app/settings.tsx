@@ -189,6 +189,7 @@ export default function Settings() {
   }, [fadeAnim]);
 
   const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipFontChangeRef = useRef(false);
 
   const runWithOverlay = useCallback(
     (action: () => void, color?: string) => {
@@ -265,6 +266,17 @@ export default function Settings() {
       saveAndApply({ accentColor: next }); // setTheme(buildTheme(...)) вызовется один раз
     }, /* overlay color*/ theme.colors.background);
   }, [runWithOverlay, saveAndApply, selectedAccentColor, theme.colors.background]);
+
+  const handleFontSelect = useCallback((name: string) => {
+    const font = fonts.find(f => f.name === name) ?? fonts[0];
+    const weight = font.defaultWeight as DefaultTheme['fontWeight'];
+    runWithOverlay(() => {
+      skipFontChangeRef.current = true;
+      setSelectedFontName(name);
+      setFontWeight(weight);
+      saveAndApply({ fontName: name, fontWeight: weight });
+    });
+  }, [runWithOverlay, saveAndApply]);
 
   useEffect(() => {
     return () => {
@@ -374,6 +386,13 @@ export default function Settings() {
       prevThemeNameRef.current = selectedThemeName;
       return;
     }
+    if (skipFontChangeRef.current) {
+      skipFontChangeRef.current = false;
+      prevFontNameRef.current = selectedFontName;
+      prevFontWeightRef.current = fontWeight;
+      prevThemeNameRef.current = selectedThemeName;
+      return;
+    }
     const isFontChange = prevFontNameRef.current !== selectedFontName;
     const isWeightChange = prevFontWeightRef.current !== fontWeight;
     const isThemeChange = prevThemeNameRef.current !== selectedThemeName;
@@ -412,8 +431,9 @@ export default function Settings() {
 
         <FontSelector
           selectedFontName={selectedFontName}
-          onSelectFont={setSelectedFontName}
-          onSelectWeight={setFontWeight}
+          onSelectFont={handleFontSelect}
+          onSelectWeight={() => {}}
+          fontSizeLevel={fontSizeLevel}
         />
         
         <Section title="Размер шрифта">

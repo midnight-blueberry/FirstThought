@@ -9,12 +9,17 @@ interface FontSelectorProps {
   selectedFontName: string;
   onSelectFont: (name: string) => void;
   onSelectWeight: (weight: DefaultTheme['fontWeight']) => void;
+  fontSizeLevel: number;
 }
 
-const FontSelector: React.FC<FontSelectorProps> = ({ selectedFontName, onSelectFont, onSelectWeight }) => {
+const FontSelector: React.FC<FontSelectorProps> = ({
+  selectedFontName,
+  onSelectFont,
+  onSelectWeight,
+  fontSizeLevel,
+}) => {
   const theme = useTheme();
-  const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-  const delta = theme.fontSize.medium - selectedFont.defaultSize;
+  const delta = (fontSizeLevel - 3) * 2;
 
   return (
     <Section title="Шрифт">
