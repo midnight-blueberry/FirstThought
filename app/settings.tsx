@@ -9,7 +9,7 @@ import SelectableRow from '@/components/ui/molecules/selectable-row';
 import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
 import ThemeSelector from '@/components/ui/organisms/theme-selector';
-import { accentColors } from '@/constants/AccentColors';
+import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
 import { fonts, getFontFamily } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
@@ -402,22 +402,13 @@ export default function Settings() {
           selectedThemeName={selectedThemeName}
           onSelectTheme={setSelectedThemeName}
         />
-        
-          <Section title="Акцент">
-            <View>
-              {accentColors.map(color => (
-                <SelectableRow
-                  key={color.hex}
-                  label={color.name}
-                  swatchColor={color.hex}
-                  selected={color.hex === selectedAccentColor}
-                  onPress={() => handleAccentChange(color.hex)}
-                />
-              ))}
-            </View>
-          </Section>
 
-          <Divider />
+        <AccentColorSelector
+          selectedAccentColor={selectedAccentColor}
+          onSelectAccent={handleAccentChange}
+        />
+
+        <Divider />
 
           <Section title="Шрифт">
             <View>
