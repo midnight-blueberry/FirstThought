@@ -72,8 +72,9 @@ const TextAlignButton = ({
       <View
         style={{
           position: 'absolute',
-          top: -theme.padding.small,
           right: -theme.padding.small,
+          top: '50%',
+          marginTop: -(theme.iconSize.large / 2),
           width: theme.iconSize.large,
           height: theme.iconSize.large,
           justifyContent: 'center',
