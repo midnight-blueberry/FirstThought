@@ -1,9 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import AppText from '@/components/ui/atoms/app-text';
-import BarIndicator from '@/components/ui/atoms/bar-indicator';
 import SaveIcon from '@/components/ui/atoms/save-icon';
-import SelectorRow from '@/components/ui/atoms/selector-row';
 import Divider from '@/components/ui/atoms/divider';
 import TextAlignButton from '@/components/ui/molecules/text-align-button';
 import Section from '@/components/ui/organisms/settings-section';
@@ -11,6 +9,7 @@ import ThemeSelector from '@/components/ui/organisms/theme-selector';
 import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
 import FontSelector from '@/components/ui/organisms/font-selector';
 import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
+import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { saveSettings } from '@/src/storage/settings';
@@ -40,7 +39,6 @@ export default function Settings() {
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
   const [ fontSizeBlinkIndex, setFontSizeBlinkIndex ] = useState<number | null>(null);
   const fontSizeBlinkAnim = useRef(new Animated.Value(1)).current;
-  const [ fontWeightBlinkIndex, setFontWeightBlinkIndex ] = useState<number | null>(null);
   const fontWeightBlinkAnim = useRef(new Animated.Value(1)).current;
   const [ noteTextAlign, setNoteTextAlign ] = useState<DefaultTheme['noteTextAlign']>(theme.noteTextAlign);
   const [, setIsSaved ] = useState(false);
@@ -334,9 +332,8 @@ export default function Settings() {
     applyFontSizeLevel(fontSizeLevel + 1);
   };
 
-  const triggerWeightBlink = useCallback((index: number) => {
+  const triggerWeightBlink = useCallback(() => {
     fontWeightBlinkAnim.stopAnimation();
-    setFontWeightBlinkIndex(index);
     fontWeightBlinkAnim.setValue(1);
     Animated.loop(
       Animated.sequence([
@@ -344,34 +341,33 @@ export default function Settings() {
         Animated.timing(fontWeightBlinkAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
       ]),
       { iterations: 5 }
-    ).start(() => setFontWeightBlinkIndex(null));
+    ).start();
   }, [fontWeightBlinkAnim]);
 
   const stopWeightBlink = useCallback(() => {
     fontWeightBlinkAnim.stopAnimation();
     fontWeightBlinkAnim.setValue(1);
-    setFontWeightBlinkIndex(null);
   }, [fontWeightBlinkAnim]);
 
   const decreaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
       const idx = font.weights.indexOf(fontWeight as string);
-    if (fontWeightBlinkIndex !== null) stopWeightBlink();
+    stopWeightBlink();
     if (idx > 0) {
-        setFontWeight(font.weights[idx - 1] as DefaultTheme['fontWeight']);
+      setFontWeight(font.weights[idx - 1] as DefaultTheme['fontWeight']);
     } else {
-      triggerWeightBlink(0);
+      triggerWeightBlink();
     }
   };
 
   const increaseFontWeight = () => {
     const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
       const idx = font.weights.indexOf(fontWeight as string);
-    if (fontWeightBlinkIndex !== null) stopWeightBlink();
+    stopWeightBlink();
     if (idx < font.weights.length - 1) {
-        setFontWeight(font.weights[idx + 1] as DefaultTheme['fontWeight']);
+      setFontWeight(font.weights[idx + 1] as DefaultTheme['fontWeight']);
     } else {
-      triggerWeightBlink(font.weights.length - 1);
+      triggerWeightBlink();
     }
   };
 
@@ -408,7 +404,6 @@ export default function Settings() {
 
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
   const hasMultiple = selectedFont.weights.length > 1;
-  const columns = hasMultiple ? selectedFont.weights.length : 5;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -445,31 +440,13 @@ export default function Settings() {
           blinkAnim={fontSizeBlinkAnim}
         />
         
-        <Section title="Жирность шрифта">
-          <SelectorRow
-            onIncrease={hasMultiple ? increaseFontWeight : undefined}
-            onDecrease={hasMultiple ? decreaseFontWeight : undefined}
-            increaseColor={hasMultiple ? 'basic' : 'disabled'}
-            decreaseColor={hasMultiple ? 'basic' : 'disabled'}
-            opacity={hasMultiple ? 1 : 0.5}
-          >
-              <BarIndicator
-                total={columns}
-                filledCount={
-                  hasMultiple ? selectedFont.weights.indexOf(fontWeight as string) + 1 : 0
-                }
-                blinkIndex={fontWeightBlinkIndex}
-                blinkAnim={fontWeightBlinkAnim}
-                containerColor={theme.colors[hasMultiple ? 'basic' : 'disabled']}
-                fillColor={theme.colors[hasMultiple ? 'accent' : 'disabled']}
-              />
-          </SelectorRow>
-          {!hasMultiple && (
-            <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
-              Недоступно для данного шрифта
-            </AppText>
-          )}
-        </Section>
+        <FontWeightSelector
+          fontWeight={fontWeight}
+          onIncrease={increaseFontWeight}
+          onDecrease={decreaseFontWeight}
+          blinkAnim={fontWeightBlinkAnim}
+          disabled={!hasMultiple}
+        />
 
         <Section title="Выравнивание текста в заметках">
           <View
