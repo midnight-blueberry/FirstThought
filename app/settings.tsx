@@ -21,6 +21,7 @@ import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, use
 import { Animated, Easing, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { InteractionManager } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const TextAlignIcon = ({
   variant,
@@ -55,6 +56,7 @@ const TextAlignButton = ({
 }) => {
   const theme = useTheme();
   const borderColor = selected ? theme.colors.accent : 'transparent';
+  const checkColor = selected ? theme.colors.accent : theme.colors.background;
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -67,6 +69,19 @@ const TextAlignButton = ({
       }}
     >
       <TextAlignIcon variant={variant} color={theme.colors.basic} />
+      <View
+        style={{
+          position: 'absolute',
+          top: -theme.padding.small,
+          right: -theme.padding.small,
+          width: theme.iconSize.large,
+          height: theme.iconSize.large,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Ionicons name="checkmark-sharp" size={theme.iconSize.large} color={checkColor} />
+      </View>
     </TouchableOpacity>
   );
 };
