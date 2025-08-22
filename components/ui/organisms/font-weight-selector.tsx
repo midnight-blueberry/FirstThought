@@ -6,6 +6,7 @@ import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
 import { fonts } from '@/constants/Fonts';
+import { getBaseFontName } from '@/settings/utils/font';
 
 interface FontWeightSelectorProps {
   fontWeight: DefaultTheme['fontWeight'];
@@ -23,7 +24,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   disabled,
 }) => {
   const theme = useTheme();
-  const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+  const baseName = getBaseFontName(theme.fontName);
   const font = fonts.find(f => f.name === baseName) ?? fonts[0];
   const columns = disabled ? 5 : font.weights.length;
   const filledCount = disabled ? 0 : font.weights.indexOf(fontWeight as string) + 1;

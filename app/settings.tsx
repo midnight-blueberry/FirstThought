@@ -14,6 +14,8 @@ import useThemeSaver from '@/hooks/useThemeSaver';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
+import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
+import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
 
 
 export default function Settings() {
@@ -23,7 +25,7 @@ export default function Settings() {
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
-  const initialFontName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+  const initialFontName = getBaseFontName(theme.fontName);
   const [ selectedFontName, setSelectedFontName ] = useState(initialFontName);
   const [ fontWeight, setFontWeight ] = useState<DefaultTheme['fontWeight']>(theme.fontWeight);
   const [ fontSizeLevel, setFontSizeLevel ] = useState(3);
@@ -82,13 +84,12 @@ export default function Settings() {
     useCallback(() => {
       setSelectedThemeName(theme.name);
       setSelectedAccentColor(theme.colors.accent);
-      const baseName = theme.fontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+      const baseName = getBaseFontName(theme.fontName);
       setSelectedFontName(baseName);
       setFontWeight(theme.fontWeight);
       const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
-      const base = fontInfo.defaultSize - 4;
-      const level = Math.round((theme.fontSize.small - base) / 2) + 3;
-      setFontSizeLevel(Math.min(Math.max(level, 1), 5));
+      const level = calcFontSizeLevel(theme.fontSize.small, fontInfo.defaultSize);
+      setFontSizeLevel(level);
       setNoteTextAlign(theme.noteTextAlign);
     }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight, theme.noteTextAlign])
   );
@@ -114,9 +115,10 @@ export default function Settings() {
   }, [runWithOverlay, saveAndApply]);
 
   const applyFontSizeLevel = (level: number) => {
+    const next = clampLevel(level);
     runWithOverlay(() => {
-      setFontSizeLevel(level);
-      saveAndApply({ fontSizeLevel: level });
+      setFontSizeLevel(next);
+      saveAndApply({ fontSizeLevel: next });
     });
   };
 
@@ -186,7 +188,7 @@ export default function Settings() {
     prevFontWeightRef.current = fontWeight;
     prevThemeNameRef.current = selectedThemeName;
     const newOverlayColor = isThemeChange
-      ? themeList.find(t => t.name === selectedThemeName)?.colors.background
+      ? resolveOverlayColor(selectedThemeName, themeList)
       : undefined;
     saveWithFeedbackRef.current(isFontChange || isWeightChange || isThemeChange, newOverlayColor);
   }, [selectedThemeName, selectedFontName, fontWeight]);

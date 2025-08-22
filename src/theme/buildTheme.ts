@@ -3,6 +3,8 @@ import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
 import { themeList, themes } from '@/theme';
 import { sizes } from '@/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
+import { nextIconSize } from '@/settings/utils/font';
+import { clampLevel } from '@/settings/utils/theme';
 
 type SavedSettings = {
   themeName?: string;
@@ -34,7 +36,7 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
 
   // 3) Размеры шрифта (с учётом уровня)
   // В твоём коде: delta = (level - 3) * 2; medium = font.defaultSize + delta
-  const level = Math.min(Math.max(saved?.fontSizeLevel ?? 3, 1), 5);
+  const level = clampLevel(saved?.fontSizeLevel ?? 3);
   const delta = (level - 3) * 2;
   const medium = fontMeta.defaultSize + delta;
   const updatedFontSize: DefaultTheme['fontSize'] = {
@@ -62,15 +64,8 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
 
   // 5) Размеры иконок
   // Если пользователь уже сохранил iconSize — уважаем его; иначе считаем от level
-  const iconDelta = (level - 3) * 4;
   const updatedIconSize: DefaultTheme['iconSize'] =
-    saved?.iconSize ?? {
-      xsmall: sizes.iconSize.xsmall + iconDelta,
-      small: sizes.iconSize.small + iconDelta,
-      medium: sizes.iconSize.medium + iconDelta,
-      large: sizes.iconSize.large + iconDelta,
-      xlarge: sizes.iconSize.xlarge + iconDelta,
-    };
+    saved?.iconSize ?? nextIconSize(level, sizes.iconSize);
 
   // 6) Финальный объект темы
   return {

@@ -5,6 +5,8 @@ import type { DefaultTheme } from 'styled-components/native';
 import { buildTheme } from '@/src/theme/buildTheme';
 import { saveSettings } from '@/src/storage/settings';
 import { sizes } from '@/theme/tokens';
+import { nextIconSize } from '@/settings/utils/font';
+import { clampLevel } from '@/settings/utils/theme';
 
 type Params = {
   selectedThemeName: string;
@@ -83,17 +85,10 @@ export default function useThemeSaver({
       accentColor:      patch.accentColor      ?? selectedAccentColor,
       fontName:         patch.fontName         ?? selectedFontName,
       fontWeight:       patch.fontWeight       ?? fontWeight,
-      fontSizeLevel:    patch.fontSizeLevel    ?? fontSizeLevel,
+      fontSizeLevel:    clampLevel(patch.fontSizeLevel ?? fontSizeLevel),
       iconSize:         patch.iconSize         ?? ((): DefaultTheme['iconSize'] => {
-        const level = patch.fontSizeLevel ?? fontSizeLevel;
-        const iconDelta = (level - 3) * 4;
-        return {
-          xsmall: sizes.iconSize.xsmall + iconDelta,
-          small:  sizes.iconSize.small  + iconDelta,
-          medium: sizes.iconSize.medium + iconDelta,
-          large:  sizes.iconSize.large  + iconDelta,
-          xlarge: sizes.iconSize.xlarge + iconDelta,
-        };
+        const level = clampLevel(patch.fontSizeLevel ?? fontSizeLevel);
+        return nextIconSize(level, sizes.iconSize);
       })(),
       noteTextAlign:    patch.noteTextAlign    ?? noteTextAlign,
     };
