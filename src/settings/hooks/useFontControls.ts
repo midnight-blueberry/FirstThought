@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { DefaultTheme } from 'styled-components/native';
 import type { Animated } from 'react-native';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
@@ -47,7 +47,6 @@ export default function useFontControls({
   const [selectedFontName, setSelectedFontName] = useState(initial.fontName);
   const [fontWeight, setFontWeight] = useState<DefaultTheme['fontWeight']>(initial.fontWeight);
   const [fontSizeLevel, setFontSizeLevel] = useState(initial.fontSizeLevel);
-  const skipFontChangeRef = useRef(false);
 
   const [fontSizeBlinkIndex, setFontSizeBlinkIndex] = useState<number | null>(null);
   const {
@@ -58,30 +57,18 @@ export default function useFontControls({
   const { blinkAnim: fontWeightBlinkAnim, triggerBlink: triggerWeightBlink, stopBlink: stopWeightBlink } = useBlinkAnimation();
 
   useEffect(() => {
-    skipFontChangeRef.current = true;
     setSelectedFontName(initial.fontName);
     setFontWeight(initial.fontWeight);
     setFontSizeLevel(initial.fontSizeLevel);
   }, [initial.fontName, initial.fontWeight, initial.fontSizeLevel]);
 
-  useEffect(() => {
-    if (skipFontChangeRef.current) {
-      skipFontChangeRef.current = false;
-      return;
-    }
-    runWithOverlay(() => {
-      saveAndApply({ fontName: selectedFontName, fontWeight });
-    });
-  }, [selectedFontName, fontWeight, runWithOverlay, saveAndApply]);
-
   const selectFont = useCallback(
     (name: string) => {
       const font = fonts.find(f => f.name === name) ?? fonts[0];
       const weight = font.defaultWeight as DefaultTheme['fontWeight'];
-      skipFontChangeRef.current = true;
+      setSelectedFontName(name);
+      setFontWeight(weight);
       runWithOverlay(() => {
-        setSelectedFontName(name);
-        setFontWeight(weight);
         saveAndApply({ fontName: name, fontWeight: weight });
       });
     },
@@ -91,8 +78,8 @@ export default function useFontControls({
   const applyFontSizeLevel = useCallback(
     (level: number) => {
       const next = clampLevel(level, minLevel, maxLevel);
+      setFontSizeLevel(next);
       runWithOverlay(() => {
-        setFontSizeLevel(next);
         saveAndApply({ fontSizeLevel: next });
       });
     },
@@ -119,12 +106,16 @@ export default function useFontControls({
       stopWeightBlink();
       const nextIdx = idx + delta;
       if (nextIdx >= 0 && nextIdx < font.weights.length) {
-        setFontWeight(font.weights[nextIdx] as DefaultTheme['fontWeight']);
+        const nextWeight = font.weights[nextIdx] as DefaultTheme['fontWeight'];
+        setFontWeight(nextWeight);
+        runWithOverlay(() => {
+          saveAndApply({ fontWeight: nextWeight });
+        });
       } else {
         triggerWeightBlink();
       }
     },
-    [fonts, selectedFontName, fontWeight, stopWeightBlink, triggerWeightBlink],
+    [fonts, selectedFontName, fontWeight, stopWeightBlink, triggerWeightBlink, runWithOverlay, saveAndApply],
   );
 
   const blinkState: BlinkState = {

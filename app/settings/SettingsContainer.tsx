@@ -72,7 +72,6 @@ export default function SettingsContainer() {
   const {
     saveAndApply,
     runWithOverlay,
-    showSaveIcon,
     fadeAnim,
     overlayAnim,
     overlayVisible,
@@ -161,8 +160,9 @@ export default function SettingsContainer() {
       noteTextAlign,
       onChange: (align: DefaultTheme['noteTextAlign']) => {
         setNoteTextAlign(align);
-        saveAndApply({ noteTextAlign: align });
-        showSaveIcon();
+        runWithOverlay(() => {
+          saveAndApply({ noteTextAlign: align });
+        });
       },
     },
     preview: {
