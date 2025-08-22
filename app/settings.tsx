@@ -1,14 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import SaveIcon from '@/components/ui/atoms/save-icon';
-import Divider from '@/components/ui/atoms/divider';
-import TextAlignSelector from '@/components/ui/organisms/text-align-selector';
-import ThemeSelector from '@/components/ui/organisms/theme-selector';
-import AccentColorSelector from '@/components/ui/organisms/accent-color-selector';
-import FontSelector from '@/components/ui/organisms/font-selector';
-import FontSizeSelector from '@/components/ui/organisms/font-size-selector';
-import FontWeightSelector from '@/components/ui/organisms/font-weight-selector';
-import PreviewNote from '@/components/ui/organisms/preview-note';
+import { sections, SectionKey } from '@/settings/sections.config';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
@@ -201,6 +194,51 @@ export default function Settings() {
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
   const hasMultiple = selectedFont.weights.length > 1;
 
+  const sectionProps: Record<SectionKey, Record<string, unknown>> = {
+    theme: {
+      selectedThemeName,
+      onSelectTheme: setSelectedThemeName,
+    },
+    accent: {
+      selectedAccentColor,
+      onSelectAccent: handleAccentChange,
+    },
+    divider: {},
+    font: {
+      selectedFontName,
+      onSelectFont: handleFontSelect,
+      onSelectWeight: () => {},
+      fontSizeLevel,
+    },
+    fontSize: {
+      fontSizeLevel,
+      onIncrease: increaseFontSize,
+      onDecrease: decreaseFontSize,
+      blinkIndex: fontSizeBlinkIndex,
+      blinkAnim: fontSizeBlinkAnim,
+    },
+    fontWeight: {
+      fontWeight,
+      onIncrease: increaseFontWeight,
+      onDecrease: decreaseFontWeight,
+      blinkAnim: fontWeightBlinkAnim,
+      disabled: !hasMultiple,
+    },
+    align: {
+      noteTextAlign,
+      onChange: (align: DefaultTheme['noteTextAlign']) => {
+        setNoteTextAlign(align);
+        saveAndApply({ noteTextAlign: align });
+        showSaveIcon();
+      },
+    },
+    preview: {
+      noteTextAlign,
+      fontName: theme.fontName,
+      colors: theme.colors,
+    },
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <ScrollView
@@ -209,55 +247,9 @@ export default function Settings() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <ThemeSelector
-          selectedThemeName={selectedThemeName}
-          onSelectTheme={setSelectedThemeName}
-        />
-
-        <AccentColorSelector
-          selectedAccentColor={selectedAccentColor}
-          onSelectAccent={handleAccentChange}
-        />
-
-        <Divider />
-
-        <FontSelector
-          selectedFontName={selectedFontName}
-          onSelectFont={handleFontSelect}
-          onSelectWeight={() => {}}
-          fontSizeLevel={fontSizeLevel}
-        />
-        
-        <FontSizeSelector
-          fontSizeLevel={fontSizeLevel}
-          onIncrease={increaseFontSize}
-          onDecrease={decreaseFontSize}
-          blinkIndex={fontSizeBlinkIndex}
-          blinkAnim={fontSizeBlinkAnim}
-        />
-        
-        <FontWeightSelector
-          fontWeight={fontWeight}
-          onIncrease={increaseFontWeight}
-          onDecrease={decreaseFontWeight}
-          blinkAnim={fontWeightBlinkAnim}
-          disabled={!hasMultiple}
-        />
-
-        <TextAlignSelector
-          noteTextAlign={noteTextAlign}
-          onChange={(align) => {
-            setNoteTextAlign(align);
-            saveAndApply({ noteTextAlign: align });
-            showSaveIcon();
-          }}
-        />
-
-        <PreviewNote
-          noteTextAlign={noteTextAlign}
-          fontName={theme.fontName}
-          colors={theme.colors}
-        />
+        {sections.map(({ key, Component }) => (
+          <Component key={key} {...sectionProps[key]} />
+        ))}
       </ScrollView>
 
       <Overlay
