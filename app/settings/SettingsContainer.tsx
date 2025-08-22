@@ -30,6 +30,20 @@ export default function SettingsContainer() {
   const initialFontName = getBaseFontName(theme.fontName);
   const initialFontInfo = fonts.find(f => f.name === initialFontName) ?? fonts[0];
   const initialFontSizeLevel = calcFontSizeLevel(theme.fontSize.small, initialFontInfo.defaultSize);
+  const saveAndApplyCb = useCallback(
+    (patch: SavedSettingsPatch) => {
+      saveAndApplyRef.current(patch);
+    },
+    [],
+  );
+
+  const runWithOverlayCb = useCallback(
+    (action: () => void, color?: string) => {
+      runWithOverlayRef.current(action, color);
+    },
+    [],
+  );
+
   const {
     selectedFontName,
     fontWeight,
@@ -45,8 +59,8 @@ export default function SettingsContainer() {
       fontWeight: theme.fontWeight,
       fontSizeLevel: initialFontSizeLevel,
     },
-    saveAndApply: patch => saveAndApplyRef.current(patch),
-    runWithOverlay: (action, color) => runWithOverlayRef.current(action, color),
+    saveAndApply: saveAndApplyCb,
+    runWithOverlay: runWithOverlayCb,
     clampLevel,
     maxLevel: 5,
     minLevel: 1,
