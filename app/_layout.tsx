@@ -37,7 +37,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       >
           <DrawerItem
             label="Настройки"
-            onPress={() => props.navigation.navigate('settings')}
+            onPress={() => props.navigation.navigate('settings/index')}
             labelStyle={{
               fontFamily: theme.fontName,
               fontSize: theme.fontSize.medium,
@@ -161,7 +161,7 @@ function DrawerNavigator({
         })}
       />
         <Drawer.Screen
-          name="settings"
+          name="settings/index"
           options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
           title: settingsPageHeaderTitle,
           headerLeft: () => (

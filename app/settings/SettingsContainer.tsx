@@ -1,25 +1,24 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import SaveIcon from '@/components/ui/atoms/save-icon';
-import { sections, SectionKey } from '@/settings/sections.config';
+import { SectionKey } from '@/settings/sections.config';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
-import Overlay from '@/components/ui/atoms/overlay';
 import { useFocusEffect } from '@react-navigation/native';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import usePrevious from '@/hooks/usePrevious';
-import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
 import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
+import SettingsContent from './SettingsContent';
 
 
-export default function Settings() {
+export default function SettingsContainer() {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const context = useContext(ThemeContext);
@@ -64,7 +63,6 @@ export default function Settings() {
     noteTextAlign,
     setTheme,
   });
-  const styles = React.useMemo(() => createStyles(theme), [theme]);
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 
@@ -221,40 +219,14 @@ export default function Settings() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.container}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        {sections.map(({ key, Component }) => {
-          const Comp = Component as React.ComponentType<Record<string, unknown>>;
-          return <Comp key={key} {...sectionProps[key]} />;
-        })}
-      </ScrollView>
-
-      <Overlay
-        visible={overlayVisible}
-        color={overlayColor}
-        blocks={overlayBlocks}
-        anim={overlayAnim}
-      />
-    </View>
+    <SettingsContent
+      sectionProps={sectionProps}
+      theme={theme}
+      handleScroll={handleScroll}
+      overlayVisible={overlayVisible}
+      overlayColor={overlayColor}
+      overlayAnim={overlayAnim}
+      overlayBlocks={overlayBlocks}
+    />
   );
 }
-
-const createStyles = (theme: DefaultTheme) =>
-  StyleSheet.create({
-    container: {
-      flexGrow: 1,
-      paddingHorizontal: theme.padding.xlarge,
-      paddingBottom: theme.padding.xlarge,
-    },
-    label: {
-      marginBottom: theme.margin.medium,
-    },
-    section: {
-      marginBottom: theme.margin.medium,
-    }
-  });
