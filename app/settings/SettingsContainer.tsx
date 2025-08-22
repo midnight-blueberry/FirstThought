@@ -7,13 +7,13 @@ import useHeaderShadow from '@/hooks/useHeaderShadow';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
 import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
-import { useFocusEffect } from '@react-navigation/native';
 import useThemeSaver from '@/hooks/useThemeSaver';
+import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import usePrevious from '@/hooks/usePrevious';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
+import { getBaseFontName } from '@/settings/utils/font';
 import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
 import SettingsContent from './SettingsContent';
 
@@ -66,19 +66,15 @@ export default function SettingsContainer() {
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 
-  useFocusEffect(
-    useCallback(() => {
-      setSelectedThemeName(theme.name);
-      setSelectedAccentColor(theme.colors.accent);
-      const baseName = getBaseFontName(theme.fontName);
-      setSelectedFontName(baseName);
-      setFontWeight(theme.fontWeight);
-      const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
-      const level = calcFontSizeLevel(theme.fontSize.small, fontInfo.defaultSize);
-      setFontSizeLevel(level);
-      setNoteTextAlign(theme.noteTextAlign);
-    }, [theme.name, theme.fontSize.small, theme.fontName, theme.fontWeight, theme.noteTextAlign])
-  );
+  useSyncThemeToLocalState(theme, {
+    setSelectedThemeName,
+    setSelectedAccentColor,
+    setSelectedFontName,
+    setFontWeight,
+    setFontSizeLevel,
+    setNoteTextAlign,
+  });
+
   const skipFontChangeRef = useRef(false);
 
   const handleAccentChange = useCallback((next: string) => {
