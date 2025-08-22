@@ -1,20 +1,12 @@
 import React from 'react';
-import { Animated } from 'react-native';
-import { DefaultTheme, useTheme } from 'styled-components/native';
+import { useTheme } from 'styled-components/native';
 import AppText from '../atoms/app-text';
 import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
 import { fonts } from '@/constants/Fonts';
 import { getBaseFontName } from '@/settings/utils/font';
-
-interface FontWeightSelectorProps {
-  fontWeight: DefaultTheme['fontWeight'];
-  onIncrease: () => void;
-  onDecrease: () => void;
-  blinkAnim: Animated.Value;
-  disabled: boolean;
-}
+import type { FontWeightSelectorProps } from '@/settings/types';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   fontWeight,

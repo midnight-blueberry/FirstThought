@@ -3,11 +3,7 @@ import { View } from 'react-native';
 import SelectableRow from '../molecules/selectable-row';
 import Section from './settings-section';
 import { themeList } from '@/theme';
-
-interface ThemeSelectorProps {
-  selectedThemeName: string;
-  onSelectTheme: (name: string) => void;
-}
+import type { ThemeSelectorProps } from '@/settings/types';
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSelectTheme }) => (
   <Section title="Тема">

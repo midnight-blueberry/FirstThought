@@ -1,16 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
-import { DefaultTheme, useTheme } from 'styled-components/native';
+import { useTheme } from 'styled-components/native';
+import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import SelectableRow from '../molecules/selectable-row';
 import { fonts, getFontFamily } from '@/constants/Fonts';
-
-interface FontSelectorProps {
-  selectedFontName: string;
-  onSelectFont: (name: string) => void;
-  onSelectWeight: (weight: DefaultTheme['fontWeight']) => void;
-  fontSizeLevel: number;
-}
+import type { FontSelectorProps } from '@/settings/types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
