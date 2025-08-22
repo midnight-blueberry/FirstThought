@@ -11,7 +11,6 @@ import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalSt
 import useFontControls from '@/src/settings/hooks/useFontControls';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
-import usePrevious from '@/hooks/usePrevious';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
 import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
@@ -77,7 +76,6 @@ export default function SettingsContainer() {
     overlayVisible,
     overlayColor,
     overlayBlocks,
-    saveWithFeedbackRef,
   } = useThemeSaver({
     selectedThemeName,
     selectedAccentColor,
@@ -102,26 +100,19 @@ export default function SettingsContainer() {
   });
 
   const handleAccentChange = useCallback((next: string) => {
-    setSelectedAccentColor(next);
-    // затемнение + один вызов setTheme внутри saveAndApply
     runWithOverlay(() => {
-      saveAndApply({ accentColor: next }); // setTheme(buildTheme(...)) вызовется один раз
-    }, /* overlay color*/ theme.colors.background);
-  }, [runWithOverlay, saveAndApply, selectedAccentColor, theme.colors.background]);
+      setSelectedAccentColor(next);
+      saveAndApply({ accentColor: next });
+    }, theme.colors.background);
+  }, [runWithOverlay, saveAndApply, theme.colors.background]);
 
-  const isInitialRender = useRef(true);
-  const prevThemeName = usePrevious(selectedThemeName);
-  useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-      return;
-    }
-    const isThemeChange = prevThemeName !== selectedThemeName;
-    const newOverlayColor = isThemeChange
-      ? resolveOverlayColor(selectedThemeName, themeList)
-      : undefined;
-    saveWithFeedbackRef.current(isThemeChange, newOverlayColor);
-  }, [selectedThemeName]);
+  const handleThemeChange = useCallback((name: string) => {
+    const overlayColor = resolveOverlayColor(name, themeList);
+    runWithOverlay(() => {
+      setSelectedThemeName(name);
+      saveAndApply({ themeName: name });
+    }, overlayColor);
+  }, [runWithOverlay, saveAndApply]);
 
   const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
   const hasMultiple = selectedFont.weights.length > 1;
@@ -129,7 +120,7 @@ export default function SettingsContainer() {
   const sectionProps: Record<SectionKey, Record<string, unknown>> = {
     theme: {
       selectedThemeName,
-      onSelectTheme: setSelectedThemeName,
+      onSelectTheme: handleThemeChange,
     },
     accent: {
       selectedAccentColor,
@@ -159,8 +150,8 @@ export default function SettingsContainer() {
     align: {
       noteTextAlign,
       onChange: (align: DefaultTheme['noteTextAlign']) => {
-        setNoteTextAlign(align);
         runWithOverlay(() => {
+          setNoteTextAlign(align);
           saveAndApply({ noteTextAlign: align });
         });
       },

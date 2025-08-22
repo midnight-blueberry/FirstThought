@@ -66,9 +66,9 @@ export default function useFontControls({
     (name: string) => {
       const font = fonts.find(f => f.name === name) ?? fonts[0];
       const weight = font.defaultWeight as DefaultTheme['fontWeight'];
-      setSelectedFontName(name);
-      setFontWeight(weight);
       runWithOverlay(() => {
+        setSelectedFontName(name);
+        setFontWeight(weight);
         saveAndApply({ fontName: name, fontWeight: weight });
       });
     },
@@ -78,8 +78,8 @@ export default function useFontControls({
   const applyFontSizeLevel = useCallback(
     (level: number) => {
       const next = clampLevel(level, minLevel, maxLevel);
-      setFontSizeLevel(next);
       runWithOverlay(() => {
+        setFontSizeLevel(next);
         saveAndApply({ fontSizeLevel: next });
       });
     },
@@ -107,8 +107,8 @@ export default function useFontControls({
       const nextIdx = idx + delta;
       if (nextIdx >= 0 && nextIdx < font.weights.length) {
         const nextWeight = font.weights[nextIdx] as DefaultTheme['fontWeight'];
-        setFontWeight(nextWeight);
         runWithOverlay(() => {
+          setFontWeight(nextWeight);
           saveAndApply({ fontWeight: nextWeight });
         });
       } else {
