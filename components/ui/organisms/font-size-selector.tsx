@@ -1,17 +1,9 @@
 import React from 'react';
-import { Animated } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
-
-interface FontSizeSelectorProps {
-  fontSizeLevel: number;
-  onIncrease: () => void;
-  onDecrease: () => void;
-  blinkIndex: number | null;
-  blinkAnim: Animated.Value;
-}
+import type { FontSizeSelectorProps } from '@/settings/types';
 
 const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   fontSizeLevel,

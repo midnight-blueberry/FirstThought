@@ -7,6 +7,7 @@ import { saveSettings } from '@/src/storage/settings';
 import { sizes } from '@/theme/tokens';
 import { nextIconSize } from '@/settings/utils/font';
 import { clampLevel } from '@/settings/utils/theme';
+import type { SavedSettingsPatch } from '@/settings/types';
 
 type Params = {
   selectedThemeName: string;
@@ -71,15 +72,7 @@ export default function useThemeSaver({
   const [ overlayBlocks, setOverlayBlocks ] = useState(false);
   const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const saveAndApply = useCallback((patch: {
-    themeName?: string;
-    accentColor?: string;
-    fontName?: string;
-    fontWeight?: DefaultTheme['fontWeight'];
-    fontSizeLevel?: number;
-    iconSize?: DefaultTheme['iconSize'];
-    noteTextAlign?: DefaultTheme['noteTextAlign'];
-  }) => {
+  const saveAndApply = useCallback((patch: SavedSettingsPatch) => {
     const nextSaved = {
       themeName:        patch.themeName        ?? selectedThemeName,
       accentColor:      patch.accentColor      ?? selectedAccentColor,

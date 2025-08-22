@@ -249,9 +249,10 @@ export default function Settings() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {sections.map(({ key, Component }) => (
-          <Component key={key} {...sectionProps[key]} />
-        ))}
+        {sections.map(({ key, Component }) => {
+          const Comp = Component as React.ComponentType<Record<string, unknown>>;
+          return <Comp key={key} {...sectionProps[key]} />;
+        })}
       </ScrollView>
 
       <Overlay
