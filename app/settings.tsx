@@ -9,9 +9,10 @@ import { ThemeContext } from '@/src/theme/ThemeContext';
 import { themeList } from '@/theme';
 import Overlay from '@/components/ui/atoms/overlay';
 import { useFocusEffect } from '@react-navigation/native';
-import { useNavigation } from 'expo-router';
 import useThemeSaver from '@/hooks/useThemeSaver';
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
+import usePrevious from '@/hooks/usePrevious';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
@@ -20,7 +21,6 @@ import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
 
 export default function Settings() {
   const theme = useTheme();
-  const navigation = useNavigation();
   const handleScroll = useHeaderShadow();
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
@@ -66,19 +66,7 @@ export default function Settings() {
   });
   const styles = React.useMemo(() => createStyles(theme), [theme]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerStyle: { backgroundColor: theme.colors.background },
-      headerTintColor: theme.colors.basic,
-      headerTitleStyle: {
-        color: theme.colors.basic,
-        fontFamily: theme.fontName,
-        fontWeight: theme.fontWeight, // ← берём из темы
-        fontSize: theme.fontSize.large,
-      },
-      headerRight: () => <SaveIcon fadeAnim={fadeAnim} />, 
-    });
-  }, [navigation, fadeAnim, theme]);
+  useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 
   useFocusEffect(
     useCallback(() => {
@@ -163,30 +151,21 @@ export default function Settings() {
   };
 
   const isInitialRender = useRef(true);
-  const prevFontNameRef = useRef(selectedFontName);
-  const prevFontWeightRef = useRef(fontWeight);
-  const prevThemeNameRef = useRef(selectedThemeName);
+  const prevFontName = usePrevious(selectedFontName);
+  const prevFontWeight = usePrevious(fontWeight);
+  const prevThemeName = usePrevious(selectedThemeName);
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
-      prevFontNameRef.current = selectedFontName;
-      prevFontWeightRef.current = fontWeight;
-      prevThemeNameRef.current = selectedThemeName;
       return;
     }
     if (skipFontChangeRef.current) {
       skipFontChangeRef.current = false;
-      prevFontNameRef.current = selectedFontName;
-      prevFontWeightRef.current = fontWeight;
-      prevThemeNameRef.current = selectedThemeName;
       return;
     }
-    const isFontChange = prevFontNameRef.current !== selectedFontName;
-    const isWeightChange = prevFontWeightRef.current !== fontWeight;
-    const isThemeChange = prevThemeNameRef.current !== selectedThemeName;
-    prevFontNameRef.current = selectedFontName;
-    prevFontWeightRef.current = fontWeight;
-    prevThemeNameRef.current = selectedThemeName;
+    const isFontChange = prevFontName !== selectedFontName;
+    const isWeightChange = prevFontWeight !== fontWeight;
+    const isThemeChange = prevThemeName !== selectedThemeName;
     const newOverlayColor = isThemeChange
       ? resolveOverlayColor(selectedThemeName, themeList)
       : undefined;
