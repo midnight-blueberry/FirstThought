@@ -9,7 +9,7 @@ import { themeList } from '@/theme';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
 import useFontControls from '@/src/settings/hooks/useFontControls';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
@@ -86,10 +86,8 @@ export default function SettingsContainer() {
     setTheme,
   });
 
-  useEffect(() => {
-    saveAndApplyRef.current = saveAndApply;
-    runWithOverlayRef.current = runWithOverlay;
-  }, [saveAndApply, runWithOverlay]);
+  saveAndApplyRef.current = saveAndApply;
+  runWithOverlayRef.current = runWithOverlay;
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 
