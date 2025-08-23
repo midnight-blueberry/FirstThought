@@ -6,18 +6,8 @@ import { sizes } from '@constants/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
-
-type SavedSettings = {
-  themeName?: string;
-  accentColor?: string;
-  fontName?: string;            // имя из твоего списка шрифтов (fonts[n].name)
-  fontWeight?: DefaultTheme['fontWeight']; // '400' | '700' и т.п.
-  fontSizeLevel?: number;       // твоя шкала (например 1..5), 3 = базовый
-  iconSize?: DefaultTheme['iconSize']; // если пользователь прямо задаёт набор размеров
-  noteTextAlign?: DefaultTheme['noteTextAlign'];
-} | undefined;
-
-export function buildTheme(saved: SavedSettings): DefaultTheme {
+import type { SavedSettings } from '@types';
+export function buildTheme(saved?: SavedSettings): DefaultTheme {
   // 1) Тема + акцент
   const chosenTheme = saved
     ? themeList.find(t => t.name === saved.themeName) ?? themes.light

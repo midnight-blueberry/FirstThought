@@ -7,7 +7,7 @@ import { saveSettings } from '@storage/settings';
 import { sizes } from '@constants/theme/tokens';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
-import type { SavedSettingsPatch } from '@settings/types';
+import type { SavedSettingsPatch } from '@types';
 
 type Params = {
   selectedThemeName: string;

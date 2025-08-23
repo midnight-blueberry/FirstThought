@@ -13,7 +13,7 @@ import useTheme from '@hooks/useTheme';
 import { getBaseFontName, calcFontSizeLevel } from '@utils/font';
 import { getFontByName, hasMultipleWeights } from '@utils/fontHelpers';
 import { clampLevel, resolveOverlayColor } from '@utils/theme';
-import type { SectionPropsMap } from '@settings/SectionPropsMap';
+import type { SectionPropsMap } from '@types';
 import SettingsContent from './SettingsContent';
 
 

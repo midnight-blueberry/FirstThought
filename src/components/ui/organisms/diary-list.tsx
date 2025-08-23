@@ -11,12 +11,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
-
-interface Diary {
-  id: string;
-  icon: string;
-  title: string;
-}
+import type { Diary } from '@types';
 
 type DiaryListProps = {
   data: Diary[];

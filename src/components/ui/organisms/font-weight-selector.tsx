@@ -5,7 +5,7 @@ import Section from './settings-section';
 import { fonts } from '@constants/Fonts';
 import { getBaseFontName } from '@utils/font';
 import { getFontByName, getWeightIndex } from '@utils/fontHelpers';
-import type { FontWeightSelectorProps } from '@settings/types';
+import type { FontWeightSelectorProps } from '@types';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   fontWeight,

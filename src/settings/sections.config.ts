@@ -9,7 +9,7 @@ import {
   TextAlignSelector,
   ThemeSelector,
 } from '@components/ui/organisms';
-import type { SectionKey, SectionPropsMap } from './SectionPropsMap';
+import type { SectionKey, SectionPropsMap } from '@types';
 
 export const sections = [
   { key: 'theme', Component: ThemeSelector },
@@ -24,4 +24,4 @@ export const sections = [
   [K in SectionKey]: { key: K; Component: ComponentType<SectionPropsMap[K]> };
 }[SectionKey]>;
 
-export type { SectionKey };
+export type { SectionKey } from '@types';

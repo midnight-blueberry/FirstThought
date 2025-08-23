@@ -14,7 +14,9 @@
       "@utils/*": ["src/utils/*"],
       "@settings/*": ["src/settings/*"],
       "@theme/*": ["src/theme/*"],
-      "@storage/*": ["src/storage/*"]
+      "@storage/*": ["src/storage/*"],
+      "@types/*": ["src/types/*"],
+      "@types": ["src/types"]
     },
     // Allow default React imports and JSX in TypeScript files
     "esModuleInterop": true,
