@@ -1,6 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 
+let errorSpy: jest.SpyInstance;
+
+beforeAll(() => {
+  errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  errorSpy.mockClear();
+});
+
+afterAll(() => {
+  errorSpy.mockRestore();
+});
+
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => {
   const storage = new Map<string, string>();
