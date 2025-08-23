@@ -5,9 +5,15 @@
     // Enable resolution of modules using the "@" prefix
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@components/*": ["src/components/*"],
+      "@screens/*": ["src/screens/*"],
+      "@utils/*": ["src/utils/*"],
+      "@constants/*": ["src/constants/*"],
+      "@assets/*": ["assets/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@settings/*": ["src/settings/*"],
+      "@theme/*": ["src/theme/*"],
+      "@storage/*": ["src/storage/*"]
     },
     // Allow default React imports and JSX in TypeScript files
     "esModuleInterop": true,

@@ -1,5 +1,5 @@
 import React from 'react';
-import IconButton from '@/components/ui/atoms/icon-button';
+import IconButton from '@components/ui/atoms/icon-button';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
@@ -9,7 +9,7 @@ import { Dimensions } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 
 import CustomDrawerContent from './CustomDrawerContent';
-import useHeaderConfig from '@/utils/useHeaderConfig';
+import useHeaderConfig from '@utils/useHeaderConfig';
 
 type Props = {
   theme: DefaultTheme;

@@ -1,18 +1,18 @@
-import SaveIcon from '@/components/ui/atoms/save-icon';
-import { fonts } from '@/constants/Fonts';
-import useHeaderShadow from '@/hooks/useHeaderShadow';
-import { ThemeContext } from '@/src/theme/ThemeContext';
-import { themeList } from '@/constants/theme';
-import useThemeSaver from '@/hooks/useThemeSaver';
-import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
-import useFontControls from '@/src/settings/hooks/useFontControls';
+import SaveIcon from '@components/ui/atoms/save-icon';
+import { fonts } from '@constants/Fonts';
+import useHeaderShadow from '@hooks/useHeaderShadow';
+import { ThemeContext } from '@theme/ThemeContext';
+import { themeList } from '@constants/theme';
+import useThemeSaver from '@hooks/useThemeSaver';
+import useSyncThemeToLocalState from '@settings/hooks/useSyncThemeToLocalState';
+import useFontControls from '@settings/hooks/useFontControls';
 import React, { useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
+import useHeaderTitleSync from '@hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-import { getBaseFontName, calcFontSizeLevel } from '@/utils/font';
-import { getFontByName, hasMultipleWeights } from '@/utils/fontHelpers';
-import { clampLevel, resolveOverlayColor } from '@/utils/theme';
-import type { SectionPropsMap } from '@/src/settings/SectionPropsMap';
+import { getBaseFontName, calcFontSizeLevel } from '@utils/font';
+import { getFontByName, hasMultipleWeights } from '@utils/fontHelpers';
+import { clampLevel, resolveOverlayColor } from '@utils/theme';
+import type { SectionPropsMap } from '@settings/SectionPropsMap';
 import SettingsContent from './SettingsContent';
 
 

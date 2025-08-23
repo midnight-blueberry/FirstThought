@@ -1,7 +1,7 @@
 import { DefaultTheme } from 'styled-components/native';
 import { sizes } from './tokens';
 import { lightColors, creamColors, darkColors, ColorTokens } from './colors';
-import { defaultFontName, getFontFamily } from '@/constants/Fonts';
+import { defaultFontName, getFontFamily } from '@constants/Fonts';
 
 const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   name,

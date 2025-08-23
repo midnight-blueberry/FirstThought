@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
-import { fonts, getFontFamily } from '@/constants/Fonts';
-import { loadSettings } from '@/src/storage/settings';
-import { buildTheme } from '@/src/theme/buildTheme';
-import { themes } from '@/constants/theme';
+import { fonts, getFontFamily } from '@constants/Fonts';
+import { loadSettings } from '@storage/settings';
+import { buildTheme } from '@theme/buildTheme';
+import { themes } from '@constants/theme';
 
 export function useAppBootstrap() {
   const [ready, setReady] = useState(false);

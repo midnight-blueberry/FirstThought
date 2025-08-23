@@ -2,8 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import SelectableRow from '../molecules/selectable-row';
 import Section from './settings-section';
-import { accentColors } from '@/constants/AccentColors';
-import type { AccentColorSelectorProps } from '@/src/settings/types';
+import { accentColors } from '@constants/AccentColors';
+import type { AccentColorSelectorProps } from '@settings/types';
 
 const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({ selectedAccentColor, onSelectAccent }) => (
   <Section title="Акцент">

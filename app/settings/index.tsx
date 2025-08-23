@@ -1,1 +1,1 @@
-export { default } from '@/screens/settings/SettingsContainer';
+export { default } from '@screens/settings/SettingsContainer';

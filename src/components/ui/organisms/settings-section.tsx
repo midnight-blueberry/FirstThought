@@ -1,5 +1,5 @@
-import AppText from '@/components/ui/atoms/app-text';
-import { ThemeContext } from '@/src/theme/ThemeContext';
+import AppText from '@components/ui/atoms/app-text';
+import { ThemeContext } from '@theme/ThemeContext';
 import React, { ReactNode, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';

@@ -3,7 +3,7 @@ import { useTheme } from 'styled-components/native';
 import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
-import type { FontSizeSelectorProps } from '@/src/settings/types';
+import type { FontSizeSelectorProps } from '@settings/types';
 
 const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   fontSizeLevel,

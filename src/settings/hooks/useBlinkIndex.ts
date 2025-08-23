@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { Animated } from 'react-native';
-import useBlinkAnimation from '@/hooks/useBlinkAnimation';
+import useBlinkAnimation from '@hooks/useBlinkAnimation';
 
 export type BlinkIndexReturn = {
   index: number | null;
