@@ -26,14 +26,19 @@ export default function SettingsContent({
   overlayBlocks,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
+  const scrollIndicatorInsets = React.useMemo(
+    () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),
+    [theme],
+  );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={styles.root}>
       <ScrollView
-        style={{ flex: 1 }}
+        style={styles.scroll}
         contentContainerStyle={styles.container}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        scrollIndicatorInsets={scrollIndicatorInsets}
       >
         {sections.map((section) => {
           const Component = section.Component as React.ComponentType<
@@ -55,6 +60,13 @@ export default function SettingsContent({
 
 const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scroll: {
+      flex: 1,
+    },
     container: {
       flexGrow: 1,
       paddingHorizontal: theme.padding.xlarge,
