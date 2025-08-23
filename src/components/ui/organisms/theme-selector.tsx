@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { SelectableRow } from '@components/ui/molecules';
 import Section from './settings-section';
-import { themeList } from '@constants/theme';
+import { themeList } from '@config/theme';
 import type { ThemeSelectorProps } from '@types';
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSelectTheme }) => (

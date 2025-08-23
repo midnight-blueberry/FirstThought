@@ -3,14 +3,14 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx expo start -c",
-    "build:google-play": "npx expo prebuild && npx eas build -p android",
-    "build:testing": "eas build -p android --profile testing",
+    "start": "npx expo start -c --config src/config/app.json",
+    "build:google-play": "npx expo prebuild --config src/config/app.json && npx eas build -p android --config src/config/eas.json",
+    "build:testing": "eas build -p android --profile testing --config src/config/eas.json",
     "reset-project": "node ./scripts/reset-project.js",
-    "build:apk": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "lint": "expo lint --fix"
+    "build:apk": "expo run:android --config src/config/app.json",
+    "ios": "expo run:ios --config src/config/app.json",
+    "web": "expo start --web --config src/config/app.json",
+    "lint": "expo lint --config src/config/eslint.config.mjs --fix"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",

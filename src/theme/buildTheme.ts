@@ -1,8 +1,8 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, getFontFamily } from '@constants/Fonts';
+import { defaultFontName, fonts, getFontFamily } from '@config/Fonts';
 import { getFontByName } from '@utils/fontHelpers';
-import { themeList, themes } from '@constants/theme';
-import { sizes } from '@constants/theme/tokens';
+import { themeList, themes } from '@config/theme';
+import { sizes } from '@config/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';

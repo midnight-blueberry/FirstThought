@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { DefaultTheme } from 'styled-components/native';
-import { fonts } from '@constants/Fonts';
+import { fonts } from '@config/Fonts';
 import { getBaseFontName, calcFontSizeLevel } from '@utils/font';
 import { getFontByName } from '@utils/fontHelpers';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import type { ComponentProps } from 'react';
 import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
 import { Overlay } from '@components/ui/atoms';
-import { sections } from '@settings/sections.config';
+import { sections } from '@config/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
 

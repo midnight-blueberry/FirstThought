@@ -13,7 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 import DrawerNavigator from '@components/navigation/DrawerNavigator';
-import { themes } from '@constants/theme';
+import { themes } from '@config/theme';
 
 void SplashScreen.preventAutoHideAsync();
 

@@ -9,14 +9,13 @@ module.exports = function (api) {
         alias: {
           '@screens': './src/screens',
           '@components': './src/components',
-          '@constants': './src/constants',
           '@hooks': './src/hooks',
           '@store': './src/store',
           '@assets': './assets',
           '@utils': './src/utils',
-          '@settings': './src/settings',
           '@theme': './src/theme',
-          '@storage': './src/storage'
+          '@storage': './src/storage',
+          '@config': './src/config'
         }
       }]
     ]

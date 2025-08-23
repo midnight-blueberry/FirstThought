@@ -4,7 +4,7 @@ import { useTheme } from 'styled-components/native';
 import type { DefaultTheme } from 'styled-components/native';
 import { buildTheme } from '@theme/buildTheme';
 import { saveSettings } from '@storage/settings';
-import { sizes } from '@constants/theme/tokens';
+import { sizes } from '@config/theme/tokens';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
 import type { SavedSettingsPatch } from '@types';

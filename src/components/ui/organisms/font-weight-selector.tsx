@@ -2,7 +2,7 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
-import { fonts } from '@constants/Fonts';
+import { fonts } from '@config/Fonts';
 import { getBaseFontName } from '@utils/font';
 import { getFontByName, getWeightIndex } from '@utils/fontHelpers';
 import type { FontWeightSelectorProps } from '@types';
