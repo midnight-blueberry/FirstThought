@@ -25,6 +25,7 @@ export default [
       'build/**',
       'coverage/**',
       '**/generated/**',
+      'scripts/__tests__/**',
     ],
   },
 ];
