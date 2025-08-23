@@ -1,17 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { DefaultTheme } from 'styled-components/native';
+import type { AppSettings } from '@types';
 
 const SETTINGS_KEY = 'user_settings';
-
-export type AppSettings = {
-  themeName: string;
-  accentColor: string;
-  fontSizeLevel: number;
-  fontName: string;
-  fontWeight: DefaultTheme['fontWeight'];
-  iconSize: DefaultTheme['iconSize'];
-  noteTextAlign: DefaultTheme['noteTextAlign'];
-};
 
 export async function loadSettings(): Promise<AppSettings | null> {
   try {

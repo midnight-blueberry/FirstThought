@@ -1,7 +1,20 @@
 import type { Animated } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
+import type { ComponentProps } from 'react';
+import type Divider from '@components/ui/atoms/divider';
+import type PreviewNote from '@components/ui/organisms/preview-note';
 
-export interface SavedSettingsPatch {
+export interface AppSettings {
+  themeName: string;
+  accentColor: string;
+  fontSizeLevel: number;
+  fontName: string;
+  fontWeight: DefaultTheme['fontWeight'];
+  iconSize: DefaultTheme['iconSize'];
+  noteTextAlign: DefaultTheme['noteTextAlign'];
+}
+
+export interface SavedSettings {
   themeName?: string;
   accentColor?: string;
   fontName?: string;
@@ -10,6 +23,8 @@ export interface SavedSettingsPatch {
   iconSize?: DefaultTheme['iconSize'];
   noteTextAlign?: DefaultTheme['noteTextAlign'];
 }
+
+export type SavedSettingsPatch = SavedSettings;
 
 export interface ThemeSelectorProps {
   selectedThemeName: string;
@@ -49,3 +64,15 @@ export interface TextAlignSelectorProps {
   onChange: (value: DefaultTheme['noteTextAlign']) => void;
 }
 
+export interface SectionPropsMap {
+  theme: ThemeSelectorProps;
+  accent: AccentColorSelectorProps;
+  divider: ComponentProps<typeof Divider>;
+  font: FontSelectorProps;
+  fontSize: FontSizeSelectorProps;
+  fontWeight: FontWeightSelectorProps;
+  align: TextAlignSelectorProps;
+  preview: ComponentProps<typeof PreviewNote>;
+}
+
+export type SectionKey = keyof SectionPropsMap;

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
-import type { TextAlignSelectorProps } from '@settings/types';
+import type { TextAlignSelectorProps } from '@types';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
   const theme = useTheme();

@@ -2,7 +2,7 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import { SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
-import type { FontSizeSelectorProps } from '@settings/types';
+import type { FontSizeSelectorProps } from '@types';
 
 const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   fontSizeLevel,

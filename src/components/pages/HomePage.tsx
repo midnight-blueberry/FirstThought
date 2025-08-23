@@ -5,12 +5,7 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
-
-interface Diary {
-  id: string;
-  icon: string;
-  title: string;
-}
+import type { Diary } from '@types';
 
 const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 
