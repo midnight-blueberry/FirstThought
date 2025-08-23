@@ -3,7 +3,7 @@ import type { DefaultTheme } from 'styled-components/native';
 import type { Animated } from 'react-native';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
 import useBlinkIndex from './useBlinkIndex';
-import { getFontByName, adjustWeight } from '@/src/settings/utils/fontHelpers';
+import { getFontByName, adjustWeight } from '@/utils/fontHelpers';
 
 export type FontInfo = {
   name: string;

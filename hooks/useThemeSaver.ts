@@ -4,9 +4,9 @@ import { useTheme } from 'styled-components/native';
 import type { DefaultTheme } from 'styled-components/native';
 import { buildTheme } from '@/src/theme/buildTheme';
 import { saveSettings } from '@/src/storage/settings';
-import { sizes } from '@/theme/tokens';
-import { nextIconSize } from '@/src/settings/utils/font';
-import { clampLevel } from '@/src/settings/utils/theme';
+import { sizes } from '@/constants/theme/tokens';
+import { nextIconSize } from '@/utils/font';
+import { clampLevel } from '@/utils/theme';
 import type { SavedSettingsPatch } from '@/src/settings/types';
 
 type Params = {

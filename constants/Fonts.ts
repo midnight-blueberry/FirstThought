@@ -1,4 +1,4 @@
-import { getFontByName, adjustWeight } from '@/src/settings/utils/fontHelpers';
+import { getFontByName, adjustWeight } from '@/utils/fontHelpers';
 
 export const fontData = {
   Bad_Script: {

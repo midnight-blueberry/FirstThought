@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import type { DefaultTheme } from 'styled-components/native';
 import { fonts } from '@/constants/Fonts';
-import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
-import { getFontByName } from '@/src/settings/utils/fontHelpers';
+import { getBaseFontName, calcFontSizeLevel } from '@/utils/font';
+import { getFontByName } from '@/utils/fontHelpers';
 
 type Setters = {
   setSelectedThemeName: React.Dispatch<React.SetStateAction<string>>;

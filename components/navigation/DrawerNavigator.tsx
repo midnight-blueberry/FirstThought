@@ -9,7 +9,7 @@ import { Dimensions } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 
 import CustomDrawerContent from './CustomDrawerContent';
-import useHeaderConfig from './useHeaderConfig';
+import useHeaderConfig from '@/utils/useHeaderConfig';
 
 type Props = {
   theme: DefaultTheme;

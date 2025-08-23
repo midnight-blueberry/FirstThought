@@ -5,8 +5,8 @@
 
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import type { ColorTokens } from '@/theme/colors';
-import type { ThemeName } from '@/theme';
+import type { ColorTokens } from '@/constants/theme/colors';
+import type { ThemeName } from '@/constants/theme';
 
 export function useThemeColor(
   props: { light?: string; dark?: string },

@@ -12,8 +12,8 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
-import DrawerNavigator from './navigation/DrawerNavigator';
-import { themes } from '../theme';
+import DrawerNavigator from '@/components/navigation/DrawerNavigator';
+import { themes } from '@/constants/theme';
 
 void SplashScreen.preventAutoHideAsync();
 
