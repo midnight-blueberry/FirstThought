@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import { fonts } from '@constants/Fonts';

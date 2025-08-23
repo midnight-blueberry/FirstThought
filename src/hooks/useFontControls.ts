@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { DefaultTheme } from 'styled-components/native';
 import type { Animated } from 'react-native';
 import useBlinkAnimation from '@hooks/useBlinkAnimation';
-import useBlinkIndex from './useBlinkIndex';
+import useBlinkIndex from '@hooks/useBlinkIndex';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
 
 export type FontInfo = {

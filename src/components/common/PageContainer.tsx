@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ViewProps } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 interface PageContainerProps extends ViewProps {
   children: React.ReactNode;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import { SelectableRow } from '@components/ui/molecules';

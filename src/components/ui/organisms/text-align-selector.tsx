@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@settings/types';

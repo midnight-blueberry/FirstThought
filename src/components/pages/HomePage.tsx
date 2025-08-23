@@ -3,7 +3,8 @@ import { DiaryList } from '@components/ui/organisms';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { DefaultTheme, useTheme } from 'styled-components/native';
+import { DefaultTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 interface Diary {
   id: string;
