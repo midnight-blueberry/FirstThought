@@ -48,12 +48,21 @@ export default function SettingsContent({
         })}
       </ScrollView>
 
-      <Overlay
-        visible={overlayVisible}
-        color={overlayColor}
-        blocks={overlayVisible && overlayBlocks}
-        anim={overlayAnim}
-      />
+      {(overlayVisible || overlayBlocks) && (
+        <View
+          // если надо блокировать — перехватываем касания; иначе пропускаем все события ниже
+          pointerEvents={overlayBlocks ? 'auto' : 'none'}
+          style={StyleSheet.absoluteFill}
+        >
+          <Overlay
+            visible={overlayVisible}
+            color={overlayColor}
+            // внутри оверлея блокировка не нужна — её берёт на себя обёртка
+            blocks={false}
+            anim={overlayAnim}
+          />
+        </View>
+      )}
     </View>
   );
 }
