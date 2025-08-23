@@ -51,7 +51,7 @@ export default function SettingsContent({
       <Overlay
         visible={overlayVisible}
         color={overlayColor}
-        blocks={overlayBlocks}
+        blocks={overlayVisible && overlayBlocks}
         anim={overlayAnim}
       />
     </View>
