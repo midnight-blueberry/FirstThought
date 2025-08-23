@@ -3,13 +3,13 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx expo start -c --config src/config/app.json",
-    "build:google-play": "npx expo prebuild --config src/config/app.json && npx eas build -p android --config src/config/eas.json",
+    "start": "npx expo start -c --config app.config.js",
+    "build:google-play": "npx expo prebuild --config app.config.js && npx eas build -p android --config src/config/eas.json",
     "build:testing": "eas build -p android --profile testing --config src/config/eas.json",
     "reset-project": "node ./scripts/reset-project.js",
-    "build:apk": "expo run:android --config src/config/app.json",
-    "ios": "expo run:ios --config src/config/app.json",
-    "web": "expo start --web --config src/config/app.json",
+    "build:apk": "expo run:android --config app.config.js",
+    "ios": "expo run:ios --config app.config.js",
+    "web": "expo start --web --config app.config.js",
     "lint": "expo lint --config src/config/eslint.config.mjs --fix"
   },
   "dependencies": {
