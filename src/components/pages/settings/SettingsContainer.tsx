@@ -2,7 +2,7 @@ import { SaveIcon } from '@components/ui/atoms';
 import { fonts } from '@constants/Fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import { ThemeContext } from '@store/ThemeContext';
-import { themeList } from '@constants/theme';
+import { themeList } from '@theme/buildTheme';
 import useThemeSaver from '@hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@hooks/useSyncThemeToLocalState';
 import useFontControls from '@hooks/useFontControls';

@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import { fonts, getFontFamily } from '@constants/Fonts';
 import { loadSettings } from '@storage/settings';
-import { buildTheme } from '@theme/buildTheme';
-import { themes } from '@constants/theme';
+import { buildTheme, themes } from '@theme/buildTheme';
 
 export function useAppBootstrap() {
   const [ready, setReady] = useState(false);
