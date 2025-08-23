@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import SaveIcon from '@/components/ui/atoms/save-icon';
-import { SectionKey } from '@/settings/sections.config';
+import { SectionKey } from '@/src/settings/sections.config';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { ThemeContext } from '@/src/theme/ThemeContext';
@@ -12,9 +12,9 @@ import useFontControls from '@/src/settings/hooks/useFontControls';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-import { getBaseFontName, calcFontSizeLevel } from '@/settings/utils/font';
-import { clampLevel, resolveOverlayColor } from '@/settings/utils/theme';
-import type { SavedSettingsPatch } from '@/settings/types';
+import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
+import { clampLevel, resolveOverlayColor } from '@/src/settings/utils/theme';
+import type { SavedSettingsPatch } from '@/src/settings/types';
 import SettingsContent from './SettingsContent';
 
 
