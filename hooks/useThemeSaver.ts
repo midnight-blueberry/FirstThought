@@ -5,9 +5,9 @@ import type { DefaultTheme } from 'styled-components/native';
 import { buildTheme } from '@/src/theme/buildTheme';
 import { saveSettings } from '@/src/storage/settings';
 import { sizes } from '@/theme/tokens';
-import { nextIconSize } from '@/app/settings/_utils/font';
-import { clampLevel } from '@/app/settings/_utils/theme';
-import type { SavedSettingsPatch } from '@/app/settings/_types';
+import { nextIconSize } from '@/src/settings/utils/font';
+import { clampLevel } from '@/src/settings/utils/theme';
+import type { SavedSettingsPatch } from '@/src/settings/types';
 
 type Params = {
   selectedThemeName: string;

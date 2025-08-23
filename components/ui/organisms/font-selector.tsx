@@ -5,7 +5,7 @@ import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import SelectableRow from '../molecules/selectable-row';
 import { fonts, getFontFamily } from '@/constants/Fonts';
-import type { FontSelectorProps } from '@/app/settings/_types';
+import type { FontSelectorProps } from '@/src/settings/types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
