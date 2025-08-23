@@ -8,13 +8,12 @@ import { themeList } from '@/theme';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
 import useFontControls from '@/src/settings/hooks/useFontControls';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
 import { getFontByName, hasMultipleWeights } from '@/src/settings/utils/fontHelpers';
 import { clampLevel, resolveOverlayColor } from '@/src/settings/utils/theme';
-import type { SavedSettingsPatch } from '@/src/settings/types';
 import type { SectionPropsMap } from '@/src/settings/SectionPropsMap';
 import SettingsContent from './SettingsContent';
 
@@ -25,24 +24,9 @@ export default function SettingsContainer() {
   const context = useContext(ThemeContext);
   const [ selectedThemeName, setSelectedThemeName ] = useState(theme.name);
   const [ selectedAccentColor, setSelectedAccentColor ] = useState(theme.colors.accent);
-  const saveAndApplyRef = useRef<(patch: SavedSettingsPatch) => void>(() => {});
-  const runWithOverlayRef = useRef<(action: () => void, color?: string) => void>(() => {});
   const initialFontName = getBaseFontName(theme.fontName);
   const initialFontInfo = getFontByName(fonts, initialFontName);
   const initialFontSizeLevel = calcFontSizeLevel(theme.fontSize.small, initialFontInfo.defaultSize);
-  const saveAndApplyCb = useCallback(
-    (patch: SavedSettingsPatch) => {
-      saveAndApplyRef.current(patch);
-    },
-    [],
-  );
-
-  const runWithOverlayCb = useCallback(
-    (action: () => void, color?: string) => {
-      runWithOverlayRef.current(action, color);
-    },
-    [],
-  );
 
   const {
     selectedFontName,
@@ -59,8 +43,6 @@ export default function SettingsContainer() {
       fontWeight: theme.fontWeight,
       fontSizeLevel: initialFontSizeLevel,
     },
-    saveAndApply: saveAndApplyCb,
-    runWithOverlay: runWithOverlayCb,
     clampLevel,
     maxLevel: 5,
     minLevel: 1,
@@ -87,8 +69,25 @@ export default function SettingsContainer() {
     setTheme,
   });
 
-  saveAndApplyRef.current = saveAndApply;
-  runWithOverlayRef.current = runWithOverlay;
+  const [prevFont, setPrevFont] = useState({ name: selectedFontName, weight: fontWeight });
+  useEffect(() => {
+    if (prevFont.name !== selectedFontName || prevFont.weight !== fontWeight) {
+      runWithOverlay(() => {
+        saveAndApply({ fontName: selectedFontName, fontWeight });
+      });
+      setPrevFont({ name: selectedFontName, weight: fontWeight });
+    }
+  }, [selectedFontName, fontWeight, runWithOverlay, saveAndApply, prevFont]);
+
+  const [prevFontSize, setPrevFontSize] = useState(fontSizeLevel);
+  useEffect(() => {
+    if (prevFontSize !== fontSizeLevel) {
+      runWithOverlay(() => {
+        saveAndApply({ fontSizeLevel });
+      });
+      setPrevFontSize(fontSizeLevel);
+    }
+  }, [fontSizeLevel, runWithOverlay, saveAndApply, prevFontSize]);
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 

@@ -21,12 +21,6 @@ type InitialState = {
 type Params = {
   fonts: FontInfo[];
   initial: InitialState;
-  saveAndApply: (patch: {
-    fontName?: string;
-    fontWeight?: DefaultTheme['fontWeight'];
-    fontSizeLevel?: number;
-  }) => void;
-  runWithOverlay: (action: () => void, color?: string) => void;
   clampLevel: (n: number, min?: number, max?: number) => number;
   maxLevel: number;
   minLevel: number;
@@ -40,8 +34,6 @@ type BlinkState = {
 export default function useFontControls({
   fonts,
   initial,
-  saveAndApply,
-  runWithOverlay,
   clampLevel,
   maxLevel,
   minLevel,
@@ -68,24 +60,18 @@ export default function useFontControls({
     (name: string) => {
       const font = getFontByName(fonts, name);
       const weight = font.defaultWeight as DefaultTheme['fontWeight'];
-      runWithOverlay(() => {
-        setSelectedFontName(name);
-        setFontWeight(weight);
-        saveAndApply({ fontName: name, fontWeight: weight });
-      });
+      setSelectedFontName(name);
+      setFontWeight(weight);
     },
-    [fonts, runWithOverlay, saveAndApply],
+    [fonts],
   );
 
   const applyFontSizeLevel = useCallback(
     (level: number) => {
       const next = clampLevel(level, minLevel, maxLevel);
-      runWithOverlay(() => {
-        setFontSizeLevel(next);
-        saveAndApply({ fontSizeLevel: next });
-      });
+      setFontSizeLevel(next);
     },
-    [clampLevel, minLevel, maxLevel, runWithOverlay, saveAndApply],
+    [clampLevel, minLevel, maxLevel],
   );
 
   const bumpFontSize = useCallback(
@@ -108,15 +94,12 @@ export default function useFontControls({
         | DefaultTheme['fontWeight']
         | undefined;
       if (nextWeight) {
-        runWithOverlay(() => {
-          setFontWeight(nextWeight);
-          saveAndApply({ fontWeight: nextWeight });
-        });
+        setFontWeight(nextWeight);
       } else {
         triggerWeightBlink();
       }
     },
-    [fonts, selectedFontName, fontWeight, stopWeightBlink, triggerWeightBlink, runWithOverlay, saveAndApply],
+    [fonts, selectedFontName, fontWeight, stopWeightBlink, triggerWeightBlink],
   );
 
   const blinkState: BlinkState = {
