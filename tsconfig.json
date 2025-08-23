@@ -34,6 +34,7 @@
     "dist",
     "build",
     "coverage",
-    "**/generated"
+    "**/generated/**",
+    "scripts/__tests__/**"
   ]
 }
