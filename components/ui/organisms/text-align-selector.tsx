@@ -34,4 +34,11 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
   );
 };
 
-export default TextAlignSelector;
+const propsAreEqual = (
+  prev: TextAlignSelectorProps,
+  next: TextAlignSelectorProps,
+) =>
+  prev.noteTextAlign === next.noteTextAlign &&
+  prev.onChange === next.onChange;
+
+export default React.memo(TextAlignSelector, propsAreEqual);

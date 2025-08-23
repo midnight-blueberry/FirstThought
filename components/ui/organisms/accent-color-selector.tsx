@@ -21,5 +21,12 @@ const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({ selectedAccen
   </Section>
 );
 
-export default AccentColorSelector;
+const propsAreEqual = (
+  prev: AccentColorSelectorProps,
+  next: AccentColorSelectorProps,
+) =>
+  prev.selectedAccentColor === next.selectedAccentColor &&
+  prev.onSelectAccent === next.onSelectAccent;
+
+export default React.memo(AccentColorSelector, propsAreEqual);
 

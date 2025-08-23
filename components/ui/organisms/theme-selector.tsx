@@ -21,5 +21,12 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSele
   </Section>
 );
 
-export default ThemeSelector;
+const propsAreEqual = (
+  prev: ThemeSelectorProps,
+  next: ThemeSelectorProps,
+) =>
+  prev.selectedThemeName === next.selectedThemeName &&
+  prev.onSelectTheme === next.onSelectTheme;
+
+export default React.memo(ThemeSelector, propsAreEqual);
 

@@ -42,5 +42,11 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   );
 };
 
-export default FontSelector;
+const propsAreEqual = (prev: FontSelectorProps, next: FontSelectorProps) =>
+  prev.selectedFontName === next.selectedFontName &&
+  prev.onSelectFont === next.onSelectFont &&
+  prev.onSelectWeight === next.onSelectWeight &&
+  prev.fontSizeLevel === next.fontSizeLevel;
+
+export default React.memo(FontSelector, propsAreEqual);
 
