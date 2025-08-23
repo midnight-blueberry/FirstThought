@@ -2,16 +2,13 @@ import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@/src/fixUseInsertionEffect';
 import IconButton from '@/components/ui/atoms/icon-button';
-import { fonts, getFontFamily } from '@/constants/Fonts';
-import { loadSettings } from '@/src/storage/settings';
-import { buildTheme } from '@/src/theme/buildTheme';
 import { ThemeContext } from '@/src/theme/ThemeContext';
+import { useAppBootstrap } from '@/src/app/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import type { ParamListBase } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
-import * as Font from 'expo-font';
 import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -184,41 +181,11 @@ function DrawerNavigator({
 }
 
 export default function RootLayout() {
-  const [appIsReady, setAppIsReady] = useState(false);
-  const [theme, setTheme] = useState(themes.light);
+  const { ready: appIsReady, theme, setTheme } = useAppBootstrap();
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
   const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');
   const [settingsPageHeaderElevation] = useState(0);
-
-  useEffect(() => {
-  async function prepare() {
-    try {
-      // 1. Шрифты (как и было)
-      await Font.loadAsync(
-        Object.fromEntries(
-          fonts.flatMap((f) =>
-            (f.weights as (keyof typeof f.files)[]).map((w) => [
-              getFontFamily(f.family, w),
-              f.files[w],
-            ])
-          )
-        )
-      );
-
-      // 2. Настройки
-      const saved = await loadSettings();
-
-      // 3. Собираем тему из saved через общий хелпер
-      setTheme(buildTheme(saved ?? undefined)); // <— единая точка сборки
-    } catch (e) {
-      console.warn(e);
-    } finally {
-      setAppIsReady(true);
-    }
-  }
-  void prepare();
-}, []);
 
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(theme.colors.background);
