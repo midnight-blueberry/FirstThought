@@ -3,7 +3,7 @@ import 'react-native-reanimated';
 import '@/src/fixUseInsertionEffect';
 import IconButton from '@/components/ui/atoms/icon-button';
 import { ThemeContext } from '@/src/theme/ThemeContext';
-import { useAppBootstrap } from '@/src/app/useAppBootstrap';
+import { useAppBootstrap } from '@/hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import type { DrawerContentComponentProps, DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
