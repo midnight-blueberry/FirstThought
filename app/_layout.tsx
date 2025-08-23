@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import '@/src/fixUseInsertionEffect';
 import IconButton from '@/components/ui/atoms/icon-button';
 import { fonts, getFontFamily } from '@/constants/Fonts';
@@ -17,7 +19,6 @@ import * as SystemUI from 'expo-system-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme, ThemeProvider, useTheme } from 'styled-components/native';
 import { themes } from '../theme';
