@@ -2,7 +2,7 @@ import IconButton from '@components/ui/atoms/icon-button';
 import DiaryList from '@components/ui/organisms/diary-list';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 
 interface Diary {
@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <>
       <DiaryList data={diaries} style={{ flex: 1 }} onScroll={handleScroll} />
       <IconButton
         icon='add'
@@ -47,14 +47,11 @@ const HomePage: React.FC = () => {
           },
         ]}
       />
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   addDiaryButton: {
     position: 'absolute',
     bottom: 24,

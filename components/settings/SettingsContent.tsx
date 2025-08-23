@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ComponentProps } from 'react';
-import { ScrollView, StyleSheet, View, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
+import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
 import Overlay from '@components/ui/atoms/overlay';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@settings/SectionPropsMap';
@@ -32,7 +32,7 @@ export default function SettingsContent({
   );
 
   return (
-    <View style={styles.root}>
+    <>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.container}
@@ -54,16 +54,12 @@ export default function SettingsContent({
         blocks={overlayBlocks}
         anim={overlayAnim}
       />
-    </View>
+    </>
   );
 }
 
 const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({
-    root: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
     scroll: {
       flex: 1,
     },
