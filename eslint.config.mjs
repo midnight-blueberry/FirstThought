@@ -18,5 +18,14 @@ export default [
       ...tsPlugin.configs['recommended-type-checked'].rules,
     },
   },
+  {
+    ignores: [
+      'vendor/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      '**/generated/**',
+    ],
+  },
 ];
 
