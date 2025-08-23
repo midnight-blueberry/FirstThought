@@ -2,7 +2,7 @@
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
-import { getFontFamily, getNextFontWeight } from "@/constants/Fonts";
+import { getFontFamily, getNextFontWeight } from "@constants/Fonts";
 
 type AppTextProps = {
   variant?: keyof DefaultTheme["fontSize"];

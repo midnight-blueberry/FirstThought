@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, InteractionManager } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import type { DefaultTheme } from 'styled-components/native';
-import { buildTheme } from '@/src/theme/buildTheme';
-import { saveSettings } from '@/src/storage/settings';
-import { sizes } from '@/constants/theme/tokens';
-import { nextIconSize } from '@/utils/font';
-import { clampLevel } from '@/utils/theme';
-import type { SavedSettingsPatch } from '@/src/settings/types';
+import { buildTheme } from '@theme/buildTheme';
+import { saveSettings } from '@storage/settings';
+import { sizes } from '@constants/theme/tokens';
+import { nextIconSize } from '@utils/font';
+import { clampLevel } from '@utils/theme';
+import type { SavedSettingsPatch } from '@settings/types';
 
 type Params = {
   selectedThemeName: string;

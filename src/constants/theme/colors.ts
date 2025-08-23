@@ -1,4 +1,4 @@
-import { defaultAccentColor } from '@/constants/AccentColors';
+import { defaultAccentColor } from '@constants/AccentColors';
 
 const baseColors = {
   white: '#FFFFFF',
