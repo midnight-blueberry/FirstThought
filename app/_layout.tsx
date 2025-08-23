@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
-import { ThemeContext } from '@theme/ThemeContext';
+import { ThemeContext } from '@store/ThemeContext';
 import { useAppBootstrap } from '@hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import * as SplashScreen from 'expo-splash-screen';
