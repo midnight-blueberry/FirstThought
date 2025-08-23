@@ -8,7 +8,7 @@ import { themeList } from '@/theme';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
 import useFontControls from '@/src/settings/hooks/useFontControls';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
@@ -116,51 +116,86 @@ export default function SettingsContainer() {
   const selectedFont = getFontByName(fonts, selectedFontName);
   const hasMultiple = hasMultipleWeights(selectedFont);
 
-  const sectionProps: SectionPropsMap = {
-    theme: {
-      selectedThemeName,
-      onSelectTheme: handleThemeChange,
+  const noopSelectWeight = useCallback(() => {}, []);
+  const handleIncreaseFontSize = useCallback(() => bumpFontSize(1), [bumpFontSize]);
+  const handleDecreaseFontSize = useCallback(() => bumpFontSize(-1), [bumpFontSize]);
+  const handleIncreaseFontWeight = useCallback(() => bumpFontWeight(1), [bumpFontWeight]);
+  const handleDecreaseFontWeight = useCallback(() => bumpFontWeight(-1), [bumpFontWeight]);
+  const handleAlignChange = useCallback(
+    (align: DefaultTheme['noteTextAlign']) => {
+      runWithOverlay(() => {
+        setNoteTextAlign(align);
+        saveAndApply({ noteTextAlign: align });
+      });
     },
-    accent: {
-      selectedAccentColor,
-      onSelectAccent: handleAccentChange,
-    },
-    divider: {},
-    font: {
-      selectedFontName,
-      onSelectFont: selectFont,
-      onSelectWeight: () => {},
-      fontSizeLevel,
-    },
-    fontSize: {
-      fontSizeLevel,
-      onIncrease: () => bumpFontSize(1),
-      onDecrease: () => bumpFontSize(-1),
-      blinkIndex: blinkState.size.index,
-      blinkAnim: blinkState.size.anim,
-    },
-    fontWeight: {
-      fontWeight,
-      onIncrease: () => bumpFontWeight(1),
-      onDecrease: () => bumpFontWeight(-1),
-      blinkAnim: blinkState.weight.anim,
-      disabled: !hasMultiple,
-    },
-    align: {
-      noteTextAlign,
-      onChange: (align: DefaultTheme['noteTextAlign']) => {
-        runWithOverlay(() => {
-          setNoteTextAlign(align);
-          saveAndApply({ noteTextAlign: align });
-        });
+    [runWithOverlay, saveAndApply],
+  );
+
+  const sectionProps: SectionPropsMap = useMemo(
+    () => ({
+      theme: {
+        selectedThemeName,
+        onSelectTheme: handleThemeChange,
       },
-    },
-    preview: {
+      accent: {
+        selectedAccentColor,
+        onSelectAccent: handleAccentChange,
+      },
+      divider: {},
+      font: {
+        selectedFontName,
+        onSelectFont: selectFont,
+        onSelectWeight: noopSelectWeight,
+        fontSizeLevel,
+      },
+      fontSize: {
+        fontSizeLevel,
+        onIncrease: handleIncreaseFontSize,
+        onDecrease: handleDecreaseFontSize,
+        blinkIndex: blinkState.size.index,
+        blinkAnim: blinkState.size.anim,
+      },
+      fontWeight: {
+        fontWeight,
+        onIncrease: handleIncreaseFontWeight,
+        onDecrease: handleDecreaseFontWeight,
+        blinkAnim: blinkState.weight.anim,
+        disabled: !hasMultiple,
+      },
+      align: {
+        noteTextAlign,
+        onChange: handleAlignChange,
+      },
+      preview: {
+        noteTextAlign,
+        fontName: theme.fontName,
+        colors: theme.colors,
+      },
+    }),
+    [
+      selectedThemeName,
+      handleThemeChange,
+      selectedAccentColor,
+      handleAccentChange,
+      selectedFontName,
+      selectFont,
+      noopSelectWeight,
+      fontSizeLevel,
+      handleIncreaseFontSize,
+      handleDecreaseFontSize,
+      blinkState.size.index,
+      blinkState.size.anim,
+      fontWeight,
+      handleIncreaseFontWeight,
+      handleDecreaseFontWeight,
+      blinkState.weight.anim,
+      hasMultiple,
       noteTextAlign,
-      fontName: theme.fontName,
-      colors: theme.colors,
-    },
-  };
+      handleAlignChange,
+      theme.fontName,
+      theme.colors,
+    ],
+  );
 
   return (
     <SettingsContent
