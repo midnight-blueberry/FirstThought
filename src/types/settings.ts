@@ -1,8 +1,8 @@
 import type { Animated } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
 import type { ComponentProps } from 'react';
-import type Divider from '@components/ui/atoms/divider';
-import type PreviewNote from '@components/ui/organisms/preview-note';
+import type { Divider } from '@components/ui/atoms';
+import type { PreviewNote } from '@components/ui/organisms';
 
 export interface AppSettings {
   themeName: string;
