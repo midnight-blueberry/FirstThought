@@ -6,8 +6,8 @@ import {
   creamColors,
   darkColors,
   type ColorTokens,
-} from '@constants/theme/colors';
-import { sizes } from '@constants/theme/tokens';
+  sizes,
+} from '@constants/theme';
 import { DefaultTheme } from 'styled-components/native';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
