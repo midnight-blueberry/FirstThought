@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useTheme } from 'styled-components/native';
 import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
-import SelectableRow from '../molecules/selectable-row';
+import { SelectableRow } from '@components/ui/molecules';
 import { fonts, getFontFamily } from '@constants/Fonts';
 import type { FontSelectorProps } from '@settings/types';
 

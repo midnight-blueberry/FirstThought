@@ -1,5 +1,5 @@
-import IconButton from '@components/ui/atoms/icon-button';
-import DiaryList from '@components/ui/organisms/diary-list';
+import { IconButton } from '@components/ui/atoms';
+import { DiaryList } from '@components/ui/organisms';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';

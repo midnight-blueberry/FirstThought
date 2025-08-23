@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import SelectableRow from '../molecules/selectable-row';
+import { SelectableRow } from '@components/ui/molecules';
 import Section from './settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@settings/types';

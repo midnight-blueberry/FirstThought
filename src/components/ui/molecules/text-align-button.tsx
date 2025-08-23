@@ -3,7 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
 
-import TextAlignIcon from '../atoms/text-align-icon';
+import { TextAlignIcon } from '@components/ui/atoms';
 
 interface TextAlignButtonProps {
   variant: 'left' | 'justify';

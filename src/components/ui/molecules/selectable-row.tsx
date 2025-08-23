@@ -2,7 +2,7 @@ import React from 'react';
 import { TextStyle, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'styled-components/native';
-import AppText from '../atoms/app-text';
+import { AppText } from '@components/ui/atoms';
 
 interface SelectableRowProps {
   label: string;
