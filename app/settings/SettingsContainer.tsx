@@ -13,6 +13,7 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
+import { getFontByName, hasMultipleWeights } from '@/src/settings/utils/fontHelpers';
 import { clampLevel, resolveOverlayColor } from '@/src/settings/utils/theme';
 import type { SavedSettingsPatch } from '@/src/settings/types';
 import SettingsContent from './SettingsContent';
@@ -27,7 +28,7 @@ export default function SettingsContainer() {
   const saveAndApplyRef = useRef<(patch: SavedSettingsPatch) => void>(() => {});
   const runWithOverlayRef = useRef<(action: () => void, color?: string) => void>(() => {});
   const initialFontName = getBaseFontName(theme.fontName);
-  const initialFontInfo = fonts.find(f => f.name === initialFontName) ?? fonts[0];
+  const initialFontInfo = getFontByName(fonts, initialFontName);
   const initialFontSizeLevel = calcFontSizeLevel(theme.fontSize.small, initialFontInfo.defaultSize);
   const saveAndApplyCb = useCallback(
     (patch: SavedSettingsPatch) => {
@@ -112,8 +113,8 @@ export default function SettingsContainer() {
     }, overlayColor);
   }, [runWithOverlay, saveAndApply]);
 
-  const selectedFont = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-  const hasMultiple = selectedFont.weights.length > 1;
+  const selectedFont = getFontByName(fonts, selectedFontName);
+  const hasMultiple = hasMultipleWeights(selectedFont);
 
   const sectionProps: Record<SectionKey, Record<string, unknown>> = {
     theme: {

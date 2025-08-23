@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import type { DefaultTheme } from 'styled-components/native';
 import { fonts } from '@/constants/Fonts';
 import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
+import { getFontByName } from '@/src/settings/utils/fontHelpers';
 
 type Setters = {
   setSelectedThemeName: React.Dispatch<React.SetStateAction<string>>;
@@ -30,7 +31,7 @@ export default function useSyncThemeToLocalState(
     const baseName = getBaseFontName(theme.fontName);
     setSelectedFontName?.(baseName);
     setFontWeight?.(theme.fontWeight);
-    const fontInfo = fonts.find(f => f.name === baseName) ?? fonts[0];
+    const fontInfo = getFontByName(fonts, baseName);
     const level = calcFontSizeLevel(theme.fontSize.small, fontInfo.defaultSize);
     setFontSizeLevel?.(level);
     setNoteTextAlign(theme.noteTextAlign);

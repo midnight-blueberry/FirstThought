@@ -1,5 +1,6 @@
 // src/theme/buildTheme.ts
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
+import { getFontByName } from '@/src/settings/utils/fontHelpers';
 import { themeList, themes } from '@/theme';
 import { sizes } from '@/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
@@ -30,7 +31,7 @@ export function buildTheme(saved: SavedSettings): DefaultTheme {
 
   // 2) Шрифт (семейство + начертание)
   const savedFontName = saved?.fontName ?? defaultFontName;
-  const fontMeta = fonts.find(f => f.name === savedFontName) ?? fonts[0];
+  const fontMeta = getFontByName(fonts, savedFontName);
   const weight: DefaultTheme['fontWeight'] =
     saved?.fontWeight ?? (fontMeta.defaultWeight as DefaultTheme['fontWeight']);
 

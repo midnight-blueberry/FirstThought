@@ -6,6 +6,7 @@ import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
 import { fonts } from '@/constants/Fonts';
 import { getBaseFontName } from '@/src/settings/utils/font';
+import { getFontByName, getWeightIndex } from '@/src/settings/utils/fontHelpers';
 import type { FontWeightSelectorProps } from '@/src/settings/types';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
@@ -17,9 +18,9 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 }) => {
   const theme = useTheme();
   const baseName = getBaseFontName(theme.fontName);
-  const font = fonts.find(f => f.name === baseName) ?? fonts[0];
+  const font = getFontByName(fonts, baseName);
   const columns = disabled ? 5 : font.weights.length;
-  const filledCount = disabled ? 0 : font.weights.indexOf(fontWeight as string) + 1;
+  const filledCount = disabled ? 0 : getWeightIndex(font, fontWeight as string) + 1;
   const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
 
   return (
