@@ -19,13 +19,21 @@ export default [
     },
   },
   {
+    files: ['**/*.test.ts', '**/*.test.tsx', 'scripts/__tests__/**'],
+    rules: {
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
+  },
+  {
     ignores: [
       'vendor/**',
       'dist/**',
       'build/**',
       'coverage/**',
       '**/generated/**',
-      'scripts/__tests__/**',
     ],
   },
 ];
