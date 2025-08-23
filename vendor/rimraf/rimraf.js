@@ -342,18 +342,14 @@ const rmkidsSync = (p, options) => {
   // PROFOUNDLY annoying habit of not closing handles promptly when
   // files are deleted, resulting in spurious ENOTEMPTY errors.
   const retries = isWindows ? 100 : 1
-  let i = 0
-  do {
-    let threw = true
+  for (let i = 0; i < retries; i++) {
     try {
-      const ret = options.rmdirSync(p, options)
-      threw = false
-      return ret
-    } finally {
-      if (++i < retries && threw)
-        continue
+      return options.rmdirSync(p, options)
+    } catch (err) {
+      if (i + 1 >= retries)
+        throw err
     }
-  } while (true)
+  }
 }
 
 module.exports = rimraf

@@ -152,7 +152,7 @@ function finish (self) {
 
   // at *some* point we statted all of these
   if (self.mark) {
-    for (var i = 0; i < all.length; i++) {
+    for (let i = 0; i < all.length; i++) {
       all[i] = self._mark(all[i])
     }
     if (self.nodir) {

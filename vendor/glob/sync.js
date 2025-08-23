@@ -176,8 +176,8 @@ GlobSync.prototype._processReaddir = function (prefix, read, abs, remain, index,
     if (!this.matches[index])
       this.matches[index] = Object.create(null)
 
-    for (var i = 0; i < len; i ++) {
-      var e = matchedEntries[i]
+    for (let i = 0; i < len; i++) {
+      let e = matchedEntries[i]
       if (prefix) {
         if (prefix.slice(-1) !== '/')
           e = prefix + '/' + e
@@ -197,9 +197,9 @@ GlobSync.prototype._processReaddir = function (prefix, read, abs, remain, index,
   // now test all matched entries as stand-ins for that part
   // of the pattern.
   remain.shift()
-  for (var i = 0; i < len; i ++) {
-    var e = matchedEntries[i]
-    var newPattern
+  for (let i = 0; i < len; i++) {
+    let e = matchedEntries[i]
+    let newPattern
     if (prefix)
       newPattern = [prefix, e]
     else
@@ -396,8 +396,8 @@ GlobSync.prototype._processSimple = function (prefix, index) {
   if (!exists)
     return
 
-  if (prefix && isAbsolute(prefix) && !this.nomount) {
-    var trail = /[\/\\]$/.test(prefix)
+    if (prefix && isAbsolute(prefix) && !this.nomount) {
+      var trail = /[/\\]$/.test(prefix)
     if (prefix.charAt(0) === '/') {
       prefix = path.join(this.root, prefix)
     } else {
@@ -423,7 +423,7 @@ GlobSync.prototype._stat = function (f) {
     return false
 
   if (!this.stat && ownProp(this.cache, abs)) {
-    var c = this.cache[abs]
+    let c = this.cache[abs]
 
     if (Array.isArray(c))
       c = 'DIR'
@@ -465,7 +465,7 @@ GlobSync.prototype._stat = function (f) {
 
   this.statCache[abs] = stat
 
-  var c = true
+  let c = true
   if (stat)
     c = stat.isDirectory() ? 'DIR' : 'FILE'
 

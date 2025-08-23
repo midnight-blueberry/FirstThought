@@ -275,16 +275,16 @@ Glob.prototype.resume = function () {
     if (this._emitQueue.length) {
       var eq = this._emitQueue.slice(0)
       this._emitQueue.length = 0
-      for (var i = 0; i < eq.length; i ++) {
-        var e = eq[i]
+      for (let i = 0; i < eq.length; i++) {
+        const e = eq[i]
         this._emitMatch(e[0], e[1])
       }
     }
     if (this._processQueue.length) {
       var pq = this._processQueue.slice(0)
       this._processQueue.length = 0
-      for (var i = 0; i < pq.length; i ++) {
-        var p = pq[i]
+      for (let i = 0; i < pq.length; i++) {
+        const p = pq[i]
         this._processing--
         this._process(p[0], p[1], p[2], p[3])
       }
@@ -416,8 +416,8 @@ Glob.prototype._processReaddir2 = function (prefix, read, abs, remain, index, in
     if (!this.matches[index])
       this.matches[index] = Object.create(null)
 
-    for (var i = 0; i < len; i ++) {
-      var e = matchedEntries[i]
+    for (let i = 0; i < len; i++) {
+      let e = matchedEntries[i]
       if (prefix) {
         if (prefix !== '/')
           e = prefix + '/' + e
@@ -437,16 +437,17 @@ Glob.prototype._processReaddir2 = function (prefix, read, abs, remain, index, in
   // now test all matched entries as stand-ins for that part
   // of the pattern.
   remain.shift()
-  for (var i = 0; i < len; i ++) {
-    var e = matchedEntries[i]
-    var newPattern
+  for (let i = 0; i < len; i++) {
+    let e = matchedEntries[i]
+    let newPattern
     if (prefix) {
       if (prefix !== '/')
         e = prefix + '/' + e
       else
         e = prefix + e
     }
-    this._process([e].concat(remain), index, inGlobStar, cb)
+    newPattern = prefix ? [prefix, e] : [e]
+    this._process(newPattern.concat(remain), index, inGlobStar, cb)
   }
   cb()
 }
@@ -688,7 +689,7 @@ Glob.prototype._processSimple2 = function (prefix, index, er, exists, cb) {
     return cb()
 
   if (prefix && isAbsolute(prefix) && !this.nomount) {
-    var trail = /[\/\\]$/.test(prefix)
+    var trail = /[/\\]$/.test(prefix)
     if (prefix.charAt(0) === '/') {
       prefix = path.join(this.root, prefix)
     } else {
