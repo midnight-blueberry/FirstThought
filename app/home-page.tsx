@@ -1,6 +1,11 @@
 import HomePage from '../components/HomePage';
+import PageContainer from '../components/common/PageContainer';
 
 export default function HomePageScreen() {
-  return <HomePage />;
+  return (
+    <PageContainer>
+      <HomePage />
+    </PageContainer>
+  );
 }
 
