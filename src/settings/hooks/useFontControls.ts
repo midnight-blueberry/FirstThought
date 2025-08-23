@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { DefaultTheme } from 'styled-components/native';
 import type { Animated } from 'react-native';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
+import { getFontByName, adjustWeight } from '@/src/settings/utils/fontHelpers';
 
 export type FontInfo = {
   name: string;
@@ -64,7 +65,7 @@ export default function useFontControls({
 
   const selectFont = useCallback(
     (name: string) => {
-      const font = fonts.find(f => f.name === name) ?? fonts[0];
+      const font = getFontByName(fonts, name);
       const weight = font.defaultWeight as DefaultTheme['fontWeight'];
       runWithOverlay(() => {
         setSelectedFontName(name);
@@ -101,12 +102,12 @@ export default function useFontControls({
 
   const bumpFontWeight = useCallback(
     (delta: number) => {
-      const font = fonts.find(f => f.name === selectedFontName) ?? fonts[0];
-      const idx = font.weights.indexOf(fontWeight as string);
+      const font = getFontByName(fonts, selectedFontName);
       stopWeightBlink();
-      const nextIdx = idx + delta;
-      if (nextIdx >= 0 && nextIdx < font.weights.length) {
-        const nextWeight = font.weights[nextIdx] as DefaultTheme['fontWeight'];
+      const nextWeight = adjustWeight(font, fontWeight as string, delta) as
+        | DefaultTheme['fontWeight']
+        | undefined;
+      if (nextWeight) {
         runWithOverlay(() => {
           setFontWeight(nextWeight);
           saveAndApply({ fontWeight: nextWeight });
