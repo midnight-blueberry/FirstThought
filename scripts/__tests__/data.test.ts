@@ -49,8 +49,8 @@ jest.mock('expo-secure-store', () => {
 // Simplified CryptoJS mocks to bypass encryption
 jest.mock('crypto-js', () => ({
   AES: {
-    encrypt: (plain: string, _key: any) => ({ toString: () => plain }),
-    decrypt: (cipher: string, _key: any) => ({ toString: () => cipher }),
+    encrypt: (plain: string) => ({ toString: () => plain }),
+    decrypt: (cipher: string) => ({ toString: () => cipher }),
   },
   enc: {
     Base64: { parse: (str: string) => str },
@@ -63,8 +63,8 @@ import { addDiary, deleteDiary, loadDiaries, addEntry } from '../data';
 describe('data helpers', () => {
   beforeEach(async () => {
     // reset storages and seed encryption key
-    (AsyncStorage as any).__storage.clear();
-    (SecureStore as any).__store.clear();
+    (AsyncStorage as unknown as { __storage: Map<string, string> }).__storage.clear();
+    (SecureStore as unknown as { __store: Map<string, string> }).__store.clear();
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
