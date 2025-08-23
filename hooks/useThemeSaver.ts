@@ -68,9 +68,12 @@ export default function useThemeSaver({
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const [ overlayVisible, setOverlayVisible ] = useState(false);
-  const [ overlayColor, setOverlayColor ] = useState(theme.colors.background);
   const [ overlayBlocks, setOverlayBlocks ] = useState(false);
-  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [ overlayColor, setOverlayColor ] = useState<string>(theme.colors.background);
+
+  useEffect(() => {
+    setOverlayColor(theme.colors.background);
+  }, [theme.colors.background]);
 
   const saveAndApply = useCallback((patch: SavedSettingsPatch) => {
     const nextSaved = {
@@ -92,46 +95,35 @@ export default function useThemeSaver({
     void saveSettings(nextSaved);
   }, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, noteTextAlign, setTheme]);
 
+  function animate(to: 0 | 1, duration = 180) {
+    return new Promise<void>((resolve) => {
+      Animated.timing(overlayAnim, { toValue: to, duration, useNativeDriver: true }).start(() => resolve());
+    });
+  }
+
   const runWithOverlay = useCallback(
-    (action: () => void, color?: string) => {
+    async (fn: () => void | Promise<void>, color?: string) => {
       setOverlayColor(color ?? theme.colors.background);
-
-      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
-      if (overlayTimerRef.current) { clearTimeout(overlayTimerRef.current); overlayTimerRef.current = null; }
-
-      overlayAnim.stopAnimation();
-      fadeAnim.stopAnimation();
+      hideSaveIcon();
 
       setOverlayVisible(true);
       setOverlayBlocks(true);
+
+      overlayAnim.stopAnimation();
       overlayAnim.setValue(0);
+      await animate(1);
 
-      const startFadeOut = () => {
+      try {
+        await Promise.resolve(fn());
+      } finally {
+        overlayAnim.stopAnimation();
+        await animate(0);
         setOverlayBlocks(false);
-        overlayTimerRef.current = setTimeout(() => {
-          Animated.timing(overlayAnim, {
-            toValue: 0,
-            duration: 700,
-            useNativeDriver: true,
-          }).start(() => {
-            setOverlayVisible(false);
-            overlayTimerRef.current = null;
-            showSaveIcon();
-          });
-        }, 100);
-      };
-
-      hideSaveIcon();
-      Animated.timing(overlayAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }).start(() => {
-        action();
-        startFadeOut();
-      });
+        setOverlayVisible(false);
+        showSaveIcon();
+      }
     },
-    [overlayAnim, fadeAnim, theme.colors.background, hideSaveIcon, showSaveIcon]
+    [theme.colors.background, hideSaveIcon, showSaveIcon, overlayAnim]
   );
 
   const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
@@ -156,9 +148,6 @@ export default function useThemeSaver({
     return () => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
-      }
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
       }
     };
   }, []);

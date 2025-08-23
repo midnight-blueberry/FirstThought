@@ -69,13 +69,13 @@ export default function SettingsContainer() {
   });
 
   useApplyOnChange({ name: selectedFontName, weight: fontWeight }, (font) => {
-    runWithOverlay(() => {
+    void runWithOverlay(() => {
       saveAndApply({ fontName: font.name, fontWeight: font.weight });
     });
   });
 
   useApplyOnChange(fontSizeLevel, (size) => {
-    runWithOverlay(() => {
+    void runWithOverlay(() => {
       saveAndApply({ fontSizeLevel: size });
     });
   });
@@ -89,7 +89,7 @@ export default function SettingsContainer() {
   });
 
   const handleAccentChange = useCallback((next: string) => {
-    runWithOverlay(() => {
+    void runWithOverlay(() => {
       setSelectedAccentColor(next);
       saveAndApply({ accentColor: next });
     }, theme.colors.background);
@@ -97,7 +97,7 @@ export default function SettingsContainer() {
 
   const handleThemeChange = useCallback((name: string) => {
     const overlayColor = resolveOverlayColor(name, themeList);
-    runWithOverlay(() => {
+    void runWithOverlay(() => {
       setSelectedThemeName(name);
       saveAndApply({ themeName: name });
     }, overlayColor);
@@ -113,7 +113,7 @@ export default function SettingsContainer() {
   const handleDecreaseFontWeight = useCallback(() => bumpFontWeight(-1), [bumpFontWeight]);
   const handleAlignChange = useCallback(
     (align: DefaultTheme['noteTextAlign']) => {
-      runWithOverlay(() => {
+      void runWithOverlay(() => {
         setNoteTextAlign(align);
         saveAndApply({ noteTextAlign: align });
       });
