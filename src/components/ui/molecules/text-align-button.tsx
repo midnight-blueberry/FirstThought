@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 import { TextAlignIcon } from '@components/ui/atoms';
 

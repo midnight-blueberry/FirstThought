@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { DefaultTheme, useTheme } from 'styled-components/native';
+import { DefaultTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 interface IconButtonProps {
   icon: string;

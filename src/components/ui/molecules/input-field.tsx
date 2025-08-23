@@ -3,7 +3,8 @@ import React, { useMemo, useState } from 'react';
 import { LayoutChangeEvent, TextInputProps } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styled, { DefaultTheme, useTheme } from 'styled-components/native';
+import styled, { DefaultTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 const FlattenRow = styled.View`
   flex-direction: row;

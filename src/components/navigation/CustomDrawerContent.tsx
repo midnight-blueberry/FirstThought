@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 export default function CustomDrawerContent(props: DrawerContentComponentProps) {
   const theme = useTheme();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Animated, View } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 interface BarIndicatorProps {
   total: number;

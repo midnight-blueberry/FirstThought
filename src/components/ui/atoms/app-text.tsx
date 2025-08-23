@@ -1,7 +1,8 @@
  
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
-import styled, { DefaultTheme, useTheme } from "styled-components/native";
+import styled, { DefaultTheme } from "styled-components/native";
+import useTheme from '@hooks/useTheme';
 import { getFontFamily, getNextFontWeight } from "@constants/Fonts";
 
 type AppTextProps = {

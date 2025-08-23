@@ -2,7 +2,8 @@ import { AppText } from '@components/ui/atoms';
 import { ThemeContext } from '@theme/ThemeContext';
 import React, { ReactNode, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { DefaultTheme, useTheme } from 'styled-components/native';
+import { DefaultTheme } from 'styled-components/native';
+import useTheme from '@hooks/useTheme';
 
 type SectionProps = {
   title?: string;
