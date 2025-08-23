@@ -1,11 +1,12 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
 import Overlay from '@/components/ui/atoms/overlay';
-import { sections, SectionKey } from '@/src/settings/sections.config';
+import { sections } from '@/src/settings/sections.config';
+import type { SectionPropsMap } from '@/src/settings/SectionPropsMap';
 import { DefaultTheme } from 'styled-components/native';
 
 interface SettingsContentProps {
-  sectionProps: Record<SectionKey, Record<string, unknown>>;
+  sectionProps: SectionPropsMap;
   theme: DefaultTheme;
   handleScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   overlayVisible: boolean;
@@ -33,10 +34,9 @@ export default function SettingsContent({
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {sections.map(({ key, Component }) => {
-          const Comp = Component as React.ComponentType<Record<string, unknown>>;
-          return <Comp key={key} {...sectionProps[key]} />;
-        })}
+        {sections.map(({ key, Component }) => (
+          <Component key={key} {...(sectionProps[key] as any)} />
+        ))}
       </ScrollView>
 
       <Overlay

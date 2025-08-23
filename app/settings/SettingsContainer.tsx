@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import SaveIcon from '@/components/ui/atoms/save-icon';
-import { SectionKey } from '@/src/settings/sections.config';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
 import { ThemeContext } from '@/src/theme/ThemeContext';
@@ -16,6 +15,7 @@ import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
 import { getFontByName, hasMultipleWeights } from '@/src/settings/utils/fontHelpers';
 import { clampLevel, resolveOverlayColor } from '@/src/settings/utils/theme';
 import type { SavedSettingsPatch } from '@/src/settings/types';
+import type { SectionPropsMap } from '@/src/settings/SectionPropsMap';
 import SettingsContent from './SettingsContent';
 
 
@@ -116,7 +116,7 @@ export default function SettingsContainer() {
   const selectedFont = getFontByName(fonts, selectedFontName);
   const hasMultiple = hasMultipleWeights(selectedFont);
 
-  const sectionProps: Record<SectionKey, Record<string, unknown>> = {
+  const sectionProps: SectionPropsMap = {
     theme: {
       selectedThemeName,
       onSelectTheme: handleThemeChange,
