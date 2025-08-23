@@ -1,48 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CryptoJS from 'crypto-js';
-import * as SecureStore from 'expo-secure-store';
+import { generateId, encrypt, decrypt } from '@utils/crypto';
+import { loadEntryIds, saveEntryIds, entryIdsKey } from '@utils/storage';
 
 // Ключи для индексов
-const DIARIES_KEY      = '__encrypted_diaries__';    // список ваших дневников
-const ENTRIES_KEY_PREF = '__enc_entry_ids_';         // префикс для списка ID записей конкретного дневника
+const DIARIES_KEY = '__encrypted_diaries__'; // список ваших дневников
 
 // Тип мета-информации дневника
 export interface DiaryMeta {
   id: string;
   title: string;
   createdAt: number;
-} 
-
-async function generateId(): Promise<string> {
-  return crypto.randomUUID();
-}
-
-// Генерируем настоящий 256-битный ключ (в формате Base64)
-async function generateKey() {
-  const bytes = crypto.getRandomValues(new Uint8Array(32)); // 32 * 8 = 256 бит
-  const key = CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.create(bytes));
-  await SecureStore.setItemAsync('enc_key', key, {
-    keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
-  });
-}
-
-// Получаем ключ из SecureStore
-async function getKey() {
-  const base64Key = await SecureStore.getItemAsync('enc_key');
-  return CryptoJS.enc.Base64.parse(base64Key!);
-}
-
-// Шифруем строку
-async function encrypt(plain: string): Promise<string> {
-  const key = await getKey();
-  return CryptoJS.AES.encrypt(plain, key).toString();
-}
-
-// Дешифруем
-async function decrypt(cipher: string): Promise<string> {
-  const key = await getKey();
-  const bytes = CryptoJS.AES.decrypt(cipher, key);
-  return bytes.toString(CryptoJS.enc.Utf8);
 }
 
 /** Работа со списком дневников **/
@@ -62,7 +29,7 @@ export async function saveDiaries(list: DiaryMeta[]) {
 export async function addDiary(title: string): Promise<DiaryMeta> {
   const list = await loadDiaries();
   const newDiary: DiaryMeta = {
-    id: await generateId(),
+    id: generateId(),
     title,
     createdAt: Date.now(),
   };
@@ -77,29 +44,14 @@ export async function deleteDiary(id: string) {
   list = list.filter(d => d.id !== id);
   await saveDiaries(list);
   // 2) удаляем связанные записи и их индекс
-  const key = ENTRIES_KEY_PREF + id;
   const entryIds = await loadEntryIds(id);
   // удаляем сами записи
   await Promise.all(entryIds.map(eid => AsyncStorage.removeItem(`record_${eid}`)));
   // и удаляем список ID
-  await AsyncStorage.removeItem(key);
+  await AsyncStorage.removeItem(entryIdsKey(id));
 }
 
 /** Работа со списком записей конкретного дневника **/
-
-async function loadEntryIds(diaryId: string): Promise<string[]> {
-  const key = ENTRIES_KEY_PREF + diaryId;
-  const cipher = await AsyncStorage.getItem(key);
-  if (!cipher) return [];
-  return JSON.parse(await decrypt(cipher));
-}
-
-async function saveEntryIds(diaryId: string, ids: string[]) {
-  const key = ENTRIES_KEY_PREF + diaryId;
-  const json = JSON.stringify(ids);
-  const cipher = await encrypt(json);
-  await AsyncStorage.setItem(key, cipher);
-}
 
 // Чтение одной записи
 export async function loadEntry(id: string): Promise<any|null> {
@@ -111,7 +63,7 @@ export async function loadEntry(id: string): Promise<any|null> {
 // Добавление новой записи в дневник
 export async function addEntry(diaryId: string, data: object): Promise<string> {
   // 1. Генерируем ID и сохраняем данные
-  const entryId = await generateId();
+  const entryId = generateId();
   await saveEntry(entryId, data);
 
   // 2. Обновляем индекс записей этого дневника
