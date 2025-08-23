@@ -5,8 +5,8 @@ import SelectorRow from '../atoms/selector-row';
 import BarIndicator from '../atoms/bar-indicator';
 import Section from './settings-section';
 import { fonts } from '@/constants/Fonts';
-import { getBaseFontName } from '@/src/settings/utils/font';
-import { getFontByName, getWeightIndex } from '@/src/settings/utils/fontHelpers';
+import { getBaseFontName } from '@/utils/font';
+import { getFontByName, getWeightIndex } from '@/utils/fontHelpers';
 import type { FontWeightSelectorProps } from '@/src/settings/types';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({

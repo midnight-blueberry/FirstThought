@@ -1,11 +1,11 @@
 // src/theme/buildTheme.ts
 import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
-import { getFontByName } from '@/src/settings/utils/fontHelpers';
-import { themeList, themes } from '@/theme';
-import { sizes } from '@/theme/tokens';
+import { getFontByName } from '@/utils/fontHelpers';
+import { themeList, themes } from '@/constants/theme';
+import { sizes } from '@/constants/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
-import { nextIconSize } from '@/src/settings/utils/font';
-import { clampLevel } from '@/src/settings/utils/theme';
+import { nextIconSize } from '@/utils/font';
+import { clampLevel } from '@/utils/theme';
 
 type SavedSettings = {
   themeName?: string;
