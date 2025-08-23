@@ -1,5 +1,3 @@
-import 'react-native-gesture-handler';
-import 'react-native-reanimated';
 import SaveIcon from '@/components/ui/atoms/save-icon';
 import { fonts } from '@/constants/Fonts';
 import useHeaderShadow from '@/hooks/useHeaderShadow';
