@@ -4,7 +4,7 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    ignores: ['vendor/**', 'dist/**', 'build/**'],
+    ignores: ["vendor/**", "dist/**", "build/**"],
   },
   js.configs.recommended,
   {
