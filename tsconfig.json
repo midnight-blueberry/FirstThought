@@ -20,7 +20,8 @@
     },
     // Allow default React imports and JSX in TypeScript files
     "esModuleInterop": true,
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "types": ["node", "jest"]
   },
   "include": [
     "**/*.ts",
