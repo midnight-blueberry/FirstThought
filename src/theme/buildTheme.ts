@@ -3,8 +3,8 @@ import { defaultFontName, fonts, getFontFamily } from '@/constants/Fonts';
 import { themeList, themes } from '@/theme';
 import { sizes } from '@/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
-import { nextIconSize } from '@/app/settings/utils/font';
-import { clampLevel } from '@/app/settings/utils/theme';
+import { nextIconSize } from '@/app/settings/_utils/font';
+import { clampLevel } from '@/app/settings/_utils/theme';
 
 type SavedSettings = {
   themeName?: string;
