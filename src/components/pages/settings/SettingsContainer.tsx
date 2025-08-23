@@ -1,4 +1,4 @@
-import SaveIcon from '@components/ui/atoms/save-icon';
+import { SaveIcon } from '@components/ui/atoms';
 import { fonts } from '@constants/Fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import { ThemeContext } from '@theme/ThemeContext';

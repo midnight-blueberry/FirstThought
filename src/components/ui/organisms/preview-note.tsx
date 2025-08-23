@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { DefaultTheme, useTheme } from 'styled-components/native';
-import AppText from '../atoms/app-text';
+import { AppText } from '@components/ui/atoms';
 import Section from './settings-section';
 
 interface PreviewNoteProps {

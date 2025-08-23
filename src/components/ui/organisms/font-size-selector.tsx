@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTheme } from 'styled-components/native';
-import SelectorRow from '../atoms/selector-row';
-import BarIndicator from '../atoms/bar-indicator';
+import { SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import type { FontSizeSelectorProps } from '@settings/types';
 

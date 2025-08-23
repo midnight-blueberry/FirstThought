@@ -1,5 +1,5 @@
 import React from 'react';
-import IconButton from '@components/ui/atoms/icon-button';
+import { IconButton } from '@components/ui/atoms';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerActions } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';

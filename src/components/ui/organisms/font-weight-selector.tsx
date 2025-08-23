@@ -1,8 +1,6 @@
 import React from 'react';
 import { useTheme } from 'styled-components/native';
-import AppText from '../atoms/app-text';
-import SelectorRow from '../atoms/selector-row';
-import BarIndicator from '../atoms/bar-indicator';
+import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import { fonts } from '@constants/Fonts';
 import { getBaseFontName } from '@utils/font';

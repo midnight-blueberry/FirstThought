@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
-import type Divider from '@components/ui/atoms/divider';
-import type PreviewNote from '@components/ui/organisms/preview-note';
+import type { Divider } from '@components/ui/atoms';
+import type { PreviewNote } from '@components/ui/organisms';
 import type {
   ThemeSelectorProps,
   AccentColorSelectorProps,
