@@ -1,1 +1,6 @@
-export { default } from '@screens/settings/SettingsContainer';
+import SettingsContainer from '../../components/settings/SettingsContainer';
+
+export default function SettingsScreen() {
+  return <SettingsContainer />;
+}
+
