@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
-import '../src/fixUseInsertionEffect';
+import '@utils/fixUseInsertionEffect';
 import { ThemeContext } from '@theme/ThemeContext';
 import { useAppBootstrap } from '@hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
