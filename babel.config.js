@@ -10,13 +10,9 @@ module.exports = function (api) {
           '@screens': './src/screens',
           '@utils': './src/utils',
           '@constants': './src/constants',
-          '@assets': './assets',
-          '@hooks': './src/hooks',
-          '@settings': './src/settings',
-          '@theme': './src/theme',
-          '@storage': './src/storage'
+          '@assets': './assets'
         },
-        extensions: ['.ts', '.tsx', '.js', '.json']
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
       }]
     ]
   };
