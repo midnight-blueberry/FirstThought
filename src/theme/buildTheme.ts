@@ -1,12 +1,38 @@
 // src/theme/buildTheme.ts
 import { defaultFontName, fonts, getFontFamily } from '@constants/Fonts';
 import { getFontByName } from '@utils/fontHelpers';
-import { themeList, themes } from '@constants/theme';
+import {
+  lightColors,
+  creamColors,
+  darkColors,
+  type ColorTokens,
+} from '@constants/theme/colors';
 import { sizes } from '@constants/theme/tokens';
 import { DefaultTheme } from 'styled-components/native';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
 import type { SavedSettings } from '@types';
+
+const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
+  name,
+  colors,
+  ...sizes,
+  fontName: getFontFamily(defaultFontName.replace(/ /g, '_'), '500'),
+  fontWeight: '500',
+  noteTextAlign: 'left',
+});
+
+export const themes = {
+  light: createTheme('Светлая', lightColors),
+  cream: createTheme('Кремовая', creamColors),
+  dark: createTheme('Темная', darkColors),
+} as const;
+
+export type Theme = (typeof themes)['light'];
+export type ThemeName = keyof typeof themes;
+
+export const themeList: Theme[] = Object.values(themes);
+
 export function buildTheme(saved?: SavedSettings): DefaultTheme {
   // 1) Тема + акцент
   const chosenTheme = saved
@@ -71,3 +97,4 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
     noteTextAlign: saved?.noteTextAlign ?? chosenTheme.noteTextAlign,
   } as DefaultTheme;
 }
+
