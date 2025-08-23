@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generateId, encrypt, decrypt } from '@utils/crypto';
 import { loadEntryIds, saveEntryIds, entryIdsKey } from '@utils/storage';
 
+type EntryData = Record<string, unknown>;
+
 // Ключи для индексов
 const DIARIES_KEY = '__encrypted_diaries__'; // список ваших дневников
 
@@ -17,7 +19,13 @@ export interface DiaryMeta {
 export async function loadDiaries(): Promise<DiaryMeta[]> {
   const cipher = await AsyncStorage.getItem(DIARIES_KEY);
   if (!cipher) return [];
-  return JSON.parse(await decrypt(cipher));
+  const raw = await decrypt(cipher);
+  try {
+    const data: unknown = JSON.parse(raw);
+    return Array.isArray(data) ? (data as DiaryMeta[]) : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function saveDiaries(list: DiaryMeta[]) {
@@ -54,14 +62,20 @@ export async function deleteDiary(id: string) {
 /** Работа со списком записей конкретного дневника **/
 
 // Чтение одной записи
-export async function loadEntry(id: string): Promise<any|null> {
+export async function loadEntry<T extends EntryData = EntryData>(id: string): Promise<T | null> {
   const cipher = await AsyncStorage.getItem(`record_${id}`);
   if (!cipher) return null;
-  return JSON.parse(await decrypt(cipher));
+  const raw = await decrypt(cipher);
+  try {
+    const data: unknown = JSON.parse(raw);
+    return data as T;
+  } catch {
+    return null;
+  }
 }
 
 // Добавление новой записи в дневник
-export async function addEntry(diaryId: string, data: object): Promise<string> {
+export async function addEntry(diaryId: string, data: EntryData): Promise<string> {
   // 1. Генерируем ID и сохраняем данные
   const entryId = generateId();
   await saveEntry(entryId, data);
@@ -78,16 +92,16 @@ export async function addEntry(diaryId: string, data: object): Promise<string> {
 export async function modifyEntry(
   diaryId: string,
   entryId: string,
-  updates: Record<string, any>
+  updates: EntryData
 ) {
   // проверяем, что такая запись есть в индексе
   const ids = await loadEntryIds(diaryId);
   if (!ids.includes(entryId)) {
     throw new Error(`Entry "${entryId}" not found in diary "${diaryId}"`);
   }
-  const existing = await loadEntry(entryId);
+  const existing = await loadEntry<EntryData>(entryId);
   if (!existing) throw new Error(`Record "${entryId}" not found`);
-  const merged = { ...existing, ...updates };
+  const merged: EntryData = { ...existing, ...updates };
   await saveEntry(entryId, merged);
 }
 
@@ -102,7 +116,7 @@ export async function deleteEntry(diaryId: string, entryId: string) {
 }
 
 // Сохранение/перезапись записи (уже есть)
-export async function saveEntry(id: string, data: object): Promise<void> {
+export async function saveEntry(id: string, data: EntryData): Promise<void> {
   const json = JSON.stringify(data);
   const cipher = await encrypt(json);
   await AsyncStorage.setItem(`record_${id}`, cipher);
