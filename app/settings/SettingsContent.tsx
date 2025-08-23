@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
 import Overlay from '@/components/ui/atoms/overlay';
-import { sections, SectionKey } from '@/settings/sections.config';
+import { sections, SectionKey } from './sections.config';
 import { DefaultTheme } from 'styled-components/native';
 
 interface SettingsContentProps {
