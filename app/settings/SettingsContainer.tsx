@@ -6,7 +6,8 @@ import { themeList } from '@/theme';
 import useThemeSaver from '@/hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@/src/settings/hooks/useSyncThemeToLocalState';
 import useFontControls from '@/src/settings/hooks/useFontControls';
-import React, { useCallback, useContext, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { useApplyOnChange } from '@/src/settings/hooks/useApplyOnChange';
 import useHeaderTitleSync from '@/hooks/useHeaderTitleSync';
 import { DefaultTheme, useTheme } from 'styled-components/native';
 import { getBaseFontName, calcFontSizeLevel } from '@/src/settings/utils/font';
@@ -67,25 +68,17 @@ export default function SettingsContainer() {
     setTheme,
   });
 
-  const [prevFont, setPrevFont] = useState({ name: selectedFontName, weight: fontWeight });
-  useEffect(() => {
-    if (prevFont.name !== selectedFontName || prevFont.weight !== fontWeight) {
-      runWithOverlay(() => {
-        saveAndApply({ fontName: selectedFontName, fontWeight });
-      });
-      setPrevFont({ name: selectedFontName, weight: fontWeight });
-    }
-  }, [selectedFontName, fontWeight, runWithOverlay, saveAndApply, prevFont]);
+  useApplyOnChange({ name: selectedFontName, weight: fontWeight }, (font) => {
+    runWithOverlay(() => {
+      saveAndApply({ fontName: font.name, fontWeight: font.weight });
+    });
+  });
 
-  const [prevFontSize, setPrevFontSize] = useState(fontSizeLevel);
-  useEffect(() => {
-    if (prevFontSize !== fontSizeLevel) {
-      runWithOverlay(() => {
-        saveAndApply({ fontSizeLevel });
-      });
-      setPrevFontSize(fontSizeLevel);
-    }
-  }, [fontSizeLevel, runWithOverlay, saveAndApply, prevFontSize]);
+  useApplyOnChange(fontSizeLevel, (size) => {
+    runWithOverlay(() => {
+      saveAndApply({ fontSizeLevel: size });
+    });
+  });
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
 
