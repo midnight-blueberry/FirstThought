@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { DefaultTheme } from 'styled-components/native';
 import type { Animated } from 'react-native';
 import useBlinkAnimation from '@/hooks/useBlinkAnimation';
+import useBlinkIndex from './useBlinkIndex';
 import { getFontByName, adjustWeight } from '@/src/settings/utils/fontHelpers';
 
 export type FontInfo = {
@@ -49,12 +50,12 @@ export default function useFontControls({
   const [fontWeight, setFontWeight] = useState<DefaultTheme['fontWeight']>(initial.fontWeight);
   const [fontSizeLevel, setFontSizeLevel] = useState(initial.fontSizeLevel);
 
-  const [fontSizeBlinkIndex, setFontSizeBlinkIndex] = useState<number | null>(null);
   const {
+    index: fontSizeBlinkIndex,
     blinkAnim: fontSizeBlinkAnim,
-    triggerBlink: triggerFontBlink,
+    blinkAt: blinkFontSizeAt,
     stopBlink: stopFontBlink,
-  } = useBlinkAnimation({ onEnd: () => setFontSizeBlinkIndex(null) });
+  } = useBlinkIndex();
   const { blinkAnim: fontWeightBlinkAnim, triggerBlink: triggerWeightBlink, stopBlink: stopWeightBlink } = useBlinkAnimation();
 
   useEffect(() => {
@@ -89,15 +90,14 @@ export default function useFontControls({
 
   const bumpFontSize = useCallback(
     (delta: number) => {
-      if (fontSizeBlinkIndex !== null) stopFontBlink();
+      stopFontBlink();
       if ((delta < 0 && fontSizeLevel <= minLevel) || (delta > 0 && fontSizeLevel >= maxLevel)) {
-        setFontSizeBlinkIndex(delta < 0 ? 0 : maxLevel - 1);
-        triggerFontBlink();
+        blinkFontSizeAt(delta < 0 ? 0 : maxLevel - 1);
         return;
       }
       applyFontSizeLevel(fontSizeLevel + delta);
     },
-    [fontSizeBlinkIndex, stopFontBlink, fontSizeLevel, minLevel, maxLevel, triggerFontBlink, applyFontSizeLevel],
+    [stopFontBlink, fontSizeLevel, minLevel, maxLevel, blinkFontSizeAt, applyFontSizeLevel],
   );
 
   const bumpFontWeight = useCallback(
