@@ -30,4 +30,11 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   );
 };
 
-export default FontSizeSelector;
+const propsAreEqual = (prev: FontSizeSelectorProps, next: FontSizeSelectorProps) =>
+  prev.fontSizeLevel === next.fontSizeLevel &&
+  prev.onIncrease === next.onIncrease &&
+  prev.onDecrease === next.onDecrease &&
+  prev.blinkIndex === next.blinkIndex &&
+  prev.blinkAnim === next.blinkAnim;
+
+export default React.memo(FontSizeSelector, propsAreEqual);

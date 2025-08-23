@@ -50,5 +50,12 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   );
 };
 
-export default FontWeightSelector;
+const propsAreEqual = (prev: FontWeightSelectorProps, next: FontWeightSelectorProps) =>
+  prev.fontWeight === next.fontWeight &&
+  prev.onIncrease === next.onIncrease &&
+  prev.onDecrease === next.onDecrease &&
+  prev.blinkAnim === next.blinkAnim &&
+  prev.disabled === next.disabled;
+
+export default React.memo(FontWeightSelector, propsAreEqual);
 

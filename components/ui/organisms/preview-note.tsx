@@ -33,4 +33,9 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, fontName, colo
   );
 };
 
-export default PreviewNote;
+const propsAreEqual = (prev: PreviewNoteProps, next: PreviewNoteProps) =>
+  prev.noteTextAlign === next.noteTextAlign &&
+  prev.fontName === next.fontName &&
+  prev.colors === next.colors;
+
+export default React.memo(PreviewNote, propsAreEqual);

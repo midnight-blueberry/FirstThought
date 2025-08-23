@@ -25,4 +25,6 @@ const Divider: React.FC<DividerProps> = ({ style }) => {
   );
 };
 
-export default Divider;
+const propsAreEqual = (prev: DividerProps, next: DividerProps) => prev.style === next.style;
+
+export default React.memo(Divider, propsAreEqual);
