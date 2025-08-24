@@ -34,6 +34,8 @@ export default [
       'build/**',
       'coverage/**',
       '**/generated/**',
+      'ChatGPT/**',
+      'ChatGPT.zip'
     ],
   },
 ];
