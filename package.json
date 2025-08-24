@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "BABEL_CONFIG_FILE=config/babel.config.js npx expo start -c --config config/app.json",
+    "start": "cross-env BABEL_CONFIG_FILE=config/babel.config.js npx expo start -c --config config/app.json",
     "build:google-play": "BABEL_CONFIG_FILE=config/babel.config.js npx expo prebuild --config config/app.json && BABEL_CONFIG_FILE=config/babel.config.js npx eas build -p android --config config/eas.json",
     "build:testing": "BABEL_CONFIG_FILE=config/babel.config.js eas build -p android --profile testing --config config/eas.json",
     "build:apk": "BABEL_CONFIG_FILE=config/babel.config.js expo run:android --config config/app.json",
@@ -56,6 +56,7 @@
     "@typescript-eslint/parser": "^8.39.1",
     "@types/jest": "^29.5.12",
     "babel-plugin-module-resolver": "^5.0.2",
+    "cross-env": "^7.0.3",
     "eslint": "^9.31.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
