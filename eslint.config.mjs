@@ -19,7 +19,7 @@ export default [
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', 'scripts/__tests__/**'],
+    files: ['**/*.test.ts', '**/*.test.tsx'],
     rules: {
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
