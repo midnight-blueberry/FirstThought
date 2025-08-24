@@ -12,12 +12,34 @@ export interface DiaryMeta {
   createdAt: number;
 }
 
+export type EntryData = Record<string, unknown>;
+
+function isDiaryMeta(value: unknown): value is DiaryMeta {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    typeof (value as { id?: unknown }).id === 'string' &&
+    typeof (value as { title?: unknown }).title === 'string' &&
+    typeof (value as { createdAt?: unknown }).createdAt === 'number'
+  );
+}
+
+function isEntryData(value: unknown): value is EntryData {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 /** Работа со списком дневников **/
 
 export async function loadDiaries(): Promise<DiaryMeta[]> {
   const cipher = await AsyncStorage.getItem(DIARIES_KEY);
   if (!cipher) return [];
-  return JSON.parse(await decrypt(cipher));
+  const text = await decrypt(cipher);
+  const data: unknown = JSON.parse(text);
+  if (!Array.isArray(data) || !data.every(isDiaryMeta)) {
+    throw new Error('Invalid diaries data');
+  }
+  return data;
 }
 
 export async function saveDiaries(list: DiaryMeta[]) {
@@ -54,14 +76,19 @@ export async function deleteDiary(id: string) {
 /** Работа со списком записей конкретного дневника **/
 
 // Чтение одной записи
-export async function loadEntry(id: string): Promise<any|null> {
+export async function loadEntry(id: string): Promise<EntryData | null> {
   const cipher = await AsyncStorage.getItem(`record_${id}`);
   if (!cipher) return null;
-  return JSON.parse(await decrypt(cipher));
+  const text = await decrypt(cipher);
+  const data: unknown = JSON.parse(text);
+  if (!isEntryData(data)) {
+    throw new Error(`Invalid entry data for id "${id}"`);
+  }
+  return data;
 }
 
 // Добавление новой записи в дневник
-export async function addEntry(diaryId: string, data: object): Promise<string> {
+export async function addEntry(diaryId: string, data: EntryData): Promise<string> {
   // 1. Генерируем ID и сохраняем данные
   const entryId = generateId();
   await saveEntry(entryId, data);
@@ -78,8 +105,8 @@ export async function addEntry(diaryId: string, data: object): Promise<string> {
 export async function modifyEntry(
   diaryId: string,
   entryId: string,
-  updates: Record<string, any>
-) {
+  updates: Partial<EntryData>
+): Promise<void> {
   // проверяем, что такая запись есть в индексе
   const ids = await loadEntryIds(diaryId);
   if (!ids.includes(entryId)) {
@@ -87,7 +114,7 @@ export async function modifyEntry(
   }
   const existing = await loadEntry(entryId);
   if (!existing) throw new Error(`Record "${entryId}" not found`);
-  const merged = { ...existing, ...updates };
+  const merged: EntryData = { ...existing, ...updates };
   await saveEntry(entryId, merged);
 }
 
@@ -102,7 +129,7 @@ export async function deleteEntry(diaryId: string, entryId: string) {
 }
 
 // Сохранение/перезапись записи (уже есть)
-export async function saveEntry(id: string, data: object): Promise<void> {
+export async function saveEntry(id: string, data: EntryData): Promise<void> {
   const json = JSON.stringify(data);
   const cipher = await encrypt(json);
   await AsyncStorage.setItem(`record_${id}`, cipher);
