@@ -2,6 +2,11 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
+  { ignores: ['.expo/**'] },
+  {
+    files: ['**/*.d.ts'],
+    languageOptions: { parserOptions: { project: false } },
+  },
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
