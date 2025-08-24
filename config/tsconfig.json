@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     // Enable resolution of modules using the "@" prefix
-    "baseUrl": ".",
+    "baseUrl": "..",
     "paths": {
       "@/*": ["*"],
       "@screens/*": ["src/screens/*"],
@@ -25,16 +25,17 @@
     "types": ["node", "jest"]
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "../**/*.ts",
+    "../**/*.tsx",
+    "../.expo/types/**/*.ts",
+    "../expo-env.d.ts"
   ],
   "exclude": [
-    "vendor",
-    "dist",
-    "build",
-    "coverage",
-    "**/generated/**"
+    "../vendor",
+    "../dist",
+    "../build",
+    "../coverage",
+    "../**/generated/**",
+    "./**"
   ]
 }

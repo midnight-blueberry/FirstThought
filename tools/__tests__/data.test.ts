@@ -58,7 +58,7 @@ jest.mock('crypto-js', () => ({
   },
 }));
 
-import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
+import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/tools/data';
 
 describe('data helpers', () => {
   beforeEach(async () => {

@@ -3,15 +3,15 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx expo start -c",
-    "build:google-play": "npx expo prebuild && npx eas build -p android",
-    "build:testing": "eas build -p android --profile testing",
-    "build:apk": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config eslint.config.mjs",
-    "test": "jest",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "start": "BABEL_CONFIG_FILE=config/babel.config.js npx expo start -c --config config/app.json",
+    "build:google-play": "BABEL_CONFIG_FILE=config/babel.config.js npx expo prebuild --config config/app.json && BABEL_CONFIG_FILE=config/babel.config.js npx eas build -p android --config config/eas.json",
+    "build:testing": "BABEL_CONFIG_FILE=config/babel.config.js eas build -p android --profile testing --config config/eas.json",
+    "build:apk": "BABEL_CONFIG_FILE=config/babel.config.js expo run:android --config config/app.json",
+    "ios": "BABEL_CONFIG_FILE=config/babel.config.js expo run:ios --config config/app.json",
+    "web": "BABEL_CONFIG_FILE=config/babel.config.js expo start --web --config config/app.json",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config config/eslint.config.mjs",
+    "test": "jest --config config/jest.config.js",
+    "typecheck": "tsc -p config/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
