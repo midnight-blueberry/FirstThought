@@ -37,6 +37,8 @@
     "dist",
     "build",
     "coverage",
-    "**/generated/**"
+    "**/generated/**",
+    "ChatGPT/",
+    "ChatGPT.zip"
   ]
 }
