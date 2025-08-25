@@ -1,6 +1,26 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", "app", "ChatGPT/src", "ChatGPT/app", "scripts", "types"],
-  "exclude": ["node_modules", "dist", "build", ".expo", "ChatGPT/.expo", "**/*.d.ts"]
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "app/**/*",
+    "src/**/*",
+    "config/**/*",
+    "tests/**/*",
+    "eslint.config.mjs",
+    "jest.config.js",
+    "babel.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    ".expo",
+    "vendor",
+    "ChatGPT"
+  ]
 }
-
