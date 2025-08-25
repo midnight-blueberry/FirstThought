@@ -1,62 +1,43 @@
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
-import reactPlugin from "eslint-plugin-react";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
-import reactRefreshPlugin from "eslint-plugin-react-refresh";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
-const typedFiles = [
-  "src/**/*.{ts,tsx}",
-  "app/**/*.{ts,tsx}",
-  "ChatGPT/src/**/*.{ts,tsx}",
-  "ChatGPT/app/**/*.{ts,tsx}",
-];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(__dirname, '../../');
 
 export default [
   {
     ignores: [
-      "ChatGPT/**",
-      "ChatGPT.zip",
-    ],
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/.expo/**',
+      '**/vendor/**',
+      'ChatGPT/**',
+      '*.zip'
+    ]
   },
   {
-    ignores: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/.expo/**",
-      "ChatGPT/.expo/**",
-      "**/*.d.ts",
-    ],
-  },
-  {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    ...js.configs.recommended,
-  },
-  ...tseslint.configs.recommended.map((config) => ({
-    ...config,
-    files: ["**/*.{ts,tsx,js,jsx}"],
-  })),
-  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
-    ...config,
-    files: typedFiles,
+    files: ['**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
-      ...config.languageOptions,
+      parser: tsParser,
       parserOptions: {
-        ...config.languageOptions?.parserOptions,
-        project: ["./tsconfig.eslint.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
+        project: path.join(rootDir, 'src/config/tsconfig.eslint.json'),
+        tsconfigRootDir: rootDir
+      }
     },
     plugins: {
-      ...config.plugins,
-      react: reactPlugin,
-      "react-hooks": reactHooksPlugin,
-      "react-refresh": reactRefreshPlugin,
+      '@typescript-eslint': tsPlugin
     },
     rules: {
-      ...config.rules,
-      "@typescript-eslint/await-thenable": "error",
-    },
-  })),
+      '@typescript-eslint/await-thenable': 'error'
+    }
+  },
+  {
+    files: ['**/*.config.{js,cjs,mjs}', 'jest.config.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off'
+    }
+  }
 ];
-
