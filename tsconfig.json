@@ -5,7 +5,9 @@
     // Enable resolution of modules using the "@" prefix
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
+      "@/*": ["src/*"],
+      "src/*": ["src/*"],
+      "app/*": ["app/*"],
       "@screens/*": ["src/screens/*"],
       "@components/*": ["src/components/*"],
       "@constants/*": ["src/constants/*"],

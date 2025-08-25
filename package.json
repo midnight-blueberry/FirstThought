@@ -9,7 +9,7 @@
     "build:apk": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config eslint.config.mjs",
+    "lint": "npm run typecheck && eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
     "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -58,6 +58,9 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9.31.0",
     "eslint-config-expo": "~9.2.0",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
     "typescript": "~5.8.3"
   },
   "private": true
