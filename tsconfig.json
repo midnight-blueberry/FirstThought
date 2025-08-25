@@ -1,5 +1,4 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
     // Enable resolution of modules using the "@" prefix
@@ -23,8 +22,7 @@
     },
     // Allow default React imports and JSX in TypeScript files
     "esModuleInterop": true,
-    "jsx": "react-native",
-    "types": ["node", "jest"]
+    "jsx": "react-native"
   },
   "include": [
     "**/*.ts",

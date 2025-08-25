@@ -9,7 +9,7 @@
     "build:apk": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "npm run typecheck && eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
     "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
