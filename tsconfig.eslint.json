@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "app", "ChatGPT/src", "ChatGPT/app", "scripts", "types"],
+  "exclude": ["node_modules", "dist", "build", ".expo", "ChatGPT/.expo", "**/*.d.ts"]
+}
+
