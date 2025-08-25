@@ -1,15 +1,21 @@
 import React from 'react';
-import { IconButton } from '@components/ui/atoms';
-import { Drawer } from 'expo-router/drawer';
-import { DrawerActions } from '@react-navigation/native';
-import type { DrawerNavigationProp } from '@react-navigation/drawer';
-import type { ParamListBase } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Dimensions } from 'react-native';
+import { DrawerActions } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import type { DrawerScreenProps } from '@react-navigation/drawer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme } from 'styled-components/native';
-
-import CustomDrawerContent from './CustomDrawerContent';
+import { IconButton } from '@components/ui/atoms';
 import useHeaderConfig from '@hooks/useHeaderConfig';
+import HomePageScreen from '@screens/home-page';
+import SettingsScreen from '@screens/settings';
+
+import DrawerContent from './DrawerContent';
+import { DrawerIcon } from './ui/DrawerIcon';
+import { defaultDrawerScreenOptions } from './options/drawerOptions';
+import type { DrawerParamList } from './types';
+
+const Drawer = createDrawerNavigator<DrawerParamList>();
 
 type Props = {
   theme: DefaultTheme;
@@ -32,10 +38,10 @@ export default function DrawerNavigator({
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
   return (
-    <Drawer
-      initialRouteName="home-page"
+    <Drawer.Navigator
+      initialRouteName="Home"
       screenOptions={() => ({
-        headerShown: true,
+        ...defaultDrawerScreenOptions,
         drawerStyle: {
           marginTop: top,
           width: drawerWidth,
@@ -68,23 +74,23 @@ export default function DrawerNavigator({
           marginVertical: theme.margin.small,
           marginHorizontal: theme.margin.medium,
         },
-        headerTitleAlign: 'center',
         headerTitleStyle: {
           fontFamily: theme.fontName,
           fontSize: theme.fontSize.large,
           color: theme.colors.basic,
           fontWeight: theme.fontWeight,
         },
-        headerShadowVisible: false,
         headerTintColor: theme.colors.basic,
         headerStyle: baseHeaderStyle,
       })}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <DrawerContent {...props} />}
     >
       <Drawer.Screen
-        name="home-page"
-        options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
+        name="Home"
+        component={HomePageScreen}
+        options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Home'>) => ({
           title: homePageHeaderTitle,
+          drawerIcon: DrawerIcon('home'),
           headerLeft: () => (
             <IconButton
               icon="menu"
@@ -101,9 +107,11 @@ export default function DrawerNavigator({
         })}
       />
       <Drawer.Screen
-        name="settings/index"
-        options={({ navigation }: { navigation: DrawerNavigationProp<ParamListBase> }) => ({
+        name="Settings"
+        component={SettingsScreen}
+        options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Settings'>) => ({
           title: settingsPageHeaderTitle,
+          drawerIcon: DrawerIcon('settings'),
           headerLeft: () => (
             <IconButton
               icon="chevron-back"
@@ -118,6 +126,6 @@ export default function DrawerNavigator({
           },
         })}
       />
-    </Drawer>
+    </Drawer.Navigator>
   );
 }
