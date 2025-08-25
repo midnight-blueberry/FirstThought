@@ -299,6 +299,11 @@ export const InputField = forwardRef<TextInput, InputFieldProps>(
 
     const helper = !hasError ? helperText ?? caption : undefined;
     const errorText = hasError ? errorTextProp ?? '' : undefined;
+    const accessibilityHint = hasError
+      ? typeof errorTextProp === 'string' && errorTextProp.length > 0
+        ? errorTextProp
+        : 'Поле заполнено некорректно'
+      : undefined;
 
     return (
       <View>
@@ -332,7 +337,7 @@ export const InputField = forwardRef<TextInput, InputFieldProps>(
             editable={editable}
             testID={testID}
             accessibilityLabel={label}
-            accessibilityState={errorText ? { invalid: true } : undefined}
+            accessibilityHint={accessibilityHint}
             underlineColorAndroid="transparent"
             {...rest}
           />
@@ -350,5 +355,4 @@ export const InputField = forwardRef<TextInput, InputFieldProps>(
   },
 );
 
-export type { InputFieldProps };
 export default InputField;
