@@ -14,6 +14,12 @@ const typedFiles = [
 export default [
   {
     ignores: [
+      "ChatGPT/**",
+      "ChatGPT.zip",
+    ],
+  },
+  {
+    ignores: [
       "**/node_modules/**",
       "**/dist/**",
       "**/build/**",
