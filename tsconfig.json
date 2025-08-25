@@ -33,12 +33,13 @@
     "expo-env.d.ts"
   ],
   "exclude": [
+    "node_modules",
     "vendor",
     "dist",
     "build",
     "coverage",
     "**/generated/**",
-    "ChatGPT/",
+    "ChatGPT",
     "ChatGPT.zip"
   ]
 }
