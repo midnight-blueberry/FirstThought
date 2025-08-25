@@ -1,1 +1,1 @@
-export { default } from 'src/screens/home-page';
+export { default } from '@screens/home-page';

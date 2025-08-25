@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
-import Section from './settings-section';
+import Section from '@components/ui/organisms/settings-section';
 
 interface PreviewNoteProps {
   noteTextAlign: DefaultTheme['noteTextAlign'];

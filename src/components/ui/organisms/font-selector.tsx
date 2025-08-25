@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import type { DefaultTheme } from 'styled-components/native';
-import Section from './settings-section';
+import Section from '@components/ui/organisms/settings-section';
 import { SelectableRow } from '@components/ui/molecules';
 import { fonts, getFontFamily } from '@constants/Fonts';
 import type { FontSelectorProps } from '@types';

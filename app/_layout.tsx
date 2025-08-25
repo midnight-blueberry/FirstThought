@@ -1,1 +1,1 @@
-export { default } from 'src/screens/root-layout';
+export { default } from '@screens/root-layout';

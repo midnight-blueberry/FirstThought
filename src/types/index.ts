@@ -1,2 +1,2 @@
-export * from './diary';
-export * from './settings';
+export * from '@types/diary';
+export * from '@types/settings';
