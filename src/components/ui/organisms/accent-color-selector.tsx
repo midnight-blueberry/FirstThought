@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { SelectableRow } from '@components/ui/molecules';
-import Section from './settings-section';
+import Section from '@components/ui/organisms/settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@types';
 

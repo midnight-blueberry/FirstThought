@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing } from 'react-native';
-import IconButton from './icon-button';
+import IconButton from '@components/ui/atoms/icon-button';
 
 interface SaveIconProps {
   visible?: boolean;

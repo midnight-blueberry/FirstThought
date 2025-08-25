@@ -14,7 +14,7 @@ import { getBaseFontName, calcFontSizeLevel } from '@utils/font';
 import { getFontByName, hasMultipleWeights } from '@utils/fontHelpers';
 import { clampLevel, resolveOverlayColor } from '@utils/theme';
 import type { SectionPropsMap } from '@types';
-import SettingsContent from './SettingsContent';
+import SettingsContent from '@components/pages/settings/SettingsContent';
 
 
 export default function SettingsContainer() {

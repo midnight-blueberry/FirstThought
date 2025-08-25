@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
-import IconButton from './icon-button';
+import IconButton from '@components/ui/atoms/icon-button';
 
 interface SelectorRowProps {
   onIncrease?: () => void;

@@ -6,7 +6,7 @@ export type IconSizeToken = {
   xlarge: number;
 };
 
-import { clampLevel } from './theme';
+import { clampLevel } from '@utils/theme';
 
 export function getBaseFontName(themeFontName: string): string {
   return themeFontName.replace(/_\d+$/, '').replace(/_/g, ' ');

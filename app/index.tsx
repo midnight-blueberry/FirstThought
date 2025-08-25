@@ -1,1 +1,1 @@
-export { default } from 'src/screens/index';
+export { default } from '@screens/index';

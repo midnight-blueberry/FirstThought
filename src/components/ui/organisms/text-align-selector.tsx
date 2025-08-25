@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import Section from './settings-section';
+import Section from '@components/ui/organisms/settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
 
