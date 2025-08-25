@@ -1,117 +1,354 @@
- 
-import React, { useMemo, useState } from 'react';
-import { LayoutChangeEvent, TextInputProps } from 'react-native';
-import Svg, { Rect } from 'react-native-svg';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  KeyboardTypeOptions,
+  ReturnKeyTypeOptions,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import styled, { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
+import { AppText } from '@components/ui/atoms';
+import type { DefaultTheme } from 'styled-components/native';
 
-const FlattenRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  margin-left: ${({ theme }: { theme: DefaultTheme }) => theme.margin.xlarge}px;
-`;
+export type InputFieldProps = Omit<
+  TextInputProps,
+  | 'onChangeText'
+  | 'value'
+  | 'defaultValue'
+  | 'onSubmitEditing'
+  | 'placeholder'
+  | 'autoCapitalize'
+  | 'keyboardType'
+  | 'returnKeyType'
+  | 'secureTextEntry'
+  | 'editable'
+  | 'testID'
+> & {
+  value?: string;
+  defaultValue?: string;
+  onChangeText?: (text: string) => void;
+  onSubmitEditing?: () => void;
+  placeholder?: string;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?: KeyboardTypeOptions;
+  returnKeyType?: ReturnKeyTypeOptions;
+  secureTextEntry?: boolean;
+  editable?: boolean;
+  testID?: string;
 
-const Container = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-  padding-vertical: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.padding.small + 2}px;
-  padding-left: 12px;
-  border-radius: ${({ theme }: { theme: DefaultTheme }) => theme.borderRadius}px;
-  overflow: hidden;
-`;
+  label?: string;
+  helperText?: string;
+  errorText?: string;
 
-const BorderSvg: React.FC<{ w: number; h: number; bw: number; r: number; color: string }> = ({ w, h, bw, r, color }) => {
-  // полпикселя внутрь, чтобы штрих не обрезался и не давал субпикселей
-  const half = bw / 2;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'filled' | 'outline' | 'ghost';
+  leftAccessory?:
+    | React.ReactNode
+    | ((state: { focused: boolean; value: string }) => React.ReactNode);
+  rightAccessory?:
+    | React.ReactNode
+    | ((state: { focused: boolean; value: string }) => React.ReactNode);
+  onClear?: () => void;
+
+  /** @deprecated use leftAccessory */
+  leftIconName?: string;
+  /** @deprecated use errorText */
+  error?: boolean;
+  /** @deprecated use helperText */
+  caption?: string;
+};
+
+const Label: React.FC<{ text: string }> = ({ text }) => {
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        text: { marginBottom: theme.margin.small },
+      }),
+    [theme],
+  );
   return (
-    <Svg
-      pointerEvents="none"
-      style={{ position: 'absolute', left: 0, top: 0 }}
-      width={w}
-      height={h}
-    >
-      <Rect
-        x={half}
-        y={half}
-        width={w - bw}
-        height={h - bw}
-        rx={Math.round(r)}
-        ry={Math.round(r)}
-        stroke={color}
-        strokeWidth={bw}
-        fill="none"
-        vectorEffect="non-scaling-stroke"
-      />
-    </Svg>
+    <AppText variant="small" style={styles.text}>
+      {text}
+    </AppText>
   );
 };
 
-const StyledInput = styled.TextInput.attrs(({ theme }: { theme: DefaultTheme }) => ({
-  placeholderTextColor: theme.colors.disabled,
-  includeFontPadding: false,
-  underlineColorAndroid: 'transparent',
-}))`
-  flex: 1;
-  text-align-vertical: center;
-  padding-vertical: 0px;
-  font-family: ${({ theme }: { theme: DefaultTheme }) => theme.fontName};
-  font-weight: ${({ theme }: { theme: DefaultTheme }) => theme.fontWeight};
-  font-size: ${({ theme }: { theme: DefaultTheme }) => theme.fontSize.medium}px;
-  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.basic};
-`;
-
-const SearchButton = styled.TouchableOpacity`
-  padding-left: 8px;
-  padding-right: 12px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const InputField: React.FC<TextInputProps> = (props) => {
-  const [value, setValue] = useState<string>('');
-  const [w, setW] = useState(0);
+const Caption: React.FC<{ text: string }> = ({ text }) => {
   const theme = useTheme();
-
-  const FIELD_H = useMemo(() => {
-    const h =
-      theme.iconSize.small +
-      (theme.padding.small + 2) * 2 +
-      theme.borderWidth.medium * 2 +
-      4;
-    return Math.round(h);
-  }, [theme]);
-
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        text: { marginTop: theme.margin.small },
+      }),
+    [theme],
+  );
   return (
-    <FlattenRow>
-      <Container
-        onLayout={(e: LayoutChangeEvent) => setW(Math.round(e.nativeEvent.layout.width))}
-        style={{ height: FIELD_H }}
-      >
-        {w > 0 && (
-          <BorderSvg
-            w={w}
-            h={FIELD_H}
-            bw={theme.borderWidth.medium}
-            r={theme.borderRadius}
+    <AppText variant="small" color="disabled" style={styles.text}>
+      {text}
+    </AppText>
+  );
+};
+
+const ErrorMessage: React.FC<{ text: string }> = ({ text }) => {
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        text: { marginTop: theme.margin.small },
+      }),
+    [theme],
+  );
+  return (
+    <AppText variant="small" color="accent" style={styles.text}>
+      {text}
+    </AppText>
+  );
+};
+
+const FieldContainer: React.FC<{ style?: any; children: React.ReactNode }> = ({
+  style,
+  children,
+}) => {
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: theme.borderRadius,
+          borderWidth: theme.borderWidth.small,
+          borderColor: theme.colors.basic,
+        },
+      }),
+    [theme],
+  );
+  return <View style={[styles.container, style]}>{children}</View>;
+};
+
+const createStyles = (theme: DefaultTheme) => {
+  const base = StyleSheet.create({
+    textInput: {
+      flex: 1,
+      paddingVertical: 0,
+      color: theme.colors.basic,
+      fontFamily: theme.fontName,
+      fontWeight: theme.fontWeight,
+      includeFontPadding: false,
+    },
+    leftAccessory: {
+      marginRight: theme.margin.small,
+    },
+    rightAccessory: {
+      marginLeft: theme.margin.small,
+    },
+  });
+
+  const size = {
+    sm: {
+      height: theme.buttonSizes.small,
+      paddingHorizontal: theme.padding.medium,
+    },
+    md: {
+      height: theme.buttonSizes.medium,
+      paddingHorizontal: theme.padding.medium,
+    },
+    lg: {
+      height: theme.buttonSizes.large,
+      paddingHorizontal: theme.padding.large,
+    },
+  } as const;
+
+  const sizeInput = {
+    sm: { fontSize: theme.fontSize.small },
+    md: { fontSize: theme.fontSize.medium },
+    lg: { fontSize: theme.fontSize.large },
+  } as const;
+
+  const variant = {
+    filled: { backgroundColor: theme.colors.disabled, borderWidth: 0 },
+    outline: { backgroundColor: 'transparent' },
+    ghost: { backgroundColor: 'transparent', borderWidth: 0 },
+  } as const;
+
+  const focused = { borderColor: theme.colors.accent };
+  const error = { borderColor: theme.colors.accent };
+  const disabled = {
+    backgroundColor: theme.colors.disabled,
+    borderColor: theme.colors.disabled,
+  };
+
+  return { ...base, size, sizeInput, variant, focused, error, disabled };
+};
+
+export const InputField = forwardRef<TextInput, InputFieldProps>(
+  (
+    {
+      value: valueProp,
+      defaultValue = '',
+      onChangeText,
+      onSubmitEditing,
+      placeholder,
+      autoCapitalize,
+      keyboardType,
+      returnKeyType,
+      secureTextEntry,
+      editable = true,
+      testID,
+      label,
+      helperText,
+      errorText: errorTextProp,
+      size = 'md',
+      variant = 'outline',
+      leftAccessory,
+      rightAccessory,
+      onClear,
+      leftIconName,
+      error,
+      caption,
+      ...rest
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
+    const styles = useMemo(() => createStyles(theme), [theme]);
+
+    const inputRef = useRef<TextInput>(null);
+    useImperativeHandle(ref, () => inputRef.current as TextInput);
+
+    const isControlled = valueProp !== undefined;
+    const [innerValue, setInnerValue] = useState<string>(defaultValue);
+    const value = isControlled ? valueProp ?? '' : innerValue;
+
+    const handleChangeText = (text: string) => {
+      if (!isControlled) {
+        setInnerValue(text);
+      }
+      onChangeText?.(text);
+    };
+
+    const [focused, setFocused] = useState(false);
+    const [isSecure, setIsSecure] = useState(!!secureTextEntry);
+    const hasError = !!errorTextProp || error;
+
+    const state = { focused, value };
+
+    let leftNode: React.ReactNode | undefined =
+      typeof leftAccessory === 'function'
+        ? leftAccessory(state)
+        : leftAccessory;
+    if (!leftNode && leftIconName) {
+      leftNode = (
+        <Ionicons
+          name={leftIconName}
+          size={theme.iconSize.small}
+          color={theme.colors.basic}
+        />
+      );
+    }
+
+    let rightNode: React.ReactNode | undefined;
+    if (onClear && value.length > 0) {
+      rightNode = (
+        <TouchableOpacity
+          onPress={() => {
+            if (!isControlled) {
+              setInnerValue('');
+            }
+            inputRef.current?.clear();
+            onClear();
+          }}
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name="close"
+            size={theme.iconSize.small}
+            color={theme.colors.disabled}
+          />
+        </TouchableOpacity>
+      );
+    } else if (rightAccessory) {
+      rightNode =
+        typeof rightAccessory === 'function'
+          ? rightAccessory(state)
+          : rightAccessory;
+    } else if (secureTextEntry) {
+      rightNode = (
+        <TouchableOpacity
+          onPress={() => setIsSecure(prev => !prev)}
+          accessibilityRole="button"
+        >
+          <Ionicons
+            name={isSecure ? 'eye-off' : 'eye'}
+            size={theme.iconSize.small}
             color={theme.colors.basic}
           />
-        )}
-        <StyledInput
-          value={value}
-          onChangeText={setValue}
-          style={{ height: FIELD_H }}
-          {...props}
-        />
-        <SearchButton>
-          <Ionicons name="search" size={theme.iconSize.small} color={theme.colors.basic} />
-        </SearchButton>
-      </Container>
-    </FlattenRow>
-  );
-};
+        </TouchableOpacity>
+      );
+    }
 
+    const helper = !hasError ? helperText ?? caption : undefined;
+    const errorText = hasError ? errorTextProp ?? '' : undefined;
+
+    return (
+      <View>
+        {label ? <Label text={label} /> : null}
+        <FieldContainer
+          style={[
+            styles.size[size],
+            styles.variant[variant],
+            focused && styles.focused,
+            hasError && styles.error,
+            !editable && styles.disabled,
+          ]}
+        >
+          {leftNode ? (
+            <View style={styles.leftAccessory}>{leftNode}</View>
+          ) : null}
+          <TextInput
+            ref={inputRef}
+            style={[styles.textInput, styles.sizeInput[size]]}
+            value={value}
+            onChangeText={handleChangeText}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onSubmitEditing={onSubmitEditing}
+            placeholder={placeholder}
+            placeholderTextColor={theme.colors.disabled}
+            autoCapitalize={autoCapitalize}
+            keyboardType={keyboardType}
+            returnKeyType={returnKeyType}
+            secureTextEntry={isSecure}
+            editable={editable}
+            testID={testID}
+            accessibilityLabel={label}
+            accessibilityState={errorText ? { invalid: true } : undefined}
+            underlineColorAndroid="transparent"
+            {...rest}
+          />
+          {rightNode ? (
+            <View style={styles.rightAccessory}>{rightNode}</View>
+          ) : null}
+        </FieldContainer>
+        {errorText ? (
+          <ErrorMessage text={errorText} />
+        ) : helper ? (
+          <Caption text={helper} />
+        ) : null}
+      </View>
+    );
+  },
+);
+
+export type { InputFieldProps };
 export default InputField;
