@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
 import React from 'react';
 
 /**
@@ -15,5 +14,3 @@ if (typeof (React as any).useInsertionEffect === 'function') {
 }
 
 export {}; // ensure this file is treated as a module
-
-/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
