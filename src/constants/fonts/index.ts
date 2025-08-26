@@ -5,20 +5,19 @@ export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
 
 import type { FontFamily, FontWeight, FontSource } from './types';
-import { FAMILIES } from './families';
 import { FONT_VARIANTS } from './variants';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
 
 const DEFAULT_FONT_SIZES = {
-  [FAMILIES.Bad_Script]: 22,
-  [FAMILIES.Comfortaa]: 18,
-  [FAMILIES.Lora]: 18,
-  [FAMILIES.Montserrat]: 18,
-  [FAMILIES.Nata_Sans]: 18,
-  [FAMILIES.PT_Sans]: 18,
-  [FAMILIES.Raleway]: 18,
-  [FAMILIES.Roboto_Condensed]: 18,
-  [FAMILIES.Roboto_Slab]: 18,
+  Bad_Script: 22,
+  Comfortaa: 18,
+  Lora: 18,
+  Montserrat: 18,
+  Nata_Sans: 18,
+  PT_Sans: 18,
+  Raleway: 18,
+  Roboto_Condensed: 18,
+  Roboto_Slab: 18,
 } as const satisfies Record<FontFamily, number>;
 
 export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => {
@@ -27,13 +26,14 @@ export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => 
   const defaultWeight = weights.includes('500' as FontWeight)
     ? ('500' as FontWeight)
     : weights[0];
+  const pairs = weights
+    .filter((w): w is keyof typeof variants => w in variants && !!variants[w]?.normal)
+    .map((w) => [w, variants[w]!.normal]);
   return {
     name: family.replace(/_/g, ' '),
     family,
     weights: weights.sort(),
-    files: Object.fromEntries(
-      weights.map(w => [w, variants[w].normal])
-    ) as Record<FontWeight, FontSource>,
+    files: Object.fromEntries(pairs) as Record<FontWeight, FontSource>,
     defaultSize: DEFAULT_FONT_SIZES[family],
     defaultWeight,
   };
