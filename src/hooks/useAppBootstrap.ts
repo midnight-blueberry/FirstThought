@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
-import { fonts, getFontFamily } from '@constants/Fonts';
+import { fonts, getFontFamily } from '@constants/fonts';
 import { loadSettings } from '@storage/settings';
 import { buildTheme, themes } from '@theme/buildTheme';
 

@@ -1,6 +1,6 @@
 import React,{useContext,useEffect,useMemo,useState} from 'react';
 import {SaveIcon} from '@components/ui/atoms';
-import {fonts} from '@constants/Fonts';
+import {fonts} from '@constants/fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import {ThemeContext} from '@store/ThemeContext';
 import useThemeSaver from '@hooks/useThemeSaver';

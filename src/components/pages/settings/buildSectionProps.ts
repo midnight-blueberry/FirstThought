@@ -1,7 +1,7 @@
 import type { SectionPropsMap } from '@types';
 import type { DefaultTheme } from 'styled-components/native';
 import { getFontByName, hasMultipleWeights } from '@utils/fontHelpers';
-import { fonts } from '@constants/Fonts';
+import { fonts } from '@constants/fonts';
 
 export interface BuildArgs {
   selectedThemeName: string;
