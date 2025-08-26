@@ -1,179 +1,63 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, InteractionManager } from 'react-native';
-import { useTheme } from 'styled-components/native';
-import type { DefaultTheme } from 'styled-components/native';
-import { buildTheme } from '@theme/buildTheme';
-import { saveSettings } from '@storage/settings';
-import { sizes } from '@constants/theme';
-import { nextIconSize } from '@utils/font';
-import { clampLevel } from '@utils/theme';
-import type { SavedSettingsPatch } from '@types';
+import { useEffect, useRef, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type Params = {
-  selectedThemeName: string;
-  selectedAccentColor: string;
-  selectedFontName: string;
-  fontWeight: DefaultTheme['fontWeight'];
-  fontSizeLevel: number;
-  noteTextAlign: DefaultTheme['noteTextAlign'];
-  setTheme: React.Dispatch<React.SetStateAction<DefaultTheme>>;
-};
+export type ThemeName = 'light' | 'dark' | 'system';
 
-export default function useThemeSaver({
-  selectedThemeName,
-  selectedAccentColor,
-  selectedFontName,
-  fontWeight,
-  fontSizeLevel,
-  noteTextAlign,
-  setTheme,
-}: Params) {
-  const theme = useTheme();
-  const [ , setIsSaved ] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+const KEY = 'ft:theme';
 
-  const showSaveIcon = useCallback(() => {
-    setIsSaved(true);
-    fadeAnim.stopAnimation();
-    fadeAnim.setValue(0);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 400,
-      easing: Easing.inOut(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-    }
-    saveTimerRef.current = setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: true,
-      }).start(() => setIsSaved(false));
-    }, 3000);
-  }, [fadeAnim]);
-
-  const hideSaveIcon = useCallback(() => {
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = null;
-    }
-    fadeAnim.stopAnimation();
-    fadeAnim.setValue(0);
-    setIsSaved(false);
-  }, [fadeAnim]);
-
-  const overlayAnim = useRef(new Animated.Value(0)).current;
-  const [ overlayVisible, setOverlayVisible ] = useState(false);
-  const [ overlayColor, setOverlayColor ] = useState(theme.colors.background);
-  const [ overlayBlocks, setOverlayBlocks ] = useState(false);
-  const overlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const saveAndApply = useCallback((patch: SavedSettingsPatch) => {
-    const nextSaved = {
-      themeName:        patch.themeName        ?? selectedThemeName,
-      accentColor:      patch.accentColor      ?? selectedAccentColor,
-      fontName:         patch.fontName         ?? selectedFontName,
-      fontWeight:       patch.fontWeight       ?? fontWeight,
-      fontSizeLevel:    clampLevel(patch.fontSizeLevel ?? fontSizeLevel),
-      iconSize:         patch.iconSize         ?? ((): DefaultTheme['iconSize'] => {
-        const level = clampLevel(patch.fontSizeLevel ?? fontSizeLevel);
-        return nextIconSize(level, sizes.iconSize);
-      })(),
-      noteTextAlign:    patch.noteTextAlign    ?? noteTextAlign,
-    };
-
-    InteractionManager.runAfterInteractions(() => {
-      setTheme(buildTheme(nextSaved));
-    });
-    void saveSettings(nextSaved);
-  }, [selectedThemeName, selectedAccentColor, selectedFontName, fontWeight, fontSizeLevel, noteTextAlign, setTheme]);
-
-  const runWithOverlay = useCallback(
-    (action: () => void, color?: string) => {
-      setOverlayColor(color ?? theme.colors.background);
-
-      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
-      if (overlayTimerRef.current) { clearTimeout(overlayTimerRef.current); overlayTimerRef.current = null; }
-
-      overlayAnim.stopAnimation();
-      fadeAnim.stopAnimation();
-
-      setOverlayVisible(true);
-      setOverlayBlocks(true);
-      overlayAnim.setValue(0);
-
-      const startFadeOut = () => {
-        setOverlayBlocks(false);
-        overlayTimerRef.current = setTimeout(() => {
-          Animated.timing(overlayAnim, {
-            toValue: 0,
-            duration: 700,
-            useNativeDriver: true,
-          }).start(() => {
-            setOverlayVisible(false);
-            overlayTimerRef.current = null;
-            showSaveIcon();
-          });
-        }, 100);
-      };
-
-      hideSaveIcon();
-      Animated.timing(overlayAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }).start(() => {
-        action();
-        startFadeOut();
-      });
-    },
-    [overlayAnim, fadeAnim, theme.colors.background, hideSaveIcon, showSaveIcon]
-  );
-
-  const saveWithFeedback = useCallback((withOverlay: boolean, color?: string) => {
-    const performSave = () => {
-      saveAndApply({});
-    };
-
-    if (withOverlay) {
-      runWithOverlay(performSave, color);
-    } else {
-      performSave();
-      showSaveIcon();
-    }
-  }, [runWithOverlay, saveAndApply, showSaveIcon]);
-
-  const saveWithFeedbackRef = useRef<(withOverlay: boolean, color?: string) => void>(saveWithFeedback);
-  useEffect(() => {
-    saveWithFeedbackRef.current = saveWithFeedback;
-  }, [saveWithFeedback]);
+/**
+ * Saves current theme to AsyncStorage when `theme` changes.
+ * Debounced and avoids redundant writes.
+ */
+export function useThemeSaver(theme: ThemeName): { saving: boolean; error: string | null } {
+  const lastSavedRef = useRef<ThemeName | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-      }
-      if (overlayTimerRef.current) {
-        clearTimeout(overlayTimerRef.current);
-      }
+      mountedRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
-  return {
-    saveAndApply,
-    saveWithFeedback,
-    runWithOverlay,
-    showSaveIcon,
-    hideSaveIcon,
-    fadeAnim,
-    overlayAnim,
-    overlayVisible,
-    overlayColor,
-    overlayBlocks,
-    saveWithFeedbackRef,
-  };
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (lastSavedRef.current === theme) return;
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      void (async () => {
+        try {
+          if (lastSavedRef.current === null) {
+            const stored = await AsyncStorage.getItem(KEY);
+            if (stored === 'light' || stored === 'dark' || stored === 'system') {
+              lastSavedRef.current = stored;
+            }
+          }
+          if (lastSavedRef.current !== theme) {
+            if (mountedRef.current) {
+              setSaving(true);
+              setError(null);
+            }
+            await AsyncStorage.setItem(KEY, theme);
+            lastSavedRef.current = theme;
+          }
+        } catch (e) {
+          if (mountedRef.current) {
+            setError(e instanceof Error ? e.message : String(e));
+          }
+        } finally {
+          if (mountedRef.current) setSaving(false);
+        }
+      })();
+    }, 250);
+  }, [theme]);
+
+  return { saving, error };
 }
