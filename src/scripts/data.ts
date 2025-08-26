@@ -76,19 +76,19 @@ export async function deleteDiary(id: string) {
 /** Работа со списком записей конкретного дневника **/
 
 // Чтение одной записи
-export async function loadEntry(id: string): Promise<EntryData | null> {
+export async function loadEntry<T extends EntryData>(id: string): Promise<T | null> {
   const cipher = await AsyncStorage.getItem(`record_${id}`);
   if (!cipher) return null;
   const text = await decrypt(cipher);
-  const data: unknown = JSON.parse(text);
+  const data = JSON.parse(text) as unknown;
   if (!isEntryData(data)) {
     throw new Error(`Invalid entry data for id "${id}"`);
   }
-  return data;
+  return data as T;
 }
 
 // Добавление новой записи в дневник
-export async function addEntry(diaryId: string, data: EntryData): Promise<string> {
+export async function addEntry<T extends EntryData>(diaryId: string, data: T): Promise<string> {
   // 1. Генерируем ID и сохраняем данные
   const entryId = generateId();
   await saveEntry(entryId, data);
@@ -102,20 +102,20 @@ export async function addEntry(diaryId: string, data: EntryData): Promise<string
 }
 
 // Модификация существующей записи
-export async function modifyEntry(
+export async function modifyEntry<T extends EntryData>(
   diaryId: string,
   entryId: string,
-  updates: Partial<EntryData>
+  updates: Partial<T>
 ): Promise<void> {
   // проверяем, что такая запись есть в индексе
   const ids = await loadEntryIds(diaryId);
   if (!ids.includes(entryId)) {
     throw new Error(`Entry "${entryId}" not found in diary "${diaryId}"`);
   }
-  const existing = await loadEntry(entryId);
+  const existing = await loadEntry<T>(entryId);
   if (!existing) throw new Error(`Record "${entryId}" not found`);
-  const merged: EntryData = { ...existing, ...updates };
-  await saveEntry(entryId, merged);
+  const merged: T = { ...existing, ...updates };
+  await saveEntry<T>(entryId, merged);
 }
 
 // Удаление записи из дневника
@@ -129,7 +129,7 @@ export async function deleteEntry(diaryId: string, entryId: string) {
 }
 
 // Сохранение/перезапись записи (уже есть)
-export async function saveEntry(id: string, data: EntryData): Promise<void> {
+export async function saveEntry<T extends EntryData>(id: string, data: T): Promise<void> {
   const json = JSON.stringify(data);
   const cipher = await encrypt(json);
   await AsyncStorage.setItem(`record_${id}`, cipher);

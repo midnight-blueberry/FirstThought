@@ -1,63 +1,80 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { SavedSettingsPatch, SavedSettings } from '@types';
+import type { DefaultTheme } from 'styled-components/native';
 
-export type ThemeName = 'light' | 'dark' | 'system';
+export interface UseThemeSaverArgs {
+  selectedThemeName: string;
+  selectedAccentColor: string;
+  selectedFontName: string;
+  fontWeight: DefaultTheme['fontWeight'];
+  fontSizeLevel: number;
+  noteTextAlign: DefaultTheme['noteTextAlign'];
+  setTheme: Dispatch<SetStateAction<DefaultTheme>>;
+}
 
-const KEY = 'ft:theme';
+const SETTINGS_KEY = 'ft:settings';
 
-/**
- * Saves current theme to AsyncStorage when `theme` changes.
- * Debounced and avoids redundant writes.
- */
-export function useThemeSaver(theme: ThemeName): { saving: boolean; error: string | null } {
-  const lastSavedRef = useRef<ThemeName | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mountedRef = useRef(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function useThemeSaver({
+  selectedThemeName,
+  selectedAccentColor,
+  selectedFontName,
+  fontWeight,
+  fontSizeLevel,
+  noteTextAlign,
+  setTheme,
+}: UseThemeSaverArgs) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const overlayAnim = useRef(new Animated.Value(0)).current;
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [overlayColor, setOverlayColor] = useState<string>('transparent');
+  const [overlayBlocks, setOverlayBlocks] = useState(false);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
+  const saveAndApply = useCallback(
+    (patch: SavedSettingsPatch) => {
+      const payload: SavedSettings = {
+        themeName: selectedThemeName,
+        accentColor: selectedAccentColor,
+        fontName: selectedFontName,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign,
+        ...patch,
+      };
+      void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(payload));
+      setTheme(prev => ({ ...prev, ...patch }));
+    },
+    [
+      selectedThemeName,
+      selectedAccentColor,
+      selectedFontName,
+      fontWeight,
+      fontSizeLevel,
+      noteTextAlign,
+      setTheme,
+    ],
+  );
+
+  const runWithOverlay = useCallback((fn: () => void, color?: string) => {
+    setOverlayBlocks(true);
+    setOverlayVisible(true);
+    setOverlayColor(color ?? 'transparent');
+    fn();
+    setOverlayVisible(false);
+    setOverlayBlocks(false);
   }, []);
 
-  useEffect(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    if (lastSavedRef.current === theme) return;
-    timerRef.current = setTimeout(() => {
-      timerRef.current = null;
-      void (async () => {
-        try {
-          if (lastSavedRef.current === null) {
-            const stored = await AsyncStorage.getItem(KEY);
-            if (stored === 'light' || stored === 'dark' || stored === 'system') {
-              lastSavedRef.current = stored;
-            }
-          }
-          if (lastSavedRef.current !== theme) {
-            if (mountedRef.current) {
-              setSaving(true);
-              setError(null);
-            }
-            await AsyncStorage.setItem(KEY, theme);
-            lastSavedRef.current = theme;
-          }
-        } catch (e) {
-          if (mountedRef.current) {
-            setError(e instanceof Error ? e.message : String(e));
-          }
-        } finally {
-          if (mountedRef.current) setSaving(false);
-        }
-      })();
-    }, 250);
-  }, [theme]);
-
-  return { saving, error };
+  return {
+    saveAndApply,
+    runWithOverlay,
+    fadeAnim,
+    overlayAnim,
+    overlayVisible,
+    overlayColor,
+    overlayBlocks,
+  };
 }
+
+export default useThemeSaver;
+
