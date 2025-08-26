@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { generateId, encrypt, decrypt } from '@utils/crypto';
 import { loadEntryIds, saveEntryIds, entryIdsKey } from '@utils/storage';
-import { isDiaryMeta, isEntryData } from '@/types/diary';
-import type { DiaryMeta, EntryData } from '@/types/diary';
+import { isDiaryMeta, isEntryData } from '@/types/data';
+import type { DiaryMeta, EntryData } from '@/types/data';
 
 // Ключи для индексов
 const DIARIES_KEY = '__encrypted_diaries__'; // список ваших дневников
