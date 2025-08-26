@@ -1,4 +1,6 @@
-import { getFontByName, adjustWeight } from '@utils/fontHelpers';
+import type { FontFamily, FontWeight, FontStyle, FontSource } from './types';
+import { FAMILIES } from './families';
+
 import BadScriptRegular from '@assets/fonts/Bad_Script/static/BadScript-Regular.ttf';
 import ComfortaaLight from '@assets/fonts/Comfortaa/static/Comfortaa-Light.ttf';
 import ComfortaaRegular from '@assets/fonts/Comfortaa/static/Comfortaa-Regular.ttf';
@@ -37,114 +39,63 @@ import RobotoSlabMedium from '@assets/fonts/Roboto_Slab/static/RobotoSlab-Medium
 import RobotoSlabSemiBold from '@assets/fonts/Roboto_Slab/static/RobotoSlab-SemiBold.ttf';
 import RobotoSlabBold from '@assets/fonts/Roboto_Slab/static/RobotoSlab-Bold.ttf';
 
-export const fontData = {
-  Bad_Script: {
-    files: {
-      '400': BadScriptRegular,
-    },
-    defaultSize: 22,
+export const FONT_VARIANTS = {
+  [FAMILIES.Bad_Script]: {
+    '400': { normal: BadScriptRegular },
   },
-  Comfortaa: {
-    files: {
-      '300': ComfortaaLight,
-      '400': ComfortaaRegular,
-      '500': ComfortaaMedium,
-      '600': ComfortaaSemiBold,
-      '700': ComfortaaBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Comfortaa]: {
+    '300': { normal: ComfortaaLight },
+    '400': { normal: ComfortaaRegular },
+    '500': { normal: ComfortaaMedium },
+    '600': { normal: ComfortaaSemiBold },
+    '700': { normal: ComfortaaBold },
   },
-  Lora: {
-    files: {
-      '400': LoraRegular,
-      '500': LoraMedium,
-      '600': LoraSemiBold,
-      '700': LoraBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Lora]: {
+    '400': { normal: LoraRegular },
+    '500': { normal: LoraMedium },
+    '600': { normal: LoraSemiBold },
+    '700': { normal: LoraBold },
   },
-  Montserrat: {
-    files: {
-      '300': MontserratLight,
-      '400': MontserratRegular,
-      '500': MontserratMedium,
-      '600': MontserratSemiBold,
-      '700': MontserratBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Montserrat]: {
+    '300': { normal: MontserratLight },
+    '400': { normal: MontserratRegular },
+    '500': { normal: MontserratMedium },
+    '600': { normal: MontserratSemiBold },
+    '700': { normal: MontserratBold },
   },
-  Nata_Sans: {
-    files: {
-      '300': NataSansLight,
-      '400': NataSansRegular,
-      '500': NataSansMedium,
-      '600': NataSansSemiBold,
-      '700': NataSansBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Nata_Sans]: {
+    '300': { normal: NataSansLight },
+    '400': { normal: NataSansRegular },
+    '500': { normal: NataSansMedium },
+    '600': { normal: NataSansSemiBold },
+    '700': { normal: NataSansBold },
   },
-  PT_Sans: {
-    files: {
-      '400': PTSansRegular,
-      '700': PTSansBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.PT_Sans]: {
+    '400': { normal: PTSansRegular },
+    '700': { normal: PTSansBold },
   },
-  Raleway: {
-    files: {
-      '300': RalewayLight,
-      '400': RalewayRegular,
-      '500': RalewayMedium,
-      '600': RalewaySemiBold,
-      '700': RalewayBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Raleway]: {
+    '300': { normal: RalewayLight },
+    '400': { normal: RalewayRegular },
+    '500': { normal: RalewayMedium },
+    '600': { normal: RalewaySemiBold },
+    '700': { normal: RalewayBold },
   },
-  Roboto_Condensed: {
-    files: {
-      '300': RobotoCondensedLight,
-      '400': RobotoCondensedRegular,
-      '500': RobotoCondensedMedium,
-      '600': RobotoCondensedSemiBold,
-      '700': RobotoCondensedBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Roboto_Condensed]: {
+    '300': { normal: RobotoCondensedLight },
+    '400': { normal: RobotoCondensedRegular },
+    '500': { normal: RobotoCondensedMedium },
+    '600': { normal: RobotoCondensedSemiBold },
+    '700': { normal: RobotoCondensedBold },
   },
-  Roboto_Slab: {
-    files: {
-      '300': RobotoSlabLight,
-      '400': RobotoSlabRegular,
-      '500': RobotoSlabMedium,
-      '600': RobotoSlabSemiBold,
-      '700': RobotoSlabBold,
-    },
-    defaultSize: 18,
+  [FAMILIES.Roboto_Slab]: {
+    '300': { normal: RobotoSlabLight },
+    '400': { normal: RobotoSlabRegular },
+    '500': { normal: RobotoSlabMedium },
+    '600': { normal: RobotoSlabSemiBold },
+    '700': { normal: RobotoSlabBold },
   },
-} as const;
-
-export const fonts = Object.entries(fontData).map(([folder, info]) => {
-  const name = folder.replace(/_/g, ' ');
-  const family = folder;
-  const weights = Object.keys(info.files).sort();
-  const defaultWeight = weights.includes('500') ? '500' : weights[0];
-  return {
-    name,
-    family,
-    weights,
-    files: info.files,
-    defaultSize: info.defaultSize,
-    defaultWeight,
-  };
-});
-
-export const defaultFontName = 'Comfortaa';
-
-export const getFontFamily = (family: string, weight: string) => `${family}_${weight}`;
-
-export const getNextFontWeight = (family: string, currentWeight: string) => {
-  const name = family.replace(/_/g, ' ');
-  const font = getFontByName(fonts, name);
-  const next = adjustWeight(font, currentWeight, 1);
-  return next ?? currentWeight;
-};
-
+} as const satisfies Record<
+  FontFamily,
+  Record<FontWeight, Partial<Record<FontStyle, FontSource>>>
+>;

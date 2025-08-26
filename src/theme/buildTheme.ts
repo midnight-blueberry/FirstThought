@@ -1,5 +1,5 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, getFontFamily } from '@constants/Fonts';
+import { defaultFontName, fonts, getFontFamily } from '@constants/fonts';
 import { getFontByName } from '@utils/fontHelpers';
 import {
   lightColors,
