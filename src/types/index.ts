@@ -1,2 +1,2 @@
-export * from './diary';
+export * from './data';
 export * from './settings';
