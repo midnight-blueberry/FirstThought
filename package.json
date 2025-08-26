@@ -12,7 +12,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
     "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "files:ts-over-105": "node scripts/tools/list-long-ts.cjs"
+    "long-files-detector": "node scripts/tools/list-long-ts.cjs"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
