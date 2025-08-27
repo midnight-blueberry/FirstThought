@@ -16,8 +16,8 @@ import useHeaderTitleSync from '@hooks/useHeaderTitleSync';
 import useTheme from '@hooks/useTheme';
 import { getBaseFontName, calcFontSizeLevel } from '@utils/font';
 import { getFontByName } from '@utils/fontHelpers';
-import { clampLevel } from '@utils/theme';
-import useSettingsHandlers from './hooks/useSettingsHandlers';
+import { clampLevel, resolveOverlayColor } from '@utils/theme';
+import { themeList } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import type { SavedSettings } from '@types';
@@ -25,7 +25,6 @@ import type { TextStyle } from 'react-native';
 type FontWeight = TextStyle['fontWeight'];
 
 const FONT_WEIGHTS = ['100', '200', '300', '400', '500', '600', '700', '800', '900', 'normal', 'bold'] as const;
-type AnyFontWeight = (typeof FONT_WEIGHTS)[number];
 
 function coerceFontWeight(value: unknown, fallback: FontWeight): FontWeight {
   return typeof value === 'string' && (FONT_WEIGHTS as readonly string[]).includes(value)
@@ -35,7 +34,7 @@ function coerceFontWeight(value: unknown, fallback: FontWeight): FontWeight {
 
 const SETTINGS_KEY = 'user_settings';
 
-async function loadSettings(): Promise<SavedSettings | null> {
+async function readSettings(): Promise<SavedSettings | null> {
   try {
     const json = await AsyncStorage.getItem(SETTINGS_KEY);
     return json ? (JSON.parse(json) as SavedSettings) : null;
@@ -44,7 +43,7 @@ async function loadSettings(): Promise<SavedSettings | null> {
   }
 }
 
-async function saveSettings(settings: SavedSettings): Promise<void> {
+async function writeSettings(settings: SavedSettings): Promise<void> {
   try {
     await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   } catch {
@@ -107,86 +106,150 @@ export default function useSettingsVm(): SettingsVm {
     noteTextAlign,
     setTheme,
   });
-  const [prevFont, setPrevFont] = useState({
-    name: selectedFontName,
-    weight: fontWeight,
-  });
-  const [prevFontSize, setPrevFontSize] = useState(fontSizeLevel);
+  const onChangeTheme = (next: string) => {
+    setSelectedThemeName(next);
+    saveAndApply({ themeName: next });
+  };
 
-  useEffect(() => {
-    if (
-      prevFont.name !== selectedFontName ||
-      prevFont.weight !== fontWeight
-    ) {
-      runWithOverlay(() =>
-        saveAndApply({ fontName: selectedFontName, fontWeight }),
-      );
-      setPrevFont({ name: selectedFontName, weight: fontWeight });
-    }
-    if (prevFontSize !== fontSizeLevel) {
-      runWithOverlay(() => saveAndApply({ fontSizeLevel }));
-      setPrevFontSize(fontSizeLevel);
-    }
-  }, [
-    selectedFontName,
-    fontWeight,
-    fontSizeLevel,
-    runWithOverlay,
-    saveAndApply,
-    prevFont,
-    prevFontSize,
-  ]);
+  const onChangeAccent = (next: string) => {
+    setSelectedAccentColor(next);
+    saveAndApply({ accentColor: next });
+  };
 
-  useEffect(() => {
-    void (async () => {
-      const saved = await loadSettings();
-      if (saved) {
-        if (saved.themeName) setSelectedThemeName(saved.themeName);
-        if (saved.accentColor) setSelectedAccentColor(saved.accentColor);
-        if (saved.fontName) {
-          const fontMeta = getFontByName(fonts, saved.fontName);
-          selectFont(saved.fontName);
-          if (saved.fontWeight) {
-            const defaultIdx = fontMeta.weights.indexOf(fontMeta.defaultWeight);
-            const targetIdx = fontMeta.weights.indexOf(
-              coerceFontWeight(saved.fontWeight, fontWeight),
-            );
-            bumpFontWeight(targetIdx - defaultIdx);
-          }
-        } else if (saved.fontWeight) {
-          const fontMeta = getFontByName(fonts, selectedFontName);
-          const currentIdx = fontMeta.weights.indexOf(fontWeight as FontWeight);
-          const targetIdx = fontMeta.weights.indexOf(
-            coerceFontWeight(saved.fontWeight, fontWeight),
-          );
-          bumpFontWeight(targetIdx - currentIdx);
-        }
-        if (saved.fontSizeLevel !== undefined) {
-          bumpFontSize(saved.fontSizeLevel - fontSizeLevel);
-        }
-        if (saved.noteTextAlign) setNoteTextAlign(saved.noteTextAlign);
-        saveAndApply(saved);
-      }
-    })();
-  }, []);
+  const onChangeFontFamily = (next: string) => {
+    const meta = getFontByName(fonts, next);
+    selectFont(next);
+    saveAndApply({ fontName: next, fontWeight: meta.defaultWeight });
+  };
 
-  useEffect(() => {
-    void saveSettings({
-      themeName: selectedThemeName,
-      accentColor: selectedAccentColor,
-      fontName: selectedFontName,
-      fontWeight,
-      fontSizeLevel,
-      noteTextAlign,
-    });
-  }, [
-    selectedThemeName,
-    selectedAccentColor,
-    selectedFontName,
+  const onChangeFontWeight = (
+    next: FontWeight,
+    baseFontName: string = selectedFontName,
+    baseWeight: FontWeight = fontWeight as FontWeight,
+  ) => {
+    const meta = getFontByName(fonts, baseFontName);
+    const currentIdx = meta.weights.indexOf(baseWeight);
+    const targetIdx = meta.weights.indexOf(next);
+    bumpFontWeight(targetIdx - currentIdx);
+    saveAndApply({ fontWeight: next });
+  };
+
+  const onChangeFontSize = (level: number) => {
+    bumpFontSize(level - fontSizeLevel);
+    saveAndApply({ fontSizeLevel: level });
+  };
+
+  const onChangeAlign = (align: typeof theme.noteTextAlign) => {
+    setNoteTextAlign(align);
+    saveAndApply({ noteTextAlign: align });
+  };
+
+  const currentSettings = () => ({
+    themeName: selectedThemeName,
+    accentColor: selectedAccentColor,
+    fontName: selectedFontName,
     fontWeight,
     fontSizeLevel,
     noteTextAlign,
+  });
+
+  const handleThemePick = (next: string) => {
+    runWithOverlay(
+      () => onChangeTheme(next),
+      resolveOverlayColor(next, themeList),
+    );
+    void writeSettings({ ...currentSettings(), themeName: next });
+  };
+
+  const handleAccentPick = (next: string) => {
+    runWithOverlay(() => onChangeAccent(next), theme.colors.background);
+    void writeSettings({ ...currentSettings(), accentColor: next });
+  };
+
+  const handleFontSelect = (next: string) => {
+    runWithOverlay(() => onChangeFontFamily(next));
+    const meta = getFontByName(fonts, next);
+    void writeSettings({
+      ...currentSettings(),
+      fontName: next,
+      fontWeight: meta.defaultWeight,
+    });
+  };
+
+  const handleIncFontSize = () => {
+    const next = clampLevel(fontSizeLevel + 1);
+    runWithOverlay(() => onChangeFontSize(next));
+    void writeSettings({ ...currentSettings(), fontSizeLevel: next });
+  };
+
+  const handleDecFontSize = () => {
+    const next = clampLevel(fontSizeLevel - 1);
+    runWithOverlay(() => onChangeFontSize(next));
+    void writeSettings({ ...currentSettings(), fontSizeLevel: next });
+  };
+
+  const handleIncWeight = () => {
+    const meta = getFontByName(fonts, selectedFontName);
+    const currentIdx = meta.weights.indexOf(fontWeight as FontWeight);
+    const nextIdx = Math.min(currentIdx + 1, meta.weights.length - 1);
+    const next = meta.weights[nextIdx];
+    runWithOverlay(() => onChangeFontWeight(next));
+    void writeSettings({ ...currentSettings(), fontWeight: next });
+  };
+
+  const handleDecWeight = () => {
+    const meta = getFontByName(fonts, selectedFontName);
+    const currentIdx = meta.weights.indexOf(fontWeight as FontWeight);
+    const nextIdx = Math.max(currentIdx - 1, 0);
+    const next = meta.weights[nextIdx];
+    runWithOverlay(() => onChangeFontWeight(next));
+    void writeSettings({ ...currentSettings(), fontWeight: next });
+  };
+
+  const handleAlignChange = (align: typeof theme.noteTextAlign) => {
+    runWithOverlay(() => onChangeAlign(align));
+    void writeSettings({ ...currentSettings(), noteTextAlign: align });
+  };
+
+  const loadSettings = React.useCallback(async () => {
+    const saved = await readSettings();
+    if (!saved) return;
+    if (saved.themeName) onChangeTheme(saved.themeName);
+    if (saved.accentColor) onChangeAccent(saved.accentColor);
+    if (saved.fontName) onChangeFontFamily(saved.fontName);
+    if (saved.fontWeight) {
+      const meta = saved.fontName
+        ? getFontByName(fonts, saved.fontName)
+        : getFontByName(fonts, selectedFontName);
+      const base = saved.fontName
+        ? (meta.defaultWeight as FontWeight)
+        : (fontWeight as FontWeight);
+      onChangeFontWeight(
+        coerceFontWeight(saved.fontWeight, base),
+        saved.fontName ?? selectedFontName,
+        base,
+      );
+    }
+    if (saved.fontSizeLevel !== undefined) {
+      onChangeFontSize(saved.fontSizeLevel);
+    }
+    if (saved.noteTextAlign) {
+      onChangeAlign(saved.noteTextAlign);
+    }
+  }, [
+    onChangeTheme,
+    onChangeAccent,
+    onChangeFontFamily,
+    onChangeFontWeight,
+    onChangeFontSize,
+    onChangeAlign,
+    fontWeight,
+    selectedFontName,
   ]);
+
+  useEffect(() => {
+    void loadSettings();
+  }, [loadSettings]);
 
   useHeaderTitleSync(theme, () => <SaveIcon fadeAnim={fadeAnim} />);
   useSyncThemeToLocalState(theme, {
@@ -194,16 +257,19 @@ export default function useSettingsVm(): SettingsVm {
     setSelectedAccentColor,
     setNoteTextAlign,
   });
-  const handlers = useSettingsHandlers({
-    runWithOverlay,
-    saveAndApply,
-    bumpFontSize,
-    bumpFontWeight,
-    setSelectedAccentColor,
-    setSelectedThemeName,
-    setNoteTextAlign,
-    themeBg: theme.colors.background,
-  });
+
+  const handlers = {
+    onSelectTheme: handleThemePick,
+    onSelectAccent: handleAccentPick,
+    onSelectFont: handleFontSelect,
+    onSelectWeight: () => {},
+    onIncFontSize: handleIncFontSize,
+    onDecFontSize: handleDecFontSize,
+    onIncWeight: handleIncWeight,
+    onDecWeight: handleDecWeight,
+    onAlign: handleAlignChange,
+  };
+
   const sectionProps = useMemo(
     () => ({
       ...buildSectionProps({
@@ -216,7 +282,6 @@ export default function useSettingsVm(): SettingsVm {
         sizeBlinkIndex: blinkState.size.index,
         sizeBlinkAnim: blinkState.size.anim,
         weightBlinkAnim: blinkState.weight.anim,
-        onSelectFont: selectFont,
         ...handlers,
       }),
       preview: { noteTextAlign, fontName: theme.fontName, colors: theme.colors },
@@ -232,7 +297,6 @@ export default function useSettingsVm(): SettingsVm {
       blinkState.size.anim,
       blinkState.weight.anim,
       handlers,
-      selectFont,
       theme.fontName,
       theme.colors,
     ],
