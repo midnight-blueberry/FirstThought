@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { DefaultTheme } from 'styled-components/native';
-import type { Animated } from 'react-native';
+import type { Animated, TextStyle } from 'react-native';
 import useBlinkAnimation from '@hooks/useBlinkAnimation';
 import useBlinkIndex from '@hooks/useBlinkIndex';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
+type FontWeight = TextStyle['fontWeight'];
 
 export type FontInfo = {
   name: string;
-  weights: string[];
-  defaultWeight: string;
+  weights: FontWeight[];
+  defaultWeight: FontWeight;
   defaultSize: number;
 };
 
@@ -90,7 +91,7 @@ export default function useFontControls({
     (delta: number) => {
       const font = getFontByName(fonts, selectedFontName);
       stopWeightBlink();
-      const nextWeight = adjustWeight(font, fontWeight as string, delta) as
+      const nextWeight = adjustWeight(font, fontWeight as FontWeight, delta) as
         | DefaultTheme['fontWeight']
         | undefined;
       if (nextWeight) {

@@ -21,6 +21,17 @@ import useSettingsHandlers from './hooks/useSettingsHandlers';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import type { SavedSettings } from '@types';
+import type { TextStyle } from 'react-native';
+type FontWeight = TextStyle['fontWeight'];
+
+const FONT_WEIGHTS = ['100', '200', '300', '400', '500', '600', '700', '800', '900', 'normal', 'bold'] as const;
+type AnyFontWeight = (typeof FONT_WEIGHTS)[number];
+
+function coerceFontWeight(value: unknown, fallback: FontWeight): FontWeight {
+  return typeof value === 'string' && (FONT_WEIGHTS as readonly string[]).includes(value)
+    ? (value as FontWeight)
+    : fallback;
+}
 
 const SETTINGS_KEY = 'user_settings';
 
@@ -138,15 +149,15 @@ export default function useSettingsVm(): SettingsVm {
           if (saved.fontWeight) {
             const defaultIdx = fontMeta.weights.indexOf(fontMeta.defaultWeight);
             const targetIdx = fontMeta.weights.indexOf(
-              saved.fontWeight as string,
+              coerceFontWeight(saved.fontWeight, fontWeight),
             );
             bumpFontWeight(targetIdx - defaultIdx);
           }
         } else if (saved.fontWeight) {
           const fontMeta = getFontByName(fonts, selectedFontName);
-          const currentIdx = fontMeta.weights.indexOf(fontWeight as string);
+          const currentIdx = fontMeta.weights.indexOf(fontWeight as FontWeight);
           const targetIdx = fontMeta.weights.indexOf(
-            saved.fontWeight as string,
+            coerceFontWeight(saved.fontWeight, fontWeight),
           );
           bumpFontWeight(targetIdx - currentIdx);
         }

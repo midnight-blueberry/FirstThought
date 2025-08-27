@@ -5,7 +5,9 @@ import Section from './settings-section';
 import { fonts } from '@constants/fonts';
 import { getBaseFontName } from '@utils/font';
 import { getFontByName, getWeightIndex } from '@utils/fontHelpers';
+import type { TextStyle } from 'react-native';
 import type { FontWeightSelectorProps } from '@types';
+type FontWeight = TextStyle['fontWeight'];
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   fontWeight,
@@ -18,7 +20,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   const baseName = getBaseFontName(theme.fontName);
   const font = getFontByName(fonts, baseName);
   const columns = disabled ? 5 : font.weights.length;
-  const filledCount = disabled ? 0 : getWeightIndex(font, fontWeight as string) + 1;
+  const filledCount = disabled ? 0 : getWeightIndex(font, fontWeight as FontWeight) + 1;
   const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
 
   return (

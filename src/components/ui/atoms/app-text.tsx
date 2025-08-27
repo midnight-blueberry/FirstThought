@@ -48,7 +48,7 @@ const AppText: React.FC<AppTextProps> = ({
   let resolvedFamily = fontFamily ?? theme.fontName;
 
   if ((variant === "large" || variant === "xlarge") && !fontWeight) {
-    resolvedWeight = getNextFontWeight(baseFamily, baseWeight) as TextStyle['fontWeight'];
+    resolvedWeight = getNextFontWeight(baseFamily, baseWeight as TextStyle['fontWeight']) as TextStyle['fontWeight'];
     resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
   }
 
