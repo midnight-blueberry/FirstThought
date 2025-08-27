@@ -4,9 +4,11 @@ export { WEIGHTS } from './weights';
 export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
 
-import type { FontFamily, FontWeight, FontSource } from './types';
+import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
+import type { TextStyle } from 'react-native';
 import { FONT_VARIANTS } from './variants';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
+type FontWeight = TextStyle['fontWeight'];
 
 const DEFAULT_FONT_SIZES = {
   Bad_Script: 22,
@@ -22,9 +24,9 @@ const DEFAULT_FONT_SIZES = {
 
 export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => {
   const variants = FONT_VARIANTS[family];
-  const weights = Object.keys(variants) as FontWeight[];
-  const defaultWeight = weights.includes('500' as FontWeight)
-    ? ('500' as FontWeight)
+  const weights = Object.keys(variants) as InternalFontWeight[];
+  const defaultWeight = weights.includes('500' as InternalFontWeight)
+    ? ('500' as InternalFontWeight)
     : weights[0];
   const pairs = weights
     .filter((w): w is keyof typeof variants => w in variants && !!variants[w]?.normal)
@@ -32,8 +34,8 @@ export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => 
   return {
     name: family.replace(/_/g, ' '),
     family,
-    weights: weights.sort(),
-    files: Object.fromEntries(pairs) as Record<FontWeight, FontSource>,
+    weights: weights.sort() as unknown as FontWeight[],
+    files: Object.fromEntries(pairs) as Record<InternalFontWeight, FontSource>,
     defaultSize: DEFAULT_FONT_SIZES[family],
     defaultWeight,
   };
@@ -43,7 +45,7 @@ export const defaultFontName: string = 'Comfortaa';
 
 export const getFontFamily = (family: string, weight: string) => `${family}_${weight}`;
 
-export const getNextFontWeight = (family: string, currentWeight: string) => {
+export const getNextFontWeight = (family: string, currentWeight: FontWeight) => {
   const name = family.replace(/_/g, ' ');
   const font = getFontByName(fonts, name);
   const next = adjustWeight(font, currentWeight, 1);

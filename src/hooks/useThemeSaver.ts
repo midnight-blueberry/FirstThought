@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { SavedSettingsPatch, SavedSettings } from '@types';
+import type { SavedSettingsPatch } from '@types';
 import type { DefaultTheme } from 'styled-components/native';
 
 export interface UseThemeSaverArgs {
@@ -13,8 +12,6 @@ export interface UseThemeSaverArgs {
   noteTextAlign: DefaultTheme['noteTextAlign'];
   setTheme: Dispatch<SetStateAction<DefaultTheme>>;
 }
-
-const SETTINGS_KEY = 'ft:settings';
 
 export function useThemeSaver({
   selectedThemeName,
@@ -33,27 +30,9 @@ export function useThemeSaver({
 
   const saveAndApply = useCallback(
     (patch: SavedSettingsPatch) => {
-      const payload: SavedSettings = {
-        themeName: selectedThemeName,
-        accentColor: selectedAccentColor,
-        fontName: selectedFontName,
-        fontWeight,
-        fontSizeLevel,
-        noteTextAlign,
-        ...patch,
-      };
-      void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(payload));
       setTheme(prev => ({ ...prev, ...patch }));
     },
-    [
-      selectedThemeName,
-      selectedAccentColor,
-      selectedFontName,
-      fontWeight,
-      fontSizeLevel,
-      noteTextAlign,
-      setTheme,
-    ],
+    [setTheme],
   );
 
   const runWithOverlay = useCallback((fn: () => void, color?: string) => {
