@@ -15,7 +15,8 @@ export default [
       '**/.expo/**',
       '**/vendor/**',
       'ChatGPT/**',
-      '*.zip'
+      '*.zip',
+      'expo-env.d.ts'
     ]
   },
   {

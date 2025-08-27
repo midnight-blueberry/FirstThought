@@ -1,26 +1,54 @@
 {
   "compilerOptions": {
     "strict": true,
-    // Enable resolution of modules using the "@" prefix
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "src/*": ["src/*"],
-      "app/*": ["app/*"],
-      "@screens/*": ["src/screens/*"],
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@store/*": ["src/store/*"],
-      "@assets/*": ["assets/*"],
-      "@utils/*": ["src/utils/*"],
-      "@settings/*": ["src/settings/*"],
-      "@theme/*": ["src/theme/*"],
-      "@storage/*": ["src/storage/*"],
-      "@types/*": ["src/types/*"],
-      "@types": ["src/types"]
+      "@/*": [
+        "src/*"
+      ],
+      "src/*": [
+        "src/*"
+      ],
+      "app/*": [
+        "app/*"
+      ],
+      "@screens/*": [
+        "src/screens/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@settings/*": [
+        "src/settings/*"
+      ],
+      "@theme/*": [
+        "src/theme/*"
+      ],
+      "@storage/*": [
+        "src/storage/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@types": [
+        "src/types"
+      ]
     },
-    // Allow default React imports and JSX in TypeScript files
     "esModuleInterop": true,
     "jsx": "react-native",
     "skipLibCheck": true
@@ -40,5 +68,6 @@
     "**/generated/**",
     "ChatGPT",
     "ChatGPT.zip"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
