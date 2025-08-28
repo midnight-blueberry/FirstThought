@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AppSettings } from '@types';
-
-const SETTINGS_KEY = 'user_settings';
+import { SETTINGS_KEY } from '@components/pages/settings/settingsStorage';
 
 export async function loadSettings(): Promise<AppSettings | null> {
   try {

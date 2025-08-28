@@ -4,7 +4,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { readSettings, writeSettings } from './settingsStorage';
 import { SaveIcon } from '@components/ui/atoms';
 import { fonts } from '@constants/fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
@@ -20,7 +20,6 @@ import { clampLevel, resolveOverlayColor } from '@utils/theme';
 import { themeList } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
-import type { SavedSettings } from '@types';
 import type { TextStyle } from 'react-native';
 type FontWeight = TextStyle['fontWeight'];
 
@@ -32,24 +31,6 @@ function coerceFontWeight(value: unknown, fallback: FontWeight): FontWeight {
     : fallback;
 }
 
-const SETTINGS_KEY = 'user_settings';
-
-async function readSettings(): Promise<SavedSettings | null> {
-  try {
-    const json = await AsyncStorage.getItem(SETTINGS_KEY);
-    return json ? (JSON.parse(json) as SavedSettings) : null;
-  } catch {
-    return null;
-  }
-}
-
-async function writeSettings(settings: SavedSettings): Promise<void> {
-  try {
-    await AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  } catch {
-    // ignore write errors
-  }
-}
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
