@@ -1,14 +1,8 @@
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SaveIcon } from '@components/ui/atoms';
 import { fonts } from '@constants/fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
-import { ThemeContext } from '@store/ThemeContext';
 import useThemeSaver from '@hooks/useThemeSaver';
 import useSyncThemeToLocalState from '@hooks/useSyncThemeToLocalState';
 import useFontControls from '@hooks/useFontControls';
@@ -54,7 +48,6 @@ async function writeSettings(settings: SavedSettings): Promise<void> {
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
-  const context = useContext(ThemeContext);
 
   const [selectedThemeName, setSelectedThemeName] = useState(theme.name);
   const [selectedAccentColor, setSelectedAccentColor] = useState(
@@ -87,8 +80,7 @@ export default function useSettingsVm(): SettingsVm {
     minLevel: 1,
   });
   const [noteTextAlign, setNoteTextAlign] = useState(theme.noteTextAlign);
-  if (!context) throw new Error('ThemeContext is missing');
-  const { setTheme } = context;
+  const { setTheme, setThemeName, setAccent, setFontFamily, setFontWeight } = theme;
   const {
     saveAndApply,
     runWithOverlay,
@@ -97,29 +89,23 @@ export default function useSettingsVm(): SettingsVm {
     overlayVisible,
     overlayColor,
     overlayBlocks,
-  } = useThemeSaver({
-    selectedThemeName,
-    selectedAccentColor,
-    selectedFontName,
-    fontWeight,
-    fontSizeLevel,
-    noteTextAlign,
-    setTheme,
-  });
+  } = useThemeSaver({ setTheme });
+
   const onChangeTheme = (next: string) => {
     setSelectedThemeName(next);
-    saveAndApply({ themeName: next });
+    setThemeName(next);
   };
 
   const onChangeAccent = (next: string) => {
     setSelectedAccentColor(next);
-    saveAndApply({ accentColor: next });
+    setAccent(next);
   };
 
   const onChangeFontFamily = (next: string) => {
     const meta = getFontByName(fonts, next);
     selectFont(next);
-    saveAndApply({ fontName: next, fontWeight: meta.defaultWeight });
+    setFontFamily(next);
+    setFontWeight(meta.defaultWeight);
   };
 
   const onChangeFontWeight = (
@@ -131,7 +117,7 @@ export default function useSettingsVm(): SettingsVm {
     const currentIdx = meta.weights.indexOf(baseWeight);
     const targetIdx = meta.weights.indexOf(next);
     bumpFontWeight(targetIdx - currentIdx);
-    saveAndApply({ fontWeight: next });
+    setFontWeight(next);
   };
 
   const onChangeFontSize = (level: number) => {

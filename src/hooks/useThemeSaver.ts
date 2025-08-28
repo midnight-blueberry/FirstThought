@@ -1,27 +1,12 @@
-import { useCallback, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 import type { SavedSettingsPatch } from '@types';
-import type { DefaultTheme } from 'styled-components/native';
 
 export interface UseThemeSaverArgs {
-  selectedThemeName: string;
-  selectedAccentColor: string;
-  selectedFontName: string;
-  fontWeight: DefaultTheme['fontWeight'];
-  fontSizeLevel: number;
-  noteTextAlign: DefaultTheme['noteTextAlign'];
-  setTheme: Dispatch<SetStateAction<DefaultTheme>>;
+  setTheme: (patch: SavedSettingsPatch) => void;
 }
 
-export function useThemeSaver({
-  selectedThemeName,
-  selectedAccentColor,
-  selectedFontName,
-  fontWeight,
-  fontSizeLevel,
-  noteTextAlign,
-  setTheme,
-}: UseThemeSaverArgs) {
+export function useThemeSaver({ setTheme }: UseThemeSaverArgs) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -30,7 +15,7 @@ export function useThemeSaver({
 
   const saveAndApply = useCallback(
     (patch: SavedSettingsPatch) => {
-      setTheme(prev => ({ ...prev, ...patch }));
+      setTheme(patch);
     },
     [setTheme],
   );

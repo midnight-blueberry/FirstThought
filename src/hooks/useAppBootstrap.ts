@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import { fonts, getFontFamily } from '@constants/fonts';
 import { loadSettings } from '@storage/settings';
-import { buildTheme, themes } from '@theme/buildTheme';
+import type { SavedSettings } from '@types';
 
 export function useAppBootstrap() {
   const [ready, setReady] = useState(false);
-  const [theme, setTheme] = useState(themes.light);
+  const [initialSettings, setInitialSettings] = useState<SavedSettings | null>(null);
 
   useEffect(() => {
     async function prepare() {
       try {
         await Font.loadAsync(
           Object.fromEntries(
-            fonts.flatMap((f) =>
-              (f.weights as (keyof typeof f.files)[]).map((w) => [
+            fonts.flatMap(f =>
+              (f.weights as (keyof typeof f.files)[]).map(w => [
                 getFontFamily(f.family, w),
                 f.files[w],
               ])
@@ -23,7 +23,7 @@ export function useAppBootstrap() {
         );
 
         const saved = await loadSettings();
-        setTheme(buildTheme(saved ?? undefined));
+        setInitialSettings(saved);
       } catch (e) {
         console.warn(e);
       } finally {
@@ -33,5 +33,5 @@ export function useAppBootstrap() {
     void prepare();
   }, []);
 
-  return { ready, theme, setTheme };
+  return { ready, initialSettings };
 }
