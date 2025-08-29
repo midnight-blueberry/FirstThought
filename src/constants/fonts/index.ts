@@ -1,6 +1,6 @@
 export * from './types';
 export { FAMILIES } from './families';
-export { WEIGHTS } from './weights';
+export { FONT_WEIGHTS } from './metadata';
 export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
 
@@ -23,18 +23,18 @@ const DEFAULT_FONT_SIZES = {
 } as const satisfies Record<FontFamily, number>;
 
 export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => {
-  const variants = FONT_VARIANTS[family];
+  const variants = FONT_VARIANTS[family] as Record<InternalFontWeight, { normal?: FontSource }>;
   const weights = Object.keys(variants) as InternalFontWeight[];
   const defaultWeight = weights.includes('500' as InternalFontWeight)
     ? ('500' as InternalFontWeight)
     : weights[0];
   const pairs = weights
-    .filter((w): w is keyof typeof variants => w in variants && !!variants[w]?.normal)
-    .map((w) => [w, variants[w]!.normal]);
+    .filter((w) => !!variants[w]?.normal)
+    .map((w) => [w, variants[w]!.normal as FontSource]);
   return {
     name: family.replace(/_/g, ' '),
     family,
-    weights: weights.sort() as unknown as FontWeight[],
+    weights: weights.sort() as FontWeight[],
     files: Object.fromEntries(pairs) as Record<InternalFontWeight, FontSource>,
     defaultSize: DEFAULT_FONT_SIZES[family],
     defaultWeight,

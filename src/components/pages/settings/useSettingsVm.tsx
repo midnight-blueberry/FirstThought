@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { readSettings, writeSettings } from './settingsStorage';
 import { SaveIcon } from '@components/ui/atoms';
-import { fonts } from '@constants/fonts';
+import { fonts, FONT_WEIGHTS } from '@constants/fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import { ThemeContext } from '@store/ThemeContext';
 import useThemeSaver from '@hooks/useThemeSaver';
@@ -20,13 +20,15 @@ import { clampLevel, resolveOverlayColor } from '@utils/theme';
 import { themeList } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
-import type { TextStyle } from 'react-native';
-type FontWeight = TextStyle['fontWeight'];
+import type { FontFamily, FontWeight } from '@constants/fonts';
 
-const FONT_WEIGHTS = ['100', '200', '300', '400', '500', '600', '700', '800', '900', 'normal', 'bold'] as const;
-
-function coerceFontWeight(value: unknown, fallback: FontWeight): FontWeight {
-  return typeof value === 'string' && (FONT_WEIGHTS as readonly string[]).includes(value)
+function coerceFontWeight(
+  value: unknown,
+  fallback: FontWeight,
+  family: FontFamily,
+): FontWeight {
+  const weights = FONT_WEIGHTS[family];
+  return typeof value === 'string' && (weights as readonly string[]).includes(value)
     ? (value as FontWeight)
     : fallback;
 }
@@ -109,8 +111,9 @@ export default function useSettingsVm(): SettingsVm {
     baseWeight: FontWeight = fontWeight as FontWeight,
   ) => {
     const meta = getFontByName(fonts, baseFontName);
-    const currentIdx = meta.weights.indexOf(baseWeight);
-    const targetIdx = meta.weights.indexOf(next);
+    const weights = FONT_WEIGHTS[meta.family] as readonly FontWeight[];
+    const currentIdx = weights.indexOf(baseWeight);
+    const targetIdx = weights.indexOf(next);
     bumpFontWeight(targetIdx - currentIdx);
     saveAndApply({ fontWeight: next });
   };
@@ -171,18 +174,18 @@ export default function useSettingsVm(): SettingsVm {
 
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const currentIdx = meta.weights.indexOf(fontWeight as FontWeight);
-    const nextIdx = Math.min(currentIdx + 1, meta.weights.length - 1);
-    const next = meta.weights[nextIdx];
+    const weights = FONT_WEIGHTS[meta.family] as readonly FontWeight[];
+    const idx = weights.indexOf(fontWeight as FontWeight);
+    const next = weights[(idx + 1) % weights.length];
     runWithOverlay(() => onChangeFontWeight(next));
     void writeSettings({ ...currentSettings(), fontWeight: next });
   };
 
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const currentIdx = meta.weights.indexOf(fontWeight as FontWeight);
-    const nextIdx = Math.max(currentIdx - 1, 0);
-    const next = meta.weights[nextIdx];
+    const weights = FONT_WEIGHTS[meta.family] as readonly FontWeight[];
+    const idx = weights.indexOf(fontWeight as FontWeight);
+    const next = weights[(idx - 1 + weights.length) % weights.length];
     runWithOverlay(() => onChangeFontWeight(next));
     void writeSettings({ ...currentSettings(), fontWeight: next });
   };
@@ -206,7 +209,7 @@ export default function useSettingsVm(): SettingsVm {
         ? (meta.defaultWeight as FontWeight)
         : (fontWeight as FontWeight);
       onChangeFontWeight(
-        coerceFontWeight(saved.fontWeight, base),
+        coerceFontWeight(saved.fontWeight, base, meta.family),
         saved.fontName ?? selectedFontName,
         base,
       );
