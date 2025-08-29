@@ -1,6 +1,5 @@
 import { AppText } from '@components/ui/atoms';
-import { ThemeContext } from '@store/ThemeContext';
-import React, { ReactNode, useContext } from 'react';
+import React, { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
@@ -12,9 +11,6 @@ type SectionProps = {
 
 export default function Section({ title, children }: SectionProps) {
   const theme = useTheme();
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error('ThemeContext is missing');
-
   const styles = React.useMemo(() => createStyles(theme), [theme]);
 
   return (
