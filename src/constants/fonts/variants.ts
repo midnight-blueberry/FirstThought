@@ -41,60 +41,60 @@ import RobotoSlabBold from '@assets/fonts/Roboto_Slab/static/RobotoSlab-Bold.ttf
 export const FONT_VARIANTS = {
   Bad_Script: {
     '400': { normal: BadScriptRegular },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Comfortaa: {
     '300': { normal: ComfortaaLight },
     '400': { normal: ComfortaaRegular },
     '500': { normal: ComfortaaMedium },
     '600': { normal: ComfortaaSemiBold },
     '700': { normal: ComfortaaBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Lora: {
     '400': { normal: LoraRegular },
     '500': { normal: LoraMedium },
     '600': { normal: LoraSemiBold },
     '700': { normal: LoraBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Montserrat: {
     '300': { normal: MontserratLight },
     '400': { normal: MontserratRegular },
     '500': { normal: MontserratMedium },
     '600': { normal: MontserratSemiBold },
     '700': { normal: MontserratBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Nata_Sans: {
     '300': { normal: NataSansLight },
     '400': { normal: NataSansRegular },
     '500': { normal: NataSansMedium },
     '600': { normal: NataSansSemiBold },
     '700': { normal: NataSansBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   PT_Sans: {
     '400': { normal: PTSansRegular },
     '700': { normal: PTSansBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Raleway: {
     '300': { normal: RalewayLight },
     '400': { normal: RalewayRegular },
     '500': { normal: RalewayMedium },
     '600': { normal: RalewaySemiBold },
     '700': { normal: RalewayBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Roboto_Condensed: {
     '300': { normal: RobotoCondensedLight },
     '400': { normal: RobotoCondensedRegular },
     '500': { normal: RobotoCondensedMedium },
     '600': { normal: RobotoCondensedSemiBold },
     '700': { normal: RobotoCondensedBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
   Roboto_Slab: {
     '300': { normal: RobotoSlabLight },
     '400': { normal: RobotoSlabRegular },
     '500': { normal: RobotoSlabMedium },
     '600': { normal: RobotoSlabSemiBold },
     '700': { normal: RobotoSlabBold },
-  } as Record<FontWeight, Partial<Record<FontStyle, FontSource>>>,
+  },
 } as const satisfies Record<
   FontFamily,
-  Record<FontWeight, Partial<Record<FontStyle, FontSource>>>
+  Partial<Record<FontWeight, Partial<Record<FontStyle, FontSource>>>>
 >;
