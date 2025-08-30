@@ -11,6 +11,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
+import { useSettings } from '@/state/SettingsContext';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 
 void SplashScreen.preventAutoHideAsync();
@@ -31,6 +32,7 @@ export default function RootLayout() {
 
 function RootContent() {
   const theme = useTheme();
+  const { settings } = useSettings();
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
   const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');
@@ -54,7 +56,7 @@ function RootContent() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PortalProvider>
             <DrawerNavigator
-              key={theme.name}
+              key={theme.typography.header.headerTitleFamily + theme.name + settings.fontWeight}
               theme={theme}
               homePageHeaderTitle={homePageHeaderTitle}
               homePageHeaderElevation={homePageHeaderElevation}
