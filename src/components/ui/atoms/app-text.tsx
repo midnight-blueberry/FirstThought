@@ -42,15 +42,13 @@ const AppText: React.FC<AppTextProps> = ({
   const familyString = fontFamily ?? theme.fontName;
   const parts = familyString.split("_");
   const baseFamily = parts.slice(0, -1).join("_");
-  const baseWeight = String(fontWeight ?? parts[parts.length - 1]);
+  const baseWeight = parts[parts.length - 1];
 
-  let resolvedWeight: TextStyle['fontWeight'] = fontWeight ?? theme.fontWeight;
-  let resolvedFamily = fontFamily ?? theme.fontName;
-
+  let resolvedWeight: TextStyle['fontWeight'] = (fontWeight ?? baseWeight) as TextStyle['fontWeight'];
   if ((variant === "large" || variant === "xlarge") && !fontWeight) {
     resolvedWeight = getNextFontWeight(baseFamily, baseWeight as TextStyle['fontWeight']) as TextStyle['fontWeight'];
-    resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
   }
+  const resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
 
   return (
     <StyledText

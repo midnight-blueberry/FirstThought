@@ -1,6 +1,6 @@
 import type { FontFamily, FontWeight } from './types';
 
-export const FONT_WEIGHTS = {
+export const AVAILABLE_WEIGHTS = {
   Bad_Script: ['400'],
   Comfortaa: ['300', '400', '500', '600', '700'],
   Lora: ['400', '500', '600', '700'],

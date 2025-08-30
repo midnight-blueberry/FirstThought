@@ -1,12 +1,15 @@
 export * from './types';
 export { FAMILIES } from './families';
-export { FONT_WEIGHTS } from './metadata';
+export { AVAILABLE_WEIGHTS } from './available-weights';
 export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
+export { resolveAvailableWeight } from './weight-utils';
+export { getRegisteredFonts } from './register';
 
 import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
 import type { TextStyle } from 'react-native';
 import { FONT_VARIANTS } from './variants';
+import { AVAILABLE_WEIGHTS } from './available-weights';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
 type FontWeight = TextStyle['fontWeight'];
 
@@ -22,9 +25,9 @@ const DEFAULT_FONT_SIZES = {
   Roboto_Slab: 18,
 } as const satisfies Record<FontFamily, number>;
 
-export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => {
+export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map((family) => {
   const variants = FONT_VARIANTS[family] as Record<InternalFontWeight, { normal?: FontSource }>;
-  const weights = Object.keys(variants) as InternalFontWeight[];
+  const weights = [...AVAILABLE_WEIGHTS[family]] as InternalFontWeight[];
   const defaultWeight = weights.includes('500' as InternalFontWeight)
     ? ('500' as InternalFontWeight)
     : weights[0];
