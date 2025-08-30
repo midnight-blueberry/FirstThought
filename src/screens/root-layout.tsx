@@ -5,7 +5,7 @@ import { useAppBootstrap } from '@hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
@@ -42,6 +42,10 @@ function RootContent() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar
+        barStyle={theme.isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.colors.headerBackground}
+      />
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         onLayout={onLayoutRootView}
@@ -50,6 +54,7 @@ function RootContent() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PortalProvider>
             <DrawerNavigator
+              key={theme.name}
               theme={theme}
               homePageHeaderTitle={homePageHeaderTitle}
               homePageHeaderElevation={homePageHeaderElevation}

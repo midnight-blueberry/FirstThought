@@ -6,4 +6,5 @@ export const defaultDrawerScreenOptions: DrawerNavigationOptions = {
   swipeEdgeWidth: 40,
   headerTitleAlign: 'center',
   headerShadowVisible: false,
+  headerTransparent: false,
 };

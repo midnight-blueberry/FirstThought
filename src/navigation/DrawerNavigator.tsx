@@ -39,6 +39,7 @@ export default function DrawerNavigator({
 
   return (
     <Drawer.Navigator
+      key={theme.name}
       initialRouteName="Home"
       screenOptions={() => ({
         ...defaultDrawerScreenOptions,
@@ -66,9 +67,9 @@ export default function DrawerNavigator({
           fontFamily: theme.fontName,
           fontSize: theme.fontSize.medium,
           fontWeight: theme.fontWeight,
-          color: theme.colors.basic,
+          color: theme.colors.headerForeground,
         },
-        drawerActiveTintColor: theme.colors.basic,
+        drawerActiveTintColor: theme.colors.headerForeground,
         drawerInactiveTintColor: theme.colors.disabled,
         drawerItemStyle: {
           marginVertical: theme.margin.small,
@@ -77,11 +78,13 @@ export default function DrawerNavigator({
         headerTitleStyle: {
           fontFamily: theme.fontName,
           fontSize: theme.fontSize.large,
-          color: theme.colors.basic,
+          color: theme.colors.headerForeground,
           fontWeight: theme.fontWeight,
         },
-        headerTintColor: theme.colors.basic,
+        headerTintColor: theme.colors.headerForeground,
         headerStyle: baseHeaderStyle,
+        headerShadowVisible: theme.headerShadowVisible,
+        headerTransparent: false,
       })}
       drawerContent={(props) => <DrawerContent {...props} />}
     >
@@ -104,6 +107,8 @@ export default function DrawerNavigator({
             ...baseHeaderStyle,
             elevation: homePageHeaderElevation,
           },
+          headerTintColor: theme.colors.headerForeground,
+          headerTitleStyle: { color: theme.colors.headerForeground },
         })}
       />
       <Drawer.Screen
@@ -124,6 +129,8 @@ export default function DrawerNavigator({
             ...baseHeaderStyle,
             elevation: settingsPageHeaderElevation,
           },
+          headerTintColor: theme.colors.headerForeground,
+          headerTitleStyle: { color: theme.colors.headerForeground },
         })}
       />
     </Drawer.Navigator>

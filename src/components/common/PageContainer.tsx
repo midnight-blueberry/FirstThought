@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ViewProps } from 'react-native';
 import useTheme from '@hooks/useTheme';
+import ThemeHeaderBridge from '@/navigation/ThemeHeaderBridge';
 
 interface PageContainerProps extends ViewProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children, style, ...rest 
       style={[styles.container, { backgroundColor: theme.colors.background }, style]}
       {...rest}
     >
+      <ThemeHeaderBridge />
       {children}
     </View>
   );

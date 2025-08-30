@@ -16,7 +16,7 @@ export default function useHeaderShadow() {
       const hasShadow = y > 0;
       navigation.setOptions({
         headerStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.colors.headerBackground,
           elevation: hasShadow ? 4 : 0,
           height: headerHeight,
         },
