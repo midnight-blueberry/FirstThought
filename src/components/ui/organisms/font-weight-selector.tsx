@@ -16,8 +16,8 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 }) => {
   const theme = useTheme();
   const font = getFontByName(fonts, fontFamily);
-  const columns = disabled ? 5 : font.weights.length;
-  const filledCount = disabled ? 0 : getWeightIndex(font, fontWeight) + 1;
+  const columns = font.weights.length;
+  const filledCount = getWeightIndex(font, fontWeight) + 1;
   const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
 
   return (
