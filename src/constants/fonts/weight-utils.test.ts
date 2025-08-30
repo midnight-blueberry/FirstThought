@@ -18,6 +18,10 @@ describe('resolveAvailableWeight', () => {
   it('PT_Sans + 500 => 400', () => {
     expect(resolveAvailableWeight('PT_Sans' as FontFamily, '500' as FontWeight)).toBe('400');
   });
+
+  it('Bad_Script + 700 => 400', () => {
+    expect(resolveAvailableWeight('Bad_Script' as FontFamily, '700' as FontWeight)).toBe('400');
+  });
 });
 
 describe('getFontKey', () => {

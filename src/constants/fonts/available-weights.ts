@@ -1,6 +1,6 @@
 import type { FontFamily, FontWeight } from './types';
 
-export const AVAILABLE_WEIGHTS = {
+export const AVAILABLE_WEIGHTS: Record<FontFamily, FontWeight[]> = {
   Bad_Script: ['400'],
   Comfortaa: ['300', '400', '500', '600', '700'],
   Lora: ['400', '500', '600', '700'],
@@ -10,4 +10,4 @@ export const AVAILABLE_WEIGHTS = {
   Raleway: ['300', '400', '500', '600', '700'],
   Roboto_Condensed: ['300', '400', '500', '600', '700'],
   Roboto_Slab: ['300', '400', '500', '600', '700'],
-} as const satisfies Record<FontFamily, readonly FontWeight[]>;
+} as const;

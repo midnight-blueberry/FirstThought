@@ -1,12 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import {
-  fonts,
-  AVAILABLE_WEIGHTS,
-  resolveAvailableWeight,
-  getFontFamily,
-  type FontWeight,
-} from '@constants/fonts';
+import { fonts, type FontFamily, type FontWeight } from '@constants/fonts';
+import { AVAILABLE_WEIGHTS } from '@/constants/fonts/available-weights';
+import { getFontKey, resolveAvailableWeight } from '@/constants/fonts/weight-utils';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
@@ -78,13 +74,13 @@ export default function useSettingsVm(): SettingsVm {
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, settings.fontFamily);
-    const weights: FontWeight[] = [...AVAILABLE_WEIGHTS[meta.family]];
+    const weights = (AVAILABLE_WEIGHTS[meta.family] ?? ['400']) as FontWeight[];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx + 1) % weights.length]);
   };
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, settings.fontFamily);
-    const weights: FontWeight[] = [...AVAILABLE_WEIGHTS[meta.family]];
+    const weights = (AVAILABLE_WEIGHTS[meta.family] ?? ['400']) as FontWeight[];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx - 1 + weights.length) % weights.length]);
   };
@@ -113,9 +109,9 @@ export default function useSettingsVm(): SettingsVm {
       }),
       preview: {
         noteTextAlign,
-        fontName: getFontFamily(
-          getFontByName(fonts, selectedFontName).family,
-          String(fontWeight),
+        fontName: getFontKey(
+          getFontByName(fonts, selectedFontName).family as FontFamily,
+          fontWeight,
         ),
         colors: theme.colors,
       },
