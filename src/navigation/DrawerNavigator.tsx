@@ -66,7 +66,6 @@ export default function DrawerNavigator({
         drawerLabelStyle: {
           fontFamily: theme.typography.header.headerTitleFamily,
           fontSize: theme.fontSize.medium,
-          fontWeight: theme.typography.header.headerTitleWeight,
           color: theme.colors.headerForeground,
         },
         drawerActiveTintColor: theme.colors.headerForeground,
@@ -78,7 +77,6 @@ export default function DrawerNavigator({
         headerTitleStyle: {
           color: theme.colors.headerForeground,
           fontFamily: theme.typography.header.headerTitleFamily,
-          fontWeight: theme.typography.header.headerTitleWeight,
           fontStyle: theme.typography.header.headerTitleStyle,
           fontSize: theme.typography.header.headerTitleSize,
           letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -88,7 +86,6 @@ export default function DrawerNavigator({
           ios: {
             color: theme.colors.headerForeground,
             fontFamily: theme.typography.header.headerTitleFamily,
-            fontWeight: theme.typography.header.headerLargeTitleWeight,
             fontStyle: theme.typography.header.headerTitleStyle,
             fontSize: theme.typography.header.headerLargeTitleSize,
             letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,

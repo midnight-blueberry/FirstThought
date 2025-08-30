@@ -3,7 +3,7 @@ export { FAMILIES } from './families';
 export { AVAILABLE_WEIGHTS } from './available-weights';
 export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
-export { resolveAvailableWeight } from './weight-utils';
+export { resolveAvailableWeight, getFontKey } from './weight-utils';
 export { getRegisteredFonts } from './register';
 
 import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
