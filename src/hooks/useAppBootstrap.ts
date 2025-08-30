@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
-import { FONT_FILES } from '@constants/fonts';
+import { FONT_SOURCES } from '@constants/fonts';
 
 export function useAppBootstrap() {
   const [ready, setReady] = useState(false);
@@ -8,7 +8,17 @@ export function useAppBootstrap() {
   useEffect(() => {
     async function prepare() {
       try {
-        await Font.loadAsync(FONT_FILES);
+        const fontMap = Object.fromEntries(
+          Object.entries(FONT_SOURCES).flatMap(([family, variants]) =>
+            Object.entries(variants).map(([variant, source]) => [
+              variant === 'regular' || variant === 'variable'
+                ? family
+                : `${family}-${variant}`,
+              source,
+            ]),
+          ),
+        );
+        await Font.loadAsync(fontMap);
       } catch (e) {
         console.warn(e);
       } finally {

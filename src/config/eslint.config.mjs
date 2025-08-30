@@ -37,8 +37,14 @@ export default [
   },
   {
     files: ['**/*.config.{js,cjs,mjs}', 'jest.config.js'],
+    languageOptions: {
+      parserOptions: {
+        project: null
+      }
+    },
     rules: {
-      '@typescript-eslint/no-require-imports': 'off'
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/await-thenable': 'off'
     }
   }
 ];

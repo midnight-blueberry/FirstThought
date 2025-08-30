@@ -1,7 +1,7 @@
 export * from './types';
 export { FONT_FAMILIES } from './families';
 export { FONT_WEIGHTS_BY_FAMILY } from './weights';
-export { FONT_FILES } from './files';
+export { FONT_SOURCES } from './variants';
 
 import type { FontFamily, FontWeight } from './types';
 import { FONT_FAMILIES } from './families';
