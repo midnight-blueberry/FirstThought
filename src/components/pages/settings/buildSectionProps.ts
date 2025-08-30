@@ -56,6 +56,7 @@ export default function buildSectionProps(
       blinkAnim: a.sizeBlinkAnim,
     },
     fontWeight: {
+      fontFamily: a.selectedFontName,
       fontWeight: a.fontWeight,
       onIncrease: a.onIncWeight,
       onDecrease: a.onDecWeight,

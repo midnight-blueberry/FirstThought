@@ -28,6 +28,10 @@ export default function useSettingsVm(): SettingsVm {
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
+  React.useEffect(() => {
+    setSelectedFontName(settings.fontFamily);
+  }, [settings.fontFamily]);
+
   const changeTheme = (name: string) => {
     setSelectedThemeName(name);
     const id =
@@ -51,7 +55,7 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontWeight = (weight: FontWeight) => {
-    const meta = getFontByName(fonts, selectedFontName);
+    const meta = getFontByName(fonts, settings.fontFamily);
     const safe = getNearestAllowedWeight(meta.family, weight);
     setFontWeight(safe);
     updateSettings({ fontWeight: safe });
@@ -71,13 +75,13 @@ export default function useSettingsVm(): SettingsVm {
   const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
-    const meta = getFontByName(fonts, selectedFontName);
+    const meta = getFontByName(fonts, settings.fontFamily);
     const weights: FontWeight[] = [...FONT_WEIGHTS_BY_FAMILY[meta.family]];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx + 1) % weights.length]);
   };
   const handleDecWeight = () => {
-    const meta = getFontByName(fonts, selectedFontName);
+    const meta = getFontByName(fonts, settings.fontFamily);
     const weights: FontWeight[] = [...FONT_WEIGHTS_BY_FAMILY[meta.family]];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx - 1 + weights.length) % weights.length]);

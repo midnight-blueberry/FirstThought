@@ -52,6 +52,7 @@ export interface FontSizeSelectorProps {
 }
 
 export interface FontWeightSelectorProps {
+  fontFamily: string;
   fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;
