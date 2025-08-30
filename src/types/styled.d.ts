@@ -9,5 +9,6 @@ declare module 'styled-components/native' {
     fontName: string;
     fontWeight: TextStyle['fontWeight'];
     noteTextAlign: 'left' | 'justify';
+    barStyle: 'light-content' | 'dark-content';
   }
 }

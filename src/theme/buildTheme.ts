@@ -20,6 +20,7 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   fontName: getFontFamily(defaultFontName.replace(/ /g, '_'), '500'),
   fontWeight: '500',
   noteTextAlign: 'left',
+  barStyle: name === 'Темная' ? 'light-content' : 'dark-content',
 });
 
 export const themes = {
