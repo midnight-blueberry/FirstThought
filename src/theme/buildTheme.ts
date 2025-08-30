@@ -21,6 +21,8 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   fontWeight: '500',
   noteTextAlign: 'left',
   barStyle: name === 'Темная' ? 'light-content' : 'dark-content',
+  isDark: name === 'Темная',
+  headerShadowVisible: false,
 });
 
 export const themes = {

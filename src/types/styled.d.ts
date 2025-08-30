@@ -10,5 +10,7 @@ declare module 'styled-components/native' {
     fontWeight: TextStyle['fontWeight'];
     noteTextAlign: 'left' | 'justify';
     barStyle: 'light-content' | 'dark-content';
+    isDark: boolean;
+    headerShadowVisible: boolean;
   }
 }

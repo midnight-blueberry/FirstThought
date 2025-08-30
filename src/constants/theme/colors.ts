@@ -18,6 +18,8 @@ export interface ColorTokens {
   onBackground: string;
   onAccent: string;
   onDisabled: string;
+  headerBackground: string;
+  headerForeground: string;
 }
 
 export const lightColors: ColorTokens = {
@@ -29,6 +31,8 @@ export const lightColors: ColorTokens = {
   onBackground: baseColors.black,
   onAccent: baseColors.black,
   onDisabled: baseColors.grayDark,
+  headerBackground: baseColors.white,
+  headerForeground: baseColors.black,
 };
 
 export const darkColors: ColorTokens = {
@@ -40,6 +44,8 @@ export const darkColors: ColorTokens = {
   onBackground: baseColors.white,
   onAccent: baseColors.black,
   onDisabled: baseColors.grayLight,
+  headerBackground: baseColors.black,
+  headerForeground: baseColors.white,
 };
 
 export const creamColors: ColorTokens = {
@@ -51,4 +57,6 @@ export const creamColors: ColorTokens = {
   onBackground: baseColors.black,
   onAccent: baseColors.black,
   onDisabled: baseColors.grayDark,
+  headerBackground: baseColors.cream,
+  headerForeground: baseColors.black,
 };
