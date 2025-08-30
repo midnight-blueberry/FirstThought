@@ -3,6 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
+import { fonts, getFontFamily } from '@constants/fonts';
+import { getFontByName } from '@utils/fontHelpers';
 
 export default function ThemeHeaderBridge() {
   const navigation = useNavigation();
@@ -10,13 +12,15 @@ export default function ThemeHeaderBridge() {
   const { settings } = useSettings();
 
   const setOptions = useCallback(() => {
+    const meta = getFontByName(fonts, settings.fontFamily);
+    const fontKey = getFontFamily(meta.family, String(settings.fontWeight));
     navigation.setOptions({
       headerStyle: { backgroundColor: theme.colors.headerBackground },
       headerTintColor: theme.colors.headerForeground,
       headerTitleStyle: {
         color: theme.colors.headerForeground,
-        fontFamily: theme.typography.header.headerTitleFamily,
-        fontWeight: theme.typography.header.headerTitleWeight,
+        fontFamily: fontKey,
+        fontWeight: settings.fontWeight,
         fontStyle: theme.typography.header.headerTitleStyle,
         fontSize: theme.typography.header.headerTitleSize,
         letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -25,8 +29,8 @@ export default function ThemeHeaderBridge() {
       headerLargeTitleStyle: Platform.select({
         ios: {
           color: theme.colors.headerForeground,
-          fontFamily: theme.typography.header.headerTitleFamily,
-          fontWeight: theme.typography.header.headerLargeTitleWeight,
+          fontFamily: fontKey,
+          fontWeight: settings.fontWeight,
           fontStyle: theme.typography.header.headerTitleStyle,
           fontSize: theme.typography.header.headerLargeTitleSize,
           letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
