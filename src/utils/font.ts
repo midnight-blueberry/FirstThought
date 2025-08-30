@@ -8,10 +8,6 @@ export type IconSizeToken = {
 
 import { clampLevel } from './theme';
 
-export function getBaseFontName(themeFontName: string): string {
-  return themeFontName.replace(/_\d+$/, '').replace(/_/g, ' ');
-}
-
 export function calcFontSizeLevel(themeSmallPx: number, fontDefaultSize: number): 1|2|3|4|5 {
   const base = fontDefaultSize - 4;
   const level = Math.round((themeSmallPx - base) / 2) + 3;
