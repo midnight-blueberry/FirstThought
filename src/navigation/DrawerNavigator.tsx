@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import type { DrawerScreenProps } from '@react-navigation/drawer';
@@ -39,7 +39,7 @@ export default function DrawerNavigator({
 
   return (
     <Drawer.Navigator
-      key={theme.name}
+      key={theme.typography.header.headerTitleFamily + theme.name}
       initialRouteName="Home"
       screenOptions={() => ({
         ...defaultDrawerScreenOptions,
@@ -64,9 +64,9 @@ export default function DrawerNavigator({
           borderWidth: theme.borderWidth.medium,
         },
         drawerLabelStyle: {
-          fontFamily: theme.fontName,
+          fontFamily: theme.typography.header.headerTitleFamily,
           fontSize: theme.fontSize.medium,
-          fontWeight: theme.fontWeight,
+          fontWeight: theme.typography.header.headerTitleWeight,
           color: theme.colors.headerForeground,
         },
         drawerActiveTintColor: theme.colors.headerForeground,
@@ -76,11 +76,25 @@ export default function DrawerNavigator({
           marginHorizontal: theme.margin.medium,
         },
         headerTitleStyle: {
-          fontFamily: theme.fontName,
-          fontSize: theme.fontSize.large,
           color: theme.colors.headerForeground,
-          fontWeight: theme.fontWeight,
+          fontFamily: theme.typography.header.headerTitleFamily,
+          fontWeight: theme.typography.header.headerTitleWeight,
+          fontStyle: theme.typography.header.headerTitleStyle,
+          fontSize: theme.typography.header.headerTitleSize,
+          letterSpacing: theme.typography.header.headerTitleLetterSpacing,
+          lineHeight: theme.typography.header.headerTitleLineHeight,
         },
+        headerLargeTitleStyle: Platform.select({
+          ios: {
+            color: theme.colors.headerForeground,
+            fontFamily: theme.typography.header.headerTitleFamily,
+            fontWeight: theme.typography.header.headerLargeTitleWeight,
+            fontStyle: theme.typography.header.headerTitleStyle,
+            fontSize: theme.typography.header.headerLargeTitleSize,
+            letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
+            lineHeight: theme.typography.header.headerLargeTitleLineHeight,
+          },
+        }),
         headerTintColor: theme.colors.headerForeground,
         headerStyle: baseHeaderStyle,
         headerShadowVisible: theme.headerShadowVisible,
@@ -108,7 +122,6 @@ export default function DrawerNavigator({
             elevation: homePageHeaderElevation,
           },
           headerTintColor: theme.colors.headerForeground,
-          headerTitleStyle: { color: theme.colors.headerForeground },
         })}
       />
       <Drawer.Screen
@@ -130,7 +143,6 @@ export default function DrawerNavigator({
             elevation: settingsPageHeaderElevation,
           },
           headerTintColor: theme.colors.headerForeground,
-          headerTitleStyle: { color: theme.colors.headerForeground },
         })}
       />
     </Drawer.Navigator>

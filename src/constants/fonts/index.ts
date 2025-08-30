@@ -51,3 +51,18 @@ export const getNextFontWeight = (family: string, currentWeight: FontWeight) => 
   const next = adjustWeight(font, currentWeight, 1);
   return next ?? currentWeight;
 };
+
+export function resolveFontFace(
+  familyName: string,
+  weight: FontWeight,
+  style: 'normal' | 'italic',
+): { fontFamily: string; fontWeight: FontWeight; fontStyle: 'normal' | 'italic' } {
+  const font = getFontByName(fonts, familyName);
+  let chosen = weight;
+  if (!font.weights.includes(weight)) {
+    const adj = adjustWeight(font, weight, 0);
+    chosen = (adj ?? font.defaultWeight) as FontWeight;
+  }
+  const fontFamily = getFontFamily(font.family, String(chosen));
+  return { fontFamily, fontWeight: chosen, fontStyle: style };
+}

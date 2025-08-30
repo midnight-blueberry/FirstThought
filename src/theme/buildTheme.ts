@@ -1,5 +1,6 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, getFontFamily } from '@constants/fonts';
+import { defaultFontName, fonts, getFontFamily, resolveFontFace } from '@constants/fonts';
+import { headerTypography } from './tokens/typography';
 import { getFontByName } from '@utils/fontHelpers';
 import {
   lightColors,
@@ -23,6 +24,7 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   barStyle: name === 'Темная' ? 'light-content' : 'dark-content',
   isDark: name === 'Темная',
   headerShadowVisible: false,
+  typography: { header: headerTypography },
 });
 
 export const themes = {
@@ -87,7 +89,23 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
   const updatedIconSize: DefaultTheme['iconSize'] =
     saved?.iconSize ?? nextIconSize(level, sizes.iconSize);
 
-  // 6) Финальный объект темы
+  // 6) Типографика для заголовков
+  const resolved = resolveFontFace(savedFontName, weight, 'normal');
+  const header = {
+    ...headerTypography,
+    headerTitleFamily: resolved.fontFamily,
+    headerTitleWeight: resolved.fontWeight,
+    headerTitleStyle: 'normal' as const,
+    headerTitleSize: updatedFontSize.large,
+    headerTitleLetterSpacing: 0,
+    headerTitleLineHeight: updatedFontSize.large + 6,
+    headerLargeTitleSize: updatedFontSize.xlarge,
+    headerLargeTitleWeight: resolved.fontWeight,
+    headerLargeTitleLetterSpacing: 0,
+    headerLargeTitleLineHeight: updatedFontSize.xlarge + 6,
+  };
+
+  // 7) Финальный объект темы
   return {
     ...chosenTheme,
     colors: updatedColors,
@@ -95,9 +113,10 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
     padding: updatedPadding,
     margin: updatedMargin,
     iconSize: updatedIconSize,
-    fontName: getFontFamily(fontMeta.family, String(weight)),
-    fontWeight: weight,
+    fontName: resolved.fontFamily,
+    fontWeight: resolved.fontWeight,
     noteTextAlign: saved?.noteTextAlign ?? chosenTheme.noteTextAlign,
+    typography: { header },
   } as DefaultTheme;
 }
 
