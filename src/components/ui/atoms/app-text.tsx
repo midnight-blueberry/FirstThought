@@ -3,7 +3,8 @@ import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styled, { DefaultTheme } from "styled-components/native";
 import useTheme from '@hooks/useTheme';
-import { getFontFamily, getNextFontWeight } from "@constants/fonts";
+import { getNextFontWeight } from "@constants/fonts";
+import type { FontFamily, FontWeight } from '@constants/fonts';
 
 type AppTextProps = {
   variant?: keyof DefaultTheme["fontSize"];
@@ -39,17 +40,11 @@ const AppText: React.FC<AppTextProps> = ({
 }) => {
   const theme = useTheme();
 
-  const familyString = fontFamily ?? theme.fontName;
-  const parts = familyString.split("_");
-  const baseFamily = parts.slice(0, -1).join("_");
-  const baseWeight = String(fontWeight ?? parts[parts.length - 1]);
-
+  const baseFamily = (fontFamily ?? theme.fontName) as FontFamily;
   let resolvedWeight: TextStyle['fontWeight'] = fontWeight ?? theme.fontWeight;
-  let resolvedFamily = fontFamily ?? theme.fontName;
 
   if ((variant === "large" || variant === "xlarge") && !fontWeight) {
-    resolvedWeight = getNextFontWeight(baseFamily, baseWeight as TextStyle['fontWeight']) as TextStyle['fontWeight'];
-    resolvedFamily = getFontFamily(baseFamily, String(resolvedWeight));
+    resolvedWeight = getNextFontWeight(baseFamily, resolvedWeight as FontWeight) as TextStyle['fontWeight'];
   }
 
   return (
@@ -57,7 +52,7 @@ const AppText: React.FC<AppTextProps> = ({
       style={style}
       textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
-      fontFamily={resolvedFamily}
+      fontFamily={baseFamily}
       fontWeight={resolvedWeight}
       maxFontSizeMultiplier={3}
     >

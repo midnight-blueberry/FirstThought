@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import { fonts, FONT_WEIGHTS, type FontWeight } from '@constants/fonts';
+import { fonts, FONT_WEIGHTS_BY_FAMILY, getNearestAllowedWeight, type FontWeight } from '@constants/fonts';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
@@ -51,8 +51,10 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontWeight = (weight: FontWeight) => {
-    setFontWeight(weight);
-    updateSettings({ fontWeight: weight });
+    const meta = getFontByName(fonts, selectedFontName);
+    const safe = getNearestAllowedWeight(meta.family, weight);
+    setFontWeight(safe);
+    updateSettings({ fontWeight: safe });
   };
 
   const changeFontSize = (level: number) => {
@@ -70,13 +72,13 @@ export default function useSettingsVm(): SettingsVm {
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
+    const weights: FontWeight[] = [...FONT_WEIGHTS_BY_FAMILY[meta.family]];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx + 1) % weights.length]);
   };
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
+    const weights: FontWeight[] = [...FONT_WEIGHTS_BY_FAMILY[meta.family]];
     const idx = weights.indexOf(fontWeight);
     changeFontWeight(weights[(idx - 1 + weights.length) % weights.length]);
   };

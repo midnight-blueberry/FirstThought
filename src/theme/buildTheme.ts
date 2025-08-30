@@ -1,5 +1,5 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, getFontFamily, resolveFontFace } from '@constants/fonts';
+import { defaultFontName, fonts, getNearestAllowedWeight, type FontWeight } from '@constants/fonts';
 import { headerTypography } from './tokens/typography';
 import { getFontByName } from '@utils/fontHelpers';
 import {
@@ -14,12 +14,14 @@ import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
 import type { SavedSettings } from '@types';
 
+const defaultMeta = getFontByName(fonts, defaultFontName);
+
 const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   name,
   colors,
   ...sizes,
-  fontName: getFontFamily(defaultFontName.replace(/ /g, '_'), '500'),
-  fontWeight: '500',
+  fontName: defaultMeta.family,
+  fontWeight: 500,
   noteTextAlign: 'left',
   barStyle: name === 'Темная' ? 'light-content' : 'dark-content',
   isDark: name === 'Темная',
@@ -53,8 +55,11 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
   // 2) Шрифт (семейство + начертание)
   const savedFontName = saved?.fontName ?? defaultFontName;
   const fontMeta = getFontByName(fonts, savedFontName);
-  const weight: DefaultTheme['fontWeight'] =
-    saved?.fontWeight ?? (fontMeta.defaultWeight as DefaultTheme['fontWeight']);
+  const rawWeight = (saved?.fontWeight ?? fontMeta.defaultWeight) as FontWeight;
+  const weight: DefaultTheme['fontWeight'] = getNearestAllowedWeight(
+    fontMeta.family,
+    rawWeight,
+  );
 
   // 3) Размеры шрифта (с учётом уровня)
   // В твоём коде: delta = (level - 3) * 2; medium = font.defaultSize + delta
@@ -90,17 +95,16 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
     saved?.iconSize ?? nextIconSize(level, sizes.iconSize);
 
   // 6) Типографика для заголовков
-  const resolved = resolveFontFace(savedFontName, weight, 'normal');
   const header = {
     ...headerTypography,
-    headerTitleFamily: resolved.fontFamily,
-    headerTitleWeight: resolved.fontWeight,
+    headerTitleFamily: fontMeta.family,
+    headerTitleWeight: weight,
     headerTitleStyle: 'normal' as const,
     headerTitleSize: updatedFontSize.large,
     headerTitleLetterSpacing: 0,
     headerTitleLineHeight: updatedFontSize.large + 6,
     headerLargeTitleSize: updatedFontSize.xlarge,
-    headerLargeTitleWeight: resolved.fontWeight,
+    headerLargeTitleWeight: weight,
     headerLargeTitleLetterSpacing: 0,
     headerLargeTitleLineHeight: updatedFontSize.xlarge + 6,
   };
@@ -113,8 +117,8 @@ export function buildTheme(saved?: SavedSettings): DefaultTheme {
     padding: updatedPadding,
     margin: updatedMargin,
     iconSize: updatedIconSize,
-    fontName: resolved.fontFamily,
-    fontWeight: resolved.fontWeight,
+    fontName: fontMeta.family,
+    fontWeight: weight,
     noteTextAlign: saved?.noteTextAlign ?? chosenTheme.noteTextAlign,
     typography: { header },
   } as DefaultTheme;

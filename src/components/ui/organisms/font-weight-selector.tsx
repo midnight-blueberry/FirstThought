@@ -2,8 +2,8 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
-import { fonts } from '@constants/fonts';
-import { getBaseFontName } from '@utils/font';
+import { fonts, FONT_FAMILIES } from '@constants/fonts';
+import type { FontFamily } from '@constants/fonts';
 import { getFontByName, getWeightIndex } from '@utils/fontHelpers';
 import type { FontWeightSelectorProps } from '@types';
 
@@ -15,8 +15,8 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   disabled,
 }) => {
   const theme = useTheme();
-  const baseName = getBaseFontName(theme.fontName);
-  const font = getFontByName(fonts, baseName);
+  const familyKey = theme.fontName as FontFamily;
+  const font = getFontByName(fonts, FONT_FAMILIES[familyKey]);
   const columns = disabled ? 5 : font.weights.length;
   const filledCount = disabled ? 0 : getWeightIndex(font, fontWeight) + 1;
   const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
