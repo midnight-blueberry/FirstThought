@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
+import { resolveFontFace } from '@constants/fonts';
+import type { FontFamily, FontWeight } from '@constants/fonts';
 
 interface BuildOptions {
   size: 'sm' | 'md' | 'lg';
@@ -24,10 +26,12 @@ export const buildInputFieldStyles = (
     input: {
       flex: 1,
       paddingVertical: 0,
-      color: theme.colors.basic,
-      fontFamily: theme.fontName,
-      fontWeight: theme.fontWeight,
-      includeFontPadding: false,
+        color: theme.colors.basic,
+        fontFamily: resolveFontFace(
+          theme.fontName as FontFamily,
+          theme.fontWeight as FontWeight,
+        ),
+        includeFontPadding: false,
     },
     leftAccessory: { marginRight: theme.margin.small },
     rightAccessory: { marginLeft: theme.margin.small },
