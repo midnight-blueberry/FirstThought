@@ -13,10 +13,7 @@ export function useAppBootstrap() {
           Object.entries(FONT_SOURCES).flatMap(([family, variants]) => {
             const weights = FONT_WEIGHTS_BY_FAMILY[family as FontFamily];
             if ('variable' in variants) {
-              return (weights as FontWeight[]).map(weight => [
-                `${family}-${weight}`,
-                (variants as Record<string, Font.FontSource>)['variable'],
-              ]);
+              return [[family, (variants as Record<string, Font.FontSource>).variable]];
             }
             return (weights as FontWeight[]).map(weight => {
               const key = weight === 400 ? 'regular' : weight === 700 ? 'bold' : String(weight);

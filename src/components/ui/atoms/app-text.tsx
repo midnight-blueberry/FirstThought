@@ -20,12 +20,14 @@ type AppTextProps = {
     fontSize: number;
     textColor: string;
     fontFamily: string;
+    fontWeight: TextStyle['fontWeight'];
   }
 
 const StyledText = styled.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
     font-family: ${(props: StyledTextProps) => props.fontFamily};
+    font-weight: ${(props: StyledTextProps) => props.fontWeight};
 `;
 
   const AppText: React.FC<AppTextProps> = ({
@@ -53,6 +55,7 @@ const StyledText = styled.Text<StyledTextProps>`
         textColor={theme.colors[color]}
         fontSize={theme.fontSize[variant]}
         fontFamily={face}
+        fontWeight={resolvedWeight}
         maxFontSizeMultiplier={3}
       >
         {children}
