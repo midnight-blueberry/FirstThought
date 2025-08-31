@@ -9,6 +9,8 @@ import { IconButton } from '@components/ui/atoms';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
+import { resolveFontFace } from '@constants/fonts';
+import type { FontFamily, FontWeight } from '@constants/fonts';
 
 import DrawerContent from './DrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -32,8 +34,16 @@ export default function DrawerNavigator({
   settingsPageHeaderTitle,
   settingsPageHeaderElevation,
 }: Props) {
-  const { top } = useSafeAreaInsets();
-  const baseHeaderStyle = useHeaderConfig(theme, top);
+    const { top } = useSafeAreaInsets();
+    const baseHeaderStyle = useHeaderConfig(theme, top);
+    const headerTitleFace = resolveFontFace(
+      theme.typography.header.headerTitleFamily as FontFamily,
+      theme.typography.header.headerTitleWeight as FontWeight,
+    );
+    const headerLargeTitleFace = resolveFontFace(
+      theme.typography.header.headerTitleFamily as FontFamily,
+      theme.typography.header.headerLargeTitleWeight as FontWeight,
+    );
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
@@ -63,38 +73,35 @@ export default function DrawerNavigator({
           borderColor: theme.colors.basic,
           borderWidth: theme.borderWidth.medium,
         },
-        drawerLabelStyle: {
-          fontFamily: theme.typography.header.headerTitleFamily,
-          fontSize: theme.fontSize.medium,
-          fontWeight: theme.typography.header.headerTitleWeight,
-          color: theme.colors.headerForeground,
-        },
+          drawerLabelStyle: {
+            fontFamily: headerTitleFace,
+            fontSize: theme.fontSize.medium,
+            color: theme.colors.headerForeground,
+          },
         drawerActiveTintColor: theme.colors.headerForeground,
         drawerInactiveTintColor: theme.colors.disabled,
         drawerItemStyle: {
           marginVertical: theme.margin.small,
           marginHorizontal: theme.margin.medium,
         },
-        headerTitleStyle: {
-          color: theme.colors.headerForeground,
-          fontFamily: theme.typography.header.headerTitleFamily,
-          fontWeight: theme.typography.header.headerTitleWeight,
-          fontStyle: theme.typography.header.headerTitleStyle,
-          fontSize: theme.typography.header.headerTitleSize,
-          letterSpacing: theme.typography.header.headerTitleLetterSpacing,
-          lineHeight: theme.typography.header.headerTitleLineHeight,
-        },
-        headerLargeTitleStyle: Platform.select({
-          ios: {
+          headerTitleStyle: {
             color: theme.colors.headerForeground,
-            fontFamily: theme.typography.header.headerTitleFamily,
-            fontWeight: theme.typography.header.headerLargeTitleWeight,
+            fontFamily: headerTitleFace,
             fontStyle: theme.typography.header.headerTitleStyle,
-            fontSize: theme.typography.header.headerLargeTitleSize,
-            letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
-            lineHeight: theme.typography.header.headerLargeTitleLineHeight,
+            fontSize: theme.typography.header.headerTitleSize,
+            letterSpacing: theme.typography.header.headerTitleLetterSpacing,
+            lineHeight: theme.typography.header.headerTitleLineHeight,
           },
-        }),
+          headerLargeTitleStyle: Platform.select({
+            ios: {
+              color: theme.colors.headerForeground,
+              fontFamily: headerLargeTitleFace,
+              fontStyle: theme.typography.header.headerTitleStyle,
+              fontSize: theme.typography.header.headerLargeTitleSize,
+              letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
+              lineHeight: theme.typography.header.headerLargeTitleLineHeight,
+            },
+          }),
         headerTintColor: theme.colors.headerForeground,
         headerStyle: baseHeaderStyle,
         headerShadowVisible: theme.headerShadowVisible,
