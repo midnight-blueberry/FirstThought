@@ -13,6 +13,8 @@ This means all the styles are contained in these files:
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Raleway:
+  Raleway/static/Raleway-Thin.ttf
+  Raleway/static/Raleway-ExtraLight.ttf
   Raleway/static/Raleway-Light.ttf
   Raleway/static/Raleway-Regular.ttf
   Raleway/static/Raleway-Medium.ttf
@@ -20,6 +22,8 @@ in those cases you can use the static font files for Raleway:
   Raleway/static/Raleway-Bold.ttf
   Raleway/static/Raleway-ExtraBold.ttf
   Raleway/static/Raleway-Black.ttf
+  Raleway/static/Raleway-ThinItalic.ttf
+  Raleway/static/Raleway-ExtraLightItalic.ttf
   Raleway/static/Raleway-LightItalic.ttf
   Raleway/static/Raleway-Italic.ttf
   Raleway/static/Raleway-MediumItalic.ttf

@@ -13,6 +13,8 @@ This means all the styles are contained in these files:
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Montserrat:
+  Montserrat/static/Montserrat-Thin.ttf
+  Montserrat/static/Montserrat-ExtraLight.ttf
   Montserrat/static/Montserrat-Light.ttf
   Montserrat/static/Montserrat-Regular.ttf
   Montserrat/static/Montserrat-Medium.ttf
@@ -20,6 +22,8 @@ in those cases you can use the static font files for Montserrat:
   Montserrat/static/Montserrat-Bold.ttf
   Montserrat/static/Montserrat-ExtraBold.ttf
   Montserrat/static/Montserrat-Black.ttf
+  Montserrat/static/Montserrat-ThinItalic.ttf
+  Montserrat/static/Montserrat-ExtraLightItalic.ttf
   Montserrat/static/Montserrat-LightItalic.ttf
   Montserrat/static/Montserrat-Italic.ttf
   Montserrat/static/Montserrat-MediumItalic.ttf
