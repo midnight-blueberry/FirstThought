@@ -11,13 +11,13 @@ import { clampLevel } from './theme';
 export function getBaseFontName(themeFontName: string): string {
   return themeFontName
     .replace(/-\d+(?:-italic)?$/, '')
-    .replace(/_/g, ' ');
+    .replace(/\*/g, ' ');
 }
 
 export function toFamilyKey(name: string): string {
   return name
     .replace(/-\d+(?:-italic)?$/, '')
-    .replace(/ /g, '_');
+    .replace(/ /g, '*');
 }
 
 export function calcFontSizeLevel(themeSmallPx: number, fontDefaultSize: number): 1|2|3|4|5 {
