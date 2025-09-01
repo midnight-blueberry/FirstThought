@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import { fonts, FONT_VARIANTS, nearestAvailableWeight, type FontWeight } from '@constants/fonts';
+import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
@@ -14,7 +14,12 @@ import { useSettings } from '@/state/SettingsContext';
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
-  const { settings, updateSettings } = useSettings();
+  const {
+    settings,
+    updateSettings,
+    setFontFamily: storeSetFontFamily,
+    setFontWeight: storeSetFontWeight,
+  } = useSettings();
 
   const [selectedThemeName, setSelectedThemeName] = useState(
     themes[settings.themeId].name,
@@ -23,7 +28,7 @@ export default function useSettingsVm(): SettingsVm {
     settings.accent,
   );
   const [selectedFontName, setSelectedFontName] = useState(settings.fontFamily);
-  const [fontWeight, setFontWeight] = useState<FontWeight>(settings.fontWeight);
+  const [fontWeight, setFontWeightState] = useState<FontWeight>(settings.fontWeight);
   const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
 
@@ -44,19 +49,14 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontFamily = (name: string) => {
-    const meta = getFontByName(fonts, name);
     setSelectedFontName(name);
-    const weight = String(
-      nearestAvailableWeight(meta.family, Number(fontWeight))
-    ) as FontWeight;
-    setFontWeight(weight);
-    updateSettings({ fontFamily: name, fontWeight: weight });
+    const next = storeSetFontFamily(name);
+    setFontWeightState(next.fontWeight);
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
-    const w = String(weight) as FontWeight;
-    setFontWeight(w);
-    updateSettings({ fontWeight: w });
+    const next = storeSetFontWeight(Number(weight));
+    setFontWeightState(next.fontWeight);
   };
 
   const changeFontSize = (level: number) => {
