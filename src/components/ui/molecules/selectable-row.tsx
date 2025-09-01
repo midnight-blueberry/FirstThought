@@ -1,16 +1,17 @@
 import React from 'react';
-import { TextStyle, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
+import type { FontFamily, FontWeight } from '@constants/fonts';
 
 interface SelectableRowProps {
   label: string;
   swatchColor?: string;
   selected: boolean;
   onPress: () => void;
-  fontFamily?: string;
-  fontWeight?: TextStyle['fontWeight'];
+  familyKey?: FontFamily;
+  weight?: FontWeight;
   fontSize?: number;
 }
 
@@ -19,8 +20,8 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   swatchColor,
   selected,
   onPress,
-  fontFamily,
-  fontWeight,
+  familyKey,
+  weight,
   fontSize,
 }) => {
   const theme = useTheme();
@@ -65,8 +66,8 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
         )}
         <AppText
           variant="medium"
-          fontFamily={fontFamily}
-          fontWeight={fontWeight}
+          familyKey={familyKey}
+          weight={weight}
           style={[
             { transform: [{ translateY: drop }] },
             fontSize

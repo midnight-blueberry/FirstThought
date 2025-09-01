@@ -31,8 +31,8 @@ const FontSelector: React.FC<FontSelectorProps> = ({
                 onSelectFont(f.name);
                 onSelectWeight(f.defaultWeight as DefaultTheme['fontWeight']);
               }}
-              fontFamily={f.family}
-              fontWeight={f.defaultWeight}
+              familyKey={f.family}
+              weight={f.defaultWeight}
               fontSize={fontSize}
             />
           );

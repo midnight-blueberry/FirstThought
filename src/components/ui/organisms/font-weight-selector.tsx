@@ -3,11 +3,11 @@ import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import { fonts } from '@constants/fonts';
-import { getFontByName, getWeightIndex } from '@utils/fontHelpers';
+import { getWeightIndex } from '@utils/fontHelpers';
 import type { FontWeightSelectorProps } from '@types';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
-  fontFamily,
+  fontFamilyKey,
   fontWeight,
   onIncrease,
   onDecrease,
@@ -15,7 +15,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   disabled,
 }) => {
   const theme = useTheme();
-  const font = getFontByName(fonts, fontFamily);
+  const font = fonts.find(f => f.family === fontFamilyKey)!;
   const columns = font.weights.length;
   const filledCount = getWeightIndex(font, fontWeight) + 1;
   const blinkIndex = filledCount > 0 ? filledCount - 1 : null;
@@ -48,7 +48,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 };
 
 const propsAreEqual = (prev: FontWeightSelectorProps, next: FontWeightSelectorProps) =>
-  prev.fontFamily === next.fontFamily &&
+  prev.fontFamilyKey === next.fontFamilyKey &&
   prev.fontWeight === next.fontWeight &&
   prev.onIncrease === next.onIncrease &&
   prev.onDecrease === next.onDecrease &&

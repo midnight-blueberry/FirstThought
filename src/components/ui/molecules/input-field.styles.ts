@@ -31,7 +31,6 @@ export const buildInputFieldStyles = (
           theme.fontName as FontFamily,
           theme.fontWeight as FontWeight,
         ),
-        fontWeight: theme.fontWeight,
         includeFontPadding: false,
     },
     leftAccessory: { marginRight: theme.margin.small },

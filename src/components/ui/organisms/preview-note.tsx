@@ -7,11 +7,10 @@ import Section from './settings-section';
 
 interface PreviewNoteProps {
   noteTextAlign: DefaultTheme['noteTextAlign'];
-  fontName: string;
   colors: DefaultTheme['colors'];
 }
 
-const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, fontName, colors }) => {
+const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, colors }) => {
   const theme = useTheme();
 
   return (
@@ -26,7 +25,7 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, fontName, colo
           alignSelf: 'stretch',
         }}
       >
-        <AppText color="basic" fontFamily={fontName} style={{ textAlign: noteTextAlign }}>
+        <AppText color="basic" style={{ textAlign: noteTextAlign }}>
           Так будет выглядеть ваша заметка в выбранном формате
         </AppText>
       </View>
@@ -35,8 +34,6 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, fontName, colo
 };
 
 const propsAreEqual = (prev: PreviewNoteProps, next: PreviewNoteProps) =>
-  prev.noteTextAlign === next.noteTextAlign &&
-  prev.fontName === next.fontName &&
-  prev.colors === next.colors;
+  prev.noteTextAlign === next.noteTextAlign && prev.colors === next.colors;
 
 export default React.memo(PreviewNote, propsAreEqual);

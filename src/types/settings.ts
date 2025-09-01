@@ -3,6 +3,7 @@ import type { DefaultTheme } from 'styled-components/native';
 import type { ComponentProps } from 'react';
 import type { Divider } from '@components/ui/atoms';
 import type { PreviewNote } from '@components/ui/organisms';
+import type { FontFamily } from '@constants/fonts';
 
 export interface AppSettings {
   themeName: string;
@@ -52,7 +53,7 @@ export interface FontSizeSelectorProps {
 }
 
 export interface FontWeightSelectorProps {
-  fontFamily: string;
+  fontFamilyKey: FontFamily;
   fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;

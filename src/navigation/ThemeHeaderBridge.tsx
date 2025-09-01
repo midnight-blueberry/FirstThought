@@ -2,14 +2,12 @@ import { useFocusEffect, useNavigation } from 'expo-router';
 import { useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import { useSettings } from '@/state/SettingsContext';
 import { resolveFontFace } from '@constants/fonts';
 import type { FontFamily, FontWeight } from '@constants/fonts';
 
 export default function ThemeHeaderBridge() {
   const navigation = useNavigation();
   const theme = useTheme();
-  const { settings } = useSettings();
 
   const setOptions = useCallback(() => {
     navigation.setOptions({
@@ -40,17 +38,17 @@ export default function ThemeHeaderBridge() {
           },
         }),
     });
-  }, [navigation, theme, settings]);
+  }, [navigation, theme]);
 
   useFocusEffect(
     useCallback(() => {
       setOptions();
-    }, [setOptions])
+    }, [navigation, theme])
   );
 
   useEffect(() => {
     setOptions();
-  }, [setOptions]);
+  }, [navigation, theme]);
 
   return null;
 }

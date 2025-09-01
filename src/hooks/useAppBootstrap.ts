@@ -11,16 +11,16 @@ export function useAppBootstrap() {
       try {
         const fontMap = Object.fromEntries(
           Object.entries(FONT_SOURCES).flatMap(([family, variants]) => {
-            const weights = FONT_WEIGHTS_BY_FAMILY[family as FontFamily];
+            const weights = FONT_WEIGHTS_BY_FAMILY[family as FontFamily] as FontWeight[];
             if ('variable' in variants) {
-              return [[family, (variants as Record<string, Font.FontSource>).variable]];
+              return weights.map(w => [`${family}-${w}`, (variants as Record<string, Font.FontSource>).variable]);
             }
-            return (weights as FontWeight[]).map(weight => {
-              const key = weight === 400 ? 'regular' : weight === 700 ? 'bold' : String(weight);
+            return weights.map(w => {
+              const key = w === 400 ? 'regular' : w === 700 ? 'bold' : String(w);
               const source = (variants as Record<string, Font.FontSource>)[key];
-              return [`${family}-${weight}`, source];
+              return [`${family}-${w}`, source];
             });
-          }),
+          })
         );
         await Font.loadAsync(fontMap);
       } catch (e) {
