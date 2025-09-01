@@ -1,13 +1,14 @@
 export * from './types';
 export { FAMILIES } from './families';
-export { FONT_VARIANTS, FONT_KEYS } from './variants';
+export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
 export { nearestAvailableWeight } from './resolve';
 
 import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
 import type { TextStyle } from 'react-native';
-import { FONT_VARIANTS, FONT_KEYS } from './variants';
+import { FONT_VARIANTS } from './variants';
 import { FONT_FILES } from './files';
+import { fontKey } from './resolve';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
 type FontWeight = TextStyle['fontWeight'];
 
@@ -24,13 +25,13 @@ const DEFAULT_FONT_SIZES = {
 } as const satisfies Record<FontFamily, number>;
 
 export const fonts = (Object.keys(FONT_FILES) as FontFamily[]).map(family => {
-  const weightsNums = FONT_VARIANTS[family];
-  const weights = weightsNums.map(w => String(w) as InternalFontWeight);
+  const variants = FONT_VARIANTS[family] ?? {};
+  const weights = Object.keys(variants) as InternalFontWeight[];
   const defaultWeight = weights.includes('500' as InternalFontWeight)
     ? ('500' as InternalFontWeight)
     : weights[0];
   const files = Object.fromEntries(
-    weights.map(w => [w, (FONT_FILES as Record<string, Record<number, FontSource>>)[family][Number(w)]])
+    weights.map(w => [w, variants[w]?.normal as FontSource])
   ) as Record<InternalFontWeight, FontSource>;
   return {
     name: family.replace(/_/g, ' '),
@@ -62,6 +63,6 @@ export function resolveFontFace(
     const adj = adjustWeight(font, weight, 0);
     chosen = (adj ?? font.defaultWeight) as FontWeight;
   }
-  const fontFamily = FONT_KEYS[font.family][Number(chosen)];
+  const fontFamily = fontKey(font.family, Number(chosen));
   return { fontFamily, fontWeight: chosen, fontStyle: style };
 }

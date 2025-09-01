@@ -1,5 +1,5 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, FONT_KEYS, resolveFontFace } from '@constants/fonts';
+import { defaultFontName, fonts, resolveFontFace } from '@constants/fonts';
 import { headerTypography } from './tokens/typography';
 import { getFontByName } from '@utils/fontHelpers';
 import {
@@ -13,12 +13,13 @@ import { DefaultTheme } from 'styled-components/native';
 import { nextIconSize } from '@utils/font';
 import { clampLevel } from '@utils/theme';
 import type { SavedSettings } from '@types';
+import { fontKey } from '@constants/fonts/resolve';
 
 const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   name,
   colors,
   ...sizes,
-  fontName: FONT_KEYS[defaultFontName.replace(/ /g, '_')][500],
+    fontName: fontKey(defaultFontName.replace(/ /g, '_'), 500),
   fontWeight: '500',
   noteTextAlign: 'left',
   barStyle: name === 'Темная' ? 'light-content' : 'dark-content',

@@ -74,14 +74,20 @@ export default function useSettingsVm(): SettingsVm {
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights = FONT_VARIANTS[meta.family] ?? [400];
+    const variantMap = FONT_VARIANTS[meta.family];
+    const weights = variantMap
+      ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
+      : [400];
     const idx = weights.indexOf(Number(fontWeight));
     const next = weights[(idx + 1) % weights.length];
     changeFontWeight(String(next) as FontWeight);
   };
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights = FONT_VARIANTS[meta.family] ?? [400];
+    const variantMap = FONT_VARIANTS[meta.family];
+    const weights = variantMap
+      ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
+      : [400];
     const idx = weights.indexOf(Number(fontWeight));
     const next = weights[(idx - 1 + weights.length) % weights.length];
     changeFontWeight(String(next) as FontWeight);
