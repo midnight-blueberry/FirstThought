@@ -1,18 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import { SelectableRow } from '@components/ui/molecules';
-import { fonts } from '@constants/fonts';
-import { nearestAvailableWeight, fontKey } from '@/constants/fonts/resolve';
-import { FONT_VARIANTS } from '@/constants/fonts/variants';
+import { fonts, nearestAvailableWeight } from '@constants/fonts';
+import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
   onSelectFont,
-  onSelectWeight,
   fontSizeLevel,
 }) => {
   const theme = useTheme();
@@ -33,7 +30,6 @@ const FontSelector: React.FC<FontSelectorProps> = ({
               selected={f.name === selectedFontName}
               onPress={() => {
                 onSelectFont(f.name);
-                onSelectWeight(f.defaultWeight as DefaultTheme['fontWeight']);
               }}
               labelStyle={{ fontFamily: sampleKey }}
               fontSize={fontSize}
@@ -48,7 +44,6 @@ const FontSelector: React.FC<FontSelectorProps> = ({
 const propsAreEqual = (prev: FontSelectorProps, next: FontSelectorProps) =>
   prev.selectedFontName === next.selectedFontName &&
   prev.onSelectFont === next.onSelectFont &&
-  prev.onSelectWeight === next.onSelectWeight &&
   prev.fontSizeLevel === next.fontSizeLevel;
 
 export default React.memo(FontSelector, propsAreEqual);
