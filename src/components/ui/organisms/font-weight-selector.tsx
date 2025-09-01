@@ -2,7 +2,7 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
-import { FONT_VARIANTS, nearestAvailableWeight } from '@constants/fonts';
+import { FONT_VARIANTS } from '@constants/fonts';
 import { getBaseFontName } from '@utils/font';
 import type { FontWeightSelectorProps } from '@types';
 
@@ -18,8 +18,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   const baseName = getBaseFontName(theme.fontName);
   const family = baseName.replace(/ /g, '_');
   const weights = FONT_VARIANTS[family] ?? [400];
-  const actual = nearestAvailableWeight(family, Number(fontWeight));
-  const selectedIndex = Math.max(0, weights.indexOf(actual));
+  const selectedIndex = Math.max(0, weights.indexOf(Number(fontWeight)));
   const blinkIndex = selectedIndex;
 
   return (
