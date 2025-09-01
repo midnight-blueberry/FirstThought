@@ -2,21 +2,20 @@ import { useFocusEffect, useNavigation } from 'expo-router';
 import { useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import { useSettings } from '@/state/SettingsContext';
+import { HeaderTitle } from '@components/ui/atoms';
+import type { HeaderTitleProps } from '@react-navigation/elements';
 
 export default function ThemeHeaderBridge() {
   const navigation = useNavigation();
   const theme = useTheme();
-  const { settings } = useSettings();
 
   const setOptions = useCallback(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: theme.colors.headerBackground },
       headerTintColor: theme.colors.headerForeground,
+      headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
       headerTitleStyle: {
         color: theme.colors.headerForeground,
-        fontFamily: theme.typography.header.headerTitleFamily,
-        fontWeight: theme.typography.header.headerTitleWeight,
         fontStyle: theme.typography.header.headerTitleStyle,
         fontSize: theme.typography.header.headerTitleSize,
         letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -25,8 +24,6 @@ export default function ThemeHeaderBridge() {
       headerLargeTitleStyle: Platform.select({
         ios: {
           color: theme.colors.headerForeground,
-          fontFamily: theme.typography.header.headerTitleFamily,
-          fontWeight: theme.typography.header.headerLargeTitleWeight,
           fontStyle: theme.typography.header.headerTitleStyle,
           fontSize: theme.typography.header.headerLargeTitleSize,
           letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
@@ -34,7 +31,7 @@ export default function ThemeHeaderBridge() {
         },
       }),
     });
-  }, [navigation, theme, settings]);
+  }, [navigation, theme]);
 
   useFocusEffect(
     useCallback(() => {

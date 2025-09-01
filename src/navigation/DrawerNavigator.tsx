@@ -5,7 +5,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import type { DrawerScreenProps } from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme } from 'styled-components/native';
-import { IconButton } from '@components/ui/atoms';
+import { IconButton, HeaderTitle } from '@components/ui/atoms';
+import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
@@ -64,9 +65,7 @@ export default function DrawerNavigator({
           borderWidth: theme.borderWidth.medium,
         },
         drawerLabelStyle: {
-          fontFamily: theme.typography.header.headerTitleFamily,
           fontSize: theme.fontSize.medium,
-          fontWeight: theme.typography.header.headerTitleWeight,
           color: theme.colors.headerForeground,
         },
         drawerActiveTintColor: theme.colors.headerForeground,
@@ -75,10 +74,9 @@ export default function DrawerNavigator({
           marginVertical: theme.margin.small,
           marginHorizontal: theme.margin.medium,
         },
+        headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
         headerTitleStyle: {
           color: theme.colors.headerForeground,
-          fontFamily: theme.typography.header.headerTitleFamily,
-          fontWeight: theme.typography.header.headerTitleWeight,
           fontStyle: theme.typography.header.headerTitleStyle,
           fontSize: theme.typography.header.headerTitleSize,
           letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -87,8 +85,6 @@ export default function DrawerNavigator({
         headerLargeTitleStyle: Platform.select({
           ios: {
             color: theme.colors.headerForeground,
-            fontFamily: theme.typography.header.headerTitleFamily,
-            fontWeight: theme.typography.header.headerLargeTitleWeight,
             fontStyle: theme.typography.header.headerTitleStyle,
             fontSize: theme.typography.header.headerLargeTitleSize,
             letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
