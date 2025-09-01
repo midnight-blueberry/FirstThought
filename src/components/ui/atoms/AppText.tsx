@@ -1,15 +1,13 @@
 import React from 'react';
-import { StyleProp, TextStyle } from 'react-native';
+import { TextProps, TextStyle } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
 import { resolveFont } from '@/constants/fonts/resolve';
 import { useSettings } from '@/state/SettingsContext';
 import useTheme from '@hooks/useTheme';
 
-export type AppTextProps = {
+export type AppTextProps = TextProps & {
   variant?: keyof DefaultTheme['fontSize'];
   color?: keyof DefaultTheme['colors'];
-  children: React.ReactNode;
-  style?: StyleProp<TextStyle>;
   fontFamily?: string;
   fontWeight?: TextStyle['fontWeight'];
 };
