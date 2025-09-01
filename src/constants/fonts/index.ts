@@ -2,11 +2,27 @@ export * from './types';
 export { FONT_FAMILIES } from './families';
 export { FONT_WEIGHTS_BY_FAMILY } from './weights';
 export { FONT_SOURCES } from './variants';
-export { resolveFontFace } from './resolve';
 
 import type { FontFamily, FontWeight } from './types';
 import { FONT_FAMILIES } from './families';
 import { FONT_WEIGHTS_BY_FAMILY } from './weights';
+
+export const VARIABLE_FAMILIES: Partial<Record<FontFamily, true>> = {
+  Comfortaa: true,
+  Lora: true,
+  Montserrat: true,
+  Nata_Sans: true,
+  Raleway: true,
+  Roboto_Condensed: true,
+  Roboto_Slab: true,
+} as const;
+
+export const isVariableFamily = (f: FontFamily): boolean => !!VARIABLE_FAMILIES[f];
+
+export const closestAvailableWeight = (
+  f: FontFamily,
+  w: FontWeight,
+): FontWeight => getNearestAllowedWeight(f, w);
 
 const DEFAULT_FONT_SIZES: Record<FontFamily, number> = {
   Bad_Script: 22,

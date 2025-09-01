@@ -3,8 +3,7 @@ import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styled, { DefaultTheme } from "styled-components/native";
 import useTheme from '@hooks/useTheme';
-import { getNextFontWeight } from "@constants/fonts";
-import { resolveFontFace } from "@constants/fonts/resolve";
+import { closestAvailableWeight, isVariableFamily, getNextFontWeight } from '@constants/fonts';
 import type { FontFamily, FontWeight } from '@constants/fonts';
 
 type AppTextProps = {
@@ -43,11 +42,13 @@ const AppText: React.FC<AppTextProps> = ({
     w = getNextFontWeight(fam, w) as FontWeight;
   }
 
-  const face = resolveFontFace(fam, w);
+  const styleFromFont = isVariableFamily(fam)
+    ? { fontFamily: fam, fontWeight: String(w) as TextStyle['fontWeight'] }
+    : { fontFamily: `${fam}-${closestAvailableWeight(fam, w)}` };
 
   return (
     <StyledText
-      style={[style, { fontFamily: face }]}
+      style={[style, styleFromFont]}
       textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
       maxFontSizeMultiplier={3}

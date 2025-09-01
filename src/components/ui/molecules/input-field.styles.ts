@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
-import { resolveFontFace } from '@constants/fonts';
+import { closestAvailableWeight, isVariableFamily } from '@constants/fonts';
 import type { FontFamily, FontWeight } from '@constants/fonts';
 
 interface BuildOptions {
@@ -15,6 +15,12 @@ export const buildInputFieldStyles = (
   theme: DefaultTheme,
   { size, variant, focused, hasError, editable }: BuildOptions,
 ) => {
+  const fam = theme.fontName as FontFamily;
+  const w = theme.fontWeight as FontWeight;
+  const fontStyle = isVariableFamily(fam)
+    ? { fontFamily: fam, fontWeight: String(w) as TextStyle['fontWeight'] }
+    : { fontFamily: `${fam}-${closestAvailableWeight(fam, w)}` };
+
   const base = StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -26,12 +32,9 @@ export const buildInputFieldStyles = (
     input: {
       flex: 1,
       paddingVertical: 0,
-        color: theme.colors.basic,
-        fontFamily: resolveFontFace(
-          theme.fontName as FontFamily,
-          theme.fontWeight as FontWeight,
-        ),
-        includeFontPadding: false,
+      color: theme.colors.basic,
+      includeFontPadding: false,
+      ...fontStyle,
     },
     leftAccessory: { marginRight: theme.margin.small },
     rightAccessory: { marginLeft: theme.margin.small },

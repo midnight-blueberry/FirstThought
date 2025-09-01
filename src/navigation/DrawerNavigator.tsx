@@ -9,8 +9,9 @@ import { IconButton } from '@components/ui/atoms';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
-import { resolveFontFace } from '@constants/fonts';
+import { closestAvailableWeight, isVariableFamily } from '@constants/fonts';
 import type { FontFamily, FontWeight } from '@constants/fonts';
+import type { TextStyle } from 'react-native';
 
 import DrawerContent from './DrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -18,6 +19,11 @@ import { defaultDrawerScreenOptions } from './options/drawerOptions';
 import type { DrawerParamList } from './types';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
+
+const fontStyle = (family: FontFamily, weight: FontWeight): TextStyle =>
+  isVariableFamily(family)
+    ? { fontFamily: family, fontWeight: String(weight) as TextStyle['fontWeight'] }
+    : { fontFamily: `${family}-${closestAvailableWeight(family, weight)}` };
 
 type Props = {
   theme: DefaultTheme;
@@ -34,16 +40,16 @@ export default function DrawerNavigator({
   settingsPageHeaderTitle,
   settingsPageHeaderElevation,
 }: Props) {
-    const { top } = useSafeAreaInsets();
-    const baseHeaderStyle = useHeaderConfig(theme, top);
-    const headerTitleFace = resolveFontFace(
-      theme.typography.header.headerTitleFamily as FontFamily,
-      theme.typography.header.headerTitleWeight as FontWeight,
-    );
-    const headerLargeTitleFace = resolveFontFace(
-      theme.typography.header.headerTitleFamily as FontFamily,
-      theme.typography.header.headerLargeTitleWeight as FontWeight,
-    );
+  const { top } = useSafeAreaInsets();
+  const baseHeaderStyle = useHeaderConfig(theme, top);
+  const headerTitleFont = fontStyle(
+    theme.typography.header.headerTitleFamily as FontFamily,
+    theme.typography.header.headerTitleWeight as FontWeight,
+  );
+  const headerLargeTitleFont = fontStyle(
+    theme.typography.header.headerTitleFamily as FontFamily,
+    theme.typography.header.headerLargeTitleWeight as FontWeight,
+  );
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
@@ -73,11 +79,11 @@ export default function DrawerNavigator({
           borderColor: theme.colors.basic,
           borderWidth: theme.borderWidth.medium,
         },
-          drawerLabelStyle: {
-            fontFamily: headerTitleFace,
-            fontSize: theme.fontSize.medium,
-            color: theme.colors.headerForeground,
-          },
+        drawerLabelStyle: {
+          ...headerTitleFont,
+          fontSize: theme.fontSize.medium,
+          color: theme.colors.headerForeground,
+        },
         drawerActiveTintColor: theme.colors.headerForeground,
         drawerInactiveTintColor: theme.colors.disabled,
         drawerItemStyle: {
@@ -86,7 +92,7 @@ export default function DrawerNavigator({
         },
           headerTitleStyle: {
             color: theme.colors.headerForeground,
-            fontFamily: headerTitleFace,
+            ...headerTitleFont,
             fontStyle: theme.typography.header.headerTitleStyle,
             fontSize: theme.typography.header.headerTitleSize,
             letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -95,7 +101,7 @@ export default function DrawerNavigator({
           headerLargeTitleStyle: Platform.select({
             ios: {
               color: theme.colors.headerForeground,
-              fontFamily: headerLargeTitleFace,
+              ...headerLargeTitleFont,
               fontStyle: theme.typography.header.headerTitleStyle,
               fontSize: theme.typography.header.headerLargeTitleSize,
               letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
