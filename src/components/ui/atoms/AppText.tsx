@@ -3,6 +3,7 @@ import { TextProps, TextStyle } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
 import { resolveFont } from '@/constants/fonts/resolve';
 import { useSettings } from '@/state/SettingsContext';
+import { toFamilyKey } from '@utils/font';
 import useTheme from '@hooks/useTheme';
 
 export type AppTextProps = TextProps & {
@@ -35,9 +36,9 @@ const AppText: React.FC<AppTextProps> = ({
 }) => {
   const theme = useTheme();
   const { settings } = useSettings();
-  const family = propFamily ?? settings.fontFamily;
   const weight = propWeight ?? settings.fontWeight;
-  const { key } = resolveFont(family, parseInt(String(weight), 10));
+  const familyKey = toFamilyKey(propFamily ?? settings.fontFamily);
+  const { key } = resolveFont(familyKey, parseInt(String(weight), 10));
 
   return (
     <StyledText

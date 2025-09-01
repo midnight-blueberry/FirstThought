@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { defaultFontName, fonts, type FontWeight } from '@constants/fonts';
 import { listAvailableWeights, nearestAvailableWeight } from '@/constants/fonts/resolve';
 import { getFontByName } from '@utils/fontHelpers';
+import { toFamilyKey } from '@utils/font';
 import { themes, type ThemeName } from '@theme/buildTheme';
 import type { DefaultTheme } from 'styled-components/native';
 
@@ -76,8 +77,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   updateRef = apply;
   const changeFamily = useCallback(
     (nextFamily: string) => {
+      const key = toFamilyKey(nextFamily);
       const clamped = nearestAvailableWeight(
-        nextFamily,
+        key,
         Number(stateRef.current.fontWeight),
       );
       return apply({
@@ -89,10 +91,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
   const changeWeight = useCallback(
     (nextWeight: number) => {
-      const clamped = nearestAvailableWeight(
-        stateRef.current.fontFamily,
-        nextWeight,
-      );
+      const key = toFamilyKey(stateRef.current.fontFamily);
+      const clamped = nearestAvailableWeight(key, nextWeight);
       return apply({ fontWeight: String(clamped) as FontWeight });
     },
     [apply],
@@ -106,10 +106,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const json = await AsyncStorage.getItem(STORAGE_KEY);
         if (json) {
           const saved = JSON.parse(json) as Partial<Settings>;
-          const weights = listAvailableWeights(saved.fontFamily ?? defaultFontName);
+          const savedKey = toFamilyKey(saved.fontFamily ?? defaultFontName);
+          const weights = listAvailableWeights(savedKey);
           const normalized = weights.length
             ? nearestAvailableWeight(
-                saved.fontFamily ?? defaultFontName,
+                savedKey,
                 Number(saved.fontWeight ?? 400),
               )
             : 400;
