@@ -1,5 +1,5 @@
 // src/theme/buildTheme.ts
-import { defaultFontName, fonts, getFontFamily, resolveFontFace } from '@constants/fonts';
+import { defaultFontName, fonts, FONT_KEYS, resolveFontFace } from '@constants/fonts';
 import { headerTypography } from './tokens/typography';
 import { getFontByName } from '@utils/fontHelpers';
 import {
@@ -18,7 +18,7 @@ const createTheme = (name: string, colors: ColorTokens): DefaultTheme => ({
   name,
   colors,
   ...sizes,
-  fontName: getFontFamily(defaultFontName.replace(/ /g, '_'), '500'),
+  fontName: FONT_KEYS[defaultFontName.replace(/ /g, '_')][500],
   fontWeight: '500',
   noteTextAlign: 'left',
   barStyle: name === 'Темная' ? 'light-content' : 'dark-content',
