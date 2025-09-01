@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
-import { useAppBootstrap } from '@hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -12,13 +12,20 @@ import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
+import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { ready: appIsReady } = useAppBootstrap();
-  if (!appIsReady) {
+  const entries = Object.entries(FONT_FILES).flatMap(([family, map]) =>
+    Object.entries(map).map(([w, file]) => [`${family}-${w}`, file] as const),
+  );
+  const fontsObject = Object.fromEntries(entries);
+
+  const [loaded] = useFonts(fontsObject);
+
+  if (!loaded) {
     return null;
   }
   return (
