@@ -1,4 +1,4 @@
-export { default as AppText } from './app-text';
+export { default as AppText } from './AppText';
 export { default as BarIndicator } from './bar-indicator';
 export { default as Divider } from './divider';
 export { default as IconButton } from './icon-button';
