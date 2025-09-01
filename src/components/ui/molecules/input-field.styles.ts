@@ -25,8 +25,6 @@ export const buildInputFieldStyles = (
       flex: 1,
       paddingVertical: 0,
       color: theme.colors.basic,
-      fontFamily: theme.fontName,
-      fontWeight: theme.fontWeight,
       includeFontPadding: false,
     },
     leftAccessory: { marginRight: theme.margin.small },

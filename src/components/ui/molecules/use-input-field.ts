@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { TextInput, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import type { TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import type { InputFieldProps } from './input-field';
