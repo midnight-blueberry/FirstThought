@@ -1,4 +1,6 @@
 export { default as AppText } from './AppText';
+export { default as AppTextInput } from './AppTextInput';
+export * from './AppTextInput';
 export { default as BarIndicator } from './bar-indicator';
 export { default as Divider } from './divider';
 export { default as IconButton } from './icon-button';
