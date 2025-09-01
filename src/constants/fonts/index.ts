@@ -1,8 +1,8 @@
 export * from './types';
 export { FAMILIES } from './families';
-export { FONT_WEIGHTS } from './metadata';
 export { FONT_VARIANTS, FONT_KEYS } from './variants';
 export { FONT_ALIASES } from './aliases';
+export { nearestAvailableWeight } from './resolve';
 
 import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
 import type { TextStyle } from 'react-native';

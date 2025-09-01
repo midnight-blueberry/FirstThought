@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import { fonts, FONT_WEIGHTS, type FontWeight } from '@constants/fonts';
+import { fonts, FONT_VARIANTS, nearestAvailableWeight, type FontWeight } from '@constants/fonts';
+import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
@@ -45,14 +46,17 @@ export default function useSettingsVm(): SettingsVm {
   const changeFontFamily = (name: string) => {
     const meta = getFontByName(fonts, name);
     setSelectedFontName(name);
-    const weight: FontWeight = meta.defaultWeight;
+    const weight = String(
+      nearestAvailableWeight(meta.family, Number(fontWeight))
+    ) as FontWeight;
     setFontWeight(weight);
     updateSettings({ fontFamily: name, fontWeight: weight });
   };
 
-  const changeFontWeight = (weight: FontWeight) => {
-    setFontWeight(weight);
-    updateSettings({ fontWeight: weight });
+  const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
+    const w = String(weight) as FontWeight;
+    setFontWeight(w);
+    updateSettings({ fontWeight: w });
   };
 
   const changeFontSize = (level: number) => {
@@ -70,15 +74,17 @@ export default function useSettingsVm(): SettingsVm {
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
-    const idx = weights.indexOf(fontWeight);
-    changeFontWeight(weights[(idx + 1) % weights.length]);
+    const weights = FONT_VARIANTS[meta.family] ?? [400];
+    const idx = weights.indexOf(Number(fontWeight));
+    const next = weights[(idx + 1) % weights.length];
+    changeFontWeight(String(next) as FontWeight);
   };
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
-    const idx = weights.indexOf(fontWeight);
-    changeFontWeight(weights[(idx - 1 + weights.length) % weights.length]);
+    const weights = FONT_VARIANTS[meta.family] ?? [400];
+    const idx = weights.indexOf(Number(fontWeight));
+    const next = weights[(idx - 1 + weights.length) % weights.length];
+    changeFontWeight(String(next) as FontWeight);
   };
 
   const sectionProps = useMemo(
@@ -96,7 +102,7 @@ export default function useSettingsVm(): SettingsVm {
         onSelectTheme: changeTheme,
         onSelectAccent: changeAccent,
         onSelectFont: changeFontFamily,
-        onSelectWeight: () => {},
+        onSelectWeight: changeFontWeight,
         onIncFontSize: handleIncFontSize,
         onDecFontSize: handleDecFontSize,
         onIncWeight: handleIncWeight,
