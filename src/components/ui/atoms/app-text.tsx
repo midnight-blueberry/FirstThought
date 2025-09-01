@@ -3,7 +3,8 @@ import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import styled, { DefaultTheme } from "styled-components/native";
 import useTheme from '@hooks/useTheme';
-import { getNextFontWeight, resolveFontFace } from "@constants/fonts";
+import { getNextFontWeight } from "@constants/fonts";
+import { resolveFontFace } from "@constants/fonts/resolve";
 import type { FontFamily, FontWeight } from '@constants/fonts';
 
 type AppTextProps = {
@@ -18,13 +19,11 @@ type AppTextProps = {
 interface StyledTextProps {
   fontSize: number;
   textColor: string;
-  fontFamily: string;
 }
 
 const StyledText = styled.Text<StyledTextProps>`
   color: ${(props: StyledTextProps) => props.textColor};
   font-size: ${(props: StyledTextProps) => props.fontSize}px;
-  font-family: ${(props: StyledTextProps) => props.fontFamily};
 `;
 
 const AppText: React.FC<AppTextProps> = ({
@@ -48,10 +47,9 @@ const AppText: React.FC<AppTextProps> = ({
 
   return (
     <StyledText
-      style={style}
+      style={[style, { fontFamily: face }]}
       textColor={theme.colors[color]}
       fontSize={theme.fontSize[variant]}
-      fontFamily={face}
       maxFontSizeMultiplier={3}
     >
       {children}

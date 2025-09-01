@@ -2,7 +2,7 @@ export * from './types';
 export { FONT_FAMILIES } from './families';
 export { FONT_WEIGHTS_BY_FAMILY } from './weights';
 export { FONT_SOURCES } from './variants';
-export { FACE_BY_FAMILY_AND_WEIGHT, resolveFontFace } from './faces';
+export { resolveFontFace } from './resolve';
 
 import type { FontFamily, FontWeight } from './types';
 import { FONT_FAMILIES } from './families';
