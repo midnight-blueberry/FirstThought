@@ -12,6 +12,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
     "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "gen:fonts": "node scripts/generate-font-files.cjs",
+    "gen:fonts:check": "node scripts/generate-font-files.cjs --check",
     "long-files-detector": "node scripts/tools/list-long-ts.cjs"
   },
   "dependencies": {
