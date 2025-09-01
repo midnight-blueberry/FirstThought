@@ -4,7 +4,9 @@ import useTheme from '@hooks/useTheme';
 import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import { SelectableRow } from '@components/ui/molecules';
-import { fonts, FONT_KEYS } from '@constants/fonts';
+import { fonts } from '@constants/fonts';
+import { nearestAvailableWeight, fontKey } from '@/constants/fonts/resolve';
+import { FONT_VARIANTS } from '@/constants/fonts/variants';
 import type { FontSelectorProps } from '@types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
@@ -19,8 +21,10 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   return (
     <Section title="Шрифт">
       <View>
-        {fonts.map(f => {
+        {fonts.map((f) => {
           const fontSize = f.defaultSize + delta;
+          const sampleWeight = nearestAvailableWeight(f.family, 400);
+          const sampleKey = fontKey(f.family, sampleWeight);
           return (
             <SelectableRow
               key={f.name}
@@ -31,8 +35,7 @@ const FontSelector: React.FC<FontSelectorProps> = ({
                 onSelectFont(f.name);
                 onSelectWeight(f.defaultWeight as DefaultTheme['fontWeight']);
               }}
-              fontFamily={FONT_KEYS[f.family][Number(f.defaultWeight)]}
-              fontWeight="normal"
+              labelStyle={{ fontFamily: sampleKey }}
               fontSize={fontSize}
             />
           );

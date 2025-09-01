@@ -103,7 +103,7 @@ export default function useSettingsVm(): SettingsVm {
         onDecWeight: handleDecWeight,
         onAlign: changeAlign,
       }),
-      preview: { noteTextAlign, fontName: theme.fontName, colors: theme.colors },
+      preview: { noteTextAlign, colors: theme.colors },
     }),
     [
       selectedThemeName,
@@ -112,7 +112,6 @@ export default function useSettingsVm(): SettingsVm {
       fontSizeLevel,
       fontWeight,
       noteTextAlign,
-      theme.fontName,
       theme.colors,
     ],
   );
