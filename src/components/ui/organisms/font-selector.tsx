@@ -4,7 +4,7 @@ import useTheme from '@hooks/useTheme';
 import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import { SelectableRow } from '@components/ui/molecules';
-import { fonts, getFontFamily } from '@constants/fonts';
+import { fonts, FONT_KEYS } from '@constants/fonts';
 import type { FontSelectorProps } from '@types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
@@ -31,7 +31,7 @@ const FontSelector: React.FC<FontSelectorProps> = ({
                 onSelectFont(f.name);
                 onSelectWeight(f.defaultWeight as DefaultTheme['fontWeight']);
               }}
-              fontFamily={getFontFamily(f.family, f.defaultWeight)}
+              fontFamily={FONT_KEYS[f.family][Number(f.defaultWeight)]}
               fontWeight="normal"
               fontSize={fontSize}
             />
