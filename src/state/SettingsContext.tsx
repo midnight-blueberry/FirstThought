@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState, createContext, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { defaultFontName, fonts, type FontWeight } from '@constants/fonts';
+import {
+  defaultFontName,
+  fonts,
+  type FontWeight,
+  nearestAvailableWeight,
+  listAvailableWeights,
+} from '@constants/fonts';
 import { getFontByName } from '@utils/fontHelpers';
+import { toFamilyKey } from '@utils/font';
 import { themes, type ThemeName } from '@theme/buildTheme';
 import type { DefaultTheme } from 'styled-components/native';
 
@@ -29,11 +36,15 @@ const defaultSettings: Settings = {
 interface Ctx {
   settings: Settings;
   updateSettings: (p: Partial<Settings>) => Settings;
+  changeFamily: (family: string) => void;
+  changeWeight: (weight: number) => void;
 }
 
 const SettingsContext = createContext<Ctx>({
   settings: defaultSettings,
   updateSettings: () => defaultSettings,
+  changeFamily: () => {},
+  changeWeight: () => {},
 });
 
 let updateRef = (p: Partial<Settings>) => defaultSettings;
@@ -52,11 +63,35 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
   updateRef = apply;
 
+  const changeFamily = useCallback((nextFamily: string) => {
+    const key = toFamilyKey(nextFamily);
+    const clamped = nearestAvailableWeight(key, Number(stateRef.current.fontWeight));
+    apply({ fontFamily: nextFamily, fontWeight: String(clamped) as FontWeight });
+  }, [apply]);
+
+  const changeWeight = useCallback((nextWeight: number) => {
+    const key = toFamilyKey(stateRef.current.fontFamily);
+    const clamped = nearestAvailableWeight(key, nextWeight);
+    apply({ fontWeight: String(clamped) as FontWeight });
+  }, [apply]);
+
   useEffect(() => {
     void (async () => {
       try {
         const json = await AsyncStorage.getItem(STORAGE_KEY);
-        if (json) apply(JSON.parse(json) as Partial<Settings>);
+        if (json) {
+          const saved = JSON.parse(json) as Partial<Settings>;
+          const savedKey = toFamilyKey(saved.fontFamily ?? defaultFontName);
+          const weights = listAvailableWeights(savedKey);
+          const normalized = weights.length
+            ? nearestAvailableWeight(savedKey, Number(saved.fontWeight ?? 400))
+            : 400;
+          apply({
+            ...saved,
+            fontFamily: saved.fontFamily ?? defaultFontName,
+            fontWeight: String(normalized) as FontWeight,
+          });
+        }
       } catch {}
     })();
   }, [apply]);
@@ -69,7 +104,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [settings]);
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings: apply }}>
+    <SettingsContext.Provider value={{ settings, updateSettings: apply, changeFamily, changeWeight }}>
       {children}
     </SettingsContext.Provider>
   );

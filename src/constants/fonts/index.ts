@@ -8,6 +8,7 @@ import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from '.
 import type { TextStyle } from 'react-native';
 import { FONT_VARIANTS } from './variants';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
+import { toFamilyKey } from '@utils/font';
 type FontWeight = TextStyle['fontWeight'];
 
 const DEFAULT_FONT_SIZES = {
@@ -65,4 +66,33 @@ export function resolveFontFace(
   }
   const fontFamily = getFontFamily(font.family, String(chosen));
   return { fontFamily, fontWeight: chosen, fontStyle: style };
+}
+
+const findFontByKey = (key: string) =>
+  fonts.find(f => toFamilyKey(f.name) === key || toFamilyKey(f.family.replace(/_/g, ' ')) === key);
+
+export const listAvailableWeights = (key: string): number[] => {
+  const font = findFontByKey(key);
+  return font ? font.weights.map(w => Number(w)) : [];
+};
+
+export const nearestAvailableWeight = (key: string, desired: number): number => {
+  const weights = listAvailableWeights(key);
+  if (!weights.length) return desired;
+  return weights.reduce((prev, curr) =>
+    Math.abs(curr - desired) < Math.abs(prev - desired) ? curr : prev,
+  weights[0]);
+};
+
+export function resolveFont(key: string, weight: number) {
+  const font = findFontByKey(key) ?? fonts[0];
+  const clamped = nearestAvailableWeight(key, weight);
+  const fontKey = getFontFamily(font.family, String(clamped));
+  return {
+    key: fontKey,
+    weight: clamped,
+    name: font.name,
+    family: font.family,
+    weights: font.weights.map(w => Number(w)),
+  };
 }
