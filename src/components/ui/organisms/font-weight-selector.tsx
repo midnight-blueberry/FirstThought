@@ -2,9 +2,10 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
-import { FONT_VARIANTS, type FontFamily } from '@constants/fonts';
-import { getBaseFontName } from '@utils/font';
 import type { FontWeightSelectorProps } from '@types';
+import { listAvailableWeights } from '@/constants/fonts/resolve';
+import { toFamilyKey } from '@utils/font';
+import { useSettings } from '@/state/SettingsContext';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   fontWeight,
@@ -12,17 +13,16 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   onDecrease,
   onSelect,
   blinkAnim,
-  disabled,
+  disabled: disabledProp,
 }) => {
   const theme = useTheme();
-  const baseName = getBaseFontName(theme.fontName);
-  const family = baseName.replace(/ /g, '_') as FontFamily;
-  const variantMap = FONT_VARIANTS[family];
-  const weights = variantMap
-    ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
-    : [400];
+  const { settings } = useSettings();
+  const weights = listAvailableWeights(toFamilyKey(settings.fontFamily));
+  const hasOnlyOneWeight = weights.length === 1;
+  const disabled = disabledProp || hasOnlyOneWeight;
   const selectedIndex = Math.max(0, weights.indexOf(Number(fontWeight)));
-  const blinkIndex = selectedIndex;
+  const blinkIndex = hasOnlyOneWeight ? null : selectedIndex;
+  const STEPS = [0, 1, 2, 3, 4] as const;
 
   return (
     <Section title="Жирность шрифта">
@@ -34,16 +34,21 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
         opacity={disabled ? 0.5 : 1}
       >
         <BarIndicator
-          total={weights.length}
-          filledCount={selectedIndex + 1}
+          total={STEPS.length}
+          filledCount={hasOnlyOneWeight ? 0 : selectedIndex + 1}
           blinkIndex={blinkIndex}
           blinkAnim={blinkAnim}
           containerColor={theme.colors[disabled ? 'disabled' : 'basic']}
           fillColor={theme.colors[disabled ? 'disabled' : 'accent']}
           onPress={
-            disabled
+            hasOnlyOneWeight
               ? undefined
-              : (i) => onSelect(String(weights[i]) as FontWeightSelectorProps['fontWeight'])
+              : (i) => {
+                  const w = weights[i];
+                  if (w != null) {
+                    onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+                  }
+                }
           }
         />
       </SelectorRow>
