@@ -11,11 +11,13 @@ import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useSaveIndicator } from '@components/header/SaveIndicator';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
+  const { showFor2s } = useSaveIndicator();
   const {
     settings,
     updateSettings,
@@ -38,7 +40,7 @@ export default function useSettingsVm(): SettingsVm {
 
   const changeTheme = (name: string) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         setSelectedThemeName(name);
         const id =
           (Object.keys(themes) as ThemeName[]).find(
@@ -47,58 +49,64 @@ export default function useSettingsVm(): SettingsVm {
         updateSettings({ themeId: id });
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
   const changeAccent = (color: string) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         setSelectedAccentColor(color);
         updateSettings({ accent: color });
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
   const changeFontFamily = (name: string) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         setSelectedFontName(name);
         const next = storeSetFontFamily(name);
         setFontWeightState(next.fontWeight);
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         const next = storeSetFontWeight(Number(weight));
         setFontWeightState(next.fontWeight);
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
   const changeFontSize = (level: number) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         const next = clampLevel(level);
         setFontSizeLevel(next);
         updateSettings({ fontSizeLevel: next });
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
     void (async () => {
-      await overlay.apply(() => {
+      await overlay.apply(async () => {
         setNoteTextAlign(align);
         updateSettings({ noteTextAlign: align });
       });
       await overlay.end();
+      await showFor2s();
     })();
   };
 
