@@ -5,6 +5,7 @@ import useTheme from '@hooks/useTheme';
 interface OverlayTransitionCtx {
   begin: () => Promise<void>;
   end: () => Promise<void>;
+  apply: (callback: () => Promise<void> | void) => Promise<void>;
 }
 
 const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
@@ -28,12 +29,20 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   // step 2 will implement fade-out; placeholder for now
   const end = useCallback(async () => {}, []);
 
+  const apply = useCallback(
+    async (callback: () => Promise<void> | void) => {
+      await begin();
+      await callback();
+    },
+    [begin],
+  );
+
   const overlayColor = theme.isDark
     ? 'rgba(255,255,255,0.35)'
     : 'rgba(0,0,0,0.35)';
 
   return (
-    <OverlayTransitionContext.Provider value={{ begin, end }}>
+    <OverlayTransitionContext.Provider value={{ begin, end, apply }}>
       {children}
       <Animated.View
         pointerEvents={active ? 'auto' : 'none'}

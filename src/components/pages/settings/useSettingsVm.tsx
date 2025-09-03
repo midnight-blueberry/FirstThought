@@ -10,10 +10,12 @@ import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings } from '@/state/SettingsContext';
+import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
+  const overlay = useOverlayTransition();
   const {
     settings,
     updateSettings,
@@ -35,39 +37,51 @@ export default function useSettingsVm(): SettingsVm {
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
   const changeTheme = (name: string) => {
-    setSelectedThemeName(name);
-    const id =
-      (Object.keys(themes) as ThemeName[]).find(
-        (k) => themes[k].name === name,
-      ) ?? 'light';
-    updateSettings({ themeId: id });
+    void overlay.apply(() => {
+      setSelectedThemeName(name);
+      const id =
+        (Object.keys(themes) as ThemeName[]).find(
+          (k) => themes[k].name === name,
+        ) ?? 'light';
+      updateSettings({ themeId: id });
+    });
   };
 
   const changeAccent = (color: string) => {
-    setSelectedAccentColor(color);
-    updateSettings({ accent: color });
+    void overlay.apply(() => {
+      setSelectedAccentColor(color);
+      updateSettings({ accent: color });
+    });
   };
 
   const changeFontFamily = (name: string) => {
-    setSelectedFontName(name);
-    const next = storeSetFontFamily(name);
-    setFontWeightState(next.fontWeight);
+    void overlay.apply(() => {
+      setSelectedFontName(name);
+      const next = storeSetFontFamily(name);
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
-    const next = storeSetFontWeight(Number(weight));
-    setFontWeightState(next.fontWeight);
+    void overlay.apply(() => {
+      const next = storeSetFontWeight(Number(weight));
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontSize = (level: number) => {
-    const next = clampLevel(level);
-    setFontSizeLevel(next);
-    updateSettings({ fontSizeLevel: next });
+    void overlay.apply(() => {
+      const next = clampLevel(level);
+      setFontSizeLevel(next);
+      updateSettings({ fontSizeLevel: next });
+    });
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
-    setNoteTextAlign(align);
-    updateSettings({ noteTextAlign: align });
+    void overlay.apply(() => {
+      setNoteTextAlign(align);
+      updateSettings({ noteTextAlign: align });
+    });
   };
 
   const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
