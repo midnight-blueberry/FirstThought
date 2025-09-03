@@ -9,3 +9,4 @@ export { default as Overlay } from './overlay';
 export { default as SaveIcon } from './save-icon';
 export { default as SelectorRow } from './selector-row';
 export { default as TextAlignIcon } from './text-align-icon';
+export { default as StatusBarOverlay } from './status-bar-overlay';
