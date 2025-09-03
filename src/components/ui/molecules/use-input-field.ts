@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import type { TextInput } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import type { InputFieldProps } from './input-field';
 
@@ -41,7 +41,7 @@ export const useInputFieldState = (props: InputFieldProps) => {
   let leftNode = typeof leftAccessory === 'function' ? leftAccessory(state) : leftAccessory;
   if (!leftNode && leftIconName) {
     leftNode = React.createElement(Ionicons, {
-      name: leftIconName,
+      name: leftIconName as any,
       size: theme.iconSize.small,
       color: theme.colors.basic,
     });
@@ -62,7 +62,7 @@ export const useInputFieldState = (props: InputFieldProps) => {
         accessibilityRole: 'button',
       },
       React.createElement(Ionicons, {
-        name: 'close',
+        name: 'close' as any,
         size: theme.iconSize.small,
         color: theme.colors.disabled,
       }),
@@ -77,7 +77,7 @@ export const useInputFieldState = (props: InputFieldProps) => {
       TouchableOpacity,
       { onPress: toggleSecure, accessibilityRole: 'button' },
       React.createElement(Ionicons, {
-        name: secureVisible ? 'eye' : 'eye-off',
+        name: (secureVisible ? 'eye' : 'eye-off') as any,
         size: theme.iconSize.small,
         color: theme.colors.basic,
       }),

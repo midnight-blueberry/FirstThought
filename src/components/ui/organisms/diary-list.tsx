@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
 import type { Diary } from '@types';
@@ -37,7 +37,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
       ]}
     >
       <Ionicons
-        name={item.icon}
+        name={item.icon as any}
         size={theme.iconSize.small}
         color={theme.colors.basic}
       />

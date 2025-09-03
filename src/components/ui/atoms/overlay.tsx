@@ -1,6 +1,6 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
-import { Portal } from '@gorhom/portal';
+import { Portal } from 'react-native-portalize';
 
 interface OverlayProps {
   visible: boolean;
