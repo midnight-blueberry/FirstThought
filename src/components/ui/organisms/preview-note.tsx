@@ -6,6 +6,7 @@ import { AppText } from '@components/ui/atoms';
 import Section from './settings-section';
 import { resolveFont } from '@/constants/fonts/resolve';
 import { useSettings } from '@/state/SettingsContext';
+import { toFamilyKey } from '@utils/font';
 
 interface PreviewNoteProps {
   noteTextAlign: DefaultTheme['noteTextAlign'];
@@ -16,7 +17,7 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({ noteTextAlign, colors }) => {
   const theme = useTheme();
   const { settings } = useSettings();
   const { key } = resolveFont(
-    settings.fontFamily,
+    toFamilyKey(settings.fontFamily),
     parseInt(String(settings.fontWeight), 10),
   );
 

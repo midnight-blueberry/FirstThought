@@ -36,8 +36,9 @@ const AppText: React.FC<AppTextProps> = ({
 }) => {
   const theme = useTheme();
   const { settings } = useSettings();
+  const familyName = propFamily ?? settings.fontFamily;
+  const familyKey = toFamilyKey(familyName);
   const weight = propWeight ?? settings.fontWeight;
-  const familyKey = toFamilyKey(propFamily ?? settings.fontFamily);
   const { key } = resolveFont(familyKey, parseInt(String(weight), 10));
 
   return (
