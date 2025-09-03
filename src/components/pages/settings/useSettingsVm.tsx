@@ -40,7 +40,7 @@ export default function useSettingsVm(): SettingsVm {
 
   const changeTheme = (name: string) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         setSelectedThemeName(name);
         const id =
           (Object.keys(themes) as ThemeName[]).find(
@@ -48,64 +48,58 @@ export default function useSettingsVm(): SettingsVm {
           ) ?? 'light';
         updateSettings({ themeId: id });
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
 
   const changeAccent = (color: string) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         setSelectedAccentColor(color);
         updateSettings({ accent: color });
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
 
   const changeFontFamily = (name: string) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         setSelectedFontName(name);
         const next = storeSetFontFamily(name);
         setFontWeightState(next.fontWeight);
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         const next = storeSetFontWeight(Number(weight));
         setFontWeightState(next.fontWeight);
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
 
   const changeFontSize = (level: number) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         const next = clampLevel(level);
         setFontSizeLevel(next);
         updateSettings({ fontSizeLevel: next });
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
     void (async () => {
-      await overlay.apply(async () => {
+      await overlay.transact(async () => {
         setNoteTextAlign(align);
         updateSettings({ noteTextAlign: align });
       });
-      await overlay.end();
       await showFor2s();
     })();
   };
