@@ -17,9 +17,7 @@
     "expo-doctor": "npx -y expo-doctor"
   },
   "dependencies": {
-    "@gorhom/portal": "^1.0.14",
     "@react-native-async-storage/async-storage": "2.1.2",
-    "@react-native-vector-icons/ionicons": "^12.3.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.9",
     "@react-navigation/elements": "^2.5.2",
@@ -43,6 +41,7 @@
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-portalize": "file:vendor/react-native-portalize",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
@@ -69,6 +68,13 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   },
   "private": true
 }
