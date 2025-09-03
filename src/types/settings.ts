@@ -39,7 +39,6 @@ export interface AccentColorSelectorProps {
 export interface FontSelectorProps {
   selectedFontName: string;
   onSelectFont: (name: string) => void;
-  onSelectWeight: (weight: DefaultTheme['fontWeight']) => void;
   fontSizeLevel: number;
 }
 
@@ -55,6 +54,7 @@ export interface FontWeightSelectorProps {
   fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;
+  onSelect: (weight: DefaultTheme['fontWeight']) => void;
   blinkAnim: Animated.Value;
   disabled: boolean;
 }

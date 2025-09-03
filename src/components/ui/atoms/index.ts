@@ -1,7 +1,10 @@
-export { default as AppText } from './app-text';
+export { default as AppText } from './AppText';
+export { default as AppTextInput } from './AppTextInput';
+export * from './AppTextInput';
 export { default as BarIndicator } from './bar-indicator';
 export { default as Divider } from './divider';
 export { default as IconButton } from './icon-button';
+export { default as HeaderTitle } from './HeaderTitle';
 export { default as Overlay } from './overlay';
 export { default as SaveIcon } from './save-icon';
 export { default as SelectorRow } from './selector-row';

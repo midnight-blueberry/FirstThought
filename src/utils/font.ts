@@ -9,8 +9,13 @@ export type IconSizeToken = {
 import { clampLevel } from './theme';
 
 export function getBaseFontName(themeFontName: string): string {
-  return themeFontName.replace(/_\d+$/, '').replace(/_/g, ' ');
+  return themeFontName
+    .replace(/-\d+(?:-italic)?$/, '')
+    .replace(/_/g, ' ');
 }
+
+export const toFamilyKey = (name: string) =>
+  name.replace(/-\d+(?:-italic)?$/, '').replace(/ /g, '_');
 
 export function calcFontSizeLevel(themeSmallPx: number, fontDefaultSize: number): 1|2|3|4|5 {
   const base = fontDefaultSize - 4;

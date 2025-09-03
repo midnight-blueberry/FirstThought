@@ -1,16 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import type { DefaultTheme } from 'styled-components/native';
 import Section from './settings-section';
 import { SelectableRow } from '@components/ui/molecules';
-import { fonts, getFontFamily } from '@constants/fonts';
+import { fonts, nearestAvailableWeight } from '@constants/fonts';
+import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
   onSelectFont,
-  onSelectWeight,
   fontSizeLevel,
 }) => {
   const theme = useTheme();
@@ -19,8 +18,10 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   return (
     <Section title="Шрифт">
       <View>
-        {fonts.map(f => {
+        {fonts.map((f) => {
           const fontSize = f.defaultSize + delta;
+          const sampleWeight = nearestAvailableWeight(f.family, 400);
+          const sampleKey = fontKey(f.family, sampleWeight);
           return (
             <SelectableRow
               key={f.name}
@@ -29,10 +30,8 @@ const FontSelector: React.FC<FontSelectorProps> = ({
               selected={f.name === selectedFontName}
               onPress={() => {
                 onSelectFont(f.name);
-                onSelectWeight(f.defaultWeight as DefaultTheme['fontWeight']);
               }}
-              fontFamily={getFontFamily(f.family, f.defaultWeight)}
-              fontWeight="normal"
+              labelStyle={{ fontFamily: sampleKey }}
               fontSize={fontSize}
             />
           );
@@ -45,7 +44,6 @@ const FontSelector: React.FC<FontSelectorProps> = ({
 const propsAreEqual = (prev: FontSelectorProps, next: FontSelectorProps) =>
   prev.selectedFontName === next.selectedFontName &&
   prev.onSelectFont === next.onSelectFont &&
-  prev.onSelectWeight === next.onSelectWeight &&
   prev.fontSizeLevel === next.fontSizeLevel;
 
 export default React.memo(FontSelector, propsAreEqual);

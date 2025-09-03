@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import { fonts, FONT_WEIGHTS, type FontWeight } from '@constants/fonts';
+import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
+import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
@@ -13,7 +14,12 @@ import { useSettings } from '@/state/SettingsContext';
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
-  const { settings, updateSettings } = useSettings();
+  const {
+    settings,
+    updateSettings,
+    setFontFamily: storeSetFontFamily,
+    setFontWeight: storeSetFontWeight,
+  } = useSettings();
 
   const [selectedThemeName, setSelectedThemeName] = useState(
     themes[settings.themeId].name,
@@ -22,7 +28,7 @@ export default function useSettingsVm(): SettingsVm {
     settings.accent,
   );
   const [selectedFontName, setSelectedFontName] = useState(settings.fontFamily);
-  const [fontWeight, setFontWeight] = useState<FontWeight>(settings.fontWeight);
+  const [fontWeight, setFontWeightState] = useState<FontWeight>(settings.fontWeight);
   const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
 
@@ -43,16 +49,14 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontFamily = (name: string) => {
-    const meta = getFontByName(fonts, name);
     setSelectedFontName(name);
-    const weight: FontWeight = meta.defaultWeight;
-    setFontWeight(weight);
-    updateSettings({ fontFamily: name, fontWeight: weight });
+    const next = storeSetFontFamily(name);
+    setFontWeightState(next.fontWeight);
   };
 
-  const changeFontWeight = (weight: FontWeight) => {
-    setFontWeight(weight);
-    updateSettings({ fontWeight: weight });
+  const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
+    const next = storeSetFontWeight(Number(weight));
+    setFontWeightState(next.fontWeight);
   };
 
   const changeFontSize = (level: number) => {
@@ -70,15 +74,23 @@ export default function useSettingsVm(): SettingsVm {
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
   const handleIncWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
-    const idx = weights.indexOf(fontWeight);
-    changeFontWeight(weights[(idx + 1) % weights.length]);
+    const variantMap = FONT_VARIANTS[meta.family];
+    const weights = variantMap
+      ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
+      : [400];
+    const idx = weights.indexOf(Number(fontWeight));
+    const next = weights[(idx + 1) % weights.length];
+    changeFontWeight(String(next) as FontWeight);
   };
   const handleDecWeight = () => {
     const meta = getFontByName(fonts, selectedFontName);
-    const weights: FontWeight[] = [...FONT_WEIGHTS[meta.family]];
-    const idx = weights.indexOf(fontWeight);
-    changeFontWeight(weights[(idx - 1 + weights.length) % weights.length]);
+    const variantMap = FONT_VARIANTS[meta.family];
+    const weights = variantMap
+      ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
+      : [400];
+    const idx = weights.indexOf(Number(fontWeight));
+    const next = weights[(idx - 1 + weights.length) % weights.length];
+    changeFontWeight(String(next) as FontWeight);
   };
 
   const sectionProps = useMemo(
@@ -96,14 +108,14 @@ export default function useSettingsVm(): SettingsVm {
         onSelectTheme: changeTheme,
         onSelectAccent: changeAccent,
         onSelectFont: changeFontFamily,
-        onSelectWeight: () => {},
+        onSelectWeight: changeFontWeight,
         onIncFontSize: handleIncFontSize,
         onDecFontSize: handleDecFontSize,
         onIncWeight: handleIncWeight,
         onDecWeight: handleDecWeight,
         onAlign: changeAlign,
       }),
-      preview: { noteTextAlign, fontName: theme.fontName, colors: theme.colors },
+      preview: { noteTextAlign, colors: theme.colors },
     }),
     [
       selectedThemeName,
@@ -112,7 +124,6 @@ export default function useSettingsVm(): SettingsVm {
       fontSizeLevel,
       fontWeight,
       noteTextAlign,
-      theme.fontName,
       theme.colors,
     ],
   );

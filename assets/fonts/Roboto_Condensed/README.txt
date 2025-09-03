@@ -13,6 +13,8 @@ This means all the styles are contained in these files:
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Roboto Condensed:
+  Roboto_Condensed/static/RobotoCondensed-Thin.ttf
+  Roboto_Condensed/static/RobotoCondensed-ExtraLight.ttf
   Roboto_Condensed/static/RobotoCondensed-Light.ttf
   Roboto_Condensed/static/RobotoCondensed-Regular.ttf
   Roboto_Condensed/static/RobotoCondensed-Medium.ttf
@@ -20,6 +22,8 @@ in those cases you can use the static font files for Roboto Condensed:
   Roboto_Condensed/static/RobotoCondensed-Bold.ttf
   Roboto_Condensed/static/RobotoCondensed-ExtraBold.ttf
   Roboto_Condensed/static/RobotoCondensed-Black.ttf
+  Roboto_Condensed/static/RobotoCondensed-ThinItalic.ttf
+  Roboto_Condensed/static/RobotoCondensed-ExtraLightItalic.ttf
   Roboto_Condensed/static/RobotoCondensed-LightItalic.ttf
   Roboto_Condensed/static/RobotoCondensed-Italic.ttf
   Roboto_Condensed/static/RobotoCondensed-MediumItalic.ttf

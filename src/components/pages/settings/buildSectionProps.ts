@@ -18,7 +18,7 @@ export interface BuildArgs {
   onSelectTheme: (n: string) => void;
   onSelectAccent: (c: string) => void;
   onSelectFont: (n: string) => void;
-  onSelectWeight: () => void; // noop
+  onSelectWeight: (w: DefaultTheme['fontWeight']) => void;
   onIncFontSize: () => void;
   onDecFontSize: () => void;
   onIncWeight: () => void;
@@ -45,7 +45,6 @@ export default function buildSectionProps(
     font: {
       selectedFontName: a.selectedFontName,
       onSelectFont: a.onSelectFont,
-      onSelectWeight: a.onSelectWeight,
       fontSizeLevel: a.fontSizeLevel,
     },
     fontSize: {
@@ -59,6 +58,7 @@ export default function buildSectionProps(
       fontWeight: a.fontWeight,
       onIncrease: a.onIncWeight,
       onDecrease: a.onDecWeight,
+      onSelect: a.onSelectWeight,
       blinkAnim: a.weightBlinkAnim,
       disabled: !multiple,
     },

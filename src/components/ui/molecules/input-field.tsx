@@ -1,6 +1,12 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { TextInput, View } from 'react-native';
-import type { KeyboardTypeOptions, ReturnKeyTypeOptions, TextInputProps } from 'react-native';
+import { View } from 'react-native';
+import type {
+  KeyboardTypeOptions,
+  ReturnKeyTypeOptions,
+  TextInputProps,
+  TextInput,
+} from 'react-native';
+import { AppTextInput } from '@components/ui/atoms';
 import useTheme from '@hooks/useTheme';
 import { Label, HelperText, ErrorText, FieldContainer } from './input-field.parts';
 import { buildInputFieldStyles } from './input-field.styles';
@@ -57,7 +63,7 @@ export const InputField = forwardRef<TextInput, InputFieldProps>((props, ref) =>
       {label && <Label text={label} />}
       <FieldContainer style={styles.container}>
         {leftNode && <View style={styles.leftAccessory}>{leftNode}</View>}
-        <TextInput
+        <AppTextInput
           ref={inputRef}
           style={styles.input}
           value={value}

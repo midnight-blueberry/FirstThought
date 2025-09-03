@@ -1,24 +1,33 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
-import { useAppBootstrap } from '@hooks/useAppBootstrap';
 import { PortalProvider } from '@gorhom/portal';
 import * as SplashScreen from 'expo-splash-screen';
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, StatusBar } from 'react-native';
+import { useFonts } from 'expo-font';
+import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
+import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { ready: appIsReady } = useAppBootstrap();
-  if (!appIsReady) {
+  const entries = Object.entries(FONT_FILES).flatMap(([family, map]) =>
+    Object.entries(map).map(([w, file]) => [`${family}-${w}`, file] as const),
+  );
+  const fontsObject = Object.fromEntries(entries);
+
+  const [loaded] = useFonts(fontsObject);
+
+  if (!loaded) {
     return null;
   }
   return (
@@ -33,6 +42,9 @@ export default function RootLayout() {
 function RootContent() {
   const theme = useTheme();
   const { settings } = useSettings();
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(theme.colors.background);
+  }, [theme.colors.background]);
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
   const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');
@@ -45,7 +57,7 @@ function RootContent() {
   return (
     <SafeAreaProvider>
       <StatusBar
-        barStyle={theme.isDark ? 'light-content' : 'dark-content'}
+        style={theme.isDark ? 'light' : 'dark'}
         backgroundColor={theme.colors.headerBackground}
       />
       <SafeAreaView
@@ -56,7 +68,7 @@ function RootContent() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PortalProvider>
             <DrawerNavigator
-              key={theme.typography.header.headerTitleFamily + theme.name + settings.fontWeight}
+              key={`ui-${settings.themeId}-${theme.colors.headerBackground}`}
               theme={theme}
               homePageHeaderTitle={homePageHeaderTitle}
               homePageHeaderElevation={homePageHeaderElevation}

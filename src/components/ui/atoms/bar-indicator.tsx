@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, View, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 interface BarIndicatorProps {
@@ -9,6 +9,7 @@ interface BarIndicatorProps {
   blinkAnim: Animated.Value;
   containerColor: string;
   fillColor: string;
+  onPress?: (index: number) => void;
 }
 
 const BarIndicator: React.FC<BarIndicatorProps> = ({
@@ -18,6 +19,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
   blinkAnim,
   containerColor,
   fillColor,
+  onPress,
 }) => {
   const theme = useTheme();
 
@@ -38,17 +40,28 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           height: '100%',
           backgroundColor: fillColor,
         } as const;
+        const Wrapper = onPress ? Pressable : View;
         if (blinkIndex === i) {
           return (
-            <View key={i} style={containerStyle}>
-              {i < filledCount && <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />}
-            </View>
+            <Wrapper
+              key={i}
+              style={containerStyle}
+              onPress={onPress ? () => onPress(i) : undefined}
+            >
+              {i < filledCount && (
+                <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
+              )}
+            </Wrapper>
           );
         }
         return (
-          <View key={i} style={containerStyle}>
+          <Wrapper
+            key={i}
+            style={containerStyle}
+            onPress={onPress ? () => onPress(i) : undefined}
+          >
             {i < filledCount && <View style={innerStyle} />}
-          </View>
+          </Wrapper>
         );
       })}
     </>

@@ -1,12 +1,14 @@
 export * from './types';
 export { FAMILIES } from './families';
-export { FONT_WEIGHTS } from './metadata';
 export { FONT_VARIANTS } from './variants';
 export { FONT_ALIASES } from './aliases';
+export { nearestAvailableWeight } from './resolve';
 
 import type { FontFamily, FontWeight as InternalFontWeight, FontSource } from './types';
 import type { TextStyle } from 'react-native';
 import { FONT_VARIANTS } from './variants';
+import { FONT_FILES } from './files';
+import { fontKey } from './resolve';
 import { getFontByName, adjustWeight } from '@utils/fontHelpers';
 type FontWeight = TextStyle['fontWeight'];
 
@@ -22,28 +24,26 @@ const DEFAULT_FONT_SIZES = {
   Roboto_Slab: 18,
 } as const satisfies Record<FontFamily, number>;
 
-export const fonts = (Object.keys(FONT_VARIANTS) as FontFamily[]).map(family => {
-  const variants = FONT_VARIANTS[family] as Record<InternalFontWeight, { normal?: FontSource }>;
+export const fonts = (Object.keys(FONT_FILES) as FontFamily[]).map(family => {
+  const variants = FONT_VARIANTS[family] ?? {};
   const weights = Object.keys(variants) as InternalFontWeight[];
   const defaultWeight = weights.includes('500' as InternalFontWeight)
     ? ('500' as InternalFontWeight)
     : weights[0];
-  const pairs = weights
-    .filter((w) => !!variants[w]?.normal)
-    .map((w) => [w, variants[w]!.normal as FontSource]);
+  const files = Object.fromEntries(
+    weights.map(w => [w, variants[w]?.normal as FontSource])
+  ) as Record<InternalFontWeight, FontSource>;
   return {
     name: family.replace(/_/g, ' '),
     family,
     weights: weights.sort() as FontWeight[],
-    files: Object.fromEntries(pairs) as Record<InternalFontWeight, FontSource>,
+    files,
     defaultSize: DEFAULT_FONT_SIZES[family],
     defaultWeight,
   };
 });
 
 export const defaultFontName: string = 'Comfortaa';
-
-export const getFontFamily = (family: string, weight: string) => `${family}_${weight}`;
 
 export const getNextFontWeight = (family: string, currentWeight: FontWeight) => {
   const name = family.replace(/_/g, ' ');
@@ -63,6 +63,6 @@ export function resolveFontFace(
     const adj = adjustWeight(font, weight, 0);
     chosen = (adj ?? font.defaultWeight) as FontWeight;
   }
-  const fontFamily = getFontFamily(font.family, String(chosen));
+  const fontFamily = fontKey(font.family, Number(chosen));
   return { fontFamily, fontWeight: chosen, fontStyle: style };
 }
