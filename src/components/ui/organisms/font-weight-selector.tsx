@@ -8,9 +8,6 @@ import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
-  fontWeight,
-  onIncrease,
-  onDecrease,
   onSelect,
   blinkAnim,
   disabled: disabledProp,
@@ -18,30 +15,46 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   const theme = useTheme();
   const { settings } = useSettings();
   const weights = listAvailableWeights(toFamilyKey(settings.fontFamily));
-  const hasOnlyOneWeight = weights.length === 1;
-  const disabled = disabledProp || hasOnlyOneWeight;
-  const selectedIndex = Math.max(0, weights.indexOf(Number(fontWeight)));
-  const blinkIndex = hasOnlyOneWeight ? null : selectedIndex;
-  const STEPS = [0, 1, 2, 3, 4] as const;
+  const isSingle = weights.length === 1;
+  const columnsCount = isSingle ? 5 : weights.length;
+  const currentIndex = isSingle
+    ? 0
+    : Math.max(0, weights.indexOf(Number(settings.fontWeight)));
+  const incDisabled = isSingle || currentIndex >= weights.length - 1;
+  const decDisabled = isSingle || currentIndex <= 0;
+
+  const handleIncrease = () => {
+    const w = weights[currentIndex + 1];
+    if (w != null) {
+      onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+    }
+  };
+
+  const handleDecrease = () => {
+    const w = weights[currentIndex - 1];
+    if (w != null) {
+      onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+    }
+  };
 
   return (
     <Section title="Жирность шрифта">
       <SelectorRow
-        onIncrease={disabled ? undefined : onIncrease}
-        onDecrease={disabled ? undefined : onDecrease}
-        increaseColor={disabled ? 'disabled' : 'basic'}
-        decreaseColor={disabled ? 'disabled' : 'basic'}
-        opacity={disabled ? 0.5 : 1}
+        onIncrease={incDisabled ? undefined : handleIncrease}
+        onDecrease={decDisabled ? undefined : handleDecrease}
+        increaseColor={incDisabled ? 'disabled' : 'basic'}
+        decreaseColor={decDisabled ? 'disabled' : 'basic'}
+        opacity={isSingle ? 0.5 : 1}
       >
         <BarIndicator
-          total={STEPS.length}
-          filledCount={hasOnlyOneWeight ? 0 : selectedIndex + 1}
-          blinkIndex={blinkIndex}
+          total={columnsCount}
+          filledCount={isSingle ? 0 : currentIndex + 1}
+          blinkIndex={isSingle ? null : currentIndex}
           blinkAnim={blinkAnim}
-          containerColor={theme.colors[disabled ? 'disabled' : 'basic']}
-          fillColor={theme.colors[disabled ? 'disabled' : 'accent']}
+          containerColor={theme.colors[isSingle ? 'disabled' : 'basic']}
+          fillColor={theme.colors[isSingle ? 'disabled' : 'accent']}
           onPress={
-            hasOnlyOneWeight
+            isSingle
               ? undefined
               : (i) => {
                   const w = weights[i];
@@ -52,7 +65,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
           }
         />
       </SelectorRow>
-      {disabled && (
+      {isSingle && (
         <AppText variant='small' color='disabled' style={{ textAlign: 'center' }}>
           Недоступно для данного шрифта
         </AppText>
@@ -62,9 +75,6 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 };
 
 const propsAreEqual = (prev: FontWeightSelectorProps, next: FontWeightSelectorProps) =>
-  prev.fontWeight === next.fontWeight &&
-  prev.onIncrease === next.onIncrease &&
-  prev.onDecrease === next.onDecrease &&
   prev.onSelect === next.onSelect &&
   prev.blinkAnim === next.blinkAnim &&
   prev.disabled === next.disabled;
