@@ -5,8 +5,7 @@
   "scripts": {
     "start": "npx expo start -c",
     "build:google-play": "npx expo prebuild && npx eas build -p android",
-    "build:testing": "eas build -p android --profile testing",
-    "build:apk": "expo run:android",
+    "build:apk": "eas build -p android --profile testing",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --config src/config/eslint.config.mjs",
@@ -14,7 +13,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "gen:fonts": "node scripts/generate-font-files.cjs",
     "gen:fonts:check": "node scripts/generate-font-files.cjs --check",
-    "long-files-detector": "node scripts/tools/list-long-ts.cjs"
+    "long-files-detector": "node scripts/tools/list-long-ts.cjs",
+    "expo-doctor": "npx -y expo-doctor"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
