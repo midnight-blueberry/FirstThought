@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
 import { TextAlignIcon } from '@components/ui/atoms';
@@ -32,7 +32,7 @@ const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, sel
 
       {selected && (
         <Ionicons
-          name="checkmark-sharp"
+          name={"checkmark-sharp" as any}
           size={theme.iconSize.large}
           color={theme.colors.accent}
           style={{

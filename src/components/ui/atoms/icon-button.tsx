@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 
@@ -18,7 +18,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, onPress, size, color = 'b
   return (
     <TouchableOpacity onPress={onPress} style={[ styles.button, style ]} hitSlop={8}>
       <Ionicons
-        name={icon}
+        name={icon as any}
         size={size ?? theme.iconSize.large}
         color={theme.colors[color]}
       />

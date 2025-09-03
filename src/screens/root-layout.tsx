@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
-import { PortalProvider } from '@gorhom/portal';
+import { PortalProvider } from 'react-native-portalize';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
