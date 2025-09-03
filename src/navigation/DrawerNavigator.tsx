@@ -11,7 +11,7 @@ import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
 
-import DrawerContent from './DrawerContent';
+import CustomDrawerContent from '@/navigation/CustomDrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
 import { defaultDrawerScreenOptions } from './options/drawerOptions';
 import type { DrawerParamList } from './types';
@@ -42,7 +42,6 @@ export default function DrawerNavigator({
     () => ({
       ...defaultDrawerScreenOptions,
       drawerStyle: {
-        marginTop: top,
         width: drawerWidth,
         backgroundColor: theme.colors.background,
         borderColor: theme.colors.basic,
@@ -53,7 +52,6 @@ export default function DrawerNavigator({
         overflow: 'hidden' as const,
       },
       drawerContentStyle: {
-        paddingTop: 20,
         backgroundColor: theme.colors.background,
         borderRadius: theme.borderRadius,
         borderTopLeftRadius: 0,
@@ -96,7 +94,6 @@ export default function DrawerNavigator({
     [
       baseHeaderStyle,
       drawerWidth,
-      top,
       theme.colors.background,
       theme.colors.basic,
       theme.colors.disabled,
@@ -120,7 +117,7 @@ export default function DrawerNavigator({
       key={theme.typography.header.headerTitleFamily + theme.name}
       initialRouteName="Home"
       screenOptions={screenOptions}
-      drawerContent={(props) => <DrawerContent {...props} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
         name="Home"
