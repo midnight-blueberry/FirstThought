@@ -1,10 +1,14 @@
 {
-  "cli": { "version": ">= 10.0.0" },
+  "cli": {
+    "version": ">= 10.0.0",
+    "appVersionSource": "remote"
+  },
   "build": {
     "testing": {
       "android": { "buildType": "apk" }
     },
     "production": {
+      "autoIncrement": true,
       "android": { "buildType": "app-bundle" }
     }
   }
