@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, StyleSheet } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 interface OverlayTransitionCtx {
@@ -15,32 +15,50 @@ const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const [active, setActive] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
   const theme = useTheme();
+
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => subscription.remove();
+  }, []);
 
   const begin = useCallback(() => {
     setActive(true);
     return new Promise<void>(resolve => {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start(() => resolve());
+      if (reduceMotion) {
+        opacity.setValue(1);
+        resolve();
+      } else {
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }).start(() => resolve());
+      }
     });
-  }, [opacity]);
+  }, [opacity, reduceMotion]);
 
   const end = useCallback(() => {
     return new Promise<void>(resolve => {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }).start(() => {
+      if (reduceMotion) {
+        opacity.setValue(0);
         setActive(false);
         resolve();
-      });
+      } else {
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }).start(() => {
+          setActive(false);
+          resolve();
+        });
+      }
     });
-  }, [opacity]);
+  }, [opacity, reduceMotion]);
 
   const apply = useCallback(
     async (callback: () => Promise<void> | void) => {
