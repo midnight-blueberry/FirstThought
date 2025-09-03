@@ -5,7 +5,7 @@ import { PortalProvider } from '@gorhom/portal';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -57,13 +57,13 @@ function RootContent() {
 
   return (
     <SafeAreaProvider>
-      <StatusBarOverlay color={theme.colors.headerBackground} />
-      <StatusBar translucent style={theme.isDark ? 'light' : 'dark'} />
       <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        style={[styles.container, { backgroundColor: theme.colors.background, position: 'relative' }]}
         onLayout={onLayoutRootView}
-        edges={['left', 'right', 'bottom']}
+        edges={Platform.OS === 'ios' ? ['top', 'right', 'bottom', 'left'] : ['right', 'bottom', 'left']}
       >
+        <StatusBar translucent style={theme.isDark ? 'light' : 'dark'} />
+        <StatusBarOverlay />
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PortalProvider>
             <DrawerNavigator

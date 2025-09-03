@@ -34,7 +34,8 @@ export default function DrawerNavigator({
   settingsPageHeaderElevation,
 }: Props) {
   const { top } = useSafeAreaInsets();
-  const baseHeaderStyle = useHeaderConfig(theme, top);
+  const topInset = Platform.OS === 'ios' ? top : 0;
+  const baseHeaderStyle = useHeaderConfig(theme, topInset);
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
@@ -42,7 +43,7 @@ export default function DrawerNavigator({
     () => ({
       ...defaultDrawerScreenOptions,
       drawerStyle: {
-        marginTop: top,
+        marginTop: topInset,
         width: drawerWidth,
         backgroundColor: theme.colors.background,
         borderColor: theme.colors.basic,
@@ -96,7 +97,7 @@ export default function DrawerNavigator({
     [
       baseHeaderStyle,
       drawerWidth,
-      top,
+      topInset,
       theme.colors.background,
       theme.colors.basic,
       theme.colors.disabled,
