@@ -26,8 +26,18 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
     });
   }, [opacity]);
 
-  // step 2 will implement fade-out; placeholder for now
-  const end = useCallback(async () => {}, []);
+  const end = useCallback(() => {
+    return new Promise<void>(resolve => {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => {
+        setActive(false);
+        resolve();
+      });
+    });
+  }, [opacity]);
 
   const apply = useCallback(
     async (callback: () => Promise<void> | void) => {
