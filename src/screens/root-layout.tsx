@@ -16,6 +16,7 @@ import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
+import StatusBarBackground from '@components/ui/StatusBarBackground';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -56,10 +57,8 @@ function RootContent() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar
-        style={theme.isDark ? 'light' : 'dark'}
-        backgroundColor={theme.colors.headerBackground}
-      />
+      <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+      <StatusBarBackground />
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         onLayout={onLayoutRootView}
