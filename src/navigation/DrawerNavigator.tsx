@@ -42,7 +42,6 @@ export default function DrawerNavigator({
     () => ({
       ...defaultDrawerScreenOptions,
       drawerStyle: {
-        marginTop: top,
         width: drawerWidth,
         backgroundColor: theme.colors.background,
         borderColor: theme.colors.basic,
@@ -96,7 +95,6 @@ export default function DrawerNavigator({
     [
       baseHeaderStyle,
       drawerWidth,
-      top,
       theme.colors.background,
       theme.colors.basic,
       theme.colors.disabled,
