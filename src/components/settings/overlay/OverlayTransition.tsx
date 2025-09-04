@@ -20,7 +20,13 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const [active, setActive] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
-  const theme = useTheme();
+  const { colors } = useTheme();
+  const backgroundColor = colors.background;
+  const [visibleBg, setVisibleBg] = useState(backgroundColor);
+
+  useEffect(() => {
+    setVisibleBg(backgroundColor);
+  }, [backgroundColor]);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -93,18 +99,14 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   const isBusy = useCallback(() => busy.current, []);
 
+  const animatedStyle = { opacity };
+
   return (
     <OverlayTransitionContext.Provider value={{ begin, end, apply, transact, isBusy }}>
       {children}
       <Animated.View
         pointerEvents={active ? 'auto' : 'none'}
-        style={[
-          StyleSheet.absoluteFillObject,
-          {
-            opacity,
-            backgroundColor: theme.colors.background,
-          },
-        ]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: visibleBg }, animatedStyle]}
       />
     </OverlayTransitionContext.Provider>
   );
