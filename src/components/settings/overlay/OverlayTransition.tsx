@@ -85,10 +85,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   const isBusy = useCallback(() => busy.current, []);
 
-  const overlayColor = theme.isDark
-    ? 'rgba(255,255,255,0.35)'
-    : 'rgba(0,0,0,0.35)';
-
   return (
     <OverlayTransitionContext.Provider value={{ begin, end, apply, transact, isBusy }}>
       {children}
@@ -98,7 +94,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
           StyleSheet.absoluteFillObject,
           {
             opacity,
-            backgroundColor: overlayColor,
+            backgroundColor: theme.colors.background,
           },
         ]}
       />
