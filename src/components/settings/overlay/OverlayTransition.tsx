@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, StyleSheet } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 interface OverlayTransitionCtx {
@@ -37,7 +37,8 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       } else {
         const timing = Animated.timing(opacity, {
           toValue: 1,
-          duration: 250,
+          duration: 500,
+          easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         });
         timing.start(({ finished: _finished }) => resolve());
@@ -54,7 +55,8 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       } else {
         Animated.timing(opacity, {
           toValue: 0,
-          duration: 250,
+          duration: 500,
+          easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }).start(() => {
           setActive(false);
