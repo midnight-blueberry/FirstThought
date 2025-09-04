@@ -9,9 +9,10 @@ import { clampLevel } from '@utils/theme';
 import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
-import { useSettings } from '@/state/SettingsContext';
+import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
+import { showErrorToast } from '@utils/showErrorToast';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
@@ -38,70 +39,84 @@ export default function useSettingsVm(): SettingsVm {
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
-  const changeTheme = (name: string) => {
-    void (async () => {
+  const resetToSnapshot = (s: Settings) => {
+    setSelectedThemeName(themes[s.themeId].name);
+    setSelectedAccentColor(s.accent);
+    setSelectedFontName(s.fontFamily);
+    setFontWeightState(s.fontWeight);
+    setFontSizeLevel(s.fontSizeLevel);
+    setNoteTextAlign(s.noteTextAlign);
+  };
+
+  const withSettingsTransaction = async (
+    cb: () => void | Promise<void>,
+  ) => {
+    const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
+    try {
       await overlay.transact(async () => {
-        setSelectedThemeName(name);
-        const id =
-          (Object.keys(themes) as ThemeName[]).find(
-            (k) => themes[k].name === name,
-          ) ?? 'light';
-        updateSettings({ themeId: id });
+        try {
+          await cb();
+        } catch (e) {
+          updateSettings(snapshot);
+          resetToSnapshot(snapshot);
+          console.warn(e);
+          throw e;
+        }
       });
       await showFor2s();
-    })();
+    } catch (e) {
+      showErrorToast(
+        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
+      );
+    }
+  };
+
+  const changeTheme = (name: string) => {
+    void withSettingsTransaction(async () => {
+      setSelectedThemeName(name);
+      const id =
+        (Object.keys(themes) as ThemeName[]).find(
+          (k) => themes[k].name === name,
+        ) ?? 'light';
+      updateSettings({ themeId: id });
+    });
   };
 
   const changeAccent = (color: string) => {
-    void (async () => {
-      await overlay.transact(async () => {
-        setSelectedAccentColor(color);
-        updateSettings({ accent: color });
-      });
-      await showFor2s();
-    })();
+    void withSettingsTransaction(async () => {
+      setSelectedAccentColor(color);
+      updateSettings({ accent: color });
+    });
   };
 
   const changeFontFamily = (name: string) => {
-    void (async () => {
-      await overlay.transact(async () => {
-        setSelectedFontName(name);
-        const next = storeSetFontFamily(name);
-        setFontWeightState(next.fontWeight);
-      });
-      await showFor2s();
-    })();
+    void withSettingsTransaction(async () => {
+      setSelectedFontName(name);
+      const next = storeSetFontFamily(name);
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
-    void (async () => {
-      await overlay.transact(async () => {
-        const next = storeSetFontWeight(Number(weight));
-        setFontWeightState(next.fontWeight);
-      });
-      await showFor2s();
-    })();
+    void withSettingsTransaction(async () => {
+      const next = storeSetFontWeight(Number(weight));
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontSize = (level: number) => {
-    void (async () => {
-      await overlay.transact(async () => {
-        const next = clampLevel(level);
-        setFontSizeLevel(next);
-        updateSettings({ fontSizeLevel: next });
-      });
-      await showFor2s();
-    })();
+    void withSettingsTransaction(async () => {
+      const next = clampLevel(level);
+      setFontSizeLevel(next);
+      updateSettings({ fontSizeLevel: next });
+    });
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
-    void (async () => {
-      await overlay.transact(async () => {
-        setNoteTextAlign(align);
-        updateSettings({ noteTextAlign: align });
-      });
-      await showFor2s();
-    })();
+    void withSettingsTransaction(async () => {
+      setNoteTextAlign(align);
+      updateSettings({ noteTextAlign: align });
+    });
   };
 
   const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
