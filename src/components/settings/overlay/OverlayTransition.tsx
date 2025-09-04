@@ -12,6 +12,9 @@ interface OverlayTransitionCtx {
 
 const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
 
+export const waitFrame = () =>
+  new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const [active, setActive] = useState(false);
@@ -27,16 +30,17 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   const begin = useCallback(() => {
     setActive(true);
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       if (reduceMotion) {
         opacity.setValue(1);
         resolve();
       } else {
-        Animated.timing(opacity, {
+        const timing = Animated.timing(opacity, {
           toValue: 1,
           duration: 250,
           useNativeDriver: true,
-        }).start(() => resolve());
+        });
+        timing.start(({ finished: _finished }) => resolve());
       }
     });
   }, [opacity, reduceMotion]);
@@ -74,7 +78,9 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       busy.current = true;
       try {
         await begin();
+        await waitFrame();
         await callback();
+        await waitFrame();
       } finally {
         await end();
         busy.current = false;
