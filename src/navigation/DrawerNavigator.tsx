@@ -91,7 +91,6 @@ export default function DrawerNavigator({
       headerStyle: baseHeaderStyle,
       headerShadowVisible: theme.headerShadowVisible,
       sceneContainerStyle: { backgroundColor: theme.colors.background },
-      headerRight: () => <SaveIndicator />,
     }),
     [
       baseHeaderStyle,
@@ -136,12 +135,7 @@ export default function DrawerNavigator({
                 }}
               />
             ),
-            headerRight: () => (
-              <>
-                <IconButton icon="search" onPress={() => null} />
-                <SaveIndicator />
-              </>
-            ),
+            headerRight: () => <IconButton icon="search" onPress={() => null} />,
             headerStyle: {
               ...baseHeaderStyle,
               elevation: homePageHeaderElevation,
@@ -163,6 +157,7 @@ export default function DrawerNavigator({
                 }}
               />
             ),
+            headerRight: () => <SaveIndicator />,
             headerStyle: {
               ...baseHeaderStyle,
               elevation: settingsPageHeaderElevation,

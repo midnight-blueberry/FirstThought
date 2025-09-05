@@ -5,6 +5,7 @@ import useTheme from '@hooks/useTheme';
 
 interface SaveIndicatorContextValue {
   showFor2s: () => Promise<void>;
+  hide: () => void;
   opacity: Animated.Value;
   visible: boolean;
 }
@@ -39,9 +40,16 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [opacity]);
 
+  const hide = useCallback(() => {
+    opacity.stopAnimation(() => {
+      opacity.setValue(0);
+    });
+    setVisible(false);
+  }, [opacity]);
+
   const value = useMemo(
-    () => ({ showFor2s, opacity, visible }),
-    [showFor2s, opacity, visible],
+    () => ({ showFor2s, hide, opacity, visible }),
+    [showFor2s, hide, opacity, visible],
   );
 
   return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
