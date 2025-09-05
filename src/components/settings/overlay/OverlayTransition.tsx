@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
+import { Portal } from 'react-native-portalize';
 import useTheme from '@hooks/useTheme';
 
 interface OverlayTransitionCtx {
@@ -112,17 +113,30 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       }}
     >
       {children}
-      <Animated.View
-        pointerEvents={active ? 'auto' : 'none'}
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: frozenBg ?? theme.colors.background },
-          animatedStyle,
-        ]}
-      />
+      <Portal>
+        <Animated.View
+          pointerEvents={active ? 'auto' : 'none'}
+          style={[
+            styles.overlay,
+            { backgroundColor: frozenBg ?? theme.colors.background },
+            animatedStyle,
+          ]}
+        />
+      </Portal>
     </OverlayTransitionContext.Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1000,
+  },
+});
 
 export function useOverlayTransition() {
   const ctx = useContext(OverlayTransitionContext);
