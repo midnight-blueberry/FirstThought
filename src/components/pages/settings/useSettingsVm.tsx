@@ -18,7 +18,7 @@ export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
-  const { showFor2s } = useSaveIndicator();
+  const { markDirty, clearDirty } = useSaveIndicator();
   const {
     settings,
     updateSettings,
@@ -52,6 +52,7 @@ export default function useSettingsVm(): SettingsVm {
     cb: () => void | Promise<void>,
     nextBackground?: string,
   ) => {
+    markDirty();
     const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
     try {
       if (nextBackground) {
@@ -68,9 +69,10 @@ export default function useSettingsVm(): SettingsVm {
         }
       });
       overlay.releaseBackground();
-      await showFor2s();
+      clearDirty();
     } catch (e) {
       overlay.releaseBackground();
+      clearDirty();
       showErrorToast(
         e instanceof Error ? e.message : 'Ошибка сохранения настроек',
       );

@@ -10,7 +10,6 @@ import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
-import SaveIndicator, { SaveIndicatorProvider } from '@components/header/SaveIndicator';
 
 import CustomDrawerContent from '@/navigation/CustomDrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -91,7 +90,6 @@ export default function DrawerNavigator({
       headerStyle: baseHeaderStyle,
       headerShadowVisible: theme.headerShadowVisible,
       sceneContainerStyle: { backgroundColor: theme.colors.background },
-      headerRight: () => <SaveIndicator />,
     }),
     [
       baseHeaderStyle,
@@ -115,62 +113,55 @@ export default function DrawerNavigator({
   );
 
   return (
-    <SaveIndicatorProvider>
-      <Drawer.Navigator
-        key={theme.typography.header.headerTitleFamily + theme.name}
-        initialRouteName="Home"
-        screenOptions={screenOptions}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
-        <Drawer.Screen
-          name="Home"
-          component={HomePageScreen}
-          options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Home'>) => ({
-            title: homePageHeaderTitle,
-            drawerIcon: DrawerIcon('home'),
-            headerLeft: () => (
-              <IconButton
-                icon="menu"
-                onPress={() => {
-                  navigation.dispatch(DrawerActions.openDrawer());
-                }}
-              />
-            ),
-            headerRight: () => (
-              <>
-                <IconButton icon="search" onPress={() => null} />
-                <SaveIndicator />
-              </>
-            ),
-            headerStyle: {
-              ...baseHeaderStyle,
-              elevation: homePageHeaderElevation,
-            },
-            headerTintColor: theme.colors.headerForeground,
-          })}
-        />
-        <Drawer.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Settings'>) => ({
-            title: settingsPageHeaderTitle,
-            drawerIcon: DrawerIcon('settings'),
-            headerLeft: () => (
-              <IconButton
-                icon="chevron-back"
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              />
-            ),
-            headerStyle: {
-              ...baseHeaderStyle,
-              elevation: settingsPageHeaderElevation,
-            },
-            headerTintColor: theme.colors.headerForeground,
-          })}
-        />
-      </Drawer.Navigator>
-    </SaveIndicatorProvider>
+    <Drawer.Navigator
+      key={theme.typography.header.headerTitleFamily + theme.name}
+      initialRouteName="Home"
+      screenOptions={screenOptions}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      <Drawer.Screen
+        name="Home"
+        component={HomePageScreen}
+        options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Home'>) => ({
+          title: homePageHeaderTitle,
+          drawerIcon: DrawerIcon('home'),
+          headerLeft: () => (
+            <IconButton
+              icon="menu"
+              onPress={() => {
+                navigation.dispatch(DrawerActions.openDrawer());
+              }}
+            />
+          ),
+          headerRight: () => <IconButton icon="search" onPress={() => null} />,
+          headerStyle: {
+            ...baseHeaderStyle,
+            elevation: homePageHeaderElevation,
+          },
+          headerTintColor: theme.colors.headerForeground,
+        })}
+      />
+      <Drawer.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Settings'>) => ({
+          title: settingsPageHeaderTitle,
+          drawerIcon: DrawerIcon('settings'),
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-back"
+              onPress={() => {
+                navigation.goBack();
+              }}
+            />
+          ),
+          headerStyle: {
+            ...baseHeaderStyle,
+            elevation: settingsPageHeaderElevation,
+          },
+          headerTintColor: theme.colors.headerForeground,
+        })}
+      />
+    </Drawer.Navigator>
   );
 }

@@ -1,50 +1,41 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet } from 'react-native';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
 interface SaveIndicatorContextValue {
-  showFor2s: () => Promise<void>;
-  opacity: Animated.Value;
-  visible: boolean;
+  dirty: boolean;
+  markDirty: () => void;
+  clearDirty: () => void;
 }
 
-const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined>(undefined);
+const SaveIndicatorContext =
+  createContext<SaveIndicatorContextValue | undefined>(undefined);
 
-export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [visible, setVisible] = useState(false);
-  const opacity = useRef(new Animated.Value(0)).current;
+export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [dirty, setDirty] = useState(false);
 
-  const showFor2s = useCallback(() => {
-    setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
-    });
-  }, [opacity]);
+  const markDirty = useCallback(() => setDirty(true), []);
+  const clearDirty = useCallback(() => setDirty(false), []);
 
   const value = useMemo(
-    () => ({ showFor2s, opacity, visible }),
-    [showFor2s, opacity, visible],
+    () => ({ dirty, markDirty, clearDirty }),
+    [dirty, markDirty, clearDirty],
   );
 
-  return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
+  return (
+    <SaveIndicatorContext.Provider value={value}>
+      {children}
+    </SaveIndicatorContext.Provider>
+  );
 };
 
 export function useSaveIndicator() {
@@ -55,8 +46,11 @@ export function useSaveIndicator() {
   return ctx;
 }
 
-const SaveIndicator: React.FC = () => {
-  const { visible, opacity } = useSaveIndicator();
+interface IndicatorProps {
+  visible?: boolean;
+}
+
+const SaveIndicator: React.FC<IndicatorProps> = ({ visible = false }) => {
   const theme = useTheme();
 
   if (!visible) {
@@ -64,26 +58,18 @@ const SaveIndicator: React.FC = () => {
   }
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.container,
-        { opacity, right: theme.padding.large, top: theme.padding.large },
-      ]}
-    >
-      <Ionicons
-        name="save-outline"
-        size={theme.iconSize.medium}
-        color={theme.colors.headerForeground}
-      />
-    </Animated.View>
+    <Ionicons
+      name="save-outline"
+      size={theme.iconSize.medium}
+      color={theme.colors.headerForeground}
+      style={styles.icon}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-  },
+  icon: {},
 });
 
 export default SaveIndicator;
+
