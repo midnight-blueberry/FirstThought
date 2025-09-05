@@ -50,9 +50,13 @@ export default function useSettingsVm(): SettingsVm {
 
   const withSettingsTransaction = async (
     cb: () => void | Promise<void>,
+    nextBackground?: string,
   ) => {
     const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
     try {
+      if (nextBackground) {
+        overlay.freezeBackground(nextBackground);
+      }
       await overlay.transact(async () => {
         try {
           await cb();
@@ -63,8 +67,10 @@ export default function useSettingsVm(): SettingsVm {
           throw e;
         }
       });
+      overlay.releaseBackground();
       await showFor2s();
     } catch (e) {
+      overlay.releaseBackground();
       showErrorToast(
         e instanceof Error ? e.message : 'Ошибка сохранения настроек',
       );
@@ -72,14 +78,18 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeTheme = (name: string) => {
-    void withSettingsTransaction(async () => {
-      setSelectedThemeName(name);
-      const id =
-        (Object.keys(themes) as ThemeName[]).find(
-          (k) => themes[k].name === name,
-        ) ?? 'light';
-      updateSettings({ themeId: id });
-    });
+    const id =
+      (Object.keys(themes) as ThemeName[]).find(
+        (k) => themes[k].name === name,
+      ) ?? 'light';
+    const nextBg = themes[id].colors.background;
+    void withSettingsTransaction(
+      async () => {
+        setSelectedThemeName(name);
+        updateSettings({ themeId: id });
+      },
+      nextBg,
+    );
   };
 
   const changeAccent = (color: string) => {

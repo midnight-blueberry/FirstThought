@@ -8,6 +8,8 @@ interface OverlayTransitionCtx {
   apply: (callback: () => Promise<void> | void) => Promise<void>;
   transact: (callback: () => Promise<void> | void) => Promise<void>;
   isBusy: () => boolean;
+  freezeBackground: (color: string) => void;
+  releaseBackground: () => void;
 }
 
 const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
@@ -20,13 +22,8 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const [active, setActive] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
-  const { colors } = useTheme();
-  const backgroundColor = colors.background;
-  const [visibleBg, setVisibleBg] = useState(backgroundColor);
-
-  useEffect(() => {
-    setVisibleBg(backgroundColor);
-  }, [backgroundColor]);
+  const theme = useTheme();
+  const [frozenBg, setFrozenBg] = useState<string | null>(null);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -92,6 +89,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       } finally {
         await end();
         busy.current = false;
+        setFrozenBg(null);
       }
     },
     [begin, end],
@@ -102,11 +100,25 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const animatedStyle = { opacity };
 
   return (
-    <OverlayTransitionContext.Provider value={{ begin, end, apply, transact, isBusy }}>
+    <OverlayTransitionContext.Provider
+      value={{
+        begin,
+        end,
+        apply,
+        transact,
+        isBusy,
+        freezeBackground: setFrozenBg,
+        releaseBackground: () => setFrozenBg(null),
+      }}
+    >
       {children}
       <Animated.View
         pointerEvents={active ? 'auto' : 'none'}
-        style={[StyleSheet.absoluteFill, { backgroundColor: visibleBg }, animatedStyle]}
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: frozenBg ?? theme.colors.background },
+          animatedStyle,
+        ]}
       />
     </OverlayTransitionContext.Provider>
   );
