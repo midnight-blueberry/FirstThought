@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SettingsScreen from './index';
-import SaveIndicatorIcon from '@components/header/SaveIndicator';
-import { SaveIndicatorProvider } from '@features/save-indicator';
+import { SaveIndicatorProvider, SaveIndicatorIcon } from '@features/save-indicator';
 import { IconButton } from '@components/ui/atoms';
 import useTheme from '@hooks/useTheme';
 import useHeaderConfig from '@hooks/useHeaderConfig';
@@ -17,7 +16,7 @@ export default function SettingsNavigator() {
 
   const screenOptions = useMemo(
     () => ({
-      headerStyle: { ...baseHeaderStyle, elevation: 0 },
+      headerStyle: { ...baseHeaderStyle, elevation: 0, zIndex: 2000 },
       headerTintColor: theme.colors.headerForeground,
       headerShadowVisible: theme.headerShadowVisible,
     }),
@@ -39,6 +38,7 @@ export default function SettingsNavigator() {
               />
             ),
             headerRight: () => <SaveIndicatorIcon />,
+            headerRightContainerStyle: { marginRight: 12 },
           })}
         />
       </Stack.Navigator>

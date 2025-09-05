@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import { Animated } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
@@ -15,14 +15,7 @@ const SaveIndicatorIcon: React.FC = () => {
   }
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        
-        styles.container,
-        { opacity, right: theme.padding.large, top: theme.padding.large },
-      ]}
-    >
+    <Animated.View pointerEvents="none" style={{ opacity }}>
       <Ionicons
         name="save-outline"
         size={theme.iconSize.medium}
@@ -31,11 +24,5 @@ const SaveIndicatorIcon: React.FC = () => {
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-  },
-});
 
 export default SaveIndicatorIcon;
