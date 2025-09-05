@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet, Easing, Modal } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 interface OverlayTransitionCtx {
@@ -19,11 +19,11 @@ export const waitFrame = () =>
 
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const opacity = useRef(new Animated.Value(0)).current;
-  const [active, setActive] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
   const theme = useTheme();
   const [frozenBg, setFrozenBg] = useState<string | null>(null);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -32,7 +32,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   }, []);
 
   const begin = useCallback(() => {
-    setActive(true);
     return new Promise<void>((resolve) => {
       if (reduceMotion) {
         opacity.setValue(1);
@@ -53,7 +52,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
     return new Promise<void>(resolve => {
       if (reduceMotion) {
         opacity.setValue(0);
-        setActive(false);
         resolve();
       } else {
         Animated.timing(opacity, {
@@ -62,7 +60,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }).start(() => {
-          setActive(false);
           resolve();
         });
       }
@@ -97,7 +94,13 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   const isBusy = useCallback(() => busy.current, []);
 
-  const animatedStyle = { opacity };
+  useEffect(() => {
+    const id = opacity.addListener(({ value }) => setIsOverlayVisible(value > 0.001));
+    return () => opacity.removeListener(id);
+  }, [opacity]);
+
+  const modalVisible = isOverlayVisible || busy.current;
+  const bg = frozenBg ?? theme.colors.background;
 
   return (
     <OverlayTransitionContext.Provider
@@ -112,14 +115,12 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       }}
     >
       {children}
-      <Animated.View
-        pointerEvents={active ? 'auto' : 'none'}
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: frozenBg ?? theme.colors.background },
-          animatedStyle,
-        ]}
-      />
+      <Modal transparent visible={modalVisible} statusBarTranslucent>
+        <Animated.View
+          pointerEvents={isOverlayVisible ? 'auto' : 'none'}
+          style={[StyleSheet.absoluteFill, { backgroundColor: bg, opacity }]}
+        />
+      </Modal>
     </OverlayTransitionContext.Provider>
   );
 };

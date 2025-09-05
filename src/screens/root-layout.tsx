@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
+import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayTransition';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
 import { FONT_FILES } from '@/constants/fonts/files';
@@ -34,7 +35,9 @@ export default function RootLayout() {
   return (
     <SettingsProvider>
       <ThemeProvider>
-        <RootContent />
+        <OverlayTransitionProvider>
+          <RootContent />
+        </OverlayTransitionProvider>
       </ThemeProvider>
     </SettingsProvider>
   );
