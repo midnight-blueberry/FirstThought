@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated } from 'react-native';
 import {
   fonts,
   FONT_VARIANTS,
@@ -15,25 +14,30 @@ import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
-import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useOverlayTransition } from '@features/overlay/useOverlayTransition';
 import { useSaveIndicator } from '@features/save-indicator';
-import { showErrorToast } from '@utils/showErrorToast';
 import { toFamilyKey } from '@utils/font';
 import { areSettingsEqual } from '@features/settings/areSettingsEqual';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
-  const overlay = useOverlayTransition();
+  const { withOverlay } = useOverlayTransition();
   const { show, hide, reset } = useSaveIndicator();
   const { settings, updateSettings } = useSettings();
 
+  const previewing = useRef(false);
   const [draft, setDraft] = useState<Settings>(settings);
-  useEffect(() => {
-    setDraft(settings);
-  }, [settings]);
+  const [saved, setSaved] = useState<Settings>(settings);
 
-  const saved = settings;
+  useEffect(() => {
+    if (previewing.current) {
+      previewing.current = false;
+      return;
+    }
+    setDraft(settings);
+    setSaved(settings);
+  }, [settings]);
 
   const dirty = useMemo(
     () => !areSettingsEqual(draft, saved),
@@ -46,46 +50,16 @@ export default function useSettingsVm(): SettingsVm {
 
   useEffect(() => () => reset(), [reset]);
 
-  const overlayAnim = useRef(new Animated.Value(0)).current;
-
-  const resetToSnapshot = (s: Settings) => {
-    setDraft(s);
-  };
-
-  const withSettingsTransaction = async (
-    cb: () => void | Promise<void>,
-    nextBackground?: string,
-  ) => {
-    const snapshot = JSON.parse(JSON.stringify(saved)) as Settings;
-    try {
-      if (nextBackground) {
-        overlay.freezeBackground(nextBackground);
-      }
-      await overlay.transact(async () => {
-        try {
-          await cb();
-        } catch (e) {
-          updateSettings(snapshot);
-          resetToSnapshot(snapshot);
-          console.warn(e);
-          throw e;
-        }
-      });
-      overlay.releaseBackground();
-    } catch (e) {
-      overlay.releaseBackground();
-      showErrorToast(
-        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
-      );
-    }
-  };
-
   const changeTheme = (name: string) => {
     const id =
       (Object.keys(themes) as ThemeName[]).find(
         (k) => themes[k].name === name,
       ) ?? 'light';
     setDraft((prev) => ({ ...prev, themeId: id }));
+    withOverlay(() => {
+      previewing.current = true;
+      updateSettings({ themeId: id });
+    });
   };
 
   const changeAccent = (color: string) => {
@@ -95,11 +69,16 @@ export default function useSettingsVm(): SettingsVm {
   const changeFontFamily = (name: string) => {
     const key = toFamilyKey(name);
     const normalized = nearestAvailableWeight(key, Number(draft.fontWeight));
+    const nextWeight = String(normalized) as FontWeight;
     setDraft((prev) => ({
       ...prev,
       fontFamily: name,
-      fontWeight: String(normalized) as FontWeight,
+      fontWeight: nextWeight,
     }));
+    withOverlay(() => {
+      previewing.current = true;
+      updateSettings({ fontFamily: name, fontWeight: nextWeight });
+    });
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
@@ -148,10 +127,7 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const save = async () => {
-    const nextBg = themes[draft.themeId].colors.background;
-    await withSettingsTransaction(async () => {
-      updateSettings(draft);
-    }, nextBg);
+    updateSettings(draft);
   };
 
   const sectionProps = useMemo(
@@ -193,10 +169,6 @@ export default function useSettingsVm(): SettingsVm {
     sectionProps,
     theme,
     handleScroll,
-    overlayVisible: false,
-    overlayColor: 'transparent',
-    overlayAnim,
-    overlayBlocks: false,
     save,
   };
 }
