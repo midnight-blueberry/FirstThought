@@ -11,14 +11,14 @@ import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
-import { useSaveIndicator } from '@components/header/SaveIndicator';
+import { useSaveIndicator } from '@features/save-indicator';
 import { showErrorToast } from '@utils/showErrorToast';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
-  const { showFor2s } = useSaveIndicator();
+  const { show } = useSaveIndicator();
   const {
     settings,
     updateSettings,
@@ -68,7 +68,7 @@ export default function useSettingsVm(): SettingsVm {
         }
       });
       overlay.releaseBackground();
-      await showFor2s();
+      await show();
     } catch (e) {
       overlay.releaseBackground();
       showErrorToast(

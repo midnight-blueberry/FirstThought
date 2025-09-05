@@ -1,84 +1,21 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet } from 'react-native';
+import React from 'react';
+import { Animated } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
+import { useSaveIndicator } from '@features/save-indicator';
 
-interface SaveIndicatorContextValue {
-  showFor2s: () => Promise<void>;
-  hide: () => void;
-  opacity: Animated.Value;
-  visible: boolean;
-}
-
-const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined>(undefined);
-
-export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [visible, setVisible] = useState(false);
-  const opacity = useRef(new Animated.Value(0)).current;
-
-  const showFor2s = useCallback(() => {
-    setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
-    });
-  }, [opacity]);
-
-  const hide = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
-    setVisible(false);
-  }, [opacity]);
-
-  const value = useMemo(
-    () => ({ showFor2s, hide, opacity, visible }),
-    [showFor2s, hide, opacity, visible],
-  );
-
-  return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
-};
-
-export function useSaveIndicator() {
-  const ctx = useContext(SaveIndicatorContext);
-  if (!ctx) {
-    throw new Error('useSaveIndicator must be used within SaveIndicatorProvider');
-  }
-  return ctx;
-}
-
-const SaveIndicator: React.FC = () => {
-  const { visible, opacity } = useSaveIndicator();
+const SaveIndicatorIcon: React.FC = () => {
+  const { active, opacity } = useSaveIndicator();
   const theme = useTheme();
+  const isFocused = useIsFocused();
 
-  if (!visible) {
+  if (!isFocused || !active) {
     return null;
   }
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.container,
-        { opacity, right: theme.padding.large, top: theme.padding.large },
-      ]}
-    >
+    <Animated.View pointerEvents="none" style={{ opacity }}>
       <Ionicons
         name="save-outline"
         size={theme.iconSize.medium}
@@ -88,10 +25,4 @@ const SaveIndicator: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-  },
-});
-
-export default SaveIndicator;
+export default SaveIndicatorIcon;
