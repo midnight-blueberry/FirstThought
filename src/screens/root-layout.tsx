@@ -18,6 +18,7 @@ import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayT
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import StatusBarBackground from '@components/ui/StatusBarBackground';
+import { SaveIndicatorProvider } from '@components/header/SaveIndicator';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -34,15 +35,19 @@ export default function RootLayout() {
   }
   return (
     <SettingsProvider>
-      <ThemeProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <PortalProvider>
-            <OverlayTransitionProvider>
-              <RootContent />
-            </OverlayTransitionProvider>
-          </PortalProvider>
-        </GestureHandlerRootView>
-      </ThemeProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <SaveIndicatorProvider>
+            <ThemeProvider>
+              <PortalProvider>
+                <OverlayTransitionProvider>
+                  <RootContent />
+                </OverlayTransitionProvider>
+              </PortalProvider>
+            </ThemeProvider>
+          </SaveIndicatorProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </SettingsProvider>
   );
 }
@@ -63,7 +68,7 @@ function RootContent() {
   }, []);
 
   return (
-    <SafeAreaProvider>
+    <>
       <StatusBar style={theme.isDark ? 'light' : 'dark'} />
       <StatusBarBackground />
       <SafeAreaView
@@ -80,7 +85,7 @@ function RootContent() {
           settingsPageHeaderElevation={settingsPageHeaderElevation}
         />
       </SafeAreaView>
-    </SafeAreaProvider>
+    </>
   );
 }
 
