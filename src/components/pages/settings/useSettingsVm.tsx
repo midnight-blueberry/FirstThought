@@ -15,7 +15,7 @@ import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@features/overlay/useOverlayTransition';
-import { useSaveIndicator } from '@features/save-indicator';
+import { useSaveIndicator } from '@/features/save-indicator/context';
 import { toFamilyKey } from '@utils/font';
 import { areSettingsEqual } from '@features/settings/areSettingsEqual';
 
@@ -31,19 +31,21 @@ export default function useSettingsVm(): SettingsVm {
   const [draft, setDraft] = useState<Settings>(settings);
   const [saved, setSaved] = useState<Settings>(settings);
 
+  const dirty = useMemo(
+    () => !areSettingsEqual(draft, saved),
+    [draft, saved],
+  );
+
   useEffect(() => {
     if (previewing.current) {
       previewing.current = false;
       return;
     }
-    setDraft(settings);
     setSaved(settings);
-  }, [settings]);
-
-  const dirty = useMemo(
-    () => !areSettingsEqual(draft, saved),
-    [draft, saved],
-  );
+    if (!dirty) {
+      setDraft(settings);
+    }
+  }, [settings, dirty]);
 
   useEffect(() => {
     if (dirty !== lastDirtyRef.current) {

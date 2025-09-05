@@ -3,78 +3,44 @@ import React, {
   useCallback,
   useContext,
   useMemo,
-  useRef,
   useState,
 } from 'react';
-import { Animated, Easing } from 'react-native';
 
 interface SaveIndicatorContextValue {
   show: () => void;
   hide: () => void;
   reset: () => void;
   active: boolean;
-  opacity: Animated.Value;
 }
 
 const SaveIndicatorContext =
   createContext<SaveIndicatorContextValue | undefined>(undefined);
 
-const noopOpacity = new Animated.Value(0);
 const noopContext: SaveIndicatorContextValue = {
   show: () => {},
   hide: () => {},
   reset: () => {},
   active: false,
-  opacity: noopOpacity,
 };
 
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [active, setActive] = useState(false);
-  const activeRef = useRef(false);
-  const opacity = useRef(new Animated.Value(0)).current;
 
   const show = useCallback(() => {
-    if (activeRef.current) {
-      return;
-    }
-    activeRef.current = true;
-    setActive(true);
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 350,
-      easing: Easing.inOut(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-  }, [opacity]);
+    setActive((prev) => (prev === true ? prev : true));
+  }, []);
 
   const hide = useCallback(() => {
-    if (!activeRef.current) {
-      return;
-    }
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 350,
-      easing: Easing.inOut(Easing.quad),
-      useNativeDriver: true,
-    }).start(() => {
-      activeRef.current = false;
-      setActive(false);
-    });
-  }, [opacity]);
+    setActive((prev) => (prev === false ? prev : false));
+  }, []);
 
-  const reset = useCallback(() => {
-    activeRef.current = false;
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
-    setActive(false);
-  }, [opacity]);
+  const reset = useCallback(() => setActive(false), []);
 
   const value = useMemo(
-    () => ({ show, hide, reset, active, opacity }),
-    [show, hide, reset, active, opacity],
+    () => ({ active, show, hide, reset }),
+    [active, show, hide, reset],
   );
 
   return (

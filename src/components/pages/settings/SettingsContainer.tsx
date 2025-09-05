@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import SettingsContent from './SettingsContent';
 import useSettingsVm from './useSettingsVm';
-import { useSaveIndicator } from '@features/save-indicator';
+import { useSaveIndicator } from '@/features/save-indicator/context';
 
 export default function SettingsContainer() {
   const vm = useSettingsVm();

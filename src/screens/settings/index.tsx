@@ -9,10 +9,7 @@ export default function SettingsScreen() {
   const headerRight = useMemo(() => () => <SaveIndicatorIcon />, []);
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight,
-      headerRightContainerStyle: { marginRight: 12 },
-    });
+    navigation.setOptions({ headerRight });
   }, [navigation, headerRight]);
 
   return (
