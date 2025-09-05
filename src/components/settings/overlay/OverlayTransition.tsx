@@ -23,7 +23,10 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const busy = useRef(false);
   const theme = useTheme();
   const [frozenBg, setFrozenBg] = useState<string | null>(null);
-  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [state, setState] = useState<'idle' | 'fadingIn' | 'shown' | 'fadingOut'>('idle');
+  const [modalVisible, setModalVisible] = useState(false);
+  const currentAnim = useRef<Animated.CompositeAnimation | null>(null);
+  const pendingPromiseRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -31,40 +34,63 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
     return () => subscription.remove();
   }, []);
 
+  const stopCurrentAnimation = useCallback(() => {
+    currentAnim.current?.stop();
+    currentAnim.current = null;
+  }, []);
+
   const begin = useCallback(() => {
+    if (state === 'shown' || state === 'fadingIn') return Promise.resolve();
     return new Promise<void>((resolve) => {
+      stopCurrentAnimation();
+      setModalVisible(true);
+      setState('fadingIn');
       if (reduceMotion) {
         opacity.setValue(1);
+        setState('shown');
         resolve();
-      } else {
-        const timing = Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.inOut(Easing.cubic),
-          useNativeDriver: true,
-        });
-        timing.start(({ finished: _finished }) => resolve());
+        return;
       }
+      currentAnim.current = Animated.timing(opacity, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.inOut(Easing.cubic),
+        useNativeDriver: true,
+      });
+      currentAnim.current.start(() => {
+        currentAnim.current = null;
+        setState('shown');
+        resolve();
+      });
     });
-  }, [opacity, reduceMotion]);
+  }, [reduceMotion, opacity, state, stopCurrentAnimation]);
 
   const end = useCallback(() => {
-    return new Promise<void>(resolve => {
+    if (state === 'idle' || state === 'fadingOut') return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      stopCurrentAnimation();
+      setState('fadingOut');
       if (reduceMotion) {
         opacity.setValue(0);
+        setState('idle');
+        setModalVisible(false);
         resolve();
-      } else {
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          easing: Easing.inOut(Easing.cubic),
-          useNativeDriver: true,
-        }).start(() => {
-          resolve();
-        });
+        return;
       }
+      currentAnim.current = Animated.timing(opacity, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.inOut(Easing.cubic),
+        useNativeDriver: true,
+      });
+      currentAnim.current.start(() => {
+        currentAnim.current = null;
+        setState('idle');
+        setModalVisible(false);
+        resolve();
+      });
     });
-  }, [opacity, reduceMotion]);
+  }, [reduceMotion, opacity, state, stopCurrentAnimation]);
 
   const apply = useCallback(
     async (callback: () => Promise<void> | void) => {
@@ -75,31 +101,28 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   );
 
   const transact = useCallback(
-    async (callback: () => Promise<void> | void) => {
-      if (busy.current) return;
-      busy.current = true;
-      try {
-        await begin();
-        await waitFrame();
-        await callback();
-        await waitFrame();
-      } finally {
-        await end();
-        busy.current = false;
-        setFrozenBg(null);
-      }
+    (callback: () => Promise<void> | void) => {
+      const run = async () => {
+        busy.current = true;
+        try {
+          await begin();
+          await waitFrame();
+          await callback();
+          await waitFrame();
+        } finally {
+          await end();
+          busy.current = false;
+          setFrozenBg(null);
+        }
+      };
+      const next = pendingPromiseRef.current.then(run);
+      pendingPromiseRef.current = next.catch(() => {});
+      return next;
     },
     [begin, end],
   );
 
   const isBusy = useCallback(() => busy.current, []);
-
-  useEffect(() => {
-    const id = opacity.addListener(({ value }) => setIsOverlayVisible(value > 0.001));
-    return () => opacity.removeListener(id);
-  }, [opacity]);
-
-  const modalVisible = isOverlayVisible || busy.current;
   const bg = frozenBg ?? theme.colors.background;
 
   return (
@@ -117,7 +140,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       {children}
       <Modal transparent visible={modalVisible} statusBarTranslucent>
         <Animated.View
-          pointerEvents={isOverlayVisible ? 'auto' : 'none'}
           style={[StyleSheet.absoluteFill, { backgroundColor: bg, opacity }]}
         />
       </Modal>
