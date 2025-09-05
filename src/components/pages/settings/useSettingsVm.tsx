@@ -24,6 +24,7 @@ export default function useSettingsVm(): SettingsVm {
     updateSettings,
     setFontFamily: storeSetFontFamily,
     setFontWeight: storeSetFontWeight,
+    setDirty,
   } = useSettings();
 
   const [selectedThemeName, setSelectedThemeName] = useState(
@@ -46,6 +47,7 @@ export default function useSettingsVm(): SettingsVm {
     setFontWeightState(s.fontWeight);
     setFontSizeLevel(s.fontSizeLevel);
     setNoteTextAlign(s.noteTextAlign);
+    setDirty(false);
   };
 
   const withSettingsTransaction = async (
@@ -82,11 +84,15 @@ export default function useSettingsVm(): SettingsVm {
       (Object.keys(themes) as ThemeName[]).find(
         (k) => themes[k].name === name,
       ) ?? 'light';
+    if (settings.themeId === id) {
+      return;
+    }
     const nextBg = themes[id].colors.background;
     void withSettingsTransaction(
       async () => {
         setSelectedThemeName(name);
         updateSettings({ themeId: id });
+        setDirty(true);
       },
       nextBg,
     );

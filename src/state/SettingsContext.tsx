@@ -40,6 +40,8 @@ interface Ctx {
   updateSettings: (p: Partial<Settings>) => Settings;
   setFontFamily: (family: string) => Settings;
   setFontWeight: (weight: number) => Settings;
+  isDirty: boolean;
+  setDirty: (dirty: boolean) => void;
 }
 
 const SettingsContext = createContext<Ctx>({
@@ -47,6 +49,8 @@ const SettingsContext = createContext<Ctx>({
   updateSettings: () => defaultSettings,
   setFontFamily: () => defaultSettings,
   setFontWeight: () => defaultSettings,
+  isDirty: false,
+  setDirty: () => {},
 });
 
 let updateRef = (p: Partial<Settings>) => defaultSettings;
@@ -67,6 +71,7 @@ export function setFontWeight(weight: number) {
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const stateRef = useRef(settings);
+  const [isDirty, setDirty] = useState(false);
 
   const apply = useCallback((p: Partial<Settings>) => {
     stateRef.current = { ...stateRef.current, ...p };
@@ -131,6 +136,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         updateSettings: apply,
         setFontFamily: changeFamily,
         setFontWeight: changeWeight,
+        isDirty,
+        setDirty,
       }}
     >
       {children}
