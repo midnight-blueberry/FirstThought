@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { Dimensions, Platform } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -10,8 +10,6 @@ import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
-import SaveIndicator, { useSaveIndicator } from '@components/header/SaveIndicator';
-import { useSettings } from '@/state/SettingsContext';
 
 import CustomDrawerContent from '@/navigation/CustomDrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -39,13 +37,6 @@ export default function DrawerNavigator({
   const baseHeaderStyle = useHeaderConfig(theme, top);
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
-  const { isDirty, setDirty } = useSettings();
-  const { showFor2s } = useSaveIndicator();
-
-  const handleSave = useCallback(() => {
-    setDirty(false);
-    void showFor2s();
-  }, [setDirty, showFor2s]);
 
   const screenOptions = useMemo(
     () => ({
@@ -99,12 +90,6 @@ export default function DrawerNavigator({
       headerStyle: baseHeaderStyle,
       headerShadowVisible: theme.headerShadowVisible,
       sceneContainerStyle: { backgroundColor: theme.colors.background },
-      headerRight: () => (
-        <>
-          {isDirty && <IconButton icon="save-outline" onPress={handleSave} />}
-          <SaveIndicator />
-        </>
-      ),
     }),
     [
       baseHeaderStyle,
@@ -124,8 +109,6 @@ export default function DrawerNavigator({
       theme.typography.header.headerTitleLineHeight,
       theme.typography.header.headerTitleSize,
       theme.typography.header.headerTitleStyle,
-      isDirty,
-      handleSave,
     ]
   );
 
@@ -151,11 +134,7 @@ export default function DrawerNavigator({
               />
             ),
             headerRight: () => (
-              <>
-                <IconButton icon="search" onPress={() => null} />
-                {isDirty && <IconButton icon="save-outline" onPress={handleSave} />}
-                <SaveIndicator />
-              </>
+              <IconButton icon="search" onPress={() => null} />
             ),
             headerStyle: {
               ...baseHeaderStyle,

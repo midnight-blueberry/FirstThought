@@ -18,7 +18,7 @@ import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayT
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import StatusBarBackground from '@components/ui/StatusBarBackground';
-import { SaveIndicatorProvider } from '@components/header/SaveIndicator';
+import SaveIndicator, { SaveIndicatorProvider } from '@components/header/SaveIndicator';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -84,6 +84,7 @@ function RootContent() {
           settingsPageHeaderTitle={settingsPageHeaderTitle}
           settingsPageHeaderElevation={settingsPageHeaderElevation}
         />
+        <SaveIndicator />
       </SafeAreaView>
     </>
   );

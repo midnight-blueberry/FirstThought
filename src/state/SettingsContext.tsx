@@ -35,11 +35,20 @@ const defaultSettings: Settings = {
   noteTextAlign: 'left',
 };
 
+const isEqual = (a: Settings, b: Settings) =>
+  a.themeId === b.themeId &&
+  a.accent === b.accent &&
+  a.fontFamily === b.fontFamily &&
+  a.fontWeight === b.fontWeight &&
+  a.fontSizeLevel === b.fontSizeLevel &&
+  a.noteTextAlign === b.noteTextAlign;
+
 interface Ctx {
   settings: Settings;
   updateSettings: (p: Partial<Settings>) => Settings;
   setFontFamily: (family: string) => Settings;
   setFontWeight: (weight: number) => Settings;
+  saveSettings: () => Promise<void>;
   isDirty: boolean;
   setDirty: (dirty: boolean) => void;
 }
@@ -49,6 +58,7 @@ const SettingsContext = createContext<Ctx>({
   updateSettings: () => defaultSettings,
   setFontFamily: () => defaultSettings,
   setFontWeight: () => defaultSettings,
+  saveSettings: async () => {},
   isDirty: false,
   setDirty: () => {},
 });
@@ -71,12 +81,13 @@ export function setFontWeight(weight: number) {
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const stateRef = useRef(settings);
+  const savedRef = useRef<Settings>(defaultSettings);
   const [isDirty, setDirty] = useState(false);
 
   const apply = useCallback((p: Partial<Settings>) => {
     stateRef.current = { ...stateRef.current, ...p };
     setSettings(stateRef.current);
-    void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
+    setDirty(!isEqual(stateRef.current, savedRef.current));
     return stateRef.current;
   }, []);
   updateRef = apply;
@@ -105,6 +116,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   setFamilyRef = changeFamily;
   setWeightRef = changeWeight;
 
+  const saveSettings = useCallback(async () => {
+    savedRef.current = { ...stateRef.current };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(savedRef.current));
+    setDirty(false);
+  }, []);
+
   useEffect(() => {
     void (async () => {
       try {
@@ -119,15 +136,20 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 Number(saved.fontWeight ?? 400),
               )
             : 400;
-          apply({
+          const loaded: Settings = {
+            ...defaultSettings,
             ...saved,
             fontFamily: saved.fontFamily ?? defaultFontName,
             fontWeight: String(normalized) as FontWeight,
-          });
+          };
+          stateRef.current = loaded;
+          savedRef.current = loaded;
+          setSettings(loaded);
+          setDirty(false);
         }
       } catch {}
     })();
-  }, [apply]);
+  }, []);
 
   return (
     <SettingsContext.Provider
@@ -136,6 +158,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         updateSettings: apply,
         setFontFamily: changeFamily,
         setFontWeight: changeWeight,
+        saveSettings,
         isDirty,
         setDirty,
       }}
