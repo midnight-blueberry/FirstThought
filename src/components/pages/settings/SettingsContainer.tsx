@@ -8,13 +8,19 @@ export default function SettingsContainer() {
   const vm = useSettingsVm();
   const navigation = useNavigation();
   const { reset } = useSaveIndicator();
+  const { save } = vm;
 
   useEffect(() => {
-    const unsub = navigation.addListener('blur', reset);
-    return () => {
-      unsub();
+    const onBlur = () => {
+      void save();
       reset();
     };
-  }, [navigation, reset]);
+    const unsub = navigation.addListener('blur', onBlur);
+    return () => {
+      unsub();
+      void save();
+      reset();
+    };
+  }, [navigation, reset, save]);
   return <SettingsContent {...vm} />;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import type { ComponentProps } from 'react';
-import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
-import { Overlay } from '@components/ui/atoms';
+import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
@@ -10,20 +9,12 @@ interface SettingsContentProps {
   sectionProps: SectionPropsMap;
   theme: DefaultTheme;
   handleScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  overlayVisible: boolean;
-  overlayColor: string;
-  overlayAnim: Animated.Value;
-  overlayBlocks: boolean;
 }
 
 export default function SettingsContent({
   sectionProps,
   theme,
   handleScroll,
-  overlayVisible,
-  overlayColor,
-  overlayAnim,
-  overlayBlocks,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const scrollIndicatorInsets = React.useMemo(
@@ -32,29 +23,20 @@ export default function SettingsContent({
   );
 
   return (
-    <>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.container}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        scrollIndicatorInsets={scrollIndicatorInsets}
-      >
-        {sections.map((section) => {
-          const Component = section.Component as React.ComponentType<
-            ComponentProps<typeof section.Component>
-          >;
-          return <Component key={section.key} {...sectionProps[section.key]} />;
-        })}
-      </ScrollView>
-
-      <Overlay
-        visible={overlayVisible}
-        color={overlayColor}
-        blocks={overlayBlocks}
-        anim={overlayAnim}
-      />
-    </>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+      scrollIndicatorInsets={scrollIndicatorInsets}
+    >
+      {sections.map((section) => {
+        const Component = section.Component as React.ComponentType<
+          ComponentProps<typeof section.Component>
+        >;
+        return <Component key={section.key} {...sectionProps[section.key]} />;
+      })}
+    </ScrollView>
   );
 }
 

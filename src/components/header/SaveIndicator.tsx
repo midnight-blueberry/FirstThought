@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
-import { useSaveIndicator } from '@features/save-indicator';
+import { useSaveIndicator } from '@/features/save-indicator/context';
 
 const SaveIndicatorIcon: React.FC = () => {
   const { active, opacity } = useSaveIndicator();

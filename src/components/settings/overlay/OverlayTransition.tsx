@@ -3,6 +3,8 @@ import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
 import { Portal } from 'react-native-portalize';
 import useTheme from '@hooks/useTheme';
 
+export const OVERLAY_FADE_OUT_MS = 500;
+
 interface OverlayTransitionCtx {
   begin: () => Promise<void>;
   end: () => Promise<void>;
@@ -41,7 +43,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       } else {
         const timing = Animated.timing(opacity, {
           toValue: 1,
-          duration: 500,
+          duration: OVERLAY_FADE_OUT_MS,
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         });
@@ -59,7 +61,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       } else {
         Animated.timing(opacity, {
           toValue: 0,
-          duration: 500,
+          duration: OVERLAY_FADE_OUT_MS,
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }).start(() => {
