@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SettingsScreen from './index';
 import { SaveIndicatorProvider } from '@features/save-indicator';
-import SaveIndicatorIcon from '@/components/header/SaveIndicator';
 import { IconButton } from '@components/ui/atoms';
 import useTheme from '@hooks/useTheme';
 import useHeaderConfig from '@hooks/useHeaderConfig';
@@ -38,7 +37,6 @@ export default function SettingsNavigator() {
                 onPress={() => navigation.goBack()}
               />
             ),
-            headerRight: () => <SaveIndicatorIcon />,
             headerRightContainerStyle: { marginRight: 12 },
           })}
         />

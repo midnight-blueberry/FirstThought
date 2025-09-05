@@ -24,6 +24,7 @@ export default function useSettingsVm(): SettingsVm {
   const handleScroll = useHeaderShadow();
   const { withOverlay } = useOverlayTransition();
   const { show, hide, reset } = useSaveIndicator();
+  const lastDirtyRef = useRef<boolean>(false);
   const { settings, updateSettings } = useSettings();
 
   const previewing = useRef(false);
@@ -45,10 +46,18 @@ export default function useSettingsVm(): SettingsVm {
   );
 
   useEffect(() => {
-    dirty ? show() : hide();
+    if (dirty !== lastDirtyRef.current) {
+      dirty ? show() : hide();
+      lastDirtyRef.current = dirty;
+    }
   }, [dirty, show, hide]);
 
-  useEffect(() => () => reset(), [reset]);
+  useEffect(() =>
+    () => {
+      lastDirtyRef.current = false;
+      reset();
+    },
+  [reset]);
 
   const changeTheme = (name: string) => {
     const id =

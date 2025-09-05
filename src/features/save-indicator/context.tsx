@@ -32,16 +32,14 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [active, setActive] = useState(false);
+  const activeRef = useRef(false);
   const opacity = useRef(new Animated.Value(0)).current;
 
-  const reset = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
-    setActive(false);
-  }, [opacity]);
-
   const show = useCallback(() => {
+    if (activeRef.current) {
+      return;
+    }
+    activeRef.current = true;
     setActive(true);
     Animated.timing(opacity, {
       toValue: 1,
@@ -52,14 +50,26 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [opacity]);
 
   const hide = useCallback(() => {
+    if (!activeRef.current) {
+      return;
+    }
     Animated.timing(opacity, {
       toValue: 0,
       duration: 350,
       easing: Easing.inOut(Easing.quad),
       useNativeDriver: true,
     }).start(() => {
+      activeRef.current = false;
       setActive(false);
     });
+  }, [opacity]);
+
+  const reset = useCallback(() => {
+    activeRef.current = false;
+    opacity.stopAnimation(() => {
+      opacity.setValue(0);
+    });
+    setActive(false);
   }, [opacity]);
 
   const value = useMemo(
