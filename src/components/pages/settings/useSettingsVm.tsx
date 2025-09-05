@@ -11,7 +11,7 @@ import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
-import { useSaveIndicator } from '@components/header/SaveIndicator';
+import { useSaveIndicator } from '@features/save-indicator';
 import { showErrorToast } from '@utils/showErrorToast';
 
 export default function useSettingsVm(): SettingsVm {

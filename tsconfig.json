@@ -47,6 +47,9 @@
       ],
       "@types": [
         "src/types"
+      ],
+      "@features/*": [
+        "src/features/*"
       ]
     },
     "esModuleInterop": true,

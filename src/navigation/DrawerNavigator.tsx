@@ -9,8 +9,7 @@ import { IconButton, HeaderTitle } from '@components/ui/atoms';
 import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
-import SettingsScreen from '@screens/settings';
-import SaveIndicatorIcon from '@components/header/SaveIndicator';
+import SettingsNavigator from '@screens/settings/SettingsNavigator';
 
 import CustomDrawerContent from '@/navigation/CustomDrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -110,7 +109,7 @@ export default function DrawerNavigator({
       theme.typography.header.headerTitleLineHeight,
       theme.typography.header.headerTitleSize,
       theme.typography.header.headerTitleStyle,
-    ]
+    ],
   );
 
   return (
@@ -144,25 +143,11 @@ export default function DrawerNavigator({
         />
         <Drawer.Screen
           name="Settings"
-          component={SettingsScreen}
-          options={({ navigation }: DrawerScreenProps<DrawerParamList, 'Settings'>) => ({
-            title: settingsPageHeaderTitle,
+          component={SettingsNavigator}
+          options={{
             drawerIcon: DrawerIcon('settings'),
-            headerLeft: () => (
-              <IconButton
-                icon="chevron-back"
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              />
-            ),
-            headerRight: () => <SaveIndicatorIcon />,
-            headerStyle: {
-              ...baseHeaderStyle,
-              elevation: settingsPageHeaderElevation,
-            },
-            headerTintColor: theme.colors.headerForeground,
-          })}
+            headerShown: false,
+          }}
         />
       </Drawer.Navigator>
   );
