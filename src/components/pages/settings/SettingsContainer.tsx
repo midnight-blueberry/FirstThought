@@ -1,26 +1,28 @@
 import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import SettingsContent from './SettingsContent';
-import useSettingsVm from './useSettingsVm';
-import { useSaveIndicator } from '@/features/save-indicator/context';
+import type { SettingsVm } from './useSettingsVm.types';
 
-export default function SettingsContainer() {
-  const vm = useSettingsVm();
+export default function SettingsContainer(props: SettingsVm) {
   const navigation = useNavigation();
-  const { reset } = useSaveIndicator();
-  const { save } = vm;
+  const { save, sectionProps, theme, handleScroll } = props;
 
   useEffect(() => {
     const onBlur = () => {
       void save();
-      reset();
     };
     const unsub = navigation.addListener('blur', onBlur);
     return () => {
       unsub();
       void save();
-      reset();
     };
-  }, [navigation, reset, save]);
-  return <SettingsContent {...vm} />;
+  }, [navigation, save]);
+
+  return (
+    <SettingsContent
+      sectionProps={sectionProps}
+      theme={theme}
+      handleScroll={handleScroll}
+    />
+  );
 }

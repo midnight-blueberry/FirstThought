@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SettingsScreen from './index';
-import { SaveIndicatorProvider } from '@features/save-indicator';
 import { IconButton } from '@components/ui/atoms';
 import useTheme from '@hooks/useTheme';
 import useHeaderConfig from '@hooks/useHeaderConfig';
@@ -24,24 +23,21 @@ export default function SettingsNavigator() {
   );
 
   return (
-    <SaveIndicatorProvider>
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen
-          name="SettingsMain"
-          component={SettingsScreen}
-          options={({ navigation }) => ({
-            title: 'Настройки',
-            headerLeft: () => (
-              <IconButton
-                icon="chevron-back"
-                onPress={() => navigation.goBack()}
-              />
-            ),
-            headerRightContainerStyle: { marginRight: 12 },
-          })}
-        />
-      </Stack.Navigator>
-    </SaveIndicatorProvider>
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen
+        name="SettingsMain"
+        component={SettingsScreen}
+        options={({ navigation }) => ({
+          title: 'Настройки',
+          headerLeft: () => (
+            <IconButton
+              icon="chevron-back"
+              onPress={() => navigation.goBack()}
+            />
+          ),
+          headerRightContainerStyle: { marginRight: 12 },
+        })}
+      />
+    </Stack.Navigator>
   );
 }
-

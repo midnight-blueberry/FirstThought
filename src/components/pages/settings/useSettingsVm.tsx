@@ -15,7 +15,6 @@ import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@features/overlay/useOverlayTransition';
-import { useSaveIndicator } from '@/features/save-indicator/context';
 import { toFamilyKey } from '@utils/font';
 import { areSettingsEqual } from '@features/settings/areSettingsEqual';
 
@@ -23,8 +22,6 @@ export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const { withOverlay } = useOverlayTransition();
-  const { show, hide, reset } = useSaveIndicator();
-  const lastDirtyRef = useRef<boolean>(false);
   const { settings, updateSettings } = useSettings();
 
   const previewing = useRef(false);
@@ -46,20 +43,6 @@ export default function useSettingsVm(): SettingsVm {
       setDraft(settings);
     }
   }, [settings, dirty]);
-
-  useEffect(() => {
-    if (dirty !== lastDirtyRef.current) {
-      dirty ? show() : hide();
-      lastDirtyRef.current = dirty;
-    }
-  }, [dirty, show, hide]);
-
-  useEffect(() =>
-    () => {
-      lastDirtyRef.current = false;
-      reset();
-    },
-  [reset]);
 
   const changeTheme = (name: string) => {
     const id =
@@ -181,5 +164,6 @@ export default function useSettingsVm(): SettingsVm {
     theme,
     handleScroll,
     save,
+    dirty,
   };
 }

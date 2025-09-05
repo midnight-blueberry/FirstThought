@@ -11,5 +11,6 @@ export interface SettingsVm {
   theme: DefaultTheme;
   handleScroll: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
   save: () => Promise<void>;
+  dirty: boolean;
 }
 
