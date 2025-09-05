@@ -1,58 +1,87 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
 interface SaveIndicatorContextValue {
-  showFor2s: () => Promise<void>;
-  hide: () => void;
+  show: () => Promise<void>;
+  reset: () => void;
+  active: boolean;
   opacity: Animated.Value;
-  visible: boolean;
+  isTransitioning: boolean;
 }
 
-const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined>(undefined);
+const SaveIndicatorContext =
+  createContext<SaveIndicatorContextValue | undefined>(undefined);
 
-export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [visible, setVisible] = useState(false);
+export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [active, setActive] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const showFor2s = useCallback(() => {
-    setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
-    });
-  }, [opacity]);
-
-  const hide = useCallback(() => {
+  const reset = useCallback(() => {
+    if (hideTimeout.current) {
+      clearTimeout(hideTimeout.current);
+      hideTimeout.current = null;
+    }
     opacity.stopAnimation(() => {
       opacity.setValue(0);
     });
-    setVisible(false);
+    setActive(false);
+    setIsTransitioning(false);
   }, [opacity]);
 
+  const show = useCallback(() => {
+    if (isTransitioning) {
+      return Promise.resolve();
+    }
+    setIsTransitioning(true);
+    setActive(true);
+    return new Promise<void>((resolve) => {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }).start(() => {
+        hideTimeout.current = setTimeout(() => {
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 350,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }).start(() => {
+            setActive(false);
+            setIsTransitioning(false);
+            hideTimeout.current = null;
+            resolve();
+          });
+        }, 1300);
+      });
+    });
+  }, [isTransitioning, opacity]);
+
   const value = useMemo(
-    () => ({ showFor2s, hide, opacity, visible }),
-    [showFor2s, hide, opacity, visible],
+    () => ({ show, reset, active, opacity, isTransitioning }),
+    [show, reset, active, opacity, isTransitioning],
   );
 
-  return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
+  return (
+    <SaveIndicatorContext.Provider value={value}>
+      {children}
+    </SaveIndicatorContext.Provider>
+  );
 };
 
 export function useSaveIndicator() {
@@ -63,11 +92,12 @@ export function useSaveIndicator() {
   return ctx;
 }
 
-const SaveIndicator: React.FC = () => {
-  const { visible, opacity } = useSaveIndicator();
+const SaveIndicatorIcon: React.FC = () => {
+  const { active, opacity } = useSaveIndicator();
   const theme = useTheme();
+  const isFocused = useIsFocused();
 
-  if (!visible) {
+  if (!isFocused || !active) {
     return null;
   }
 
@@ -94,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SaveIndicator;
+export default SaveIndicatorIcon;

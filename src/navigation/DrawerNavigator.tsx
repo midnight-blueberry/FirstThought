@@ -10,7 +10,7 @@ import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 import HomePageScreen from '@screens/home-page';
 import SettingsScreen from '@screens/settings';
-import SaveIndicator, { SaveIndicatorProvider } from '@components/header/SaveIndicator';
+import SaveIndicatorIcon from '@components/header/SaveIndicator';
 
 import CustomDrawerContent from '@/navigation/CustomDrawerContent';
 import { DrawerIcon } from './ui/DrawerIcon';
@@ -114,7 +114,6 @@ export default function DrawerNavigator({
   );
 
   return (
-    <SaveIndicatorProvider>
       <Drawer.Navigator
         key={theme.typography.header.headerTitleFamily + theme.name}
         initialRouteName="Home"
@@ -157,7 +156,7 @@ export default function DrawerNavigator({
                 }}
               />
             ),
-            headerRight: () => <SaveIndicator />,
+            headerRight: () => <SaveIndicatorIcon />,
             headerStyle: {
               ...baseHeaderStyle,
               elevation: settingsPageHeaderElevation,
@@ -166,6 +165,5 @@ export default function DrawerNavigator({
           })}
         />
       </Drawer.Navigator>
-    </SaveIndicatorProvider>
   );
 }

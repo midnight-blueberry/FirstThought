@@ -18,7 +18,7 @@ export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
-  const { showFor2s } = useSaveIndicator();
+  const { show } = useSaveIndicator();
   const {
     settings,
     updateSettings,
@@ -68,7 +68,7 @@ export default function useSettingsVm(): SettingsVm {
         }
       });
       overlay.releaseBackground();
-      await showFor2s();
+      await show();
     } catch (e) {
       overlay.releaseBackground();
       showErrorToast(
