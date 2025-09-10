@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { TouchableOpacity, View, GestureResponderEvent } from 'react-native';
+import React, { useContext, useRef } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
 import { TextAlignIcon } from '@components/ui/atoms';
-import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { StableAnchorContext } from '@/features/scroll/useStableAnchor';
 
 interface TextAlignButtonProps {
   variant: 'left' | 'justify';
@@ -15,13 +15,17 @@ interface TextAlignButtonProps {
 const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, selected }) => {
   const theme = useTheme();
   const borderColor = selected ? theme.colors.accent : 'transparent';
-  const anchorCtx = useContext(AnchorStableScrollContext);
+  const anchorCtx = useContext(StableAnchorContext);
+  const ref = useRef<View>(null);
 
   return (
     <View style={{ alignItems: 'center' }}>
       <TouchableOpacity
-        onPressIn={(e: GestureResponderEvent) => {
-          anchorCtx?.setAnchor(e.currentTarget);
+        ref={ref}
+        onPressIn={() => {
+          if (ref.current) {
+            anchorCtx?.setAnchor(ref.current);
+          }
         }}
         onPress={() => {
           anchorCtx?.captureBeforeUpdate();

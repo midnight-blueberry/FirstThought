@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Animated, View, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { StableAnchorContext } from '@/features/scroll/useStableAnchor';
 
 interface BarIndicatorProps {
   total: number;
@@ -23,7 +23,8 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
   onPress,
 }) => {
   const theme = useTheme();
-  const anchorCtx = useContext(AnchorStableScrollContext);
+  const anchorCtx = useContext(StableAnchorContext);
+  const itemRefs = useRef<Record<number, View | null>>({});
 
   return (
     <>
@@ -45,7 +46,15 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
         const Wrapper = onPress ? Pressable : View;
         const pressProps = onPress
           ? {
-              onPressIn: (e: any) => anchorCtx?.setAnchor(e.currentTarget),
+              ref: (r: View) => {
+                itemRefs.current[i] = r;
+              },
+              onPressIn: () => {
+                const r = itemRefs.current[i];
+                if (r) {
+                  anchorCtx?.setAnchor(r);
+                }
+              },
               onPress: () => {
                 anchorCtx?.captureBeforeUpdate();
                 onPress(i);
