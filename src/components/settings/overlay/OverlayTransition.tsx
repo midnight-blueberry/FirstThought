@@ -3,7 +3,7 @@ import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
 import { Portal } from 'react-native-portalize';
 import useTheme from '@hooks/useTheme';
 
-interface OverlayTransitionCtx {
+export interface OverlayTransitionCtx {
   begin: () => Promise<void>;
   end: () => Promise<void>;
   apply: (callback: () => Promise<void> | void) => Promise<void>;
@@ -18,6 +18,23 @@ const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null
 
 export const waitFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+export const waitForOpaque = (overlay: OverlayTransitionCtx) =>
+  new Promise<void>((resolve) => {
+    if (overlay.isOpaque()) {
+      resolve();
+      return;
+    }
+    const start = Date.now();
+    const check = () => {
+      if (overlay.isOpaque() || Date.now() - start > 300) {
+        resolve();
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
+    check();
+  });
 
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const opacity = useRef(new Animated.Value(0)).current;
