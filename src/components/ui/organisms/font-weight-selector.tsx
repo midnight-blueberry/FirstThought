@@ -10,7 +10,6 @@ import { useSettings } from '@/state/SettingsContext';
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   onSelect,
   blinkAnim,
-  disabled: disabledProp,
 }) => {
   const theme = useTheme();
   const { settings } = useSettings();
@@ -42,8 +41,6 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
       <SelectorRow
         onIncrease={incDisabled ? undefined : handleIncrease}
         onDecrease={decDisabled ? undefined : handleDecrease}
-        increaseColor={incDisabled ? 'disabled' : 'basic'}
-        decreaseColor={decDisabled ? 'disabled' : 'basic'}
         opacity={isSingle ? 0.5 : 1}
       >
         <BarIndicator
@@ -76,8 +73,7 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
 
 const propsAreEqual = (prev: FontWeightSelectorProps, next: FontWeightSelectorProps) =>
   prev.onSelect === next.onSelect &&
-  prev.blinkAnim === next.blinkAnim &&
-  prev.disabled === next.disabled;
+  prev.blinkAnim === next.blinkAnim;
 
 export default React.memo(FontWeightSelector, propsAreEqual);
 

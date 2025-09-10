@@ -4,8 +4,8 @@ const baseColors = {
   white: '#FFFFFF',
   black: '#000000',
   accentColor: defaultAccentColor,
-  grayLight: '#888888',
-  grayDark: '#BBBBBB',
+  grayLight: '#C8C8C8',
+  grayDark: '#5A5A5A',
   cream: '#FFF8E1',
 } as const;
 

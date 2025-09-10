@@ -56,7 +56,6 @@ export interface FontWeightSelectorProps {
   onDecrease: () => void;
   onSelect: (weight: DefaultTheme['fontWeight']) => void;
   blinkAnim: Animated.Value;
-  disabled: boolean;
 }
 
 export interface TextAlignSelectorProps {

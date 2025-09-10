@@ -1,7 +1,6 @@
 import type { SectionPropsMap } from '@types';
 import type { DefaultTheme } from 'styled-components/native';
-import { getFontByName, hasMultipleWeights } from '@utils/fontHelpers';
-import { fonts } from '@constants/fonts';
+// Removed unused font helpers after refactor
 
 export interface BuildArgs {
   selectedThemeName: string;
@@ -29,8 +28,6 @@ export interface BuildArgs {
 export default function buildSectionProps(
   a: BuildArgs,
 ): Omit<SectionPropsMap, 'preview'> {
-  const selectedFont = getFontByName(fonts, a.selectedFontName);
-  const multiple = hasMultipleWeights(selectedFont);
 
   return {
     theme: {
@@ -60,7 +57,6 @@ export default function buildSectionProps(
       onDecrease: a.onDecWeight,
       onSelect: a.onSelectWeight,
       blinkAnim: a.weightBlinkAnim,
-      disabled: !multiple,
     },
     align: { noteTextAlign: a.noteTextAlign, onChange: a.onAlign },
   };
