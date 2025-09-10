@@ -15,7 +15,12 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
 
   return (
     <Section title="Размер шрифта">
-      <SelectorRow onIncrease={onIncrease} onDecrease={onDecrease}>
+      <SelectorRow
+        onIncrease={onIncrease}
+        onDecrease={onDecrease}
+        increaseLabel="Увеличить размер шрифта"
+        decreaseLabel="Уменьшить размер шрифта"
+      >
         <BarIndicator
           total={5}
           filledCount={fontSizeLevel}
