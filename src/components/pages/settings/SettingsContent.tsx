@@ -1,32 +1,37 @@
 import React from 'react';
 import type { ComponentProps } from 'react';
-import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Animated,
+} from 'react-native';
 import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
-import useAnchorStableScroll, { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
   theme: DefaultTheme;
-  handleScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   overlayVisible: boolean;
   overlayColor: string;
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
-  settingsVersion: number;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  scrollRef: React.RefObject<ScrollView>;
 }
 
-export default function SettingsContent({
+function SettingsContent({
   sectionProps,
   theme,
-  handleScroll,
   overlayVisible,
   overlayColor,
   overlayAnim,
   overlayBlocks,
-  settingsVersion,
+  onScroll,
+  scrollRef,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const scrollIndicatorInsets = React.useMemo(
@@ -34,40 +39,23 @@ export default function SettingsContent({
     [theme],
   );
 
-  const { scrollRef, handleScroll: handleAnchorScroll, adjustAfterLayout, contextValue } =
-    useAnchorStableScroll();
-
-  const onScroll = React.useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      handleScroll(e);
-      handleAnchorScroll(e);
-    },
-    [handleScroll, handleAnchorScroll],
-  );
-
-  React.useLayoutEffect(() => {
-    adjustAfterLayout();
-  }, [adjustAfterLayout, settingsVersion]);
-
   return (
     <>
-      <AnchorStableScrollContext.Provider value={contextValue}>
-        <ScrollView
-          ref={scrollRef}
-          style={styles.scroll}
-          contentContainerStyle={styles.container}
-          onScroll={onScroll}
-          scrollEventThrottle={16}
-          scrollIndicatorInsets={scrollIndicatorInsets}
-        >
-          {sections.map((section) => {
-            const Component = section.Component as React.ComponentType<
-              ComponentProps<typeof section.Component>
-            >;
-            return <Component key={section.key} {...sectionProps[section.key]} />;
-          })}
-        </ScrollView>
-      </AnchorStableScrollContext.Provider>
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        contentContainerStyle={styles.container}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        scrollIndicatorInsets={scrollIndicatorInsets}
+      >
+        {sections.map((section) => {
+          const Component = section.Component as React.ComponentType<
+            ComponentProps<typeof section.Component>
+          >;
+          return <Component key={section.key} {...sectionProps[section.key]} />;
+        })}
+      </ScrollView>
 
       <Overlay
         visible={overlayVisible}
@@ -78,6 +66,18 @@ export default function SettingsContent({
     </>
   );
 }
+
+const propsAreEqual = (prev: SettingsContentProps, next: SettingsContentProps) =>
+  prev.sectionProps === next.sectionProps &&
+  prev.theme === next.theme &&
+  prev.overlayVisible === next.overlayVisible &&
+  prev.overlayColor === next.overlayColor &&
+  prev.overlayAnim === next.overlayAnim &&
+  prev.overlayBlocks === next.overlayBlocks &&
+  prev.onScroll === next.onScroll &&
+  prev.scrollRef === next.scrollRef;
+
+export default React.memo(SettingsContent, propsAreEqual);
 
 const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({

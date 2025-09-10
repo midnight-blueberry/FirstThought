@@ -14,7 +14,7 @@ import { useOverlayTransition } from '@components/settings/overlay/OverlayTransi
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 
-export default function useSettingsVm(): SettingsVm {
+export default function useSettingsVm(captureBeforeUpdate: () => void): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
@@ -103,6 +103,7 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontFamily = (name: string) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       setSelectedFontName(name);
       const next = storeSetFontFamily(name);
