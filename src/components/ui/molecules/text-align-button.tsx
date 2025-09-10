@@ -21,7 +21,7 @@ const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, sel
     <View style={{ alignItems: 'center' }}>
       <TouchableOpacity
         onPressIn={(e: GestureResponderEvent) => {
-          anchorCtx?.setAnchor(e.currentTarget);
+          anchorCtx?.setAnchor(e.currentTarget as any);
         }}
         onPress={() => {
           anchorCtx?.captureBeforeUpdate();

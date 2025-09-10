@@ -1,17 +1,14 @@
 import React, { createContext, useCallback, useContext, useRef } from 'react';
 import type { RefObject } from 'react';
+import { UIManager, findNodeHandle, ScrollView, View } from 'react-native';
 import {
-  UIManager,
-  findNodeHandle,
-  ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from 'react-native';
-import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+  useOverlayTransition,
+  waitForOpaque,
+} from '@components/settings/overlay/OverlayTransition';
 
 interface AnchorContextValue {
-  setAnchor: (ref: any) => void;
-  captureBeforeUpdate: () => void;
+  setAnchor: (ref: View, mode?: 'top' | 'center') => void;
+  captureBeforeUpdate: (scrollView?: ScrollView | null) => void;
 }
 
 export const AnchorStableScrollContext = createContext<AnchorContextValue | null>(null);
@@ -23,51 +20,60 @@ export function useAnchorStableScrollContext() {
 export default function useAnchorStableScroll() {
   const scrollRef = useRef<ScrollView>(null);
   const anchorHandle = useRef<number | null>(null);
-  const scrollY = useRef(0);
-  const oldAnchorY = useRef(0);
+  const anchorMode = useRef<'top' | 'center'>('top');
+  const oldAnchorPos = useRef(0);
+  const lastScrollY = useRef(0);
+  const lastScrollSnapshot = useRef(0);
   const inProgress = useRef(false);
   const overlay = useOverlayTransition();
 
-  const setAnchor = useCallback((ref: any) => {
+  const setAnchor = useCallback((ref: View, mode: 'top' | 'center' = 'top') => {
     const handle = typeof ref === 'number' ? ref : findNodeHandle(ref);
     if (handle != null) {
       anchorHandle.current = handle;
+      anchorMode.current = mode;
     }
   }, []);
 
-  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollY.current = e.nativeEvent.contentOffset.y;
+  const setLastScrollY = useCallback((y: number) => {
+    lastScrollY.current = y;
   }, []);
 
-  const captureBeforeUpdate = useCallback(() => {
+  const captureBeforeUpdate = useCallback((scrollView?: ScrollView | null) => {
     if (inProgress.current) return;
     const anchor = anchorHandle.current;
-    const scrollNode = findNodeHandle(scrollRef.current);
+    const sv = scrollView ?? scrollRef.current;
+    const scrollNode = findNodeHandle(sv);
     if (anchor == null || scrollNode == null) return;
     inProgress.current = true;
+    lastScrollSnapshot.current = lastScrollY.current;
     UIManager.measureLayout(
       anchor,
       scrollNode,
       () => {
         inProgress.current = false;
       },
-      (_x, y) => {
-        oldAnchorY.current = y + scrollY.current;
+      (_x, y, _w, h) => {
+        const top = y + lastScrollSnapshot.current;
+        oldAnchorPos.current =
+          anchorMode.current === 'center' ? top + h / 2 : top;
       },
     );
   }, []);
 
-  const adjustAfterLayout = useCallback(() => {
-    if (!inProgress.current) return;
-    const anchor = anchorHandle.current;
-    const scrollNode = findNodeHandle(scrollRef.current);
-    const scrollView = scrollRef.current;
-    if (anchor == null || scrollNode == null || !scrollView) {
-      inProgress.current = false;
-      return;
-    }
+  const adjustAfterLayout = useCallback(
+    async (scrollView?: ScrollView | null) => {
+      if (!inProgress.current) return;
+      const sv = scrollView ?? scrollRef.current;
+      const anchor = anchorHandle.current;
+      const scrollNode = findNodeHandle(sv);
+      if (!sv || anchor == null || scrollNode == null) {
+        inProgress.current = false;
+        return;
+      }
 
-    const perform = () => {
+      await waitForOpaque(overlay);
+
       UIManager.measureLayout(
         anchor,
         scrollNode,
@@ -75,38 +81,52 @@ export default function useAnchorStableScroll() {
           inProgress.current = false;
           anchorHandle.current = null;
         },
-        (_x, y) => {
-          const newAnchorY = y + scrollY.current;
-          const diff = newAnchorY - oldAnchorY.current;
-          if (diff !== 0) {
-            scrollView.scrollTo({ y: scrollY.current + diff, animated: false });
-          }
-          inProgress.current = false;
-          anchorHandle.current = null;
+        (_x, y, _w, h) => {
+          const lastY = lastScrollSnapshot.current;
+          const top = y + lastY;
+          const newAnchorPos =
+            anchorMode.current === 'center' ? top + h / 2 : top;
+
+          const innerHandle =
+            typeof (sv as any).getInnerViewNode === 'function'
+              ? findNodeHandle((sv as any).getInnerViewNode())
+              : null;
+
+          UIManager.measure(scrollNode, (_sx, _sy, _sw, viewportHeight) => {
+            const finish = (contentHeight: number) => {
+              let targetY = lastY + (newAnchorPos - oldAnchorPos.current);
+              const maxY = Math.max(0, contentHeight - viewportHeight);
+              if (targetY < 0) targetY = 0;
+              if (targetY > maxY) targetY = maxY;
+              sv.scrollTo({ y: targetY, animated: false });
+              inProgress.current = false;
+              anchorHandle.current = null;
+            };
+
+            if (innerHandle != null) {
+              UIManager.measure(innerHandle, (_ix, _iy, _iw, contentHeight) =>
+                finish(contentHeight),
+              );
+            } else {
+              finish(viewportHeight);
+            }
+          });
         },
       );
-    };
-
-    if (overlay && typeof overlay.isOpaque === 'function') {
-      const start = Date.now();
-      const check = () => {
-        if (overlay.isOpaque() || Date.now() - start > 300) {
-          perform();
-        } else {
-          requestAnimationFrame(check);
-        }
-      };
-      check();
-    } else {
-      perform();
-    }
-  }, [overlay]);
+    },
+    [overlay],
+  );
 
   const contextValue = React.useMemo(
     () => ({ setAnchor, captureBeforeUpdate }),
     [setAnchor, captureBeforeUpdate],
   );
 
-  return { scrollRef: scrollRef as RefObject<ScrollView>, handleScroll, adjustAfterLayout, contextValue };
+  return {
+    scrollRef: scrollRef as RefObject<ScrollView>,
+    setLastScrollY,
+    adjustAfterLayout,
+    contextValue,
+  };
 }
 

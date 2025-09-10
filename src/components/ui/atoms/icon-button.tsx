@@ -40,7 +40,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   return (
     <TouchableOpacity
       onPressIn={(e) => {
-        anchorCtx?.setAnchor(e.currentTarget);
+        anchorCtx?.setAnchor(e.currentTarget as any);
         onPressIn?.(e);
       }}
       onPress={() => {

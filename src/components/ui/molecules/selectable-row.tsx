@@ -42,7 +42,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
     <TouchableOpacity
       activeOpacity={1}
       onPressIn={(e) => {
-        anchorCtx?.setAnchor(e.currentTarget);
+        anchorCtx?.setAnchor(e.currentTarget as any);
         onPressIn?.(e);
       }}
       onPress={() => {
