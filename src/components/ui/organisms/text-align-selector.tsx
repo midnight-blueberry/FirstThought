@@ -5,7 +5,12 @@ import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
 
-const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
+const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({
+  noteTextAlign,
+  onChange,
+  setAnchor,
+  captureBeforeUpdate,
+}) => {
   const theme = useTheme();
 
   return (
@@ -22,12 +27,20 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
         <TextAlignButton
           variant="left"
           selected={noteTextAlign === 'left'}
-          onPress={() => onChange('left')}
+          onPress={() => {
+            captureBeforeUpdate?.();
+            onChange('left');
+          }}
+          onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
         />
         <TextAlignButton
           variant="justify"
           selected={noteTextAlign === 'justify'}
-          onPress={() => onChange('justify')}
+          onPress={() => {
+            captureBeforeUpdate?.();
+            onChange('justify');
+          }}
+          onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
         />
       </View>
     </Section>

@@ -38,6 +38,7 @@ export default function useSettingsVm(): SettingsVm {
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
+  const [settingsVersion, setSettingsVersion] = useState(0);
 
   const resetToSnapshot = (s: Settings) => {
     setSelectedThemeName(themes[s.themeId].name);
@@ -69,6 +70,7 @@ export default function useSettingsVm(): SettingsVm {
       });
       overlay.releaseBackground();
       await showFor2s();
+      setSettingsVersion((v) => v + 1);
     } catch (e) {
       overlay.releaseBackground();
       showErrorToast(
@@ -195,5 +197,6 @@ export default function useSettingsVm(): SettingsVm {
     overlayColor: 'transparent',
     overlayAnim,
     overlayBlocks: false,
+    settingsVersion,
   };
 }

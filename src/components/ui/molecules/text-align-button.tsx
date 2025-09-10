@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, GestureResponderEvent } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
@@ -9,9 +9,15 @@ interface TextAlignButtonProps {
   variant: 'left' | 'justify';
   onPress?: () => void;
   selected?: boolean;
+  onPressIn?: (e: GestureResponderEvent) => void;
 }
 
-const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, selected }) => {
+const TextAlignButton: React.FC<TextAlignButtonProps> = ({
+  variant,
+  onPress,
+  selected,
+  onPressIn,
+}) => {
   const theme = useTheme();
   const borderColor = selected ? theme.colors.accent : 'transparent';
 
@@ -19,6 +25,7 @@ const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, sel
     <View style={{ alignItems: 'center' }}>
       <TouchableOpacity
         onPress={onPress}
+        onPressIn={onPressIn}
         hitSlop={8}
         style={{
           borderColor,

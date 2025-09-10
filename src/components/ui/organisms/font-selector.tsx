@@ -11,6 +11,8 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
   onSelectFont,
   fontSizeLevel,
+  setAnchor,
+  captureBeforeUpdate,
 }) => {
   const theme = useTheme();
   const delta = (fontSizeLevel - 3) * 2;
@@ -29,8 +31,10 @@ const FontSelector: React.FC<FontSelectorProps> = ({
               swatchColor={theme.colors.basic}
               selected={f.name === selectedFontName}
               onPress={() => {
+                captureBeforeUpdate?.();
                 onSelectFont(f.name);
               }}
+              onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
               labelStyle={{ fontFamily: sampleKey }}
               fontSize={fontSize}
             />

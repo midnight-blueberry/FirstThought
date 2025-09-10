@@ -1,8 +1,13 @@
-import type { Animated } from 'react-native';
+import type { Animated, View } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
 import type { ComponentProps } from 'react';
 import type { Divider } from '@components/ui/atoms';
 import type { PreviewNote } from '@components/ui/organisms';
+
+export interface AnchorStableScrollHandlers {
+  setAnchor?: (ref: View | number | null) => void;
+  captureBeforeUpdate?: () => void;
+}
 
 export interface AppSettings {
   themeName: string;
@@ -26,23 +31,23 @@ export interface SavedSettings {
 
 export type SavedSettingsPatch = SavedSettings;
 
-export interface ThemeSelectorProps {
+export interface ThemeSelectorProps extends AnchorStableScrollHandlers {
   selectedThemeName: string;
   onSelectTheme: (name: string) => void;
 }
 
-export interface AccentColorSelectorProps {
+export interface AccentColorSelectorProps extends AnchorStableScrollHandlers {
   selectedAccentColor: string;
   onSelectAccent: (color: string) => void;
 }
 
-export interface FontSelectorProps {
+export interface FontSelectorProps extends AnchorStableScrollHandlers {
   selectedFontName: string;
   onSelectFont: (name: string) => void;
   fontSizeLevel: number;
 }
 
-export interface FontSizeSelectorProps {
+export interface FontSizeSelectorProps extends AnchorStableScrollHandlers {
   fontSizeLevel: number;
   onIncrease: () => void;
   onDecrease: () => void;
@@ -50,7 +55,7 @@ export interface FontSizeSelectorProps {
   blinkAnim: Animated.Value;
 }
 
-export interface FontWeightSelectorProps {
+export interface FontWeightSelectorProps extends AnchorStableScrollHandlers {
   fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;
@@ -59,7 +64,7 @@ export interface FontWeightSelectorProps {
   disabled: boolean;
 }
 
-export interface TextAlignSelectorProps {
+export interface TextAlignSelectorProps extends AnchorStableScrollHandlers {
   noteTextAlign: DefaultTheme['noteTextAlign'];
   onChange: (value: DefaultTheme['noteTextAlign']) => void;
 }

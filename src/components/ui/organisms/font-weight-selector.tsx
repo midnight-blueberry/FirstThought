@@ -7,7 +7,12 @@ import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
 
-const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {
+const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
+  onSelect,
+  blinkAnim,
+  setAnchor,
+  captureBeforeUpdate,
+}) => {
   const theme = useTheme();
   const { settings } = useSettings();
   const weights = listAvailableWeights(toFamilyKey(settings.fontFamily));
@@ -36,8 +41,16 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
   return (
     <Section title="Жирность шрифта">
       <SelectorRow
-        onIncrease={handleIncrease}
-        onDecrease={handleDecrease}
+        onIncrease={() => {
+          captureBeforeUpdate?.();
+          handleIncrease();
+        }}
+        onDecrease={() => {
+          captureBeforeUpdate?.();
+          handleDecrease();
+        }}
+        onIncreasePressIn={(e) => setAnchor?.(e.currentTarget as any)}
+        onDecreasePressIn={(e) => setAnchor?.(e.currentTarget as any)}
         increaseDisabled={incDisabled}
         decreaseDisabled={decDisabled}
         opacity={isSingle ? 0.5 : 1}
@@ -53,12 +66,14 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
             isSingle
               ? undefined
               : (i) => {
+                  captureBeforeUpdate?.();
                   const w = weights[i];
                   if (w != null) {
                     onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
                   }
                 }
           }
+          onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
         />
       </SelectorRow>
       {isSingle && (

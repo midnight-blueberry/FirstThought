@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle,
+  GestureResponderEvent,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
@@ -12,6 +18,7 @@ interface IconButtonProps {
   color?: ThemeColorName;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  onPressIn?: (e: GestureResponderEvent) => void;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -21,6 +28,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   color = 'basic',
   style,
   disabled = false,
+  onPressIn,
 }) => {
   const theme = useTheme();
   const iconColor = disabled
@@ -30,6 +38,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      onPressIn={onPressIn}
       disabled={disabled}
       activeOpacity={disabled ? 1 : undefined}
       style={[styles.button, style]}

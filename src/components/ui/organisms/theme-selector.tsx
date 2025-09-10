@@ -5,16 +5,25 @@ import Section from './settings-section';
 import { themeList } from '@theme/buildTheme';
 import type { ThemeSelectorProps } from '@types';
 
-const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSelectTheme }) => (
+const ThemeSelector: React.FC<ThemeSelectorProps> = ({
+  selectedThemeName,
+  onSelectTheme,
+  setAnchor,
+  captureBeforeUpdate,
+}) => (
   <Section title="Тема">
     <View>
-      {themeList.map(themeItem => (
+      {themeList.map((themeItem) => (
         <SelectableRow
           key={themeItem.name}
           label={themeItem.name}
           swatchColor={themeItem.colors.background}
           selected={themeItem.name === selectedThemeName}
-          onPress={() => onSelectTheme(themeItem.name)}
+          onPress={() => {
+            captureBeforeUpdate?.();
+            onSelectTheme(themeItem.name);
+          }}
+          onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
         />
       ))}
     </View>

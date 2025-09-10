@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleProp, TextStyle, TouchableOpacity, View } from 'react-native';
+import {
+  StyleProp,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  GestureResponderEvent,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
@@ -11,6 +17,7 @@ interface SelectableRowProps {
   onPress: () => void;
   fontSize?: number;
   labelStyle?: StyleProp<TextStyle>;
+  onPressIn?: (e: GestureResponderEvent) => void;
 }
 
 const SelectableRow: React.FC<SelectableRowProps> = ({
@@ -18,6 +25,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   swatchColor,
   selected,
   onPress,
+  onPressIn,
   fontSize,
   labelStyle,
 }) => {
@@ -32,6 +40,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
+      onPressIn={onPressIn}
       style={[
         {
           marginBottom: theme.margin.small,

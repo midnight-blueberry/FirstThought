@@ -5,16 +5,25 @@ import Section from './settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@types';
 
-const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({ selectedAccentColor, onSelectAccent }) => (
+const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({
+  selectedAccentColor,
+  onSelectAccent,
+  setAnchor,
+  captureBeforeUpdate,
+}) => (
   <Section title="Акцент">
     <View>
-      {accentColors.map(color => (
+      {accentColors.map((color) => (
         <SelectableRow
           key={color.hex}
           label={color.name}
           swatchColor={color.hex}
           selected={color.hex === selectedAccentColor}
-          onPress={() => onSelectAccent(color.hex)}
+          onPress={() => {
+            captureBeforeUpdate?.();
+            onSelectAccent(color.hex);
+          }}
+          onPressIn={(e) => setAnchor?.(e.currentTarget as any)}
         />
       ))}
     </View>

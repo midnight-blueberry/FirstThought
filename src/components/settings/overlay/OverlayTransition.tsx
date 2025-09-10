@@ -11,6 +11,7 @@ interface OverlayTransitionCtx {
   isBusy: () => boolean;
   freezeBackground: (color: string) => void;
   releaseBackground: () => void;
+  getOpacity: () => number;
 }
 
 const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
@@ -25,6 +26,18 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const busy = useRef(false);
   const theme = useTheme();
   const [frozenBg, setFrozenBg] = useState<string | null>(null);
+  const opacityValue = useRef(0);
+
+  useEffect(() => {
+    const id = opacity.addListener(({ value }) => {
+      opacityValue.current = value;
+    });
+    return () => {
+      opacity.removeListener(id);
+    };
+  }, [opacity]);
+
+  const getOpacity = useCallback(() => opacityValue.current, []);
 
   useEffect(() => {
     AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -110,6 +123,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
         isBusy,
         freezeBackground: setFrozenBg,
         releaseBackground: () => setFrozenBg(null),
+        getOpacity,
       }}
     >
       {children}

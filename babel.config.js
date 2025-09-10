@@ -19,7 +19,8 @@ module.exports = function (api) {
           '@utils': './src/utils',
           '@settings': './src/settings',
           '@theme': './src/theme',
-          '@storage': './src/storage'
+          '@storage': './src/storage',
+          '@features': './src/features'
         }
       }]
     ]

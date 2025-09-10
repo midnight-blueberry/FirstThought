@@ -10,6 +10,8 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   onDecrease,
   blinkIndex,
   blinkAnim,
+  setAnchor,
+  captureBeforeUpdate,
 }) => {
   const theme = useTheme();
   const incDisabled = fontSizeLevel >= 5;
@@ -18,8 +20,16 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   return (
     <Section title="Размер шрифта">
       <SelectorRow
-        onIncrease={onIncrease}
-        onDecrease={onDecrease}
+        onIncrease={() => {
+          captureBeforeUpdate?.();
+          onIncrease();
+        }}
+        onDecrease={() => {
+          captureBeforeUpdate?.();
+          onDecrease();
+        }}
+        onIncreasePressIn={(e) => setAnchor?.(e.currentTarget as any)}
+        onDecreasePressIn={(e) => setAnchor?.(e.currentTarget as any)}
         increaseDisabled={incDisabled}
         decreaseDisabled={decDisabled}
       >

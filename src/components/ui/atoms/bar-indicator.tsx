@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, View, Pressable } from 'react-native';
+import { Animated, View, Pressable, GestureResponderEvent } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 interface BarIndicatorProps {
@@ -10,6 +10,7 @@ interface BarIndicatorProps {
   containerColor: string;
   fillColor: string;
   onPress?: (index: number) => void;
+  onPressIn?: (e: GestureResponderEvent) => void;
 }
 
 const BarIndicator: React.FC<BarIndicatorProps> = ({
@@ -20,6 +21,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
   containerColor,
   fillColor,
   onPress,
+  onPressIn,
 }) => {
   const theme = useTheme();
 
@@ -40,13 +42,14 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           height: '100%',
           backgroundColor: fillColor,
         } as const;
-        const Wrapper = onPress ? Pressable : View;
+        const Wrapper = onPress || onPressIn ? Pressable : View;
         if (blinkIndex === i) {
           return (
             <Wrapper
               key={i}
               style={containerStyle}
               onPress={onPress ? () => onPress(i) : undefined}
+              onPressIn={onPressIn}
             >
               {i < filledCount && (
                 <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
@@ -59,6 +62,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
             key={i}
             style={containerStyle}
             onPress={onPress ? () => onPress(i) : undefined}
+            onPressIn={onPressIn}
           >
             {i < filledCount && <View style={innerStyle} />}
           </Wrapper>

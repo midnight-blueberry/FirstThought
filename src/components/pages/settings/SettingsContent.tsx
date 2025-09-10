@@ -5,6 +5,7 @@ import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
+import useAnchorStableScroll from '@features/scroll/useAnchorStableScroll';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
@@ -14,6 +15,7 @@ interface SettingsContentProps {
   overlayColor: string;
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
+  settingsVersion: number;
 }
 
 export default function SettingsContent({
@@ -24,16 +26,41 @@ export default function SettingsContent({
   overlayColor,
   overlayAnim,
   overlayBlocks,
+  settingsVersion,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const scrollIndicatorInsets = React.useMemo(
     () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),
     [theme],
   );
+  const scrollRef = React.useRef<ScrollView>(null);
+  const { setAnchor, captureBeforeUpdate, adjustAfterLayout } = useAnchorStableScroll();
+
+  const boundCapture = React.useCallback(() => {
+    void captureBeforeUpdate(scrollRef.current);
+  }, [captureBeforeUpdate]);
+
+  const sectionPropsWithAnchor = React.useMemo(
+    () => ({
+      ...sectionProps,
+      theme: { ...sectionProps.theme, setAnchor, captureBeforeUpdate: boundCapture },
+      accent: { ...sectionProps.accent, setAnchor, captureBeforeUpdate: boundCapture },
+      font: { ...sectionProps.font, setAnchor, captureBeforeUpdate: boundCapture },
+      fontSize: { ...sectionProps.fontSize, setAnchor, captureBeforeUpdate: boundCapture },
+      fontWeight: { ...sectionProps.fontWeight, setAnchor, captureBeforeUpdate: boundCapture },
+      align: { ...sectionProps.align, setAnchor, captureBeforeUpdate: boundCapture },
+    }),
+    [sectionProps, setAnchor, boundCapture],
+  );
+
+  React.useLayoutEffect(() => {
+    adjustAfterLayout(scrollRef.current);
+  }, [settingsVersion, adjustAfterLayout]);
 
   return (
     <>
       <ScrollView
+        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.container}
         onScroll={handleScroll}
@@ -44,7 +71,9 @@ export default function SettingsContent({
           const Component = section.Component as React.ComponentType<
             ComponentProps<typeof section.Component>
           >;
-          return <Component key={section.key} {...sectionProps[section.key]} />;
+          return (
+            <Component key={section.key} {...sectionPropsWithAnchor[section.key]} />
+          );
         })}
       </ScrollView>
 
