@@ -1,14 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
-import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import IconButton from './icon-button';
 
 interface SelectorRowProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
-  increaseColor?: keyof DefaultTheme['colors'];
-  decreaseColor?: keyof DefaultTheme['colors'];
+  increaseDisabled?: boolean;
+  decreaseDisabled?: boolean;
   opacity?: number;
   children: React.ReactNode;
 }
@@ -16,8 +15,8 @@ interface SelectorRowProps {
 const SelectorRow: React.FC<SelectorRowProps> = ({
   onIncrease,
   onDecrease,
-  increaseColor = 'basic',
-  decreaseColor = 'basic',
+  increaseDisabled = false,
+  decreaseDisabled = false,
   opacity = 1,
   children,
 }) => {
@@ -36,8 +35,8 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
       <IconButton
         icon='remove'
         onPress={onDecrease}
+        disabled={decreaseDisabled}
         size={theme.iconSize.large}
-        color={decreaseColor}
         style={{ marginRight: theme.margin.medium }}
       />
       <View
@@ -48,8 +47,8 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
       <IconButton
         icon='add'
         onPress={onIncrease}
+        disabled={increaseDisabled}
         size={theme.iconSize.large}
-        color={increaseColor}
         style={{ marginLeft: theme.margin.medium }}
       />
     </View>

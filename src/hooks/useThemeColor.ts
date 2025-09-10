@@ -5,11 +5,11 @@
 
 import { useColorScheme } from '@hooks/useColorScheme';
 import { themes, type ThemeName } from '@theme/buildTheme';
-import type { ColorTokens } from '@constants/theme';
+import type { ThemeColorName } from '@theme/index';
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof ColorTokens,
+  colorName: ThemeColorName,
 ) {
   const colorScheme = useColorScheme();
   const theme: ThemeName = colorScheme ?? 'light';
