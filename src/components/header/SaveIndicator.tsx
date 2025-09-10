@@ -1,58 +1,62 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
+import { useNavigationState } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 
 interface SaveIndicatorContextValue {
-  showFor2s: () => Promise<void>;
+  show: () => void;
   hide: () => void;
   opacity: Animated.Value;
   visible: boolean;
 }
 
-const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined>(undefined);
+const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined>(
+  undefined,
+);
 
-export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
 
-  const showFor2s = useCallback(() => {
+  const show = useCallback(() => {
     setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
-    });
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 350,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
+    }).start();
   }, [opacity]);
 
   const hide = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
-    setVisible(false);
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: 350,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
+    }).start(() => setVisible(false));
   }, [opacity]);
 
   const value = useMemo(
-    () => ({ showFor2s, hide, opacity, visible }),
-    [showFor2s, hide, opacity, visible],
+    () => ({ show, hide, opacity, visible }),
+    [show, hide, opacity, visible],
   );
 
-  return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
+  return (
+    <SaveIndicatorContext.Provider value={value}>
+      {children}
+    </SaveIndicatorContext.Provider>
+  );
 };
 
 export function useSaveIndicator() {
@@ -64,10 +68,13 @@ export function useSaveIndicator() {
 }
 
 const SaveIndicator: React.FC = () => {
+  const routeName = useNavigationState(
+    (state) => state.routes[state.index]?.name,
+  );
   const { visible, opacity } = useSaveIndicator();
   const theme = useTheme();
 
-  if (!visible) {
+  if (routeName !== 'Settings' || !visible) {
     return null;
   }
 
