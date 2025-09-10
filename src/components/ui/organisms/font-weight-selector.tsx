@@ -42,8 +42,10 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
       <SelectorRow
         onIncrease={incDisabled ? undefined : handleIncrease}
         onDecrease={decDisabled ? undefined : handleDecrease}
-        increaseColor={incDisabled ? 'disabled' : 'basic'}
-        decreaseColor={decDisabled ? 'disabled' : 'basic'}
+        increaseDisabled={incDisabled}
+        decreaseDisabled={decDisabled}
+        increaseLabel="Увеличить жирность шрифта"
+        decreaseLabel="Уменьшить жирность шрифта"
         opacity={isSingle ? 0.5 : 1}
       >
         <BarIndicator
