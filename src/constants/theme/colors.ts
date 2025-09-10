@@ -20,6 +20,12 @@ export interface ColorTokens {
   onDisabled: string;
   headerBackground: string;
   headerForeground: string;
+  control: {
+    disabled: {
+      fg: string;
+      bg: string;
+    };
+  };
 }
 
 export const lightColors: ColorTokens = {
@@ -33,6 +39,12 @@ export const lightColors: ColorTokens = {
   onDisabled: baseColors.grayDark,
   headerBackground: baseColors.white,
   headerForeground: baseColors.black,
+  control: {
+    disabled: {
+      fg: '#CCCCCC',
+      bg: 'transparent',
+    },
+  },
 };
 
 export const darkColors: ColorTokens = {
@@ -46,6 +58,12 @@ export const darkColors: ColorTokens = {
   onDisabled: baseColors.grayLight,
   headerBackground: baseColors.black,
   headerForeground: baseColors.white,
+  control: {
+    disabled: {
+      fg: '#777777',
+      bg: 'transparent',
+    },
+  },
 };
 
 export const creamColors: ColorTokens = {
@@ -59,4 +77,10 @@ export const creamColors: ColorTokens = {
   onDisabled: baseColors.grayDark,
   headerBackground: baseColors.cream,
   headerForeground: baseColors.black,
+  control: {
+    disabled: {
+      fg: '#CCCCCC',
+      bg: 'transparent',
+    },
+  },
 };

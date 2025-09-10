@@ -7,11 +7,7 @@ import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
 
-const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
-  onSelect,
-  blinkAnim,
-  disabled: disabledProp,
-}) => {
+const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {
   const theme = useTheme();
   const { settings } = useSettings();
   const weights = listAvailableWeights(toFamilyKey(settings.fontFamily));
@@ -40,10 +36,10 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
   return (
     <Section title="Жирность шрифта">
       <SelectorRow
-        onIncrease={incDisabled ? undefined : handleIncrease}
-        onDecrease={decDisabled ? undefined : handleDecrease}
-        increaseColor={incDisabled ? 'disabled' : 'basic'}
-        decreaseColor={decDisabled ? 'disabled' : 'basic'}
+        onIncrease={handleIncrease}
+        onDecrease={handleDecrease}
+        increaseDisabled={incDisabled}
+        decreaseDisabled={decDisabled}
         opacity={isSingle ? 0.5 : 1}
       >
         <BarIndicator
