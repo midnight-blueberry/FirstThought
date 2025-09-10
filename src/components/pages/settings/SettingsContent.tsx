@@ -5,6 +5,7 @@ import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
+import useAnchorStableScroll, { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
@@ -14,6 +15,7 @@ interface SettingsContentProps {
   overlayColor: string;
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
+  settingsVersion: number;
 }
 
 export default function SettingsContent({
@@ -24,6 +26,7 @@ export default function SettingsContent({
   overlayColor,
   overlayAnim,
   overlayBlocks,
+  settingsVersion,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const scrollIndicatorInsets = React.useMemo(
@@ -31,22 +34,40 @@ export default function SettingsContent({
     [theme],
   );
 
+  const { scrollRef, handleScroll: handleAnchorScroll, adjustAfterLayout, contextValue } =
+    useAnchorStableScroll();
+
+  const onScroll = React.useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      handleScroll(e);
+      handleAnchorScroll(e);
+    },
+    [handleScroll, handleAnchorScroll],
+  );
+
+  React.useLayoutEffect(() => {
+    adjustAfterLayout();
+  }, [adjustAfterLayout, settingsVersion]);
+
   return (
     <>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.container}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        scrollIndicatorInsets={scrollIndicatorInsets}
-      >
-        {sections.map((section) => {
-          const Component = section.Component as React.ComponentType<
-            ComponentProps<typeof section.Component>
-          >;
-          return <Component key={section.key} {...sectionProps[section.key]} />;
-        })}
-      </ScrollView>
+      <AnchorStableScrollContext.Provider value={contextValue}>
+        <ScrollView
+          ref={scrollRef}
+          style={styles.scroll}
+          contentContainerStyle={styles.container}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          scrollIndicatorInsets={scrollIndicatorInsets}
+        >
+          {sections.map((section) => {
+            const Component = section.Component as React.ComponentType<
+              ComponentProps<typeof section.Component>
+            >;
+            return <Component key={section.key} {...sectionProps[section.key]} />;
+          })}
+        </ScrollView>
+      </AnchorStableScrollContext.Provider>
 
       <Overlay
         visible={overlayVisible}
