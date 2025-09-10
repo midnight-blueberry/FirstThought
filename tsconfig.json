@@ -36,6 +36,9 @@
       "@settings/*": [
         "src/settings/*"
       ],
+      "@features/*": [
+        "src/features/*"
+      ],
       "@theme/*": [
         "src/theme/*"
       ],

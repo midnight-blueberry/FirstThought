@@ -36,6 +36,7 @@ export default function useSettingsVm(): SettingsVm {
   const [fontWeight, setFontWeightState] = useState<FontWeight>(settings.fontWeight);
   const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
+  const [settingsVersion, setSettingsVersion] = useState(0);
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
@@ -60,6 +61,7 @@ export default function useSettingsVm(): SettingsVm {
       await overlay.transact(async () => {
         try {
           await cb();
+          setSettingsVersion((v) => v + 1);
         } catch (e) {
           updateSettings(snapshot);
           resetToSnapshot(snapshot);
@@ -195,5 +197,6 @@ export default function useSettingsVm(): SettingsVm {
     overlayColor: 'transparent',
     overlayAnim,
     overlayBlocks: false,
+    settingsVersion,
   };
 }
