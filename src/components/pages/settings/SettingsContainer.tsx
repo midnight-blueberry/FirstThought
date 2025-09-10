@@ -9,10 +9,6 @@ import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
-import {
-  useOverlayTransition,
-  waitForOpaque,
-} from '@components/settings/overlay/OverlayTransition';
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -22,7 +18,6 @@ export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
   const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
   const { hide } = useSaveIndicator();
-  const overlay = useOverlayTransition();
 
   useEffect(() => {
     return () => {
@@ -33,17 +28,14 @@ export default function SettingsContainer() {
   const onScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       vm.handleScroll(e);
-      anchor.handleScroll(e);
+      anchor.setLastScrollY(e.nativeEvent.contentOffset.y);
     },
-    [vm.handleScroll, anchor.handleScroll],
+    [vm.handleScroll, anchor.setLastScrollY],
   );
 
   useLayoutEffect(() => {
-    void (async () => {
-      await waitForOpaque(overlay);
-      anchor.adjustAfterLayout();
-    })();
-  }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
+    void anchor.adjustAfterLayout();
+  }, [anchor.adjustAfterLayout, vm.settingsVersion]);
 
   return (
     <AnchorStableScrollContext.Provider value={anchor.contextValue}>
