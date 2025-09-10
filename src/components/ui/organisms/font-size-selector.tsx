@@ -12,10 +12,17 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   blinkAnim,
 }) => {
   const theme = useTheme();
+  const incDisabled = fontSizeLevel >= 5;
+  const decDisabled = fontSizeLevel <= 1;
 
   return (
     <Section title="Размер шрифта">
-      <SelectorRow onIncrease={onIncrease} onDecrease={onDecrease}>
+      <SelectorRow
+        onIncrease={onIncrease}
+        onDecrease={onDecrease}
+        increaseDisabled={incDisabled}
+        decreaseDisabled={decDisabled}
+      >
         <BarIndicator
           total={5}
           filledCount={fontSizeLevel}

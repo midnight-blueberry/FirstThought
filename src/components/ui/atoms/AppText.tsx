@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextProps, TextStyle } from 'react-native';
 import styled, { DefaultTheme } from 'styled-components/native';
+import type { ThemeColorName } from '@theme/index';
 import { resolveFont } from '@/constants/fonts/resolve';
 import { useSettings } from '@/state/SettingsContext';
 import { toFamilyKey } from '@utils/font';
@@ -8,7 +9,7 @@ import useTheme from '@hooks/useTheme';
 
 export type AppTextProps = TextProps & {
   variant?: keyof DefaultTheme['fontSize'];
-  color?: keyof DefaultTheme['colors'];
+  color?: ThemeColorName;
   fontFamily?: string;
   fontWeight?: TextStyle['fontWeight'];
 };

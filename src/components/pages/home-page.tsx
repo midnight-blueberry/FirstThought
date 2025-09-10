@@ -3,16 +3,16 @@ import { DiaryList } from '@components/ui/organisms';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import type { Diary } from '@types';
+import type { ThemeColorName } from '@theme/index';
 
 const iconOptions = ['book', 'journal', 'document', 'clipboard', 'archive'];
 
 const HomePage: React.FC = () => {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const theme = useTheme();
-  const iconColor: keyof DefaultTheme['colors'] = 'onAccent';
+  const iconColor: ThemeColorName = 'onAccent';
   const handleScroll = useHeaderShadow();
 
   const addDiary = () => {
