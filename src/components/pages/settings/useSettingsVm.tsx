@@ -54,6 +54,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
     cb: () => void | Promise<void>,
     nextBackground?: string,
   ) => {
+    captureBeforeUpdate();
     const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
     try {
       if (nextBackground) {
@@ -103,7 +104,6 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeFontFamily = (name: string) => {
-    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       setSelectedFontName(name);
       const next = storeSetFontFamily(name);

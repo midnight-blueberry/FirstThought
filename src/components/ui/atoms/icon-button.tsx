@@ -1,16 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import {
   StyleProp,
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
   GestureResponderEvent,
+  View,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import { getDisabledControlColor, ThemeColorName } from '@theme/index';
-import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { AnchorStableScrollContext } from '@/features/scroll/useStableAnchor';
 
 interface IconButtonProps {
   icon: string;
@@ -36,12 +37,17 @@ const IconButton: React.FC<IconButtonProps> = ({
     ? getDisabledControlColor(theme)
     : theme.colors[color];
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const ref = useRef<View>(null);
 
   return (
     <TouchableOpacity
+      ref={ref}
       onPressIn={(e) => {
-        anchorCtx?.setAnchor(e.currentTarget);
+        anchorCtx?.setAnchor(ref.current);
         onPressIn?.(e);
+      }}
+      onFocus={() => {
+        anchorCtx?.setAnchor(ref.current);
       }}
       onPress={() => {
         anchorCtx?.captureBeforeUpdate();

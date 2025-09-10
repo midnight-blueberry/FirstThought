@@ -1,28 +1,30 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import SettingsContent from './SettingsContent';
 import useSettingsVm from './useSettingsVm';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
-import useAnchorStableScroll, {
+import useStableAnchor, {
   AnchorStableScrollContext,
-} from '@/features/scroll/useAnchorStableScroll';
-import {
-  useOverlayTransition,
-  waitForOpaque,
-} from '@components/settings/overlay/OverlayTransition';
+} from '@/features/scroll/useStableAnchor';
+import useOverlayOpaque from '@/features/overlay/useOverlayOpaque';
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ScrollView,
 } from 'react-native';
 
 export default function SettingsContainer() {
-  const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const {
+    setLastScrollY,
+    captureBeforeUpdate,
+    adjustAfterLayout,
+    setContentSize,
+    setViewportHeight,
+    contextValue,
+  } = useStableAnchor();
+  const vm = useSettingsVm(captureBeforeUpdate);
   const { hide } = useSaveIndicator();
-  const overlay = useOverlayTransition();
+  const waitForOpaque = useOverlayOpaque();
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     return () => {
@@ -33,20 +35,19 @@ export default function SettingsContainer() {
   const onScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       vm.handleScroll(e);
-      anchor.handleScroll(e);
+      setLastScrollY(e.nativeEvent.contentOffset.y);
     },
-    [vm.handleScroll, anchor.handleScroll],
+    [vm.handleScroll, setLastScrollY],
   );
 
   useLayoutEffect(() => {
     void (async () => {
-      await waitForOpaque(overlay);
-      anchor.adjustAfterLayout();
+      await adjustAfterLayout(scrollRef.current, waitForOpaque);
     })();
-  }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
+  }, [adjustAfterLayout, vm.settingsVersion, waitForOpaque]);
 
   return (
-    <AnchorStableScrollContext.Provider value={anchor.contextValue}>
+    <AnchorStableScrollContext.Provider value={contextValue}>
       <SettingsContent
         sectionProps={vm.sectionProps}
         theme={vm.theme}
@@ -55,7 +56,9 @@ export default function SettingsContainer() {
         overlayAnim={vm.overlayAnim}
         overlayBlocks={vm.overlayBlocks}
         onScroll={onScroll}
-        scrollRef={anchor.scrollRef}
+        scrollRef={scrollRef}
+        onContentSizeChange={(_w, h) => setContentSize(h)}
+        onLayout={(e) => setViewportHeight(e.nativeEvent.layout.height)}
       />
     </AnchorStableScrollContext.Provider>
   );

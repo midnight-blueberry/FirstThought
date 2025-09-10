@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Animated, View, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { AnchorStableScrollContext } from '@/features/scroll/useStableAnchor';
 
 interface BarIndicatorProps {
   total: number;
@@ -24,6 +24,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const refs = useRef<Array<View | null>>([]);
 
   return (
     <>
@@ -45,7 +46,8 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
         const Wrapper = onPress ? Pressable : View;
         const pressProps = onPress
           ? {
-              onPressIn: (e: any) => anchorCtx?.setAnchor(e.currentTarget),
+              onPressIn: () => anchorCtx?.setAnchor(refs.current[i]),
+              onFocus: () => anchorCtx?.setAnchor(refs.current[i]),
               onPress: () => {
                 anchorCtx?.captureBeforeUpdate();
                 onPress(i);
@@ -54,7 +56,12 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           : {};
         if (blinkIndex === i) {
           return (
-            <Wrapper key={i} style={containerStyle} {...pressProps}>
+            <Wrapper
+              key={i}
+              ref={onPress ? (r: View | null) => { refs.current[i] = r; } : undefined}
+              style={containerStyle}
+              {...pressProps}
+            >
               {i < filledCount && (
                 <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
               )}
@@ -62,7 +69,12 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           );
         }
         return (
-          <Wrapper key={i} style={containerStyle} {...pressProps}>
+          <Wrapper
+            key={i}
+            ref={onPress ? (r: View | null) => { refs.current[i] = r; } : undefined}
+            style={containerStyle}
+            {...pressProps}
+          >
             {i < filledCount && <View style={innerStyle} />}
           </Wrapper>
         );
