@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Animated, View, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
-import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { AnchorStableScrollContext } from '@/features/scroll/useStableAnchor';
 
 interface BarIndicatorProps {
   total: number;
@@ -24,6 +24,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const itemRefs = useRef<Record<number, View | null>>({});
 
   return (
     <>
@@ -42,29 +43,36 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           height: '100%',
           backgroundColor: fillColor,
         } as const;
-        const Wrapper = onPress ? Pressable : View;
-        const pressProps = onPress
-          ? {
-              onPressIn: (e: any) => anchorCtx?.setAnchor(e.currentTarget),
-              onPress: () => {
+        if (onPress) {
+          return (
+            <Pressable
+              key={i}
+              ref={(r) => {
+                itemRefs.current[i] = r;
+              }}
+              onPressIn={() => anchorCtx?.setAnchor(itemRefs.current[i])}
+              onPress={() => {
                 anchorCtx?.captureBeforeUpdate();
                 onPress(i);
-              },
-            }
-          : {};
-        if (blinkIndex === i) {
-          return (
-            <Wrapper key={i} style={containerStyle} {...pressProps}>
+              }}
+              style={containerStyle}
+            >
               {i < filledCount && (
-                <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
+                <Animated.View style={[innerStyle, blinkIndex === i ? { opacity: blinkAnim } : null]} />
               )}
-            </Wrapper>
+            </Pressable>
           );
         }
         return (
-          <Wrapper key={i} style={containerStyle} {...pressProps}>
-            {i < filledCount && <View style={innerStyle} />}
-          </Wrapper>
+          <View key={i} style={containerStyle}>
+            {i < filledCount && (
+              blinkIndex === i ? (
+                <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
+              ) : (
+                <View style={innerStyle} />
+              )
+            )}
+          </View>
         );
       })}
     </>

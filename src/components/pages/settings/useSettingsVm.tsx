@@ -81,6 +81,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeTheme = (name: string) => {
+    captureBeforeUpdate();
     const id =
       (Object.keys(themes) as ThemeName[]).find(
         (k) => themes[k].name === name,
@@ -96,6 +97,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeAccent = (color: string) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       setSelectedAccentColor(color);
       updateSettings({ accent: color });
@@ -112,6 +114,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       const next = storeSetFontWeight(Number(weight));
       setFontWeightState(next.fontWeight);
@@ -119,6 +122,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeFontSize = (level: number) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       const next = clampLevel(level);
       setFontSizeLevel(next);
@@ -127,6 +131,7 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       setNoteTextAlign(align);
       updateSettings({ noteTextAlign: align });

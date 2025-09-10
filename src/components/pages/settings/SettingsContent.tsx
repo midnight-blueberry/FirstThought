@@ -6,6 +6,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Animated,
+  LayoutChangeEvent,
 } from 'react-native';
 import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
@@ -20,7 +21,9 @@ interface SettingsContentProps {
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  scrollRef: React.RefObject<ScrollView>;
+  scrollRef: React.RefObject<ScrollView | null>;
+  onContentSizeChange: (w: number, h: number) => void;
+  onLayout: (e: LayoutChangeEvent) => void;
 }
 
 function SettingsContent({
@@ -32,6 +35,8 @@ function SettingsContent({
   overlayBlocks,
   onScroll,
   scrollRef,
+  onContentSizeChange,
+  onLayout,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const scrollIndicatorInsets = React.useMemo(
@@ -47,6 +52,8 @@ function SettingsContent({
         contentContainerStyle={styles.container}
         onScroll={onScroll}
         scrollEventThrottle={16}
+        onContentSizeChange={onContentSizeChange}
+        onLayout={onLayout}
         scrollIndicatorInsets={scrollIndicatorInsets}
       >
         {sections.map((section) => {
@@ -75,7 +82,9 @@ const propsAreEqual = (prev: SettingsContentProps, next: SettingsContentProps) =
   prev.overlayAnim === next.overlayAnim &&
   prev.overlayBlocks === next.overlayBlocks &&
   prev.onScroll === next.onScroll &&
-  prev.scrollRef === next.scrollRef;
+  prev.scrollRef === next.scrollRef &&
+  prev.onContentSizeChange === next.onContentSizeChange &&
+  prev.onLayout === next.onLayout;
 
 export default React.memo(SettingsContent, propsAreEqual);
 
