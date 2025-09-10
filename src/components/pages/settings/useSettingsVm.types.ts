@@ -18,5 +18,6 @@ export interface SettingsVm {
   overlayColor: string;
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
+  settingsVersion: number;
 }
 

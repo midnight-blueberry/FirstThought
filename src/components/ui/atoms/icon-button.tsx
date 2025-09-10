@@ -1,9 +1,10 @@
-import React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle, GestureResponderEvent } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import { getDisabledControlColor, ThemeColorName } from '@theme/index';
+import { AnchorContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface IconButtonProps {
   icon: string;
@@ -26,10 +27,13 @@ const IconButton: React.FC<IconButtonProps> = ({
   const iconColor = disabled
     ? getDisabledControlColor(theme)
     : theme.colors[color];
+  const setAnchor = useContext(AnchorContext);
+  const handlePressIn = (e: GestureResponderEvent) => setAnchor(e.currentTarget as any);
 
   return (
     <TouchableOpacity
       onPress={onPress}
+      onPressIn={handlePressIn}
       disabled={disabled}
       activeOpacity={disabled ? 1 : undefined}
       style={[styles.button, style]}

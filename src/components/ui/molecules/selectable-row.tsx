@@ -1,8 +1,9 @@
-import React from 'react';
-import { StyleProp, TextStyle, TouchableOpacity, View } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleProp, TextStyle, TouchableOpacity, View, GestureResponderEvent } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
+import { AnchorContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface SelectableRowProps {
   label: string;
@@ -27,11 +28,14 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   const paddingLeft = hasSwatch
     ? theme.margin.medium + (theme.iconSize.large - theme.iconSize.small) / 2
     : theme.margin.medium;
+  const setAnchor = useContext(AnchorContext);
+  const handlePressIn = (e: GestureResponderEvent) => setAnchor(e.currentTarget as any);
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
+      onPressIn={handlePressIn}
       style={[
         {
           marginBottom: theme.margin.small,

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Animated, View, Pressable } from 'react-native';
+import React, { useContext } from 'react';
+import { Animated, View, Pressable, GestureResponderEvent } from 'react-native';
 import useTheme from '@hooks/useTheme';
+import { AnchorContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface BarIndicatorProps {
   total: number;
@@ -22,6 +23,8 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
   onPress,
 }) => {
   const theme = useTheme();
+  const setAnchor = useContext(AnchorContext);
+  const handlePressIn = (e: GestureResponderEvent) => setAnchor(e.currentTarget as any);
 
   return (
     <>
@@ -40,13 +43,14 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           height: '100%',
           backgroundColor: fillColor,
         } as const;
-        const Wrapper = onPress ? Pressable : View;
+        const Wrapper: any = onPress ? Pressable : View;
         if (blinkIndex === i) {
           return (
             <Wrapper
               key={i}
               style={containerStyle}
               onPress={onPress ? () => onPress(i) : undefined}
+              onPressIn={onPress ? handlePressIn : undefined}
             >
               {i < filledCount && (
                 <Animated.View style={[innerStyle, { opacity: blinkAnim }]} />
@@ -59,6 +63,7 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
             key={i}
             style={containerStyle}
             onPress={onPress ? () => onPress(i) : undefined}
+            onPressIn={onPress ? handlePressIn : undefined}
           >
             {i < filledCount && <View style={innerStyle} />}
           </Wrapper>

@@ -11,6 +11,7 @@ interface OverlayTransitionCtx {
   isBusy: () => boolean;
   freezeBackground: (color: string) => void;
   releaseBackground: () => void;
+  getOpacity: () => number;
 }
 
 const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
@@ -110,6 +111,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
         isBusy,
         freezeBackground: setFrozenBg,
         releaseBackground: () => setFrozenBg(null),
+        getOpacity: () => (opacity as any).__getValue?.() ?? 0,
       }}
     >
       {children}
