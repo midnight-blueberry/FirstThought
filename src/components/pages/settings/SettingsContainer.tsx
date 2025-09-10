@@ -20,7 +20,7 @@ import type {
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const vm = useSettingsVm();
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 
@@ -33,15 +33,15 @@ export default function SettingsContainer() {
   const onScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       vm.handleScroll(e);
-      anchor.handleScroll(e);
+      anchor.setLastScrollY(e.nativeEvent.contentOffset.y);
     },
-    [vm.handleScroll, anchor.handleScroll],
+    [vm.handleScroll, anchor.setLastScrollY],
   );
 
   useLayoutEffect(() => {
     void (async () => {
       await waitForOpaque(overlay);
-      anchor.adjustAfterLayout();
+      anchor.adjustAfterLayout(anchor.scrollRef.current);
     })();
   }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
 

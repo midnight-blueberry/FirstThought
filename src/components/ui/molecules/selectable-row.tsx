@@ -19,6 +19,7 @@ interface SelectableRowProps {
   fontSize?: number;
   labelStyle?: StyleProp<TextStyle>;
   onPressIn?: (e: GestureResponderEvent) => void;
+  disableDefaultAnchor?: boolean;
 }
 
 const SelectableRow: React.FC<SelectableRowProps> = ({
@@ -29,6 +30,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
   labelStyle,
   onPressIn,
+  disableDefaultAnchor,
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
@@ -42,11 +44,15 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
     <TouchableOpacity
       activeOpacity={1}
       onPressIn={(e) => {
-        anchorCtx?.setAnchor(e.currentTarget);
+        if (!disableDefaultAnchor) {
+          anchorCtx?.setAnchor(e.currentTarget);
+        }
         onPressIn?.(e);
       }}
       onPress={() => {
-        anchorCtx?.captureBeforeUpdate();
+        if (!disableDefaultAnchor) {
+          anchorCtx?.captureBeforeUpdate();
+        }
         onPress();
       }}
       style={[
