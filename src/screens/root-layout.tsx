@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
-import { PortalProvider } from 'react-native-portalize';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -14,9 +13,12 @@ import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
+import { PortalProvider } from 'react-native-portalize';
+import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayTransition';
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import StatusBarBackground from '@components/ui/StatusBarBackground';
+import { SaveIndicatorProvider } from '@components/header/SaveIndicator';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -34,7 +36,15 @@ export default function RootLayout() {
   return (
     <SettingsProvider>
       <ThemeProvider>
-        <RootContent />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <PortalProvider>
+            <OverlayTransitionProvider>
+              <SaveIndicatorProvider>
+                <RootContent />
+              </SaveIndicatorProvider>
+            </OverlayTransitionProvider>
+          </PortalProvider>
+        </GestureHandlerRootView>
       </ThemeProvider>
     </SettingsProvider>
   );
@@ -64,18 +74,14 @@ function RootContent() {
         onLayout={onLayoutRootView}
         edges={['left', 'right', 'bottom']}
       >
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <PortalProvider>
-            <DrawerNavigator
-              key={`ui-${settings.themeId}-${theme.colors.headerBackground}`}
-              theme={theme}
-              homePageHeaderTitle={homePageHeaderTitle}
-              homePageHeaderElevation={homePageHeaderElevation}
-              settingsPageHeaderTitle={settingsPageHeaderTitle}
-              settingsPageHeaderElevation={settingsPageHeaderElevation}
-            />
-          </PortalProvider>
-        </GestureHandlerRootView>
+        <DrawerNavigator
+          key={`ui-${settings.themeId}-${theme.colors.headerBackground}`}
+          theme={theme}
+          homePageHeaderTitle={homePageHeaderTitle}
+          homePageHeaderElevation={homePageHeaderElevation}
+          settingsPageHeaderTitle={settingsPageHeaderTitle}
+          settingsPageHeaderElevation={settingsPageHeaderElevation}
+        />
       </SafeAreaView>
     </SafeAreaProvider>
   );

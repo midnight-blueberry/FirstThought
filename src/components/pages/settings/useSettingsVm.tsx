@@ -9,11 +9,16 @@ import { clampLevel } from '@utils/theme';
 import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
-import { useSettings } from '@/state/SettingsContext';
+import { useSettings, type Settings } from '@/state/SettingsContext';
+import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useSaveIndicator } from '@components/header/SaveIndicator';
+import { showErrorToast } from '@utils/showErrorToast';
 
 export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
+  const overlay = useOverlayTransition();
+  const { showFor2s } = useSaveIndicator();
   const {
     settings,
     updateSettings,
@@ -34,40 +39,94 @@ export default function useSettingsVm(): SettingsVm {
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
+  const resetToSnapshot = (s: Settings) => {
+    setSelectedThemeName(themes[s.themeId].name);
+    setSelectedAccentColor(s.accent);
+    setSelectedFontName(s.fontFamily);
+    setFontWeightState(s.fontWeight);
+    setFontSizeLevel(s.fontSizeLevel);
+    setNoteTextAlign(s.noteTextAlign);
+  };
+
+  const withSettingsTransaction = async (
+    cb: () => void | Promise<void>,
+    nextBackground?: string,
+  ) => {
+    const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
+    try {
+      if (nextBackground) {
+        overlay.freezeBackground(nextBackground);
+      }
+      await overlay.transact(async () => {
+        try {
+          await cb();
+        } catch (e) {
+          updateSettings(snapshot);
+          resetToSnapshot(snapshot);
+          console.warn(e);
+          throw e;
+        }
+      });
+      overlay.releaseBackground();
+      await showFor2s();
+    } catch (e) {
+      overlay.releaseBackground();
+      showErrorToast(
+        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
+      );
+    }
+  };
+
   const changeTheme = (name: string) => {
-    setSelectedThemeName(name);
     const id =
       (Object.keys(themes) as ThemeName[]).find(
         (k) => themes[k].name === name,
       ) ?? 'light';
-    updateSettings({ themeId: id });
+    const nextBg = themes[id].colors.background;
+    void withSettingsTransaction(
+      async () => {
+        setSelectedThemeName(name);
+        updateSettings({ themeId: id });
+      },
+      nextBg,
+    );
   };
 
   const changeAccent = (color: string) => {
-    setSelectedAccentColor(color);
-    updateSettings({ accent: color });
+    void withSettingsTransaction(async () => {
+      setSelectedAccentColor(color);
+      updateSettings({ accent: color });
+    });
   };
 
   const changeFontFamily = (name: string) => {
-    setSelectedFontName(name);
-    const next = storeSetFontFamily(name);
-    setFontWeightState(next.fontWeight);
+    void withSettingsTransaction(async () => {
+      setSelectedFontName(name);
+      const next = storeSetFontFamily(name);
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
-    const next = storeSetFontWeight(Number(weight));
-    setFontWeightState(next.fontWeight);
+    void withSettingsTransaction(async () => {
+      const next = storeSetFontWeight(Number(weight));
+      setFontWeightState(next.fontWeight);
+    });
   };
 
   const changeFontSize = (level: number) => {
-    const next = clampLevel(level);
-    setFontSizeLevel(next);
-    updateSettings({ fontSizeLevel: next });
+    void withSettingsTransaction(async () => {
+      const next = clampLevel(level);
+      setFontSizeLevel(next);
+      updateSettings({ fontSizeLevel: next });
+    });
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
-    setNoteTextAlign(align);
-    updateSettings({ noteTextAlign: align });
+    void withSettingsTransaction(async () => {
+      setNoteTextAlign(align);
+      updateSettings({ noteTextAlign: align });
+    });
   };
 
   const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
