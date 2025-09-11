@@ -5,7 +5,7 @@ import { SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import type { FontSizeSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { useStickyRegister } from '@/features/sticky-position/useStickyRegister';
 
 const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   fontSizeLevel,
@@ -18,21 +18,21 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
   const incDisabled = fontSizeLevel >= 5;
   const decDisabled = fontSizeLevel <= 1;
   const { registerPress } = useStickySelection();
-  const rowRef = useStickyRegister('fontSize');
+  const stickyRef = useStickyRegister('fontSize');
 
   return (
     <Section title="Размер шрифта">
-      <View ref={rowRef}>
+      <View ref={stickyRef} collapsable={false}>
         <SelectorRow
           onIncrease={() => {
             void (async () => {
-              await registerPress('fontSize', rowRef);
+              await registerPress('fontSize');
               onIncrease();
             })();
           }}
           onDecrease={() => {
             void (async () => {
-              await registerPress('fontSize', rowRef);
+              await registerPress('fontSize');
               onDecrease();
             })();
           }}
