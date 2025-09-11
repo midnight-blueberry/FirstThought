@@ -11,6 +11,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSele
       {themeList.map(themeItem => (
         <SelectableRow
           key={themeItem.name}
+          stickyKey={`theme-${themeItem.name}`}
           label={themeItem.name}
           swatchColor={themeItem.colors.background}
           selected={themeItem.name === selectedThemeName}

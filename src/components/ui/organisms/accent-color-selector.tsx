@@ -11,6 +11,7 @@ const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({ selectedAccen
       {accentColors.map(color => (
         <SelectableRow
           key={color.hex}
+          stickyKey={`accent-${color.hex}`}
           label={color.name}
           swatchColor={color.hex}
           selected={color.hex === selectedAccentColor}

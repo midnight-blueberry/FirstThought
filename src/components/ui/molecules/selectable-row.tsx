@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import { useStickySelectionPositionContext } from '@/features/sticky-position/useStickySelectionPosition';
 
 interface SelectableRowProps {
   label: string;
@@ -19,6 +20,7 @@ interface SelectableRowProps {
   fontSize?: number;
   labelStyle?: StyleProp<TextStyle>;
   onPressIn?: (e: GestureResponderEvent) => void;
+  stickyKey: string;
 }
 
 const SelectableRow: React.FC<SelectableRowProps> = ({
@@ -29,9 +31,15 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
   labelStyle,
   onPressIn,
+  stickyKey,
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const sticky = useStickySelectionPositionContext();
+  const itemRef = React.useRef<View>(null);
+  React.useEffect(() => {
+    sticky?.registerItemRef(stickyKey, itemRef);
+  }, [sticky, stickyKey]);
   const drop = -theme.padding.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
@@ -40,14 +48,16 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
 
   return (
     <TouchableOpacity
+      ref={itemRef}
       activeOpacity={1}
       onPressIn={(e) => {
         anchorCtx?.setAnchor(e.currentTarget);
         onPressIn?.(e);
       }}
-      onPress={() => {
+      onPress={async () => {
         anchorCtx?.captureBeforeUpdate();
         onPress();
+        await sticky?.onItemPress(stickyKey);
       }}
       style={[
         {

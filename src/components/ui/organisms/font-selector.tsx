@@ -25,6 +25,7 @@ const FontSelector: React.FC<FontSelectorProps> = ({
           return (
             <SelectableRow
               key={f.name}
+              stickyKey={`font-${f.name}`}
               label={f.name}
               swatchColor={theme.colors.basic}
               selected={f.name === selectedFontName}
