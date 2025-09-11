@@ -5,37 +5,38 @@ import Section from './settings-section';
 import { themeList } from '@theme/buildTheme';
 import type { ThemeSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickyRegister } from '@/features/sticky-position/registry';
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   selectedThemeName,
   onSelectTheme,
 }) => {
   const { registerPress } = useStickySelection();
-  const refs = React.useRef<Record<string, View | null>>({});
+
+  const ThemeItem = ({ name, colors }: { name: string; colors: { background: string } }) => {
+    const ref = useStickyRegister(`theme:${name}`);
+    return (
+      <View ref={ref}>
+        <SelectableRow
+          label={name}
+          swatchColor={colors.background}
+          selected={name === selectedThemeName}
+          onPress={() => {
+            void (async () => {
+              await registerPress(`theme:${name}`, ref);
+              onSelectTheme(name);
+            })();
+          }}
+        />
+      </View>
+    );
+  };
 
   return (
     <Section title="Тема">
       <View>
-        {themeList.map((themeItem) => (
-          <View
-            key={themeItem.name}
-            ref={(el) => {
-              refs.current[themeItem.name] = el;
-            }}
-          >
-            <SelectableRow
-              label={themeItem.name}
-              swatchColor={themeItem.colors.background}
-              selected={themeItem.name === selectedThemeName}
-              onPress={() => {
-                const refObj = { current: refs.current[themeItem.name] };
-                void (async () => {
-                  await registerPress(`theme:${themeItem.name}`, refObj);
-                  onSelectTheme(themeItem.name);
-                })();
-              }}
-            />
-          </View>
+        {themeList.map((t) => (
+          <ThemeItem key={t.name} name={t.name} colors={t.colors} />
         ))}
       </View>
     </Section>

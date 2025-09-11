@@ -5,37 +5,38 @@ import Section from './settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickyRegister } from '@/features/sticky-position/registry';
 
 const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({
   selectedAccentColor,
   onSelectAccent,
 }) => {
   const { registerPress } = useStickySelection();
-  const refs = React.useRef<Record<string, View | null>>({});
+
+  const AccentItem = ({ hex, name }: { hex: string; name: string }) => {
+    const ref = useStickyRegister(`accent:${hex}`);
+    return (
+      <View ref={ref}>
+        <SelectableRow
+          label={name}
+          swatchColor={hex}
+          selected={hex === selectedAccentColor}
+          onPress={() => {
+            void (async () => {
+              await registerPress(`accent:${hex}`, ref);
+              onSelectAccent(hex);
+            })();
+          }}
+        />
+      </View>
+    );
+  };
 
   return (
     <Section title="Акцент">
       <View>
-        {accentColors.map((color) => (
-          <View
-            key={color.hex}
-            ref={(el) => {
-              refs.current[color.hex] = el;
-            }}
-          >
-            <SelectableRow
-              label={color.name}
-              swatchColor={color.hex}
-              selected={color.hex === selectedAccentColor}
-              onPress={() => {
-                const refObj = { current: refs.current[color.hex] };
-                void (async () => {
-                  await registerPress(`accent:${color.hex}`, refObj);
-                  onSelectAccent(color.hex);
-                })();
-              }}
-            />
-          </View>
+        {accentColors.map((c) => (
+          <AccentItem key={c.hex} hex={c.hex} name={c.name} />
         ))}
       </View>
     </Section>

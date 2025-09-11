@@ -9,11 +9,11 @@ import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
-import { StickySelectionProvider } from '@/features/sticky-position/StickySelectionProvider';
 import {
   useOverlayTransition,
   waitForOpaque,
 } from '@components/settings/overlay/OverlayTransition';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -21,9 +21,10 @@ import type {
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate, anchor.scrollRef);
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
+  const sticky = useStickySelection();
 
   useEffect(() => {
     return () => {
@@ -35,8 +36,9 @@ export default function SettingsContainer() {
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       vm.handleScroll(e);
       anchor.handleScroll(e);
+      sticky.scrollYRef.current = e.nativeEvent.contentOffset.y;
     },
-    [vm.handleScroll, anchor.handleScroll],
+    [vm.handleScroll, anchor.handleScroll, sticky.scrollYRef],
   );
 
   useLayoutEffect(() => {
@@ -47,19 +49,17 @@ export default function SettingsContainer() {
   }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
 
   return (
-    <StickySelectionProvider>
-      <AnchorStableScrollContext.Provider value={anchor.contextValue}>
-        <SettingsContent
-          sectionProps={vm.sectionProps}
-          theme={vm.theme}
-          overlayVisible={vm.overlayVisible}
-          overlayColor={vm.overlayColor}
-          overlayAnim={vm.overlayAnim}
-          overlayBlocks={vm.overlayBlocks}
-          onScroll={onScroll}
-          scrollRef={anchor.scrollRef}
-        />
-      </AnchorStableScrollContext.Provider>
-    </StickySelectionProvider>
+    <AnchorStableScrollContext.Provider value={anchor.contextValue}>
+      <SettingsContent
+        sectionProps={vm.sectionProps}
+        theme={vm.theme}
+        overlayVisible={vm.overlayVisible}
+        overlayColor={vm.overlayColor}
+        overlayAnim={vm.overlayAnim}
+        overlayBlocks={vm.overlayBlocks}
+        onScroll={onScroll}
+        scrollRef={anchor.scrollRef}
+      />
+    </AnchorStableScrollContext.Provider>
   );
 }
