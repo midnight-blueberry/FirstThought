@@ -14,7 +14,6 @@ import { useOverlayTransition } from '@components/settings/overlay/OverlayTransi
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionProvider';
-import { alignScrollAfterApply } from '@/features/sticky-position/alignScrollAfterApply';
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,
@@ -65,18 +64,26 @@ export default function useSettingsVm(
         overlay.freezeBackground(nextBackground);
       }
       const sticky = getStickySelectionContext();
-      await sticky?.beginApply();
-      try {
-        await cb();
-        setSettingsVersion((v) => v + 1);
-      } catch (e) {
-        updateSettings(snapshot);
-        resetToSnapshot(snapshot);
-        console.warn(e);
-        throw e;
-      }
-      await alignScrollAfterApply(scrollRef);
+      let error: unknown;
+      await sticky?.applyWithSticky(
+        async () => {
+          try {
+            await cb();
+            setSettingsVersion((v) => v + 1);
+          } catch (e) {
+            error = e;
+            updateSettings(snapshot);
+            resetToSnapshot(snapshot);
+            console.warn(e);
+            throw e;
+          }
+        },
+        scrollRef,
+      );
       overlay.releaseBackground();
+      if (error) {
+        throw error;
+      }
       await showFor2s();
     } catch (e) {
       overlay.releaseBackground();

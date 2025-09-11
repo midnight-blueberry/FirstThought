@@ -38,7 +38,7 @@ export const waitForOpaque = (overlay: OverlayTransitionCtx) =>
 
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const opacity = useRef(new Animated.Value(0)).current;
-  const [active, setActive] = useState(false);
+  const [pe, setPe] = useState<'auto' | 'none'>('none');
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
   const theme = useTheme();
@@ -51,7 +51,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   }, []);
 
   const begin = useCallback(() => {
-    setActive(true);
     return new Promise<void>((resolve) => {
       if (reduceMotion) {
         opacity.setValue(1);
@@ -69,10 +68,9 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   }, [opacity, reduceMotion]);
 
   const end = useCallback(() => {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       if (reduceMotion) {
         opacity.setValue(0);
-        setActive(false);
         resolve();
       } else {
         Animated.timing(opacity, {
@@ -81,7 +79,6 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }).start(() => {
-          setActive(false);
           resolve();
         });
       }
@@ -116,6 +113,13 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   const isBusy = useCallback(() => busy.current, []);
 
+  useEffect(() => {
+    const id = opacity.addListener(({ value }) => {
+      setPe(value > 0.01 ? 'auto' : 'none');
+    });
+    return () => opacity.removeListener(id);
+  }, [opacity]);
+
   const animatedStyle = { opacity };
 
   return (
@@ -134,7 +138,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
       {children}
       <Portal>
         <Animated.View
-          pointerEvents={active ? 'auto' : 'none'}
+          pointerEvents={pe}
           style={[
             styles.overlay,
             { backgroundColor: frozenBg ?? theme.colors.background },
