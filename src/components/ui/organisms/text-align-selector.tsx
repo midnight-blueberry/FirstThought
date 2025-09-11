@@ -5,13 +5,13 @@ import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { useStickyRegister } from '@/features/sticky-position/useStickyRegister';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
   const theme = useTheme();
   const { registerPress } = useStickySelection();
-  const leftRef = useStickyRegister('align:left');
-  const justifyRef = useStickyRegister('align:justify');
+  const leftStickyRef = useStickyRegister('align:left');
+  const justifyStickyRef = useStickyRegister('align:justify');
 
   return (
     <Section title="Выравнивание текста в заметках">
@@ -24,25 +24,25 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
           paddingTop: theme.padding.large,
         }}
       >
-        <View ref={leftRef}>
+        <View ref={leftStickyRef} collapsable={false}>
           <TextAlignButton
             variant="left"
             selected={noteTextAlign === 'left'}
             onPress={() => {
               void (async () => {
-                await registerPress('align:left', leftRef);
+                await registerPress('align:left');
                 onChange('left');
               })();
             }}
           />
         </View>
-        <View ref={justifyRef}>
+        <View ref={justifyStickyRef} collapsable={false}>
           <TextAlignButton
             variant="justify"
             selected={noteTextAlign === 'justify'}
             onPress={() => {
               void (async () => {
-                await registerPress('align:justify', justifyRef);
+                await registerPress('align:justify');
                 onChange('justify');
               })();
             }}

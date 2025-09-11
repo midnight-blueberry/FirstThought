@@ -1,60 +1,74 @@
 import { RefObject } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { getStickySelectionContext } from './StickySelectionProvider';
-import { getItemRef } from './registry';
+import { getItemHandle } from './registry';
+import { measureInWindowByHandle, measureViewportOfScrollView } from './nativeMeasure';
 
 const raf = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-
 export async function alignScrollAfterApply(
   scrollRef: RefObject<ScrollView>,
-  opts: { timeoutMs?: number; maxRafs?: number } = {},
+  contentRef: RefObject<View | null>,
+  opts: { timeoutMs?: number; settleRafs?: number } = {},
 ) {
   const ctx = getStickySelectionContext();
   if (!ctx) return;
   const { state, scrollYRef } = ctx;
-  const { lastId, yCenterOnScreen } = state;
-  if (!lastId || yCenterOnScreen == null) {
+  const { lastId, yCenterOnScreen: savedCenterOnScreen } = state;
+  if (!lastId || savedCenterOnScreen == null) {
     return;
   }
-  const targetRef = getItemRef(lastId);
-  if (!targetRef || !scrollRef.current) {
+  const handle = getItemHandle(lastId);
+  if (handle == null || !scrollRef.current) {
     return;
   }
 
-  const doAlign = async (maxRafs: number) => {
+  const timeoutMs = opts.timeoutMs ?? 200;
+  const settleRafs = opts.settleRafs ?? 4;
+  const start = Date.now();
+
+  let box = await measureInWindowByHandle(handle);
+  let prev = box;
+  for (let i = 0; i < settleRafs; i++) {
+    if (Date.now() - start > timeoutMs) break;
     await raf();
-    await raf();
-    let attempts = 0;
-    let y = 0;
-    let h = 0;
-    while (attempts < maxRafs) {
-      await new Promise<void>((resolve) => {
-        targetRef.measureInWindow((_x, y0, _w, h0) => {
-          y = y0;
-          h = h0;
+    box = await measureInWindowByHandle(handle);
+    if (Math.abs(box.y - prev.y) < 0.5 && Math.abs(box.height - prev.height) < 0.5) {
+      break;
+    }
+    prev = box;
+  }
+
+  const { topWin: scrollTopWin, height: viewportH } = await measureViewportOfScrollView(
+    scrollRef.current,
+  );
+
+  const savedCenterViewport = savedCenterOnScreen - scrollTopWin;
+  const currentCenterViewport = box.y + box.height / 2 - scrollTopWin;
+  const deltaViewport = currentCenterViewport - savedCenterViewport;
+
+  let contentH = Number.POSITIVE_INFINITY;
+  await new Promise<void>((resolve) => {
+    const node = contentRef.current as any;
+    if (node && typeof node.measure === 'function') {
+      node.measure(
+        (_x: number, _y: number, _w: number, h: number) => {
+          contentH = h;
           resolve();
-        });
-      });
-      if (y !== 0 || h !== 0) break;
-      attempts += 1;
-      await raf();
+        },
+      );
+    } else {
+      resolve();
     }
-    if (y === 0 && h === 0) {
-      return;
-    }
-    const newCenter = y + h / 2;
-    const delta = newCenter - yCenterOnScreen;
-    if (Math.abs(delta) >= 1) {
-      const currentY = scrollYRef.current;
-      scrollRef.current.scrollTo({ y: currentY + delta, animated: false });
-      scrollYRef.current = currentY + delta;
-    }
-    await raf();
-  };
+  });
 
-  const { timeoutMs = 300, maxRafs = 3 } = opts;
+  const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
-  await Promise.race([doAlign(maxRafs), delay(timeoutMs)]);
+  const targetY = clamp(
+    scrollYRef.current + deltaViewport,
+    0,
+    Math.max(0, contentH - viewportH),
+  );
+  scrollRef.current.scrollTo({ y: targetY, animated: false });
+  scrollYRef.current = targetY;
 }

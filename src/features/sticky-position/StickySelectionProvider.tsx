@@ -3,6 +3,8 @@ import type { View } from 'react-native';
 import { ScrollView } from 'react-native';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { alignScrollAfterApply } from './alignScrollAfterApply';
+import { getItemHandle } from './registry';
+import { measureInWindowByHandle } from './nativeMeasure';
 
 export interface StickySelectionState {
   lastId: string | null;
@@ -15,10 +17,11 @@ export type StickyStatus = 'idle' | 'measuring' | 'applying' | 'scrolling';
 export interface StickySelectionContextValue {
   state: StickySelectionState;
   status: React.MutableRefObject<StickyStatus>;
-  registerPress: (id: string, ref: React.RefObject<View | null>) => Promise<void>;
+  registerPress: (id: string) => Promise<void>;
   applyWithSticky: (
     applyFn: () => Promise<void> | void,
     scrollRef: React.RefObject<ScrollView>,
+    contentRef: React.RefObject<View | null>,
   ) => Promise<void>;
   reset: () => void;
   scrollYRef: React.MutableRefObject<number>;
@@ -63,16 +66,16 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
     [overlay],
   );
 
-  const registerPress = useCallback(async (id: string, ref: React.RefObject<View | null>) => {
+  const registerPress = useCallback(async (id: string) => {
     statusRef.current = 'measuring';
     await new Promise<void>((resolve) => {
       let attempts = 0;
       const measure = () => {
-        const node = ref.current as any;
-        if (node && typeof node.measureInWindow === 'function') {
-          node.measureInWindow((_x: number, y: number, _w: number, h: number) => {
+        const handle = getItemHandle(id);
+        if (handle != null) {
+          measureInWindowByHandle(handle).then(({ y, height }) => {
             stateRef.current.lastId = id;
-            stateRef.current.yCenterOnScreen = y + h / 2;
+            stateRef.current.yCenterOnScreen = y + height / 2;
             stateRef.current.ts = Date.now();
             if (__DEV__) {
               console.log('StickySelection', stateRef.current);
@@ -87,7 +90,7 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
           requestAnimationFrame(measure);
         } else {
           if (__DEV__) {
-            console.warn('StickySelection: measure failed for', id);
+            console.warn('StickySelection: handle not found for', id);
           }
           statusRef.current = 'idle';
           resolve();
@@ -108,6 +111,7 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
     async (
       applyFn: () => Promise<void> | void,
       scrollRef: React.RefObject<ScrollView>,
+      contentRef: React.RefObject<View | null>,
     ) => {
       if (statusRef.current === 'scrolling') return;
       if (
@@ -121,7 +125,9 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
       try {
         await applyFn();
         statusRef.current = 'scrolling';
-        await alignScrollAfterApply(scrollRef, { timeoutMs: 300, maxRafs: 3 });
+        await alignScrollAfterApply(scrollRef, contentRef, {
+          timeoutMs: 300,
+        });
       } catch (e) {
         if (__DEV__) {
           console.warn('[sticky] applyWithSticky error', e);
