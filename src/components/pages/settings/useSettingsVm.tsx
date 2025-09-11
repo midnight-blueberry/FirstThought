@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated } from 'react-native';
+import { Animated, ScrollView } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
@@ -13,8 +13,13 @@ import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
+import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionProvider';
+import { alignScrollAfterApply } from '@/features/sticky-position/alignScrollAfterApply';
 
-export default function useSettingsVm(captureBeforeUpdate: () => void): SettingsVm {
+export default function useSettingsVm(
+  captureBeforeUpdate: () => void,
+  scrollRef: React.RefObject<ScrollView>,
+): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
@@ -59,17 +64,18 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      await overlay.transact(async () => {
-        try {
-          await cb();
-          setSettingsVersion((v) => v + 1);
-        } catch (e) {
-          updateSettings(snapshot);
-          resetToSnapshot(snapshot);
-          console.warn(e);
-          throw e;
-        }
-      });
+      const sticky = getStickySelectionContext();
+      await sticky?.beginApply();
+      try {
+        await cb();
+        setSettingsVersion((v) => v + 1);
+      } catch (e) {
+        updateSettings(snapshot);
+        resetToSnapshot(snapshot);
+        console.warn(e);
+        throw e;
+      }
+      await alignScrollAfterApply(scrollRef);
       overlay.releaseBackground();
       await showFor2s();
     } catch (e) {

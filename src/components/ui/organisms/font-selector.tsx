@@ -7,6 +7,7 @@ import { fonts, nearestAvailableWeight } from '@constants/fonts';
 import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickyRegister } from '@/features/sticky-position/registry';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
@@ -16,39 +17,37 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   const theme = useTheme();
   const delta = (fontSizeLevel - 3) * 2;
   const { registerPress } = useStickySelection();
-  const refs = React.useRef<Record<string, View | null>>({});
+
+  const Item: React.FC<{ font: typeof fonts[number] }> = ({ font }) => {
+    const ref = useStickyRegister(`fontFamily:${font.name}`);
+    const fontSize = font.defaultSize + delta;
+    const sampleWeight = nearestAvailableWeight(font.family, 400);
+    const sampleKey = fontKey(font.family, sampleWeight);
+    return (
+      <View ref={ref}>
+        <SelectableRow
+          label={font.name}
+          swatchColor={theme.colors.basic}
+          selected={font.name === selectedFontName}
+          onPress={() => {
+            void (async () => {
+              await registerPress(`fontFamily:${font.name}`, ref);
+              onSelectFont(font.name);
+            })();
+          }}
+          labelStyle={{ fontFamily: sampleKey }}
+          fontSize={fontSize}
+        />
+      </View>
+    );
+  };
 
   return (
     <Section title="Шрифт">
       <View>
-        {fonts.map((f) => {
-          const fontSize = f.defaultSize + delta;
-          const sampleWeight = nearestAvailableWeight(f.family, 400);
-          const sampleKey = fontKey(f.family, sampleWeight);
-          return (
-            <View
-              key={f.name}
-              ref={(el) => {
-                refs.current[f.name] = el;
-              }}
-            >
-              <SelectableRow
-                label={f.name}
-                swatchColor={theme.colors.basic}
-                selected={f.name === selectedFontName}
-                onPress={() => {
-                  const refObj = { current: refs.current[f.name] };
-                  void (async () => {
-                    await registerPress(`fontFamily:${f.name}`, refObj);
-                    onSelectFont(f.name);
-                  })();
-                }}
-                labelStyle={{ fontFamily: sampleKey }}
-                fontSize={fontSize}
-              />
-            </View>
-          );
-        })}
+        {fonts.map((f) => (
+          <Item key={f.name} font={f} />
+        ))}
       </View>
     </Section>
   );
