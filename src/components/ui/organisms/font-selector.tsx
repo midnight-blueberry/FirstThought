@@ -6,6 +6,7 @@ import { SelectableRow } from '@components/ui/molecules';
 import { fonts, nearestAvailableWeight } from '@constants/fonts';
 import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
@@ -14,6 +15,8 @@ const FontSelector: React.FC<FontSelectorProps> = ({
 }) => {
   const theme = useTheme();
   const delta = (fontSizeLevel - 3) * 2;
+  const { registerPress } = useStickySelection();
+  const refs = React.useRef<Record<string, View | null>>({});
 
   return (
     <Section title="Шрифт">
@@ -23,17 +26,27 @@ const FontSelector: React.FC<FontSelectorProps> = ({
           const sampleWeight = nearestAvailableWeight(f.family, 400);
           const sampleKey = fontKey(f.family, sampleWeight);
           return (
-            <SelectableRow
+            <View
               key={f.name}
-              label={f.name}
-              swatchColor={theme.colors.basic}
-              selected={f.name === selectedFontName}
-              onPress={() => {
-                onSelectFont(f.name);
+              ref={(el) => {
+                refs.current[f.name] = el;
               }}
-              labelStyle={{ fontFamily: sampleKey }}
-              fontSize={fontSize}
-            />
+            >
+              <SelectableRow
+                label={f.name}
+                swatchColor={theme.colors.basic}
+                selected={f.name === selectedFontName}
+                onPress={() => {
+                  const refObj = { current: refs.current[f.name] };
+                  void (async () => {
+                    await registerPress(`fontFamily:${f.name}`, refObj);
+                    onSelectFont(f.name);
+                  })();
+                }}
+                labelStyle={{ fontFamily: sampleKey }}
+                fontSize={fontSize}
+              />
+            </View>
           );
         })}
       </View>
