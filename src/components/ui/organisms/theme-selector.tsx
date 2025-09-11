@@ -5,24 +5,24 @@ import Section from './settings-section';
 import { themeList } from '@theme/buildTheme';
 import type { ThemeSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { useStickyRegister } from '@/features/sticky-position/useStickyRegister';
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   selectedThemeName,
   onSelectTheme,
 }) => {
   const Item: React.FC<{ item: typeof themeList[number] }> = ({ item }) => {
-    const ref = useStickyRegister(`theme:${item.name}`);
+    const stickyRef = useStickyRegister(`theme:${item.name}`);
     const { registerPress } = useStickySelection();
     return (
-      <View ref={ref}>
+      <View ref={stickyRef} collapsable={false}>
         <SelectableRow
           label={item.name}
           swatchColor={item.colors.background}
           selected={item.name === selectedThemeName}
           onPress={() => {
             void (async () => {
-              await registerPress(`theme:${item.name}`, ref);
+              await registerPress(`theme:${item.name}`);
               onSelectTheme(item.name);
             })();
           }}

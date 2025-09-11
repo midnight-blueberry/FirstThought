@@ -5,7 +5,7 @@ import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { useStickyRegister } from '@/features/sticky-position/useStickyRegister';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
   const theme = useTheme();
@@ -24,25 +24,25 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
           paddingTop: theme.padding.large,
         }}
       >
-        <View ref={leftRef}>
+        <View ref={leftRef} collapsable={false}>
           <TextAlignButton
             variant="left"
             selected={noteTextAlign === 'left'}
             onPress={() => {
               void (async () => {
-                await registerPress('align:left', leftRef);
+                await registerPress('align:left');
                 onChange('left');
               })();
             }}
           />
         </View>
-        <View ref={justifyRef}>
+        <View ref={justifyRef} collapsable={false}>
           <TextAlignButton
             variant="justify"
             selected={noteTextAlign === 'justify'}
             onPress={() => {
               void (async () => {
-                await registerPress('align:justify', justifyRef);
+                await registerPress('align:justify');
                 onChange('justify');
               })();
             }}
