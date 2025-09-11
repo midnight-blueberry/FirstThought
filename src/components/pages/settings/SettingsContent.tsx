@@ -6,12 +6,12 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Animated,
+  View,
 } from 'react-native';
 import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
@@ -22,6 +22,7 @@ interface SettingsContentProps {
   overlayBlocks: boolean;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   scrollRef: React.RefObject<ScrollView>;
+  contentRef: React.RefObject<View>;
 }
 
 function SettingsContent({
@@ -33,16 +34,9 @@ function SettingsContent({
   overlayBlocks,
   onScroll,
   scrollRef,
+  contentRef,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
-  const { scrollYRef } = useStickySelection();
-  const handleScroll = React.useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      scrollYRef.current = e.nativeEvent.contentOffset.y;
-      onScroll(e);
-    },
-    [scrollYRef, onScroll],
-  );
   const scrollIndicatorInsets = React.useMemo(
     () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),
     [theme],
@@ -53,17 +47,18 @@ function SettingsContent({
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
-        contentContainerStyle={styles.container}
-        onScroll={handleScroll}
+        onScroll={onScroll}
         scrollEventThrottle={16}
         scrollIndicatorInsets={scrollIndicatorInsets}
       >
-        {sections.map((section) => {
-          const Component = section.Component as React.ComponentType<
-            ComponentProps<typeof section.Component>
-          >;
-          return <Component key={section.key} {...sectionProps[section.key]} />;
-        })}
+        <View ref={contentRef} style={styles.container}>
+          {sections.map((section) => {
+            const Component = section.Component as React.ComponentType<
+              ComponentProps<typeof section.Component>
+            >;
+            return <Component key={section.key} {...sectionProps[section.key]} />;
+          })}
+        </View>
       </ScrollView>
 
       <Overlay
@@ -84,7 +79,8 @@ const propsAreEqual = (prev: SettingsContentProps, next: SettingsContentProps) =
   prev.overlayAnim === next.overlayAnim &&
   prev.overlayBlocks === next.overlayBlocks &&
   prev.onScroll === next.onScroll &&
-  prev.scrollRef === next.scrollRef;
+  prev.scrollRef === next.scrollRef &&
+  prev.contentRef === next.contentRef;
 
 export default React.memo(SettingsContent, propsAreEqual);
 

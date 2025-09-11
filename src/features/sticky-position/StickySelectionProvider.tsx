@@ -19,6 +19,7 @@ export interface StickySelectionContextValue {
   applyWithSticky: (
     applyFn: () => Promise<void> | void,
     scrollRef: React.RefObject<ScrollView>,
+    contentRef: React.RefObject<View>,
   ) => Promise<void>;
   reset: () => void;
   scrollYRef: React.MutableRefObject<number>;
@@ -108,6 +109,7 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
     async (
       applyFn: () => Promise<void> | void,
       scrollRef: React.RefObject<ScrollView>,
+      contentRef: React.RefObject<View>,
     ) => {
       if (statusRef.current === 'scrolling') return;
       if (
@@ -121,7 +123,10 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
       try {
         await applyFn();
         statusRef.current = 'scrolling';
-        await alignScrollAfterApply(scrollRef, { timeoutMs: 300, maxRafs: 3 });
+        await alignScrollAfterApply(scrollRef, contentRef, {
+          timeoutMs: 300,
+          settleRafs: 3,
+        });
       } catch (e) {
         if (__DEV__) {
           console.warn('[sticky] applyWithSticky error', e);

@@ -2,6 +2,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useRef,
 } from 'react';
 import SettingsContent from './SettingsContent';
 import useSettingsVm from './useSettingsVm';
@@ -17,11 +18,17 @@ import {
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
+  View,
 } from 'react-native';
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate, anchor.scrollRef);
+  const contentRef = useRef<View>(null);
+  const vm = useSettingsVm(
+    anchor.contextValue.captureBeforeUpdate,
+    anchor.scrollRef,
+    contentRef as React.RefObject<View>,
+  );
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 
@@ -58,6 +65,7 @@ export default function SettingsContainer() {
           overlayBlocks={vm.overlayBlocks}
           onScroll={onScroll}
           scrollRef={anchor.scrollRef}
+          contentRef={contentRef as React.RefObject<View>}
         />
       </AnchorStableScrollContext.Provider>
     </StickySelectionProvider>
