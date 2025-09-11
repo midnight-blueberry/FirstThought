@@ -15,6 +15,7 @@ const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({ selectedAccen
           swatchColor={color.hex}
           selected={color.hex === selectedAccentColor}
           onPress={() => onSelectAccent(color.hex)}
+          stickyKey={`accent:${color.hex}`}
         />
       ))}
     </View>

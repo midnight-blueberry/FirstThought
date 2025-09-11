@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
@@ -9,22 +9,15 @@ import { clampLevel } from '@utils/theme';
 import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
-import { useSettings, type Settings } from '@/state/SettingsContext';
-import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useSettings } from '@/state/SettingsContext';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 
-export default function useSettingsVm(captureBeforeUpdate: () => void): SettingsVm {
+export default function useSettingsVm(): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
-  const overlay = useOverlayTransition();
   const { showFor2s } = useSaveIndicator();
-  const {
-    settings,
-    updateSettings,
-    setFontFamily: storeSetFontFamily,
-    setFontWeight: storeSetFontWeight,
-  } = useSettings();
+  const { settings, updateSettings } = useSettings();
 
   const [selectedThemeName, setSelectedThemeName] = useState(
     themes[settings.themeId].name,
@@ -41,97 +34,64 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
-  const resetToSnapshot = (s: Settings) => {
-    setSelectedThemeName(themes[s.themeId].name);
-    setSelectedAccentColor(s.accent);
-    setSelectedFontName(s.fontFamily);
-    setFontWeightState(s.fontWeight);
-    setFontSizeLevel(s.fontSizeLevel);
-    setNoteTextAlign(s.noteTextAlign);
+  const changeTheme = (name: string) => {
+    setSelectedThemeName(name);
   };
 
-  const withSettingsTransaction = async (
-    cb: () => void | Promise<void>,
-    nextBackground?: string,
-  ) => {
-    const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
+  const changeAccent = (color: string) => {
+    setSelectedAccentColor(color);
+  };
+
+  const changeFontFamily = (name: string) => {
+    setSelectedFontName(name);
+    const meta = getFontByName(fonts, name);
+    setFontWeightState(meta.defaultWeight as FontWeight);
+  };
+
+  const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
+    setFontWeightState(weight as FontWeight);
+  };
+
+  const changeFontSize = (level: number) => {
+    const next = clampLevel(level);
+    setFontSizeLevel(next);
+  };
+
+  const changeAlign = (align: typeof noteTextAlign) => {
+    setNoteTextAlign(align);
+  };
+
+  const applySelectedChange = useCallback(async () => {
     try {
-      if (nextBackground) {
-        overlay.freezeBackground(nextBackground);
-      }
-      await overlay.transact(async () => {
-        try {
-          await cb();
-          setSettingsVersion((v) => v + 1);
-        } catch (e) {
-          updateSettings(snapshot);
-          resetToSnapshot(snapshot);
-          console.warn(e);
-          throw e;
-        }
+      const themeId =
+        (Object.keys(themes) as ThemeName[]).find(
+          (k) => themes[k].name === selectedThemeName,
+        ) ?? 'light';
+      updateSettings({
+        themeId,
+        accent: selectedAccentColor,
+        fontFamily: selectedFontName,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign,
       });
-      overlay.releaseBackground();
+      setSettingsVersion((v) => v + 1);
       await showFor2s();
     } catch (e) {
-      overlay.releaseBackground();
       showErrorToast(
         e instanceof Error ? e.message : 'Ошибка сохранения настроек',
       );
     }
-  };
-
-  const changeTheme = (name: string) => {
-    const id =
-      (Object.keys(themes) as ThemeName[]).find(
-        (k) => themes[k].name === name,
-      ) ?? 'light';
-    const nextBg = themes[id].colors.background;
-    void withSettingsTransaction(
-      async () => {
-        setSelectedThemeName(name);
-        updateSettings({ themeId: id });
-      },
-      nextBg,
-    );
-  };
-
-  const changeAccent = (color: string) => {
-    void withSettingsTransaction(async () => {
-      setSelectedAccentColor(color);
-      updateSettings({ accent: color });
-    });
-  };
-
-  const changeFontFamily = (name: string) => {
-    captureBeforeUpdate();
-    void withSettingsTransaction(async () => {
-      setSelectedFontName(name);
-      const next = storeSetFontFamily(name);
-      setFontWeightState(next.fontWeight);
-    });
-  };
-
-  const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
-    void withSettingsTransaction(async () => {
-      const next = storeSetFontWeight(Number(weight));
-      setFontWeightState(next.fontWeight);
-    });
-  };
-
-  const changeFontSize = (level: number) => {
-    void withSettingsTransaction(async () => {
-      const next = clampLevel(level);
-      setFontSizeLevel(next);
-      updateSettings({ fontSizeLevel: next });
-    });
-  };
-
-  const changeAlign = (align: typeof noteTextAlign) => {
-    void withSettingsTransaction(async () => {
-      setNoteTextAlign(align);
-      updateSettings({ noteTextAlign: align });
-    });
-  };
+  }, [
+    selectedThemeName,
+    selectedAccentColor,
+    selectedFontName,
+    fontWeight,
+    fontSizeLevel,
+    noteTextAlign,
+    updateSettings,
+    showFor2s,
+  ]);
 
   const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
   const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
@@ -200,5 +160,6 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
     overlayAnim,
     overlayBlocks: false,
     settingsVersion,
+    applySelectedChange,
   };
 }

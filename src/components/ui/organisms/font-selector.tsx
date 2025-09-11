@@ -33,6 +33,7 @@ const FontSelector: React.FC<FontSelectorProps> = ({
               }}
               labelStyle={{ fontFamily: sampleKey }}
               fontSize={fontSize}
+              stickyKey={`font:${f.name}`}
             />
           );
         })}

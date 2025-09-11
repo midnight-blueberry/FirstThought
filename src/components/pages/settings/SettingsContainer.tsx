@@ -1,28 +1,33 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import type { NativeSyntheticEvent, NativeScrollEvent, ScrollView } from 'react-native';
 import SettingsContent from './SettingsContent';
 import useSettingsVm from './useSettingsVm';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
-import useAnchorStableScroll, {
-  AnchorStableScrollContext,
-} from '@/features/scroll/useAnchorStableScroll';
 import {
   useOverlayTransition,
   waitForOpaque,
 } from '@components/settings/overlay/OverlayTransition';
-import type {
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from 'react-native';
+import {
+  StickySelectionPositionContext,
+  useStickySelectionPosition,
+} from '@/features/sticky-position/useStickySelectionPosition';
 
 export default function SettingsContainer() {
-  const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const scrollRef = useRef<ScrollView>(null!);
+  const vm = useSettingsVm();
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
+  const sticky = useStickySelectionPosition({
+    scrollRef,
+    overlay: {
+      showOpaque: async () => {
+        await overlay.begin();
+        await waitForOpaque(overlay);
+      },
+      hide: overlay.end,
+    },
+    applySelectedChange: vm.applySelectedChange,
+  });
 
   useEffect(() => {
     return () => {
@@ -33,20 +38,13 @@ export default function SettingsContainer() {
   const onScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       vm.handleScroll(e);
-      anchor.handleScroll(e);
+      sticky.onScroll(e);
     },
-    [vm.handleScroll, anchor.handleScroll],
+    [vm.handleScroll, sticky],
   );
 
-  useLayoutEffect(() => {
-    void (async () => {
-      await waitForOpaque(overlay);
-      anchor.adjustAfterLayout();
-    })();
-  }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
-
   return (
-    <AnchorStableScrollContext.Provider value={anchor.contextValue}>
+    <StickySelectionPositionContext.Provider value={sticky}>
       <SettingsContent
         sectionProps={vm.sectionProps}
         theme={vm.theme}
@@ -55,8 +53,8 @@ export default function SettingsContainer() {
         overlayAnim={vm.overlayAnim}
         overlayBlocks={vm.overlayBlocks}
         onScroll={onScroll}
-        scrollRef={anchor.scrollRef}
+        scrollRef={scrollRef}
       />
-    </AnchorStableScrollContext.Provider>
+    </StickySelectionPositionContext.Provider>
   );
 }

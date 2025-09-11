@@ -19,5 +19,6 @@ export interface SettingsVm {
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
   settingsVersion: number;
+  applySelectedChange: () => Promise<void>;
 }
 

@@ -15,6 +15,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedThemeName, onSele
           swatchColor={themeItem.colors.background}
           selected={themeItem.name === selectedThemeName}
           onPress={() => onSelectTheme(themeItem.name)}
+          stickyKey={`theme:${themeItem.name}`}
         />
       ))}
     </View>
