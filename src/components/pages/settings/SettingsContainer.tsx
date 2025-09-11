@@ -9,7 +9,6 @@ import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
-import { StickySelectionProvider } from '@/features/sticky-position/StickySelectionProvider';
 import {
   useOverlayTransition,
   waitForOpaque,
@@ -21,7 +20,10 @@ import type {
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const vm = useSettingsVm(
+    anchor.contextValue.captureBeforeUpdate,
+    anchor.scrollRef,
+  );
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 
@@ -47,19 +49,17 @@ export default function SettingsContainer() {
   }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
 
   return (
-    <StickySelectionProvider>
-      <AnchorStableScrollContext.Provider value={anchor.contextValue}>
-        <SettingsContent
-          sectionProps={vm.sectionProps}
-          theme={vm.theme}
-          overlayVisible={vm.overlayVisible}
-          overlayColor={vm.overlayColor}
-          overlayAnim={vm.overlayAnim}
-          overlayBlocks={vm.overlayBlocks}
-          onScroll={onScroll}
-          scrollRef={anchor.scrollRef}
-        />
-      </AnchorStableScrollContext.Provider>
-    </StickySelectionProvider>
+    <AnchorStableScrollContext.Provider value={anchor.contextValue}>
+      <SettingsContent
+        sectionProps={vm.sectionProps}
+        theme={vm.theme}
+        overlayVisible={vm.overlayVisible}
+        overlayColor={vm.overlayColor}
+        overlayAnim={vm.overlayAnim}
+        overlayBlocks={vm.overlayBlocks}
+        onScroll={onScroll}
+        scrollRef={anchor.scrollRef}
+      />
+    </AnchorStableScrollContext.Provider>
   );
 }

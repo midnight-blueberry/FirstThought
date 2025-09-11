@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated } from 'react-native';
+import type { RefObject } from 'react';
+import { Animated, ScrollView } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
@@ -13,12 +14,18 @@ import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { alignScrollAfterApply } from '@/features/sticky-position/alignScrollAfterApply';
 
-export default function useSettingsVm(captureBeforeUpdate: () => void): SettingsVm {
+export default function useSettingsVm(
+  captureBeforeUpdate: () => void,
+  scrollRef: RefObject<ScrollView>,
+): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
   const { showFor2s } = useSaveIndicator();
+  const { beginApply } = useStickySelection();
   const {
     settings,
     updateSettings,
@@ -55,28 +62,32 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
     nextBackground?: string,
   ) => {
     const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
+    let error: unknown;
     try {
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      await overlay.transact(async () => {
-        try {
-          await cb();
-          setSettingsVersion((v) => v + 1);
-        } catch (e) {
-          updateSettings(snapshot);
-          resetToSnapshot(snapshot);
-          console.warn(e);
-          throw e;
-        }
-      });
-      overlay.releaseBackground();
+      await beginApply();
+      try {
+        await cb();
+        setSettingsVersion((v) => v + 1);
+      } catch (e) {
+        updateSettings(snapshot);
+        resetToSnapshot(snapshot);
+        console.warn(e);
+        error = e;
+      }
+      await alignScrollAfterApply(scrollRef);
+      if (error) {
+        throw error;
+      }
       await showFor2s();
     } catch (e) {
-      overlay.releaseBackground();
       showErrorToast(
         e instanceof Error ? e.message : 'Ошибка сохранения настроек',
       );
+    } finally {
+      overlay.releaseBackground();
     }
   };
 

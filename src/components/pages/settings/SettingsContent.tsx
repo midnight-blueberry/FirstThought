@@ -11,6 +11,7 @@ import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
@@ -38,6 +39,14 @@ function SettingsContent({
     () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),
     [theme],
   );
+  const { scrollYRef } = useStickySelection();
+  const handleScroll = React.useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollYRef.current = e.nativeEvent.contentOffset.y;
+      onScroll(e);
+    },
+    [onScroll, scrollYRef],
+  );
 
   return (
     <>
@@ -45,7 +54,7 @@ function SettingsContent({
         ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.container}
-        onScroll={onScroll}
+        onScroll={handleScroll}
         scrollEventThrottle={16}
         scrollIndicatorInsets={scrollIndicatorInsets}
       >

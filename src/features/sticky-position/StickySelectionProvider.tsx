@@ -1,28 +1,38 @@
 import React, { createContext, useCallback, useMemo, useRef } from 'react';
 import type { View } from 'react-native';
+import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 
 export interface StickySelectionState {
   lastId: string | null;
   yCenterOnScreen: number | null;
   ts: number | null;
+  status: 'idle' | 'measuring' | 'applying' | 'scrolling';
 }
 
 export interface StickySelectionContextValue {
   state: StickySelectionState;
   registerPress: (id: string, ref: React.RefObject<View | null>) => Promise<void>;
+  beginApply: () => Promise<void>;
   reset: () => void;
+  scrollYRef: React.MutableRefObject<number>;
 }
 
 const StickySelectionContext = createContext<StickySelectionContextValue | null>(null);
 
-export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const overlay = useOverlayTransition();
   const stateRef = useRef<StickySelectionState>({
     lastId: null,
     yCenterOnScreen: null,
     ts: null,
+    status: 'idle',
   });
+  const scrollYRef = useRef(0);
 
   const registerPress = useCallback(async (id: string, ref: React.RefObject<View | null>) => {
+    stateRef.current.status = 'measuring';
     await new Promise<void>((resolve) => {
       let attempts = 0;
       const measure = () => {
@@ -32,6 +42,7 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
             stateRef.current.lastId = id;
             stateRef.current.yCenterOnScreen = y + h / 2;
             stateRef.current.ts = Date.now();
+            stateRef.current.status = 'idle';
             if (__DEV__) {
               console.log('StickySelection', stateRef.current);
             }
@@ -46,6 +57,7 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
           if (__DEV__) {
             console.warn('StickySelection: measure failed for', id);
           }
+          stateRef.current.status = 'idle';
           resolve();
         }
       };
@@ -53,15 +65,31 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
     });
   }, []);
 
+  const beginApply = useCallback(async () => {
+    if (stateRef.current.lastId == null || stateRef.current.yCenterOnScreen == null) {
+      return;
+    }
+    if (stateRef.current.status === 'scrolling') return;
+    await overlay.begin();
+    stateRef.current.status = 'applying';
+  }, [overlay]);
+
   const reset = useCallback(() => {
     stateRef.current.lastId = null;
     stateRef.current.yCenterOnScreen = null;
     stateRef.current.ts = null;
+    stateRef.current.status = 'idle';
   }, []);
 
   const value = useMemo(
-    () => ({ state: stateRef.current, registerPress, reset }),
-    [registerPress, reset],
+    () => ({
+      state: stateRef.current,
+      registerPress,
+      beginApply,
+      reset,
+      scrollYRef,
+    }),
+    [registerPress, beginApply, reset],
   );
 
   return (
