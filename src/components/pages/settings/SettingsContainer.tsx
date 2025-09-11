@@ -21,7 +21,7 @@ import type {
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate, anchor.scrollRef);
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 
