@@ -10,6 +10,8 @@ interface SelectorRowProps {
   decreaseDisabled?: boolean;
   opacity?: number;
   children: React.ReactNode;
+  incItemId?: string;
+  decItemId?: string;
 }
 
 const SelectorRow: React.FC<SelectorRowProps> = ({
@@ -19,6 +21,8 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
   decreaseDisabled = false,
   opacity = 1,
   children,
+  incItemId,
+  decItemId,
 }) => {
   const theme = useTheme();
 
@@ -38,6 +42,7 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
         disabled={decreaseDisabled}
         size={theme.iconSize.large}
         style={{ marginRight: theme.margin.medium }}
+        itemId={decItemId}
       />
       <View
         style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}
@@ -50,6 +55,7 @@ const SelectorRow: React.FC<SelectorRowProps> = ({
         disabled={increaseDisabled}
         size={theme.iconSize.large}
         style={{ marginLeft: theme.margin.medium }}
+        itemId={incItemId}
       />
     </View>
   );

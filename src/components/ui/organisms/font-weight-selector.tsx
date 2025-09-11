@@ -41,6 +41,8 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
         increaseDisabled={incDisabled}
         decreaseDisabled={decDisabled}
         opacity={isSingle ? 0.5 : 1}
+        incItemId='fontWeight:+1'
+        decItemId='fontWeight:-1'
       >
         <BarIndicator
           total={columnsCount}
@@ -58,6 +60,9 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
                     onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
                   }
                 }
+          }
+          getItemId={
+            isSingle ? undefined : (i) => `fontWeight:${weights[i]}`
           }
         />
       </SelectorRow>

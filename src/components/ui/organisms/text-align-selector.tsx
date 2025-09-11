@@ -23,11 +23,13 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
           variant="left"
           selected={noteTextAlign === 'left'}
           onPress={() => onChange('left')}
+          itemId="align:left"
         />
         <TextAlignButton
           variant="justify"
           selected={noteTextAlign === 'justify'}
           onPress={() => onChange('justify')}
+          itemId="align:justify"
         />
       </View>
     </Section>

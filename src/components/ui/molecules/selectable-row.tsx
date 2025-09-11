@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface SelectableRowProps {
   label: string;
@@ -19,6 +20,7 @@ interface SelectableRowProps {
   fontSize?: number;
   labelStyle?: StyleProp<TextStyle>;
   onPressIn?: (e: GestureResponderEvent) => void;
+  itemId: string;
 }
 
 const SelectableRow: React.FC<SelectableRowProps> = ({
@@ -29,9 +31,12 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   fontSize,
   labelStyle,
   onPressIn,
+  itemId,
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const { registerPress } = useStickySelection();
+  const ref = React.useRef<View>(null);
   const drop = -theme.padding.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
@@ -45,8 +50,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
         anchorCtx?.setAnchor(e.currentTarget);
         onPressIn?.(e);
       }}
-      onPress={() => {
+      ref={ref}
+      onPress={async () => {
         anchorCtx?.captureBeforeUpdate();
+        await registerPress(itemId, ref);
         onPress();
       }}
       style={[

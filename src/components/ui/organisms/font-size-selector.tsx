@@ -22,6 +22,8 @@ const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
         onDecrease={onDecrease}
         increaseDisabled={incDisabled}
         decreaseDisabled={decDisabled}
+        incItemId='fontSize:+1'
+        decItemId='fontSize:-1'
       >
         <BarIndicator
           total={5}

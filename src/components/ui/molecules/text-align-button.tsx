@@ -5,26 +5,37 @@ import useTheme from '@hooks/useTheme';
 
 import { TextAlignIcon } from '@components/ui/atoms';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface TextAlignButtonProps {
   variant: 'left' | 'justify';
   onPress?: () => void;
   selected?: boolean;
+  itemId: string;
 }
 
-const TextAlignButton: React.FC<TextAlignButtonProps> = ({ variant, onPress, selected }) => {
+const TextAlignButton: React.FC<TextAlignButtonProps> = ({
+  variant,
+  onPress,
+  selected,
+  itemId,
+}) => {
   const theme = useTheme();
   const borderColor = selected ? theme.colors.accent : 'transparent';
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const { registerPress } = useStickySelection();
+  const ref = React.useRef<View>(null);
 
   return (
     <View style={{ alignItems: 'center' }}>
       <TouchableOpacity
+        ref={ref}
         onPressIn={(e: GestureResponderEvent) => {
           anchorCtx?.setAnchor(e.currentTarget);
         }}
-        onPress={() => {
+        onPress={async () => {
           anchorCtx?.captureBeforeUpdate();
+          await registerPress(itemId, ref);
           onPress?.();
         }}
         hitSlop={8}

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Animated, View, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface BarIndicatorProps {
   total: number;
@@ -11,6 +12,7 @@ interface BarIndicatorProps {
   containerColor: string;
   fillColor: string;
   onPress?: (index: number) => void;
+  getItemId?: (index: number) => string;
 }
 
 const BarIndicator: React.FC<BarIndicatorProps> = ({
@@ -21,9 +23,11 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
   containerColor,
   fillColor,
   onPress,
+  getItemId,
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const { registerPress } = useStickySelection();
 
   return (
     <>
@@ -43,15 +47,20 @@ const BarIndicator: React.FC<BarIndicatorProps> = ({
           backgroundColor: fillColor,
         } as const;
         const Wrapper = onPress ? Pressable : View;
+        const ref = React.createRef<View>();
         const pressProps = onPress
           ? {
+              ref,
               onPressIn: (e: any) => anchorCtx?.setAnchor(e.currentTarget),
-              onPress: () => {
+              onPress: async () => {
                 anchorCtx?.captureBeforeUpdate();
+                if (getItemId) {
+                  await registerPress(getItemId(i), ref);
+                }
                 onPress(i);
               },
             }
-          : {};
+          : { ref };
         if (blinkIndex === i) {
           return (
             <Wrapper key={i} style={containerStyle} {...pressProps}>

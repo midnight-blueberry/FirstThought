@@ -5,12 +5,14 @@ import {
   TouchableOpacity,
   ViewStyle,
   GestureResponderEvent,
+  View,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import { getDisabledControlColor, ThemeColorName } from '@theme/index';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface IconButtonProps {
   icon: string;
@@ -20,6 +22,7 @@ interface IconButtonProps {
   color?: ThemeColorName;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  itemId?: string;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -30,21 +33,28 @@ const IconButton: React.FC<IconButtonProps> = ({
   color = 'basic',
   style,
   disabled = false,
+  itemId,
 }) => {
   const theme = useTheme();
   const iconColor = disabled
     ? getDisabledControlColor(theme)
     : theme.colors[color];
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const { registerPress } = useStickySelection();
+  const ref = React.useRef<View>(null);
 
   return (
     <TouchableOpacity
+      ref={ref}
       onPressIn={(e) => {
         anchorCtx?.setAnchor(e.currentTarget);
         onPressIn?.(e);
       }}
-      onPress={() => {
+      onPress={async () => {
         anchorCtx?.captureBeforeUpdate();
+        if (itemId) {
+          await registerPress(itemId, ref);
+        }
         onPress?.();
       }}
       disabled={disabled}
