@@ -8,6 +8,7 @@ import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickyRegister } from '@/features/sticky-position/registry';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {
   const theme = useTheme();
@@ -21,25 +22,25 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
   const incDisabled = isSingle || currentIndex >= weights.length - 1;
   const decDisabled = isSingle || currentIndex <= 0;
   const { registerPress } = useStickySelection();
-  const rowRef = React.useRef<View>(null);
+  const rowRef = useStickyRegister('fontWeight');
 
   const handleIncrease = () => {
     const w = weights[currentIndex + 1];
     if (w != null) {
-      void (async () => {
-        await registerPress('fontWeight:+1', rowRef);
-        onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
-      })();
+        void (async () => {
+          await registerPress('fontWeight', rowRef);
+          onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+        })();
     }
   };
 
   const handleDecrease = () => {
     const w = weights[currentIndex - 1];
     if (w != null) {
-      void (async () => {
-        await registerPress('fontWeight:-1', rowRef);
-        onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
-      })();
+        void (async () => {
+          await registerPress('fontWeight', rowRef);
+          onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+        })();
     }
   };
 
@@ -67,9 +68,9 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
                     const w = weights[i];
                     if (w != null) {
                       void (async () => {
-                        await registerPress(`fontWeight:${w}`, rowRef);
-                        onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
-                      })();
+                          await registerPress('fontWeight', rowRef);
+                          onSelect(String(w) as FontWeightSelectorProps['fontWeight']);
+                        })();
                     }
                   }
             }

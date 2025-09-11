@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated } from 'react-native';
+import { Animated, ScrollView } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
@@ -13,11 +13,18 @@ import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
+import type { RefObject } from 'react';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
+import alignScrollAfterApply from '@/features/sticky-position/alignScrollAfterApply';
 
-export default function useSettingsVm(captureBeforeUpdate: () => void): SettingsVm {
+export default function useSettingsVm(
+  captureBeforeUpdate: () => void,
+  scrollRef: RefObject<ScrollView>,
+): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
+  const sticky = useStickySelection();
   const { showFor2s } = useSaveIndicator();
   const {
     settings,
@@ -59,19 +66,44 @@ export default function useSettingsVm(captureBeforeUpdate: () => void): Settings
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      await overlay.transact(async () => {
+
+      const needSticky =
+        sticky.state.lastId != null && sticky.state.yCenterOnScreen != null;
+
+      if (needSticky) {
+        await sticky.beginApply();
+        let success = false;
         try {
           await cb();
           setSettingsVersion((v) => v + 1);
+          success = true;
         } catch (e) {
           updateSettings(snapshot);
           resetToSnapshot(snapshot);
           console.warn(e);
           throw e;
+        } finally {
+          await alignScrollAfterApply(scrollRef);
+          overlay.releaseBackground();
+          if (success) {
+            await showFor2s();
+          }
         }
-      });
-      overlay.releaseBackground();
-      await showFor2s();
+      } else {
+        await overlay.transact(async () => {
+          try {
+            await cb();
+            setSettingsVersion((v) => v + 1);
+          } catch (e) {
+            updateSettings(snapshot);
+            resetToSnapshot(snapshot);
+            console.warn(e);
+            throw e;
+          }
+        });
+        overlay.releaseBackground();
+        await showFor2s();
+      }
     } catch (e) {
       overlay.releaseBackground();
       showErrorToast(

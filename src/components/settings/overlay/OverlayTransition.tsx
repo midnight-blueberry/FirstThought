@@ -14,7 +14,7 @@ export interface OverlayTransitionCtx {
   isOpaque: () => boolean;
 }
 
-const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
+export const OverlayTransitionContext = createContext<OverlayTransitionCtx | null>(null);
 
 export const waitFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
