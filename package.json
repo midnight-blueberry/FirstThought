@@ -14,7 +14,9 @@
     "gen:fonts": "node scripts/generate-font-files.cjs",
     "gen:fonts:check": "node scripts/generate-font-files.cjs --check",
     "long-files-detector": "node scripts/tools/list-long-ts.cjs",
-    "basic-checks": "npx expo install --check && npm run lint && npm run typecheck && npx -y expo-doctor"
+    "check-dependencies": "npx expo install --check",
+    "expo-doctor": "npx -y expo-doctor",
+    "basic-checks": "npm run check-dependencies && npm run lint && npm run typecheck && npm run expo-doctor"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.1.2",
