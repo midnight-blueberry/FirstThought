@@ -14,7 +14,7 @@ import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
 import { useSettings } from '@/state/SettingsContext';
 import { PortalProvider } from 'react-native-portalize';
-import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayTransition';
+import { OverlayTransitionProvider } from '@/components/settings/overlay';
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import StatusBarBackground from '@components/ui/StatusBarBackground';

@@ -9,11 +9,8 @@ import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
-import { StickySelectionProvider } from '@/features/sticky-position/StickySelectionProvider';
-import {
-  useOverlayTransition,
-  waitForOpaque,
-} from '@components/settings/overlay/OverlayTransition';
+import { StickySelectionProvider } from '@/features/sticky-position';
+import { useOverlayTransition, waitForOpaque } from '@/components/settings/overlay';
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,

@@ -7,7 +7,7 @@ import type { FontWeightSelectorProps } from '@types';
 import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position';
 import { register, unregister } from '@/features/sticky-position/registry';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {

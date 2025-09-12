@@ -4,7 +4,7 @@ import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position';
 import { register, unregister } from '@/features/sticky-position/registry';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
