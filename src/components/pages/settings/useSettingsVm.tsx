@@ -13,7 +13,7 @@ import { useLocalSettingsState } from './useLocalSettingsState';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
-import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionContext';
+import { getStickySelectionContext } from '@/features/sticky-position';
 import { buildSettingsPatch } from './buildSettingsPatch';
 
 export default function useSettingsVm(

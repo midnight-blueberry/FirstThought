@@ -16,3 +16,5 @@ export const StickySelectionProvider: React.FC<{
   );
 };
 
+export default StickySelectionProvider;
+
