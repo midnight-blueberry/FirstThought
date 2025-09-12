@@ -7,7 +7,7 @@ import { HeaderTitle } from '@components/ui/atoms';
 import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 
-import CustomDrawerContent from '@/navigation/CustomDrawerContent';
+import DrawerContent from './drawer/DrawerContent';
 import { defaultDrawerScreenOptions } from './options/drawerOptions';
 import { drawerRoutes, type DrawerParamList } from './drawer/routes';
 
@@ -111,7 +111,7 @@ export default function DrawerNavigator({
     <Drawer.Navigator
       initialRouteName="Home"
       screenOptions={screenOptions}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <DrawerContent {...props} />}
     >
       {drawerRoutes({
         theme,
