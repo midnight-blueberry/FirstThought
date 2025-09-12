@@ -5,8 +5,7 @@ import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
-import { clampLevel } from '@utils/theme';
-import { themes, type ThemeName } from '@theme/buildTheme';
+import { themes } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
@@ -15,6 +14,7 @@ import { useOverlayTransition } from '@components/settings/overlay/OverlayTransi
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionContext';
+import { buildSettingsPatch } from './buildSettingsPatch';
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,
@@ -23,12 +23,7 @@ export default function useSettingsVm(
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
   const { showFor2s } = useSaveIndicator();
-  const {
-    settings,
-    updateSettings,
-    setFontFamily: storeSetFontFamily,
-    setFontWeight: storeSetFontWeight,
-  } = useSettings();
+  const { settings, updateSettings } = useSettings();
 
   const {
     selectedThemeName,
@@ -97,55 +92,117 @@ export default function useSettingsVm(
   };
 
   const changeTheme = (name: string) => {
-    const id =
-      (Object.keys(themes) as ThemeName[]).find(
-        (k) => themes[k].name === name,
-      ) ?? 'light';
-    const nextBg = themes[id].colors.background;
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName: name,
+        selectedAccentColor,
+        selectedFontName,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign,
+      },
+      settings,
+    );
+    const nextBg = themes[(patch.themeId ?? settings.themeId)].colors.background;
     void withSettingsTransaction(
       async () => {
         setSelectedThemeName(name);
-        updateSettings({ themeId: id });
+        updateSettings(patch);
       },
       nextBg,
     );
   };
 
   const changeAccent = (color: string) => {
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName,
+        selectedAccentColor: color,
+        selectedFontName,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign,
+      },
+      settings,
+    );
     void withSettingsTransaction(async () => {
       setSelectedAccentColor(color);
-      updateSettings({ accent: color });
+      updateSettings(patch);
     });
   };
 
   const changeFontFamily = (name: string) => {
     captureBeforeUpdate();
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName,
+        selectedAccentColor,
+        selectedFontName: name,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign,
+      },
+      settings,
+    );
     void withSettingsTransaction(async () => {
       setSelectedFontName(name);
-      const next = storeSetFontFamily(name);
+      const next = updateSettings(patch);
       setFontWeightState(next.fontWeight);
     });
   };
 
   const changeFontWeight = (weight: DefaultTheme['fontWeight']) => {
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName,
+        selectedAccentColor,
+        selectedFontName,
+        fontWeight: weight as FontWeight,
+        fontSizeLevel,
+        noteTextAlign,
+      },
+      settings,
+    );
     void withSettingsTransaction(async () => {
-      const next = storeSetFontWeight(Number(weight));
+      const next = updateSettings(patch);
       setFontWeightState(next.fontWeight);
     });
   };
 
   const changeFontSize = (level: number) => {
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName,
+        selectedAccentColor,
+        selectedFontName,
+        fontWeight,
+        fontSizeLevel: level,
+        noteTextAlign,
+      },
+      settings,
+    );
+    const nextLevel = patch.fontSizeLevel ?? settings.fontSizeLevel;
     void withSettingsTransaction(async () => {
-      const next = clampLevel(level);
-      setFontSizeLevel(next);
-      updateSettings({ fontSizeLevel: next });
+      setFontSizeLevel(nextLevel);
+      updateSettings(patch);
     });
   };
 
   const changeAlign = (align: typeof noteTextAlign) => {
+    const patch = buildSettingsPatch(
+      {
+        selectedThemeName,
+        selectedAccentColor,
+        selectedFontName,
+        fontWeight,
+        fontSizeLevel,
+        noteTextAlign: align,
+      },
+      settings,
+    );
     void withSettingsTransaction(async () => {
       setNoteTextAlign(align);
-      updateSettings({ noteTextAlign: align });
+      updateSettings(patch);
     });
   };
 
