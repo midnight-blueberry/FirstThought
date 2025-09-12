@@ -10,6 +10,7 @@ import useHeaderConfig from '@hooks/useHeaderConfig';
 import DrawerContent from './drawer/DrawerContent';
 import { defaultDrawerScreenOptions } from './options/drawerOptions';
 import { drawerRoutes, type DrawerParamList } from './drawer/routes';
+import { drawerLinking } from './drawer/linking';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
@@ -112,6 +113,8 @@ export default function DrawerNavigator({
       initialRouteName="Home"
       screenOptions={screenOptions}
       drawerContent={(props) => <DrawerContent {...props} />}
+      // @ts-expect-error Property 'linking' is missing in type but used by navigation container
+      linking={drawerLinking}
     >
       {drawerRoutes({
         theme,
