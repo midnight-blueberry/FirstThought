@@ -5,11 +5,15 @@ import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
 import useTheme from '@hooks/useTheme';
 import { getFontByName } from '@utils/fontHelpers';
-import { themes } from '@theme/buildTheme';
+import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
-import { useLocalSettingsState, buildSettingsPatch } from '@/components/pages/settings';
+import {
+  useLocalSettingsState,
+  buildSettingsPatch,
+  useSettingsHandlers,
+} from '@/components/pages/settings';
 import { useOverlayTransition } from '@/components/settings/overlay';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
@@ -52,6 +56,16 @@ export default function useSettingsVm(
     setNoteTextAlign(s.noteTextAlign);
   };
 
+  const handlers = useSettingsHandlers({
+    setSelectedThemeName,
+    setSelectedAccentColor,
+    setSelectedFontName,
+    setFontWeightState,
+    setFontSizeLevel,
+    setNoteTextAlign,
+    setSettingsVersion,
+  });
+
   const withSettingsTransaction = async (
     cb: () => void | Promise<void>,
     nextBackground?: string,
@@ -67,7 +81,6 @@ export default function useSettingsVm(
         async () => {
           try {
             await cb();
-            setSettingsVersion((v) => v + 1);
           } catch (e) {
             error = e;
             updateSettings(snapshot);
@@ -105,7 +118,7 @@ export default function useSettingsVm(
     const nextBg = themes[(patch.themeId ?? settings.themeId)].colors.background;
     void withSettingsTransaction(
       async () => {
-        setSelectedThemeName(name);
+        handlers.onSelectTheme(name as ThemeName);
         updateSettings(patch);
       },
       nextBg,
@@ -125,7 +138,7 @@ export default function useSettingsVm(
       settings,
     );
     void withSettingsTransaction(async () => {
-      setSelectedAccentColor(color);
+      handlers.onSelectAccent(color);
       updateSettings(patch);
     });
   };
@@ -144,9 +157,9 @@ export default function useSettingsVm(
       settings,
     );
     void withSettingsTransaction(async () => {
-      setSelectedFontName(name);
+      handlers.onSelectFontFamily(name);
       const next = updateSettings(patch);
-      setFontWeightState(next.fontWeight);
+      handlers.onChangeFontWeight(next.fontWeight);
     });
   };
 
@@ -164,7 +177,7 @@ export default function useSettingsVm(
     );
     void withSettingsTransaction(async () => {
       const next = updateSettings(patch);
-      setFontWeightState(next.fontWeight);
+      handlers.onChangeFontWeight(next.fontWeight);
     });
   };
 
@@ -182,7 +195,7 @@ export default function useSettingsVm(
     );
     const nextLevel = patch.fontSizeLevel ?? settings.fontSizeLevel;
     void withSettingsTransaction(async () => {
-      setFontSizeLevel(nextLevel);
+      handlers.onChangeFontSizeLevel(nextLevel);
       updateSettings(patch);
     });
   };
@@ -200,7 +213,7 @@ export default function useSettingsVm(
       settings,
     );
     void withSettingsTransaction(async () => {
-      setNoteTextAlign(align);
+      handlers.onChangeNoteTextAlign(align);
       updateSettings(patch);
     });
   };
