@@ -5,10 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme } from 'styled-components/native';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 
-import DrawerContent from './drawer/DrawerContent';
-import { drawerScreenOptions } from './drawer/options';
-import { drawerRoutes, type DrawerParamList } from './drawer/routes';
-import { drawerLinking } from './drawer/linking';
+import {
+  DrawerContent,
+  type DrawerParamList,
+  drawerLinking,
+  drawerRoutes,
+  drawerScreenOptions,
+} from './drawer';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
