@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTheme from '@hooks/useTheme';
 
-const StatusBarBackground = () => {
+export default function StatusBarUnderlay() {
   const { top } = useSafeAreaInsets();
   const theme = useTheme();
 
@@ -25,6 +25,4 @@ const StatusBarBackground = () => {
       }}
     />
   );
-};
-
-export default StatusBarBackground;
+}

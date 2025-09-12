@@ -3,7 +3,6 @@ import { Dimensions, Platform } from 'react-native';
 import { DrawerActions } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import type { DrawerScreenProps } from '@react-navigation/drawer';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme } from 'styled-components/native';
 import { IconButton, HeaderTitle } from '@components/ui/atoms';
 import type { HeaderTitleProps } from '@react-navigation/elements';
@@ -34,8 +33,7 @@ export default function DrawerNavigator({
   settingsPageHeaderTitle,
   settingsPageHeaderElevation,
 }: Props) {
-  const { top } = useSafeAreaInsets();
-  const baseHeaderStyle = useHeaderConfig(theme, top);
+  const baseHeaderStyle = useHeaderConfig(theme);
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
