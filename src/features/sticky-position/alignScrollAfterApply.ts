@@ -1,24 +1,16 @@
-import { RefObject } from 'react';
-import { ScrollView } from 'react-native';
-import { getStickySelectionContext } from './StickySelectionProvider';
-import { getItemRef } from './registry';
+import type { AlignScrollAfterApplyParams } from './stickyTypes';
 
 const raf = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export async function alignScrollAfterApply(
-  scrollRef: RefObject<ScrollView>,
-  opts: { timeoutMs?: number; maxRafs?: number } = {},
-) {
-  const ctx = getStickySelectionContext();
-  if (!ctx) return;
-  const { state, scrollYRef } = ctx;
-  const { lastId, yCenterOnScreen } = state;
-  if (!lastId || yCenterOnScreen == null) {
-    return;
-  }
-  const targetRef = getItemRef(lastId);
+export async function alignScrollAfterApply({
+  scrollRef,
+  targetRef,
+  yCenterOnScreen,
+  scrollYRef,
+  timeoutMs = 300,
+  maxRafs = 3,
+}: AlignScrollAfterApplyParams) {
   if (!targetRef || !scrollRef.current) {
     return;
   }
@@ -53,8 +45,6 @@ export async function alignScrollAfterApply(
     }
     await raf();
   };
-
-  const { timeoutMs = 300, maxRafs = 3 } = opts;
 
   await Promise.race([doAlign(maxRafs), delay(timeoutMs)]);
 }
