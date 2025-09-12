@@ -5,7 +5,8 @@ module.exports = {
   rootDir: __dirname,
   testMatch: [
     '<rootDir>/tests/**/*.test.ts?(x)',
-    '<rootDir>/src/**/*.test.ts?(x)'
+    '<rootDir>/src/**/*.test.ts?(x)',
+    '<rootDir>/tests/bdd/**/*.steps.ts'
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
