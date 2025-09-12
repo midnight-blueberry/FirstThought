@@ -5,7 +5,7 @@ import type {
   ScrollView,
   View,
 } from 'react-native';
-import type { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import type { useOverlayTransition } from '@/components/settings/overlay';
 import type { StickySelection } from './stickyTypes';
 
 export type StickyStatus = 'idle' | 'measuring' | 'applying' | 'scrolling';

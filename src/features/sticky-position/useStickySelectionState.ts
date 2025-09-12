@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import type { View, NativeSyntheticEvent, NativeScrollEvent, ScrollView } from 'react-native';
-import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useOverlayTransition } from '@/components/settings/overlay';
 import { alignScrollAfterApply } from './alignScrollAfterApply';
 import type { StickySelection } from './stickyTypes';
 import {

@@ -7,7 +7,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
+import { useOverlayTransition } from '@/components/settings/overlay';
 
 interface AnchorContextValue {
   setAnchor: (ref: any) => void;

@@ -10,10 +10,7 @@ import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
 import { StickySelectionProvider } from '@/features/sticky-position';
-import {
-  useOverlayTransition,
-  waitForOpaque,
-} from '@components/settings/overlay/OverlayTransition';
+import { useOverlayTransition, waitForOpaque } from '@/components/settings/overlay';
 import type {
   NativeSyntheticEvent,
   NativeScrollEvent,

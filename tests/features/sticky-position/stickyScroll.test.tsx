@@ -7,7 +7,7 @@ import {
 } from '@/features/sticky-position';
 import { register } from '@/features/sticky-position/registry';
 
-jest.mock('@components/settings/overlay/OverlayTransition', () => ({
+jest.mock('@/components/settings/overlay', () => ({
   useOverlayTransition: () => ({
     begin: () => Promise.resolve(),
     end: () => Promise.resolve(),
