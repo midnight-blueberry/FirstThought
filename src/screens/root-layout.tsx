@@ -3,24 +3,23 @@ import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useState } from 'react';
+import { StatusBar, StyleSheet } from 'react-native';
 import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
-import { useSettings } from '@/state/SettingsContext';
 import { PortalProvider } from 'react-native-portalize';
 import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayTransition';
 import { FONT_FILES } from '@/constants/fonts/files';
 import DrawerNavigator from '../navigation/DrawerNavigator';
-import StatusBarBackground from '@components/ui/StatusBarBackground';
+import StatusBarUnderlay from '@components/header/StatusBarUnderlay';
 import { SaveIndicatorProvider } from '@components/header/SaveIndicator';
 
 void SplashScreen.preventAutoHideAsync();
+void SystemUI.setBackgroundColorAsync('transparent');
 
 export default function RootLayout() {
   const entries = Object.entries(FONT_FILES).flatMap(([family, map]) =>
@@ -52,10 +51,6 @@ export default function RootLayout() {
 
 function RootContent() {
   const theme = useTheme();
-  const { settings } = useSettings();
-  useEffect(() => {
-    void SystemUI.setBackgroundColorAsync(theme.colors.background);
-  }, [theme.colors.background]);
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
   const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');
@@ -67,8 +62,11 @@ function RootContent() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style={theme.isDark ? 'light' : 'dark'} />
-      <StatusBarBackground />
+      <StatusBar
+        translucent
+        barStyle={theme.isDark ? 'light-content' : 'dark-content'}
+      />
+      <StatusBarUnderlay />
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         onLayout={onLayoutRootView}
