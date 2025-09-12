@@ -3,17 +3,13 @@ import type { View } from 'react-native';
 import { ScrollView } from 'react-native';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { alignScrollAfterApply } from './alignScrollAfterApply';
-
-export interface StickySelectionState {
-  lastId: string | null;
-  yCenterOnScreen: number | null;
-  ts: number | null;
-}
+import { getItemRef } from './registry';
+import type { StickySelection } from './stickyTypes';
 
 export type StickyStatus = 'idle' | 'measuring' | 'applying' | 'scrolling';
 
 export interface StickySelectionContextValue {
-  state: StickySelectionState;
+  state: StickySelection;
   status: React.MutableRefObject<StickyStatus>;
   registerPress: (id: string, ref: React.RefObject<View | null>) => Promise<void>;
   applyWithSticky: (
@@ -32,7 +28,7 @@ let latestContext: StickySelectionContextValue | null = null;
 export const getStickySelectionContext = () => latestContext;
 
 export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const stateRef = useRef<StickySelectionState>({
+  const stateRef = useRef<StickySelection>({
     lastId: null,
     yCenterOnScreen: null,
     ts: null,
@@ -121,7 +117,15 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
       try {
         await applyFn();
         statusRef.current = 'scrolling';
-        await alignScrollAfterApply(scrollRef, { timeoutMs: 300, maxRafs: 3 });
+        const targetRef = getItemRef(stateRef.current.lastId!);
+        await alignScrollAfterApply({
+          scrollRef,
+          targetRef,
+          yCenterOnScreen: stateRef.current.yCenterOnScreen!,
+          scrollYRef,
+          timeoutMs: 300,
+          maxRafs: 3,
+        });
       } catch (e) {
         if (__DEV__) {
           console.warn('[sticky] applyWithSticky error', e);
