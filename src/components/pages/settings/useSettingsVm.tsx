@@ -18,6 +18,7 @@ import { useOverlayTransition } from '@/components/settings/overlay';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 import { getStickySelectionContext } from '@/features/sticky-position';
+import { useSettingsDirty } from './useSettingsDirty';
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,
@@ -46,6 +47,18 @@ export default function useSettingsVm(
   } = useLocalSettingsState(settings);
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
+
+  const { isDirty, changedKeys } = useSettingsDirty(
+    {
+      selectedThemeName,
+      selectedAccentColor,
+      selectedFontName,
+      fontWeight,
+      fontSizeLevel,
+      noteTextAlign,
+    },
+    settings,
+  );
 
   const resetToSnapshot = (s: Settings) => {
     setSelectedThemeName(themes[s.themeId].name);
@@ -285,5 +298,7 @@ export default function useSettingsVm(
     overlayAnim,
     overlayBlocks: false,
     settingsVersion,
+    isDirty,
+    changedKeys,
   };
 }
