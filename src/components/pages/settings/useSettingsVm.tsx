@@ -13,8 +13,11 @@ import { useSettings, type Settings } from '@/state/SettingsContext';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
+import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionProvider';
 
-export default function useSettingsVm(): SettingsVm {
+export default function useSettingsVm(
+  captureBeforeUpdate: () => void,
+): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
@@ -37,6 +40,8 @@ export default function useSettingsVm(): SettingsVm {
   const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
 
+  const [settingsVersion, setSettingsVersion] = useState(0);
+
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
   const resetToSnapshot = (s: Settings) => {
@@ -57,17 +62,26 @@ export default function useSettingsVm(): SettingsVm {
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      await overlay.transact(async () => {
-        try {
-          await cb();
-        } catch (e) {
-          updateSettings(snapshot);
-          resetToSnapshot(snapshot);
-          console.warn(e);
-          throw e;
-        }
-      });
+      const sticky = getStickySelectionContext();
+      let error: unknown;
+      await sticky?.applyWithSticky(
+        async () => {
+          try {
+            await cb();
+            setSettingsVersion((v) => v + 1);
+          } catch (e) {
+            error = e;
+            updateSettings(snapshot);
+            resetToSnapshot(snapshot);
+            console.warn(e);
+            throw e;
+          }
+        },
+      );
       overlay.releaseBackground();
+      if (error) {
+        throw error;
+      }
       await showFor2s();
     } catch (e) {
       overlay.releaseBackground();
@@ -100,6 +114,7 @@ export default function useSettingsVm(): SettingsVm {
   };
 
   const changeFontFamily = (name: string) => {
+    captureBeforeUpdate();
     void withSettingsTransaction(async () => {
       setSelectedFontName(name);
       const next = storeSetFontFamily(name);
@@ -195,5 +210,6 @@ export default function useSettingsVm(): SettingsVm {
     overlayColor: 'transparent',
     overlayAnim,
     overlayBlocks: false,
+    settingsVersion,
   };
 }

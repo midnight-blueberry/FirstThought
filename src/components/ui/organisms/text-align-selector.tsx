@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { register, unregister } from '@/features/sticky-position/registry';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
   const theme = useTheme();
+  const { registerPress } = useStickySelection();
+  const leftRef = useRef<View>(null);
+  const justifyRef = useRef<View>(null);
+  useEffect(() => {
+    register('align:left', leftRef);
+    register('align:justify', justifyRef);
+    return () => {
+      unregister('align:left');
+      unregister('align:justify');
+    };
+  }, []);
 
   return (
     <Section title="Выравнивание текста в заметках">
@@ -19,16 +32,30 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
           paddingTop: theme.padding.large,
         }}
       >
-        <TextAlignButton
-          variant="left"
-          selected={noteTextAlign === 'left'}
-          onPress={() => onChange('left')}
-        />
-        <TextAlignButton
-          variant="justify"
-          selected={noteTextAlign === 'justify'}
-          onPress={() => onChange('justify')}
-        />
+        <View ref={leftRef}>
+          <TextAlignButton
+            variant="left"
+            selected={noteTextAlign === 'left'}
+            onPress={() => {
+              void (async () => {
+                await registerPress('align:left', leftRef);
+                onChange('left');
+              })();
+            }}
+          />
+        </View>
+        <View ref={justifyRef}>
+          <TextAlignButton
+            variant="justify"
+            selected={noteTextAlign === 'justify'}
+            onPress={() => {
+              void (async () => {
+                await registerPress('align:justify', justifyRef);
+                onChange('justify');
+              })();
+            }}
+          />
+        </View>
       </View>
     </Section>
   );

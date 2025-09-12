@@ -1,31 +1,48 @@
 import React from 'react';
 import type { ComponentProps } from 'react';
-import { ScrollView, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  Animated,
+} from 'react-native';
 import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
+import useStickySelection from '@/features/sticky-position/useStickySelection';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
   theme: DefaultTheme;
-  handleScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   overlayVisible: boolean;
   overlayColor: string;
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  scrollRef: React.RefObject<ScrollView>;
 }
 
-export default function SettingsContent({
+function SettingsContent({
   sectionProps,
   theme,
-  handleScroll,
   overlayVisible,
   overlayColor,
   overlayAnim,
   overlayBlocks,
+  onScroll,
+  scrollRef,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
+  const { onScroll: stickyOnScroll } = useStickySelection();
+  const handleScroll = React.useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      stickyOnScroll(e);
+      onScroll(e);
+    },
+    [stickyOnScroll, onScroll],
+  );
   const scrollIndicatorInsets = React.useMemo(
     () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),
     [theme],
@@ -34,6 +51,7 @@ export default function SettingsContent({
   return (
     <>
       <ScrollView
+        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.container}
         onScroll={handleScroll}
@@ -57,6 +75,18 @@ export default function SettingsContent({
     </>
   );
 }
+
+const propsAreEqual = (prev: SettingsContentProps, next: SettingsContentProps) =>
+  prev.sectionProps === next.sectionProps &&
+  prev.theme === next.theme &&
+  prev.overlayVisible === next.overlayVisible &&
+  prev.overlayColor === next.overlayColor &&
+  prev.overlayAnim === next.overlayAnim &&
+  prev.overlayBlocks === next.overlayBlocks &&
+  prev.onScroll === next.onScroll &&
+  prev.scrollRef === next.scrollRef;
+
+export default React.memo(SettingsContent, propsAreEqual);
 
 const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({

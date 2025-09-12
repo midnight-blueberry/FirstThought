@@ -115,7 +115,6 @@ export default function DrawerNavigator({
 
   return (
     <Drawer.Navigator
-      key={theme.typography.header.headerTitleFamily + theme.name}
       initialRouteName="Home"
       screenOptions={screenOptions}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
