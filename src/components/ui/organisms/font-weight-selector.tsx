@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
@@ -8,7 +8,7 @@ import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
 import { useSettings } from '@/state/SettingsContext';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 
 const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {
   const theme = useTheme();
@@ -22,7 +22,11 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
   const incDisabled = isSingle || currentIndex >= weights.length - 1;
   const decDisabled = isSingle || currentIndex <= 0;
   const { registerPress } = useStickySelection();
-  const rowRef = useStickyRegister('fontWeight');
+  const rowRef = useRef<View>(null);
+  useEffect(() => {
+    register('fontWeight', rowRef);
+    return () => unregister('fontWeight');
+  }, []);
 
   const handleIncrease = () => {
     const w = weights[currentIndex + 1];

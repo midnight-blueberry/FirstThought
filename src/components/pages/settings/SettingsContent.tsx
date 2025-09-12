@@ -35,13 +35,13 @@ function SettingsContent({
   scrollRef,
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
-  const { scrollYRef } = useStickySelection();
+  const { onScroll: stickyOnScroll } = useStickySelection();
   const handleScroll = React.useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      scrollYRef.current = e.nativeEvent.contentOffset.y;
+      stickyOnScroll(e);
       onScroll(e);
     },
-    [scrollYRef, onScroll],
+    [stickyOnScroll, onScroll],
   );
   const scrollIndicatorInsets = React.useMemo(
     () => ({ right: theme.padding.xlarge, bottom: theme.padding.xlarge }),

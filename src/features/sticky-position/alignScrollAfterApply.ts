@@ -1,50 +1,23 @@
+import { InteractionManager } from 'react-native';
+import { getRef } from './registry';
 import type { AlignScrollAfterApplyParams } from './stickyTypes';
 
 const raf = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export async function alignScrollAfterApply({
-  scrollRef,
-  targetRef,
-  yCenterOnScreen,
-  scrollYRef,
-  timeoutMs = 300,
-  maxRafs = 3,
-}: AlignScrollAfterApplyParams) {
-  if (!targetRef || !scrollRef.current) {
-    return;
+export function computeDelta(prevCenterY: number, pageY: number, height: number): number {
+  return pageY + height / 2 - prevCenterY;
+}
+
+export async function alignScrollAfterApply({ id, prevCenterY }: AlignScrollAfterApplyParams): Promise<number> {
+  await InteractionManager.runAfterInteractions();
+  await raf();
+  await raf();
+  const ref = getRef(id)?.current;
+  if (!ref || typeof ref.measureInWindow !== 'function') {
+    return 0;
   }
-
-  const doAlign = async (maxRafs: number) => {
-    await raf();
-    await raf();
-    let attempts = 0;
-    let y = 0;
-    let h = 0;
-    while (attempts < maxRafs) {
-      await new Promise<void>((resolve) => {
-        targetRef.measureInWindow((_x, y0, _w, h0) => {
-          y = y0;
-          h = h0;
-          resolve();
-        });
-      });
-      if (y !== 0 || h !== 0) break;
-      attempts += 1;
-      await raf();
-    }
-    if (y === 0 && h === 0) {
-      return;
-    }
-    const newCenter = y + h / 2;
-    const delta = newCenter - yCenterOnScreen;
-    if (Math.abs(delta) >= 1) {
-      const currentY = scrollYRef.current;
-      scrollRef.current.scrollTo({ y: currentY + delta, animated: false });
-      scrollYRef.current = currentY + delta;
-    }
-    await raf();
-  };
-
-  await Promise.race([doAlign(maxRafs), delay(timeoutMs)]);
+  const { y, h } = await new Promise<{ y: number; h: number }>((resolve) => {
+    ref.measureInWindow((_x, y0, _w, h0) => resolve({ y: y0, h: h0 }));
+  });
+  return computeDelta(prevCenterY, y, h);
 }

@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
 import { TextAlignButton } from '@components/ui/molecules';
 import type { TextAlignSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 
 const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, onChange }) => {
   const theme = useTheme();
   const { registerPress } = useStickySelection();
-  const leftRef = useStickyRegister('align:left');
-  const justifyRef = useStickyRegister('align:justify');
+  const leftRef = useRef<View>(null);
+  const justifyRef = useRef<View>(null);
+  useEffect(() => {
+    register('align:left', leftRef);
+    register('align:justify', justifyRef);
+    return () => {
+      unregister('align:left');
+      unregister('align:justify');
+    };
+  }, []);
 
   return (
     <Section title="Выравнивание текста в заметках">

@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { SelectableRow } from '@components/ui/molecules';
 import Section from './settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 
 const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({
   selectedAccentColor,
   onSelectAccent,
 }) => {
   const Item: React.FC<{ color: typeof accentColors[number] }> = ({ color }) => {
-    const ref = useStickyRegister(`accent:${color.hex}`);
+    const ref = useRef<View>(null);
+    useEffect(() => {
+      register(`accent:${color.hex}`, ref);
+      return () => unregister(`accent:${color.hex}`);
+    }, [color.hex]);
     const { registerPress } = useStickySelection();
     return (
       <View ref={ref}>

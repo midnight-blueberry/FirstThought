@@ -21,7 +21,7 @@ import type {
 
 export default function SettingsContainer() {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate, anchor.scrollRef);
+  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 
@@ -47,7 +47,7 @@ export default function SettingsContainer() {
   }, [anchor.adjustAfterLayout, vm.settingsVersion, overlay]);
 
   return (
-    <StickySelectionProvider>
+    <StickySelectionProvider scrollRef={anchor.scrollRef}>
       <AnchorStableScrollContext.Provider value={anchor.contextValue}>
         <SettingsContent
           sectionProps={vm.sectionProps}

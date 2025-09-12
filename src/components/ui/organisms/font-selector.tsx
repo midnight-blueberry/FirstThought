@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import Section from './settings-section';
@@ -7,7 +7,7 @@ import { fonts, nearestAvailableWeight } from '@constants/fonts';
 import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
 import useStickySelection from '@/features/sticky-position/useStickySelection';
-import { useStickyRegister } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
   selectedFontName,
@@ -19,7 +19,11 @@ const FontSelector: React.FC<FontSelectorProps> = ({
   const { registerPress } = useStickySelection();
 
   const Item: React.FC<{ font: typeof fonts[number] }> = ({ font }) => {
-    const ref = useStickyRegister(`fontFamily:${font.name}`);
+    const ref = useRef<View>(null);
+    useEffect(() => {
+      register(`fontFamily:${font.name}`, ref);
+      return () => unregister(`fontFamily:${font.name}`);
+    }, [font.name]);
     const fontSize = font.defaultSize + delta;
     const sampleWeight = nearestAvailableWeight(font.family, 400);
     const sampleKey = fontKey(font.family, sampleWeight);
