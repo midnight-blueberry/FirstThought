@@ -18,6 +18,9 @@ describe('AccentColors constants', () => {
       names.add(color.name);
       hexes.add(color.hex);
     });
+
+    expect(names).toHaveLength(6);
+    expect(hexes).toHaveLength(6);
   });
 
   it('defaultAccentColor matches accentColors[2] and #FFCD00', () => {
