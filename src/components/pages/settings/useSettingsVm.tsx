@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
@@ -10,6 +10,7 @@ import { themes, type ThemeName } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
+import { useLocalSettingsState } from './useLocalSettingsState';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
@@ -29,18 +30,22 @@ export default function useSettingsVm(
     setFontWeight: storeSetFontWeight,
   } = useSettings();
 
-  const [selectedThemeName, setSelectedThemeName] = useState(
-    themes[settings.themeId].name,
-  );
-  const [selectedAccentColor, setSelectedAccentColor] = useState(
-    settings.accent,
-  );
-  const [selectedFontName, setSelectedFontName] = useState(settings.fontFamily);
-  const [fontWeight, setFontWeightState] = useState<FontWeight>(settings.fontWeight);
-  const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
-  const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
-
-  const [settingsVersion, setSettingsVersion] = useState(0);
+  const {
+    selectedThemeName,
+    setSelectedThemeName,
+    selectedAccentColor,
+    setSelectedAccentColor,
+    selectedFontName,
+    setSelectedFontName,
+    fontWeight,
+    setFontWeightState,
+    fontSizeLevel,
+    setFontSizeLevel,
+    noteTextAlign,
+    setNoteTextAlign,
+    settingsVersion,
+    setSettingsVersion,
+  } = useLocalSettingsState(settings);
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
