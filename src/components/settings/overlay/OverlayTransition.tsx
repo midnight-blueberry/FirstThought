@@ -1,6 +1,16 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, StyleSheet, Easing } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-portalize';
+import {
+  OVERLAY_SHOW_DURATION_MS,
+  OVERLAY_HIDE_DURATION_MS,
+  OVERLAY_MAX_OPACITY,
+  OVERLAY_MIN_OPACITY,
+  OVERLAY_EASING_IN,
+  OVERLAY_EASING_OUT,
+  OVERLAY_OPAQUE_TIMEOUT_MS,
+  OVERLAY_POINTER_EVENTS_THRESHOLD,
+} from './transitionConfig';
 import useTheme from '@hooks/useTheme';
 
 export interface OverlayTransitionCtx {
@@ -27,7 +37,7 @@ export const waitForOpaque = (overlay: OverlayTransitionCtx) =>
     }
     const start = Date.now();
     const check = () => {
-      if (overlay.isOpaque() || Date.now() - start > 300) {
+      if (overlay.isOpaque() || Date.now() - start > OVERLAY_OPAQUE_TIMEOUT_MS) {
         resolve();
       } else {
         requestAnimationFrame(check);
@@ -37,7 +47,7 @@ export const waitForOpaque = (overlay: OverlayTransitionCtx) =>
   });
 
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const opacity = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(OVERLAY_MIN_OPACITY)).current;
   const [pe, setPe] = useState<'auto' | 'none'>('none');
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
@@ -53,13 +63,13 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const begin = useCallback(() => {
     return new Promise<void>((resolve) => {
       if (reduceMotion) {
-        opacity.setValue(1);
+        opacity.setValue(OVERLAY_MAX_OPACITY);
         resolve();
       } else {
         const timing = Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.inOut(Easing.cubic),
+          toValue: OVERLAY_MAX_OPACITY,
+          duration: OVERLAY_SHOW_DURATION_MS,
+          easing: OVERLAY_EASING_IN,
           useNativeDriver: true,
         });
         timing.start(({ finished: _finished }) => resolve());
@@ -70,13 +80,13 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
   const end = useCallback(() => {
     return new Promise<void>((resolve) => {
       if (reduceMotion) {
-        opacity.setValue(0);
+        opacity.setValue(OVERLAY_MIN_OPACITY);
         resolve();
       } else {
         Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          easing: Easing.inOut(Easing.cubic),
+          toValue: OVERLAY_MIN_OPACITY,
+          duration: OVERLAY_HIDE_DURATION_MS,
+          easing: OVERLAY_EASING_OUT,
           useNativeDriver: true,
         }).start(() => {
           resolve();
@@ -115,7 +125,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   useEffect(() => {
     const id = opacity.addListener(({ value }) => {
-      setPe(value > 0.01 ? 'auto' : 'none');
+      setPe(value > OVERLAY_POINTER_EVENTS_THRESHOLD ? 'auto' : 'none');
     });
     return () => opacity.removeListener(id);
   }, [opacity]);
@@ -132,7 +142,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
         isBusy,
         freezeBackground: setFrozenBg,
         releaseBackground: () => setFrozenBg(null),
-        isOpaque: () => (opacity as any).__getValue() >= 1,
+        isOpaque: () => (opacity as any).__getValue() >= OVERLAY_MAX_OPACITY,
       }}
     >
       {children}
