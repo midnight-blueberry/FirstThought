@@ -19,7 +19,8 @@ export interface ColorTokens {
   onAccent: string;
   onDisabled: string;
   headerBackground: string;
-  headerForeground: string;
+  headerTint: string;
+  headerTitle: string;
   control: {
     disabled: {
       fg: string;
@@ -38,7 +39,8 @@ export const lightColors: ColorTokens = {
   onAccent: baseColors.black,
   onDisabled: baseColors.grayDark,
   headerBackground: baseColors.white,
-  headerForeground: baseColors.black,
+  headerTint: baseColors.black,
+  headerTitle: baseColors.black,
   control: {
     disabled: {
       fg: '#CCCCCC',
@@ -57,7 +59,8 @@ export const darkColors: ColorTokens = {
   onAccent: baseColors.black,
   onDisabled: baseColors.grayLight,
   headerBackground: baseColors.black,
-  headerForeground: baseColors.white,
+  headerTint: baseColors.white,
+  headerTitle: baseColors.white,
   control: {
     disabled: {
       fg: '#777777',
@@ -76,7 +79,8 @@ export const creamColors: ColorTokens = {
   onAccent: baseColors.black,
   onDisabled: baseColors.grayDark,
   headerBackground: baseColors.cream,
-  headerForeground: baseColors.black,
+  headerTint: baseColors.black,
+  headerTitle: baseColors.black,
   control: {
     disabled: {
       fg: '#CCCCCC',

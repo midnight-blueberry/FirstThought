@@ -62,9 +62,9 @@ export default function DrawerNavigator({
       },
       drawerLabelStyle: {
         fontSize: theme.fontSize.medium,
-        color: theme.colors.headerForeground,
+        color: theme.colors.headerTint,
       },
-      drawerActiveTintColor: theme.colors.headerForeground,
+      drawerActiveTintColor: theme.colors.headerTint,
       drawerInactiveTintColor: theme.colors.disabled,
       drawerItemStyle: {
         marginVertical: theme.margin.small,
@@ -72,7 +72,7 @@ export default function DrawerNavigator({
       },
       headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
       headerTitleStyle: {
-        color: theme.colors.headerForeground,
+        color: theme.colors.headerTitle,
         fontStyle: theme.typography.header.headerTitleStyle,
         fontSize: theme.typography.header.headerTitleSize,
         letterSpacing: theme.typography.header.headerTitleLetterSpacing,
@@ -80,14 +80,14 @@ export default function DrawerNavigator({
       },
       headerLargeTitleStyle: Platform.select({
         ios: {
-          color: theme.colors.headerForeground,
+          color: theme.colors.headerTitle,
           fontStyle: theme.typography.header.headerTitleStyle,
           fontSize: theme.typography.header.headerLargeTitleSize,
           letterSpacing: theme.typography.header.headerLargeTitleLetterSpacing,
           lineHeight: theme.typography.header.headerLargeTitleLineHeight,
         },
       }),
-      headerTintColor: theme.colors.headerForeground,
+      headerTintColor: theme.colors.headerTint,
       headerStyle: baseHeaderStyle,
       headerShadowVisible: theme.headerShadowVisible,
       sceneContainerStyle: { backgroundColor: theme.colors.background },
@@ -98,7 +98,8 @@ export default function DrawerNavigator({
       theme.colors.background,
       theme.colors.basic,
       theme.colors.disabled,
-      theme.colors.headerForeground,
+      theme.colors.headerTint,
+      theme.colors.headerTitle,
       theme.fontSize.medium,
       theme.margin.medium,
       theme.margin.small,
@@ -138,7 +139,7 @@ export default function DrawerNavigator({
               ...baseHeaderStyle,
               elevation: homePageHeaderElevation,
             },
-            headerTintColor: theme.colors.headerForeground,
+            headerTintColor: theme.colors.headerTint,
           })}
         />
         <Drawer.Screen
@@ -160,7 +161,7 @@ export default function DrawerNavigator({
               ...baseHeaderStyle,
               elevation: settingsPageHeaderElevation,
             },
-            headerTintColor: theme.colors.headerForeground,
+            headerTintColor: theme.colors.headerTint,
           })}
         />
     </Drawer.Navigator>

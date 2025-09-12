@@ -82,7 +82,7 @@ const SaveIndicator: React.FC = () => {
       <Ionicons
         name="save-outline"
         size={theme.iconSize.medium}
-        color={theme.colors.headerForeground}
+        color={theme.colors.headerTint}
       />
     </Animated.View>
   );

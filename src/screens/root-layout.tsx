@@ -4,8 +4,8 @@ import '@utils/fixUseInsertionEffect';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Platform } from 'react-native';
+import { StatusBar, setStatusBarStyle, setStatusBarBackgroundColor } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -56,6 +56,13 @@ function RootContent() {
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(theme.colors.background);
   }, [theme.colors.background]);
+
+  useEffect(() => {
+    setStatusBarStyle(theme.isDark ? 'light' : 'dark');
+    if (Platform.OS === 'android') {
+      setStatusBarBackgroundColor(theme.colors.headerBackground);
+    }
+  }, [settings.themeId, theme.isDark, theme.colors.headerBackground]);
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
   const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');

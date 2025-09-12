@@ -10,7 +10,7 @@ const HeaderTitle: React.FC<HeaderTitleProps> = ({ children, tintColor }) => {
       numberOfLines={1}
       style={{
         fontSize: theme.typography.header.headerTitleSize,
-        color: tintColor ?? theme.colors.headerForeground,
+        color: tintColor ?? theme.colors.headerTitle,
       }}
     >
       {children}
