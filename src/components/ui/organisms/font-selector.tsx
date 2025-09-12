@@ -6,7 +6,7 @@ import { SelectableRow } from '@components/ui/molecules';
 import { fonts, nearestAvailableWeight } from '@constants/fonts';
 import { fontKey } from '@/constants/fonts/resolve';
 import type { FontSelectorProps } from '@types';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position/StickySelectionContext';
 import { register, unregister } from '@/features/sticky-position/registry';
 
 const FontSelector: React.FC<FontSelectorProps> = ({
