@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Dimensions, Platform } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DefaultTheme } from 'styled-components/native';
@@ -8,6 +9,7 @@ import type { HeaderTitleProps } from '@react-navigation/elements';
 import useHeaderConfig from '@hooks/useHeaderConfig';
 
 import DrawerContent from './drawer/DrawerContent';
+import { drawerLinking } from './drawer/linking';
 import { defaultDrawerScreenOptions } from './options/drawerOptions';
 import { drawerRoutes, type DrawerParamList } from './drawer/routes';
 
@@ -108,21 +110,23 @@ export default function DrawerNavigator({
   );
 
   return (
-    <Drawer.Navigator
-      initialRouteName="Home"
-      screenOptions={screenOptions}
-      drawerContent={(props) => <DrawerContent {...props} />}
-    >
-      {drawerRoutes({
-        theme,
-        baseHeaderStyle,
-        homePageHeaderTitle,
-        homePageHeaderElevation,
-        settingsPageHeaderTitle,
-        settingsPageHeaderElevation,
-      }).map((route) => (
-        <Drawer.Screen key={route.name} {...(route as any)} />
-      ))}
-    </Drawer.Navigator>
+    <NavigationContainer linking={drawerLinking}>
+      <Drawer.Navigator
+        initialRouteName="Home"
+        screenOptions={screenOptions}
+        drawerContent={(props) => <DrawerContent {...props} />}
+      >
+        {drawerRoutes({
+          theme,
+          baseHeaderStyle,
+          homePageHeaderTitle,
+          homePageHeaderElevation,
+          settingsPageHeaderTitle,
+          settingsPageHeaderElevation,
+        }).map((route) => (
+          <Drawer.Screen key={route.name} {...(route as any)} />
+        ))}
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
