@@ -9,7 +9,7 @@ import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useAnchorStableScroll, {
   AnchorStableScrollContext,
 } from '@/features/scroll/useAnchorStableScroll';
-import { StickySelectionProvider } from '@/features/sticky-position/StickySelectionProvider';
+import { StickySelectionProvider } from '@/features/sticky-position';
 import {
   useOverlayTransition,
   waitForOpaque,
