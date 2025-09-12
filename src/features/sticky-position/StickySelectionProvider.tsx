@@ -1,9 +1,7 @@
 import React, { createContext, useCallback, useMemo, useRef } from 'react';
-import type { View } from 'react-native';
-import { ScrollView } from 'react-native';
+import type { View, NativeSyntheticEvent, NativeScrollEvent, ScrollView } from 'react-native';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { alignScrollAfterApply } from './alignScrollAfterApply';
-import { getItemRef } from './registry';
 import type { StickySelection } from './stickyTypes';
 
 export type StickyStatus = 'idle' | 'measuring' | 'applying' | 'scrolling';
@@ -12,12 +10,10 @@ export interface StickySelectionContextValue {
   state: StickySelection;
   status: React.MutableRefObject<StickyStatus>;
   registerPress: (id: string, ref: React.RefObject<View | null>) => Promise<void>;
-  applyWithSticky: (
-    applyFn: () => Promise<void> | void,
-    scrollRef: React.RefObject<ScrollView>,
-  ) => Promise<void>;
+  applyWithSticky: (applyFn: () => Promise<void> | void) => Promise<void>;
   reset: () => void;
-  scrollYRef: React.MutableRefObject<number>;
+  onScroll: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  scrollRef: React.RefObject<ScrollView>;
   overlay: ReturnType<typeof useOverlayTransition>;
 }
 
@@ -27,21 +23,25 @@ let latestContext: StickySelectionContextValue | null = null;
 
 export const getStickySelectionContext = () => latestContext;
 
-export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StickySelectionProvider: React.FC<{
+  children: React.ReactNode;
+  scrollRef: React.RefObject<ScrollView>;
+}> = ({ children, scrollRef }) => {
   const stateRef = useRef<StickySelection>({
-    lastId: null,
-    yCenterOnScreen: null,
+    id: null,
+    ref: null,
+    prevCenterY: null,
     ts: null,
   });
   const statusRef = useRef<StickyStatus>('idle');
-  const scrollYRef = useRef(0);
+  const latestScrollYRef = useRef(0);
   const overlay = useOverlayTransition();
 
   const currentAnim = useRef<{ id: number } | null>(null);
   const animCounter = useRef(0);
 
   const fadeOverlayTo = useCallback(
-    async (target: 0 | 1, duration = 300) => {
+    async (target: 0 | 1) => {
       const id = ++animCounter.current;
       currentAnim.current = { id };
       try {
@@ -67,8 +67,9 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
         const node = ref.current as any;
         if (node && typeof node.measureInWindow === 'function') {
           node.measureInWindow((_x: number, y: number, _w: number, h: number) => {
-            stateRef.current.lastId = id;
-            stateRef.current.yCenterOnScreen = y + h / 2;
+            stateRef.current.id = id;
+            stateRef.current.ref = node;
+            stateRef.current.prevCenterY = y + h / 2;
             stateRef.current.ts = Date.now();
             if (__DEV__) {
               console.log('StickySelection', stateRef.current);
@@ -94,22 +95,18 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
   }, []);
 
   const reset = useCallback(() => {
-    stateRef.current.lastId = null;
-    stateRef.current.yCenterOnScreen = null;
+    stateRef.current.id = null;
+    stateRef.current.ref = null;
+    stateRef.current.prevCenterY = null;
     stateRef.current.ts = null;
     statusRef.current = 'idle';
   }, []);
 
   const applyWithSticky = useCallback(
-    async (
-      applyFn: () => Promise<void> | void,
-      scrollRef: React.RefObject<ScrollView>,
-    ) => {
+    async (applyFn: () => Promise<void> | void) => {
       if (statusRef.current === 'scrolling') return;
-      if (
-        stateRef.current.lastId == null ||
-        stateRef.current.yCenterOnScreen == null
-      ) {
+      const { id, prevCenterY } = stateRef.current;
+      if (id == null || prevCenterY == null) {
         return;
       }
       await fadeOverlayTo(1);
@@ -117,15 +114,12 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
       try {
         await applyFn();
         statusRef.current = 'scrolling';
-        const targetRef = getItemRef(stateRef.current.lastId!);
-        await alignScrollAfterApply({
-          scrollRef,
-          targetRef,
-          yCenterOnScreen: stateRef.current.yCenterOnScreen!,
-          scrollYRef,
-          timeoutMs: 300,
-          maxRafs: 3,
-        });
+        const delta = await alignScrollAfterApply({ id, prevCenterY });
+        if (Math.abs(delta) >= 1) {
+          const currentY = latestScrollYRef.current;
+          scrollRef.current?.scrollTo({ y: currentY + delta, animated: false });
+          latestScrollYRef.current = currentY + delta;
+        }
       } catch (e) {
         if (__DEV__) {
           console.warn('[sticky] applyWithSticky error', e);
@@ -136,7 +130,14 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
         statusRef.current = 'idle';
       }
     },
-    [fadeOverlayTo, reset],
+    [fadeOverlayTo, reset, scrollRef],
+  );
+
+  const onScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      latestScrollYRef.current = e.nativeEvent.contentOffset.y;
+    },
+    [],
   );
 
   const value = useMemo(
@@ -146,10 +147,11 @@ export const StickySelectionProvider: React.FC<{ children: React.ReactNode }> = 
       registerPress,
       applyWithSticky,
       reset,
-      scrollYRef,
+      onScroll,
+      scrollRef,
       overlay,
     }),
-    [registerPress, applyWithSticky, reset, overlay],
+    [registerPress, applyWithSticky, reset, onScroll, overlay, scrollRef],
   );
 
   latestContext = value;

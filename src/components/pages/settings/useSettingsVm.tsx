@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated, ScrollView } from 'react-native';
+import { Animated } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
 import useHeaderShadow from '@hooks/useHeaderShadow';
@@ -17,7 +17,6 @@ import { getStickySelectionContext } from '@/features/sticky-position/StickySele
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,
-  scrollRef: React.RefObject<ScrollView>,
 ): SettingsVm {
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
@@ -78,7 +77,6 @@ export default function useSettingsVm(
             throw e;
           }
         },
-        scrollRef,
       );
       overlay.releaseBackground();
       if (error) {

@@ -75,7 +75,6 @@ function RootContent() {
         edges={['left', 'right', 'bottom']}
       >
         <DrawerNavigator
-          key={`ui-${settings.themeId}-${theme.colors.headerBackground}`}
           theme={theme}
           homePageHeaderTitle={homePageHeaderTitle}
           homePageHeaderElevation={homePageHeaderElevation}
