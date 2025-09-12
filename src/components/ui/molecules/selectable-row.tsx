@@ -9,6 +9,7 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
+import { settingsOptionLabelText } from '@components/settings/styles';
 import { AnchorStableScrollContext } from '@/features/scroll/useAnchorStableScroll';
 
 interface SelectableRowProps {
@@ -81,7 +82,13 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
         <AppText
           variant="medium"
           style={[
-            { transform: [{ translateY: drop }] },
+            {
+              ...settingsOptionLabelText,
+              transform: [
+                ...((settingsOptionLabelText.transform as TextStyle['transform']) ?? []),
+                { translateY: drop },
+              ] as TextStyle['transform'],
+            },
             fontSize
               ? { fontSize, lineHeight: fontSize + theme.padding.medium }
               : null,
