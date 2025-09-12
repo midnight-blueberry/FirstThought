@@ -3,7 +3,7 @@ import 'react-native-reanimated';
 import '@utils/fixUseInsertionEffect';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
@@ -12,7 +12,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { SettingsProvider } from '@/state/SettingsContext';
 import ThemeProvider from '@theme/ThemeProvider';
 import useTheme from '@hooks/useTheme';
-import { useSettings } from '@/state/SettingsContext';
 import { PortalProvider } from 'react-native-portalize';
 import { OverlayTransitionProvider } from '@components/settings/overlay/OverlayTransition';
 import { FONT_FILES } from '@/constants/fonts/files';
@@ -52,14 +51,9 @@ export default function RootLayout() {
 
 function RootContent() {
   const theme = useTheme();
-  const { settings } = useSettings();
   useEffect(() => {
     void SystemUI.setBackgroundColorAsync(theme.colors.background);
   }, [theme.colors.background]);
-  const [homePageHeaderTitle] = useState(() => 'Мои дневники');
-  const [homePageHeaderElevation] = useState(0);
-  const [settingsPageHeaderTitle] = useState(() => 'Настройки');
-  const [settingsPageHeaderElevation] = useState(0);
 
   const onLayoutRootView = useCallback(() => {
     void SplashScreen.hideAsync();
@@ -74,13 +68,7 @@ function RootContent() {
         onLayout={onLayoutRootView}
         edges={['left', 'right', 'bottom']}
       >
-        <DrawerNavigator
-          theme={theme}
-          homePageHeaderTitle={homePageHeaderTitle}
-          homePageHeaderElevation={homePageHeaderElevation}
-          settingsPageHeaderTitle={settingsPageHeaderTitle}
-          settingsPageHeaderElevation={settingsPageHeaderElevation}
-        />
+        <DrawerNavigator theme={theme} />
       </SafeAreaView>
     </SafeAreaProvider>
   );
