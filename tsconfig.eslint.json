@@ -11,7 +11,7 @@
     "config/**/*",
     "tests/**/*",
     "eslint.config.mjs",
-    "jest.config.js",
+    "jest.config.cjs",
     "babel.config.js"
   ],
   "exclude": [
