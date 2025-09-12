@@ -35,7 +35,7 @@ export default function DrawerNavigator({
   settingsPageHeaderElevation,
 }: Props) {
   const { top } = useSafeAreaInsets();
-  const baseHeaderStyle = useHeaderConfig(theme, top);
+  const baseHeaderStyle = useMemo(() => useHeaderConfig(theme, top), [theme, top]);
   const screenWidth = Dimensions.get('window').width;
   const drawerWidth = Math.min(320, screenWidth * 0.8);
 
@@ -92,25 +92,7 @@ export default function DrawerNavigator({
       headerShadowVisible: theme.headerShadowVisible,
       sceneContainerStyle: { backgroundColor: theme.colors.background },
     }),
-    [
-      baseHeaderStyle,
-      drawerWidth,
-      theme.colors.background,
-      theme.colors.basic,
-      theme.colors.disabled,
-      theme.colors.headerForeground,
-      theme.fontSize.medium,
-      theme.margin.medium,
-      theme.margin.small,
-      theme.headerShadowVisible,
-      theme.typography.header.headerLargeTitleLetterSpacing,
-      theme.typography.header.headerLargeTitleLineHeight,
-      theme.typography.header.headerLargeTitleSize,
-      theme.typography.header.headerTitleLetterSpacing,
-      theme.typography.header.headerTitleLineHeight,
-      theme.typography.header.headerTitleSize,
-      theme.typography.header.headerTitleStyle,
-    ]
+    [theme, baseHeaderStyle, drawerWidth]
   );
 
   return (

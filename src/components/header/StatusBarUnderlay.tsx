@@ -3,11 +3,11 @@ import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTheme from '@hooks/useTheme';
 
-const StatusBarBackground = () => {
-  const { top } = useSafeAreaInsets();
+const StatusBarUnderlay = () => {
+  const insets = useSafeAreaInsets();
   const theme = useTheme();
 
-  if (top === 0) {
+  if (insets.top === 0) {
     return null;
   }
 
@@ -19,7 +19,7 @@ const StatusBarBackground = () => {
         top: 0,
         left: 0,
         right: 0,
-        height: top,
+        height: insets.top,
         backgroundColor: theme.colors.headerBackground,
         zIndex: 1,
       }}
@@ -27,4 +27,4 @@ const StatusBarBackground = () => {
   );
 };
 
-export default StatusBarBackground;
+export default StatusBarUnderlay;
