@@ -6,11 +6,10 @@ import {
   OVERLAY_HIDE_DURATION_MS,
   OVERLAY_MAX_OPACITY,
   OVERLAY_MIN_OPACITY,
-  OVERLAY_EASING_IN,
-  OVERLAY_EASING_OUT,
   OVERLAY_OPAQUE_TIMEOUT_MS,
   OVERLAY_POINTER_EVENTS_THRESHOLD,
 } from './transitionConfig';
+import { useOverlayAnimation } from './useOverlayAnimation';
 import useTheme from '@hooks/useTheme';
 
 export interface OverlayTransitionCtx {
@@ -47,7 +46,7 @@ export const waitForOpaque = (overlay: OverlayTransitionCtx) =>
   });
 
 export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const opacity = useRef(new Animated.Value(OVERLAY_MIN_OPACITY)).current;
+  const { opacity, show, hide } = useOverlayAnimation();
   const [pe, setPe] = useState<'auto' | 'none'>('none');
   const [reduceMotion, setReduceMotion] = useState(false);
   const busy = useRef(false);
@@ -66,16 +65,11 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
         opacity.setValue(OVERLAY_MAX_OPACITY);
         resolve();
       } else {
-        const timing = Animated.timing(opacity, {
-          toValue: OVERLAY_MAX_OPACITY,
-          duration: OVERLAY_SHOW_DURATION_MS,
-          easing: OVERLAY_EASING_IN,
-          useNativeDriver: true,
-        });
-        timing.start(({ finished: _finished }) => resolve());
+        show();
+        setTimeout(resolve, OVERLAY_SHOW_DURATION_MS);
       }
     });
-  }, [opacity, reduceMotion]);
+  }, [opacity, reduceMotion, show]);
 
   const end = useCallback(() => {
     return new Promise<void>((resolve) => {
@@ -83,17 +77,11 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
         opacity.setValue(OVERLAY_MIN_OPACITY);
         resolve();
       } else {
-        Animated.timing(opacity, {
-          toValue: OVERLAY_MIN_OPACITY,
-          duration: OVERLAY_HIDE_DURATION_MS,
-          easing: OVERLAY_EASING_OUT,
-          useNativeDriver: true,
-        }).start(() => {
-          resolve();
-        });
+        hide();
+        setTimeout(resolve, OVERLAY_HIDE_DURATION_MS);
       }
     });
-  }, [opacity, reduceMotion]);
+  }, [opacity, reduceMotion, hide]);
 
   const apply = useCallback(
     async (callback: () => Promise<void> | void) => {
