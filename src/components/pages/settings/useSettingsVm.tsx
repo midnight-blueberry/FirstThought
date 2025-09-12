@@ -9,12 +9,11 @@ import { themes } from '@theme/buildTheme';
 import buildSectionProps from './buildSectionProps';
 import type { SettingsVm } from './useSettingsVm.types';
 import { useSettings, type Settings } from '@/state/SettingsContext';
-import { useLocalSettingsState } from './useLocalSettingsState';
+import { useLocalSettingsState, buildSettingsPatch } from '@/components/pages/settings';
 import { useOverlayTransition } from '@/components/settings/overlay';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
 import { getStickySelectionContext } from '@/features/sticky-position';
-import { buildSettingsPatch } from './buildSettingsPatch';
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,
