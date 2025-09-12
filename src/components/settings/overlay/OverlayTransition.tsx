@@ -167,3 +167,5 @@ export function useOverlayTransition() {
   return ctx;
 }
 
+export default OverlayTransitionProvider;
+
