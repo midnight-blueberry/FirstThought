@@ -5,6 +5,7 @@ import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import type { ChangedKey } from './useSettingsDirty';
 
 export interface SettingsItem {
   key: keyof SectionPropsMap;
@@ -19,5 +20,7 @@ export interface SettingsVm {
   overlayAnim: Animated.Value;
   overlayBlocks: boolean;
   settingsVersion: number;
+  isDirty: boolean;
+  changedKeys: ChangedKey[];
 }
 
