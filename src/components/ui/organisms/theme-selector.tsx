@@ -4,7 +4,7 @@ import { SelectableRow } from '@components/ui/molecules';
 import Section from './settings-section';
 import { themeList } from '@theme/buildTheme';
 import type { ThemeSelectorProps } from '@types';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position/StickySelectionContext';
 import { register, unregister } from '@/features/sticky-position/registry';
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({

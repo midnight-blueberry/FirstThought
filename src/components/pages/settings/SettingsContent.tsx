@@ -11,7 +11,7 @@ import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
 import type { SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position/StickySelectionContext';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;

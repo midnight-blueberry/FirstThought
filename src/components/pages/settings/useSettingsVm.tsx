@@ -14,7 +14,7 @@ import { useLocalSettingsState } from './useLocalSettingsState';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
-import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionProvider';
+import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionContext';
 
 export default function useSettingsVm(
   captureBeforeUpdate: () => void,

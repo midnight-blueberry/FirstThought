@@ -1,7 +1,8 @@
 import React from 'react';
 // @ts-ignore
 import renderer, { act } from 'react-test-renderer';
-import { StickySelectionProvider, getStickySelectionContext } from '@/features/sticky-position/StickySelectionProvider';
+import { StickySelectionProvider } from '@/features/sticky-position/StickySelectionProvider';
+import { getStickySelectionContext } from '@/features/sticky-position/StickySelectionContext';
 import { register } from '@/features/sticky-position/registry';
 
 jest.mock('@components/settings/overlay/OverlayTransition', () => ({

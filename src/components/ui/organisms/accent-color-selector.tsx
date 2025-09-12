@@ -4,7 +4,7 @@ import { SelectableRow } from '@components/ui/molecules';
 import Section from './settings-section';
 import { accentColors } from '@constants/AccentColors';
 import type { AccentColorSelectorProps } from '@types';
-import useStickySelection from '@/features/sticky-position/useStickySelection';
+import { useStickySelection } from '@/features/sticky-position/StickySelectionContext';
 import { register, unregister } from '@/features/sticky-position/registry';
 
 const AccentColorSelector: React.FC<AccentColorSelectorProps> = ({

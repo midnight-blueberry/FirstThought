@@ -1,27 +1,14 @@
-import React, { createContext, useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import type { View, NativeSyntheticEvent, NativeScrollEvent, ScrollView } from 'react-native';
 import { useOverlayTransition } from '@components/settings/overlay/OverlayTransition';
 import { alignScrollAfterApply } from './alignScrollAfterApply';
 import type { StickySelection } from './stickyTypes';
-
-export type StickyStatus = 'idle' | 'measuring' | 'applying' | 'scrolling';
-
-export interface StickySelectionContextValue {
-  state: StickySelection;
-  status: React.MutableRefObject<StickyStatus>;
-  registerPress: (id: string, ref: React.RefObject<View | null>) => Promise<void>;
-  applyWithSticky: (applyFn: () => Promise<void> | void) => Promise<void>;
-  reset: () => void;
-  onScroll: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  scrollRef: React.RefObject<ScrollView>;
-  overlay: ReturnType<typeof useOverlayTransition>;
-}
-
-const StickySelectionContext = createContext<StickySelectionContextValue | null>(null);
-
-let latestContext: StickySelectionContextValue | null = null;
-
-export const getStickySelectionContext = () => latestContext;
+import {
+  StickySelectionContext,
+  type StickySelectionContextValue,
+  type StickyStatus,
+  setStickySelectionContext,
+} from './StickySelectionContext';
 
 export const StickySelectionProvider: React.FC<{
   children: React.ReactNode;
@@ -140,7 +127,7 @@ export const StickySelectionProvider: React.FC<{
     [],
   );
 
-  const value = useMemo(
+  const value = useMemo<StickySelectionContextValue>(
     () => ({
       state: stateRef.current,
       status: statusRef,
@@ -154,7 +141,7 @@ export const StickySelectionProvider: React.FC<{
     [registerPress, applyWithSticky, reset, onScroll, overlay, scrollRef],
   );
 
-  latestContext = value;
+  setStickySelectionContext(value);
 
   return (
     <StickySelectionContext.Provider value={value}>
@@ -162,14 +149,4 @@ export const StickySelectionProvider: React.FC<{
     </StickySelectionContext.Provider>
   );
 };
-
-export function useStickySelectionContext() {
-  const ctx = React.useContext(StickySelectionContext);
-  if (!ctx) {
-    throw new Error('useStickySelectionContext must be used within StickySelectionProvider');
-  }
-  return ctx;
-}
-
-export { StickySelectionContext };
 
