@@ -10,6 +10,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@utils/(.*)$': '<rootDir>/src/utils/$1',
     '^react-test-renderer$': '<rootDir>/tests/mocks/react-test-renderer.ts'
   },
   transform: {
