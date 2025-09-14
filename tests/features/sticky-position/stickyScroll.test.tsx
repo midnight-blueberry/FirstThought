@@ -5,7 +5,7 @@ import {
   StickySelectionProvider,
   getStickySelectionContext,
 } from '@/features/sticky-position';
-import { register } from '@/features/sticky-position/registry';
+import { register, clearRegistry } from '@/features/sticky-position/registry';
 
 jest.mock('@/components/settings/overlay', () => ({
   useOverlayTransition: () => ({
@@ -20,6 +20,9 @@ global.requestAnimationFrame = (cb: any) => cb(0);
 global.__DEV__ = false;
 
 describe('sticky scroll', () => {
+  afterEach(() => {
+    clearRegistry();
+  });
   test('keeps scroll offset after theme change', async () => {
     const scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } } as any;
 
