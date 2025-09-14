@@ -7,18 +7,6 @@ import {
 } from '@/features/sticky-position';
 import { register, clearRegistry } from '@/features/sticky-position/registry';
 
-jest.mock('@/components/settings/overlay', () => ({
-  useOverlayTransition: () => ({
-    begin: () => Promise.resolve(),
-    end: () => Promise.resolve(),
-  }),
-}));
-
-// @ts-ignore
-global.requestAnimationFrame = (cb: any) => cb(0);
-// @ts-ignore
-global.__DEV__ = false;
-
 describe('sticky scroll', () => {
   afterEach(() => {
     clearRegistry();

@@ -8,6 +8,7 @@ module.exports = {
     '<rootDir>/src/**/*.test.ts?(x)',
     '<rootDir>/tests/bdd/**/*.steps.ts'
   ],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
