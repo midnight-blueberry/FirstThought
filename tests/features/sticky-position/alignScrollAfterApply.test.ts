@@ -1,4 +1,4 @@
-import { computeDelta } from '@/features/sticky-position';
+import { computeDelta } from '@/features/sticky-position/alignScrollAfterApply';
 
 describe('computeDelta', () => {
   it('calculates delta from measurements', () => {

@@ -14,14 +14,6 @@ jest.mock('@/components/settings/overlay', () => ({
   }),
 }));
 
-jest.mock('react-native', () => {
-  const RN = jest.requireActual('react-native');
-  return {
-    ...RN,
-    InteractionManager: { runAfterInteractions: () => Promise.resolve() },
-  };
-});
-
 // @ts-ignore
 global.requestAnimationFrame = (cb: any) => cb(0);
 
