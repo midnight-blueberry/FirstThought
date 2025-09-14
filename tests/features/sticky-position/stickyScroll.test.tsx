@@ -14,29 +14,31 @@ jest.mock('@/components/settings/overlay', () => ({
   }),
 }));
 
-jest.mock('react-native', () => {
-  const RN = jest.requireActual('react-native');
-  return {
-    ...RN,
-    InteractionManager: { runAfterInteractions: () => Promise.resolve() },
-  };
-});
-
 // @ts-ignore
 global.requestAnimationFrame = (cb: any) => cb(0);
+// @ts-ignore
+global.__DEV__ = false;
 
 describe('sticky scroll', () => {
-  it('keeps scroll offset after theme change', async () => {
-    const scrollTo = jest.fn();
-    const scrollRef = { current: { scrollTo } } as any;
-    renderer.create(
-      <StickySelectionProvider scrollRef={scrollRef}>
-        {null}
-      </StickySelectionProvider>,
-    );
+  test('keeps scroll offset after theme change', async () => {
+    const scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } } as any;
+
+    const List = () => null;
+
+    let tree: renderer.ReactTestRenderer;
+    await act(async () => {
+      tree = renderer.create(
+        <StickySelectionProvider scrollRef={scrollRef}>
+          <List />
+        </StickySelectionProvider>,
+      );
+    });
+
     const ctx = getStickySelectionContext();
     expect(ctx).toBeTruthy();
+
     const pressedRef = { current: { measureInWindow: (cb: any) => cb(0, 190, 0, 20) } } as any;
+
     await act(async () => {
       await ctx!.registerPress('theme:dark', pressedRef);
     });
@@ -45,6 +47,10 @@ describe('sticky scroll', () => {
     await act(async () => {
       await ctx!.applyWithSticky(async () => {});
     });
-    expect(scrollTo).toHaveBeenCalledWith({ y: 170, animated: false });
+    expect(scrollRef.current.scrollTo).toHaveBeenCalledWith({ y: 170, animated: false });
+
+    await act(async () => {
+      tree!.unmount();
+    });
   });
 });
