@@ -6,6 +6,7 @@ import {
   getStickySelectionContext,
 } from '@/features/sticky-position';
 import { register, clearRegistry } from '@/features/sticky-position/registry';
+import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 
 describe('sticky scroll', () => {
   afterEach(() => {
@@ -33,7 +34,7 @@ describe('sticky scroll', () => {
     await act(async () => {
       await ctx!.registerPress('theme:dark', pressedRef);
     });
-    ctx!.onScroll({ nativeEvent: { contentOffset: { y: 150 } } } as any);
+    ctx!.onScroll(makeScrollEvent(150));
     register('theme:dark', { current: { measureInWindow: (cb: any) => cb(0, 210, 0, 20) } } as any);
     await act(async () => {
       await ctx!.applyWithSticky(async () => {});
