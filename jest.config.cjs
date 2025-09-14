@@ -9,7 +9,8 @@ module.exports = {
     '<rootDir>/tests/bdd/**/*.steps.ts'
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^react-test-renderer$': '<rootDir>/tests/mocks/react-test-renderer.ts'
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }]
