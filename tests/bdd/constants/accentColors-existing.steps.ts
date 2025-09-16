@@ -2,15 +2,23 @@ import { defineFeature, loadFeature } from 'jest-cucumber';
 
 import { accentColors, defaultAccentColor } from '@/constants/AccentColors';
 
-const feature = loadFeature('tests/bdd/constants/accentColors.feature');
+const feature = loadFeature('tests/bdd/constants/accentColors-existing.feature');
 
-type StepDefinition = (matcher: string | RegExp, stepImplementation: (...args: any[]) => void) => void;
+type StepDefinition = (matcher: string | RegExp, stepImplementation: (...args: unknown[]) => void) => void;
 
 interface StepDefinitions {
   given: StepDefinition;
   when: StepDefinition;
   then: StepDefinition;
 }
+
+type Expectation = {
+  toBe: (expected: unknown) => void;
+};
+
+type ExpectFn = (actual: unknown) => Expectation;
+
+const { expect } = globalThis as unknown as { expect: ExpectFn };
 
 type AccentColor = (typeof accentColors)[number];
 type AccentColorList = readonly AccentColor[];
@@ -45,13 +53,19 @@ defineFeature(feature, (test) => {
     then('длина равна 6 и имена/hex уникальны', () => {
       const checkedColors = context.checkedColors ?? ensureColorsLoaded(context);
 
-      expect(checkedColors).toHaveLength(6);
+      expect(checkedColors.length).toBe(6);
 
-      const uniqueNames = new Set(checkedColors.map((color) => color.name));
-      expect(uniqueNames.size).toBe(checkedColors.length);
+      const seenNames: string[] = [];
+      checkedColors.forEach((color) => {
+        expect(seenNames.indexOf(color.name) !== -1).toBe(false);
+        seenNames.push(color.name);
+      });
 
-      const uniqueHexes = new Set(checkedColors.map((color) => color.hex));
-      expect(uniqueHexes.size).toBe(checkedColors.length);
+      const seenHexes: string[] = [];
+      checkedColors.forEach((color) => {
+        expect(seenHexes.indexOf(color.hex) !== -1).toBe(false);
+        seenHexes.push(color.hex);
+      });
     });
   });
 
@@ -71,7 +85,7 @@ defineFeature(feature, (test) => {
       const foundNames = context.foundNames ?? [];
 
       expectedNames.forEach((name) => {
-        expect(foundNames).toContain(name);
+        expect(foundNames.indexOf(name) !== -1).toBe(true);
       });
     });
   });
@@ -85,7 +99,13 @@ defineFeature(feature, (test) => {
 
     when('я получаю цвет по умолчанию', () => {
       const colors = ensureColorsLoaded(context);
-      context.defaultColorName = colors.find((color) => color.hex === defaultAccentColor)?.name;
+
+      for (const color of colors) {
+        if (color.hex === defaultAccentColor) {
+          context.defaultColorName = color.name;
+          break;
+        }
+      }
     });
 
     then('его имя равно "Желтый"', () => {
