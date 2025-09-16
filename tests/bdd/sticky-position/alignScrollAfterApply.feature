@@ -3,7 +3,7 @@ Feature: Align scroll after apply
   As a UI system
   I want to compute the scroll delta from touch measurements
 
-  Scenario Outline: Compute delta from measurements
+  Scenario: Compute delta from measurements
     Given I have measurements <contentY>, <pressedY>, <pressedHeight>
     When I compute the delta
     Then the result equals <delta>
