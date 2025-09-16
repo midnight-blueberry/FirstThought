@@ -47,6 +47,9 @@
       ],
       "@types": [
         "src/types"
+      ],
+      "@tests/*": [
+        "tests/*"
       ]
     },
     "esModuleInterop": true,

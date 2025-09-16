@@ -1,23 +1,10 @@
 import React from 'react';
 // @ts-ignore
-import renderer, { act } from 'react-test-renderer';
-import {
-  StickySelectionProvider,
-  getStickySelectionContext,
-} from '@/features/sticky-position';
+import { act } from 'react-test-renderer';
+import { getStickySelectionContext } from '@/features/sticky-position';
 import { register } from '@/features/sticky-position/registry';
-
-jest.mock('@/components/settings/overlay', () => ({
-  useOverlayTransition: () => ({
-    begin: () => Promise.resolve(),
-    end: () => Promise.resolve(),
-  }),
-}));
-
-// @ts-ignore
-global.requestAnimationFrame = (cb: any) => cb(0);
-// @ts-ignore
-global.__DEV__ = false;
+import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
+import { renderWithProviders } from '@tests/utils/render';
 
 describe('sticky scroll', () => {
   test('keeps scroll offset after theme change', async () => {
@@ -25,13 +12,9 @@ describe('sticky scroll', () => {
 
     const List = () => null;
 
-    let tree: renderer.ReactTestRenderer;
+    let tree: any;
     await act(async () => {
-      tree = renderer.create(
-        <StickySelectionProvider scrollRef={scrollRef}>
-          <List />
-        </StickySelectionProvider>,
-      );
+      tree = renderWithProviders(<List />, { scrollRef });
     });
 
     const ctx = getStickySelectionContext();
@@ -42,7 +25,7 @@ describe('sticky scroll', () => {
     await act(async () => {
       await ctx!.registerPress('theme:dark', pressedRef);
     });
-    ctx!.onScroll({ nativeEvent: { contentOffset: { y: 150 } } } as any);
+    ctx!.onScroll(makeScrollEvent(150));
     register('theme:dark', { current: { measureInWindow: (cb: any) => cb(0, 210, 0, 20) } } as any);
     await act(async () => {
       await ctx!.applyWithSticky(async () => {});
