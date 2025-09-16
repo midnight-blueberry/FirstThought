@@ -2,7 +2,57 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "module": "commonjs"
+    "module": "commonjs",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "src/*": [
+        "src/*"
+      ],
+      "app/*": [
+        "app/*"
+      ],
+      "@screens/*": [
+        "src/screens/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@settings/*": [
+        "src/settings/*"
+      ],
+      "@theme/*": [
+        "src/theme/*"
+      ],
+      "@storage/*": [
+        "src/storage/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@types": [
+        "src/types"
+      ],
+      "@tests/*": [
+        "tests/*"
+      ]
+    }
   },
   "include": ["src", "tests"]
 }
