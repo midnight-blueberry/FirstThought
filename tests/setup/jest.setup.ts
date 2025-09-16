@@ -1,3 +1,6 @@
+import { afterEach, jest } from '@jest/globals';
+import { clearRegistry } from '@/features/sticky-position/registry';
+
 global.requestAnimationFrame = (cb: any) => cb(0);
 
 declare global {
@@ -23,5 +26,10 @@ jest.mock('@/components/settings/overlay', () => ({
     isOpaque: () => false,
   }),
 }));
+
+afterEach(() => {
+  clearRegistry();
+  jest.restoreAllMocks();
+});
 
 export {};
