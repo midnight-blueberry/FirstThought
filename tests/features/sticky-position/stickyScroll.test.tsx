@@ -1,12 +1,10 @@
 import React from 'react';
 // @ts-ignore
-import renderer, { act } from 'react-test-renderer';
-import {
-  StickySelectionProvider,
-  getStickySelectionContext,
-} from '@/features/sticky-position';
+import { act } from 'react-test-renderer';
+import { getStickySelectionContext } from '@/features/sticky-position';
 import { register } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
+import { renderWithProviders } from '@tests/utils/render';
 
 describe('sticky scroll', () => {
   test('keeps scroll offset after theme change', async () => {
@@ -14,13 +12,9 @@ describe('sticky scroll', () => {
 
     const List = () => null;
 
-    let tree: renderer.ReactTestRenderer;
+    let tree: any;
     await act(async () => {
-      tree = renderer.create(
-        <StickySelectionProvider scrollRef={scrollRef}>
-          <List />
-        </StickySelectionProvider>,
-      );
+      tree = renderWithProviders(<List />, { scrollRef });
     });
 
     const ctx = getStickySelectionContext();
