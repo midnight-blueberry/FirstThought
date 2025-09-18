@@ -20,7 +20,7 @@ defineFeature(feature, (test: any) => {
     given('отрендерен список со scrollRef', async () => {
       scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
       await act(async () => {
-        tree = renderWithProviders(<List />, { scrollRef });
+        tree = renderWithProviders(React.createElement(List), { scrollRef });
       });
       ctx = getStickySelectionContext();
       expect(ctx).toBeTruthy();
