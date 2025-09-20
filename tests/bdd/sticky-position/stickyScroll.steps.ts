@@ -2,7 +2,7 @@ import { defineFeature, loadFeature } from 'jest-cucumber';
 // @ts-ignore
 import { act } from 'react-test-renderer';
 import React from 'react';
-import { getStickySelectionContext } from '@/features/sticky-position';
+import { StickySelectionProvider, getStickySelectionContext } from '@/features/sticky-position';
 import { register } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
@@ -19,8 +19,13 @@ defineFeature(feature, (test: any) => {
 
     given('отрендерен список со scrollRef', async () => {
       scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
+      const ui = React.createElement(
+        StickySelectionProvider,
+        { scrollRef },
+        React.createElement(List)
+      );
       await act(async () => {
-        tree = renderWithProviders(<List />, { scrollRef });
+        tree = renderWithProviders(ui, { scrollRef });
       });
       ctx = getStickySelectionContext();
       expect(ctx).toBeTruthy();
