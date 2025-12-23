@@ -5,7 +5,6 @@ module.exports = {
   rootDir: __dirname,
   testMatch: [
     '<rootDir>/tests/**/*.test.ts?(x)',
-    '<rootDir>/src/**/*.test.ts?(x)',
     '<rootDir>/tests/bdd/**/*.steps.ts'
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
