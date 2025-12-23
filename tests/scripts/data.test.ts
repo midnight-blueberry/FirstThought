@@ -46,17 +46,17 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
-// Simplified CryptoJS mocks to bypass encryption
-jest.mock('crypto-js', () => ({
-  AES: {
-    encrypt: (plain: string) => ({ toString: () => plain }),
-    decrypt: (cipher: string) => ({ toString: () => cipher }),
-  },
-  enc: {
-    Base64: { parse: (str: string) => str },
-    Utf8: {},
-  },
-}));
+// Simplified crypto mocks to bypass encryption
+jest.mock('@utils/crypto', () => {
+  let counter = 0;
+  return {
+    generateId: () => `id_${counter++}`,
+    encrypt: async (plain: string) => plain,
+    decrypt: async (cipher: string) => cipher,
+    generateKey: async () => {},
+    getKey: async () => new Uint8Array(),
+  };
+});
 
 import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
 
