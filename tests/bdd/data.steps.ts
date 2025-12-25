@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import { defineFeature, loadFeature } from 'jest-cucumber';
 
 let errorSpy: jest.SpyInstance;
 
@@ -58,36 +59,56 @@ jest.mock('@utils/crypto', () => {
 });
 
 import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
+import type { DiaryMeta } from '@/types/data';
 
-describe('data helpers', () => {
+const feature = loadFeature('tests/bdd/data.feature');
+
+defineFeature(feature, (test) => {
   beforeEach(async () => {
-    // reset storages and seed encryption key
     (AsyncStorage as unknown as { __storage: Map<string, string> }).__storage.clear();
     (SecureStore as unknown as { __store: Map<string, string> }).__store.clear();
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
-  it('addDiary adds a new diary', async () => {
-    const diary = await addDiary('My Diary');
-    expect(diary.title).toBe('My Diary');
+  test('добавление дневника сохраняет его и он появляется в списке', ({ given, when, then }) => {
+    let diary: DiaryMeta | null = null;
+    let list: DiaryMeta[] = [];
 
-    const list = await loadDiaries();
-    expect(list).toHaveLength(1);
-    expect(list[0].id).toBe(diary.id);
+    given(/^создан дневник "(.+)"$/, async (title: string) => {
+      diary = await addDiary(title);
+    });
+
+    when('загружен список дневников', async () => {
+      list = await loadDiaries();
+    });
+
+    then('дневник появляется в списке', () => {
+      expect(diary).not.toBeNull();
+      expect(diary!.title).toBe('My Diary');
+      expect(list).toHaveLength(1);
+      expect(list[0].id).toBe(diary!.id);
+    });
   });
 
-  it('deleteDiary removes diary and related entries', async () => {
-    const diary = await addDiary('Diary');
-    const entryId = await addEntry(diary.id, { text: 'hello' });
+  test('удаление дневника удаляет дневник и связанные записи', ({ given, when, then }) => {
+    let diary: DiaryMeta | null = null;
+    let entryId = '';
 
-    // ensure entry stored
-    expect(await AsyncStorage.getItem(`record_${entryId}`)).not.toBeNull();
+    given(/^создан дневник "(.+)" с записью$/, async (title: string) => {
+      diary = await addDiary(title);
+      entryId = await addEntry(diary.id, { text: 'hello' });
+      expect(await AsyncStorage.getItem(`record_${entryId}`)).not.toBeNull();
+    });
 
-    await deleteDiary(diary.id);
+    when('дневник удален', async () => {
+      await deleteDiary(diary!.id);
+    });
 
-    const list = await loadDiaries();
-    expect(list).toHaveLength(0);
-    expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
-    expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary.id}`)).toBeNull();
+    then('дневник и связанные данные удалены из хранилища', async () => {
+      const list = await loadDiaries();
+      expect(list).toHaveLength(0);
+      expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
+      expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
+    });
   });
 });
