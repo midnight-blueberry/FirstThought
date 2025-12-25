@@ -1,0 +1,9 @@
+{
+  "name": "eas-cli",
+  "version": "0.0.0-local",
+  "description": "Local placeholder for EAS CLI to provide a project-local binary.",
+  "bin": {
+    "eas": "bin/eas.js"
+  },
+  "license": "MIT"
+}

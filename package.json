@@ -58,6 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
     "babel-plugin-module-resolver": "^5.0.2",
+    "eas-cli": "file:vendor/eas-cli",
     "eslint": "^9.31.0",
     "eslint-config-expo": "~9.2.0",
     "eslint-import-resolver-node": "^0.3.9",
