@@ -1,0 +1,8 @@
+{
+  "name": "eas-cli",
+  "version": "0.0.0-local",
+  "description": "Local stub for EAS CLI to satisfy offline builds.",
+  "bin": {
+    "eas": "./bin/eas.js"
+  }
+}
