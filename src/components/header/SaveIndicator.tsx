@@ -1,7 +1,8 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet } from 'react-native';
+import React, { createContext, useContext, useMemo, useRef, useState } from 'react';
+import { Animated, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
+import { createSaveIndicatorController } from './saveIndicatorController';
 
 interface SaveIndicatorContextValue {
   showFor2s: () => Promise<void>;
@@ -15,42 +16,17 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
-
-  const showFor2s = useCallback(() => {
-    setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
-    });
-  }, [opacity]);
-
-  const hide = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
-    setVisible(false);
-  }, [opacity]);
-
-  const value = useMemo(
-    () => ({ showFor2s, hide, opacity, visible }),
-    [showFor2s, hide, opacity, visible],
+  const controller = useMemo(
+    () => createSaveIndicatorController({ setVisible, opacity }),
+    [opacity],
   );
+
+  const value = useMemo(() => ({
+    showFor2s: controller.showFor2s,
+    hide: controller.hide,
+    opacity,
+    visible,
+  }), [controller, opacity, visible]);
 
   return <SaveIndicatorContext.Provider value={value}>{children}</SaveIndicatorContext.Provider>;
 };
