@@ -28,6 +28,7 @@ export default function useSettingsVm(
   const overlay = useOverlayTransition();
   const { showFor2s } = useSaveIndicator();
   const { settings, updateSettings } = useSettings();
+  const settingsSnapshotRef = useRef<Settings>(settings);
 
   const {
     selectedThemeName,
@@ -79,6 +80,41 @@ export default function useSettingsVm(
     setSettingsVersion,
   });
 
+  const setSettingsSnapshot = (snapshot: Settings) => {
+    settingsSnapshotRef.current = snapshot;
+  };
+
+  const withOverlayTransaction = async (
+    cb: () => void | Promise<void>,
+    nextBackground?: string,
+  ) => {
+    if (overlay.isBusy()) return;
+    const snapshot = JSON.parse(JSON.stringify(settings)) as Settings;
+    setSettingsSnapshot(snapshot);
+    try {
+      if (nextBackground) {
+        overlay.freezeBackground(nextBackground);
+      }
+      await overlay.transact(async () => {
+        try {
+          await cb();
+        } catch (e) {
+          updateSettings(snapshot);
+          resetToSnapshot(snapshot);
+          console.warn(e);
+          throw e;
+        }
+      });
+      await showFor2s();
+    } catch (e) {
+      showErrorToast(
+        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
+      );
+    } finally {
+      overlay.releaseBackground();
+    }
+  };
+
   const withSettingsTransaction = async (
     cb: () => void | Promise<void>,
     nextBackground?: string,
@@ -129,7 +165,7 @@ export default function useSettingsVm(
       settings,
     );
     const nextBg = themes[(patch.themeId ?? settings.themeId)].colors.background;
-    void withSettingsTransaction(
+    void withOverlayTransaction(
       async () => {
         handlers.onSelectTheme(name as ThemeName);
         updateSettings(patch);
