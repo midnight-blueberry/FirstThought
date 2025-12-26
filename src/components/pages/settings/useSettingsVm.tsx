@@ -47,6 +47,11 @@ export default function useSettingsVm(
   } = useLocalSettingsState(settings);
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
+  const settingsSnapshot = useRef<Settings | null>(null);
+
+  const setSettingsSnapshot = (s: Settings) => {
+    settingsSnapshot.current = JSON.parse(JSON.stringify(s)) as Settings;
+  };
 
   const { isDirty, changedKeys } = useSettingsDirty(
     {
@@ -116,6 +121,33 @@ export default function useSettingsVm(
     }
   };
 
+  const withOverlayTransaction = async (
+    cb: () => void | Promise<void>,
+    nextBackground?: string,
+  ) => {
+    if (overlay.isBusy()) return;
+    setSettingsSnapshot(settings);
+    try {
+      if (nextBackground) {
+        overlay.freezeBackground(nextBackground);
+      }
+      await overlay.transact(async () => {
+        try {
+          await cb();
+        } catch (error) {
+          updateSettings(settingsSnapshot.current ?? settings);
+          resetToSnapshot(settingsSnapshot.current ?? settings);
+          throw error;
+        }
+      });
+      await showFor2s();
+    } catch (e) {
+      showErrorToast(
+        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
+      );
+    }
+  };
+
   const changeTheme = (name: string) => {
     const patch = buildSettingsPatch(
       {
@@ -129,7 +161,7 @@ export default function useSettingsVm(
       settings,
     );
     const nextBg = themes[(patch.themeId ?? settings.themeId)].colors.background;
-    void withSettingsTransaction(
+    void withOverlayTransaction(
       async () => {
         handlers.onSelectTheme(name as ThemeName);
         updateSettings(patch);
