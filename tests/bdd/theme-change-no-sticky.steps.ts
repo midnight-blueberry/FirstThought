@@ -4,7 +4,6 @@ import { act } from 'react-test-renderer';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import { renderWithProviders } from '@tests/utils/render';
 import { getStickySelectionContext } from '@/features/sticky-position';
-import type { Settings } from '@/state/SettingsContext';
 import useSettingsVm from '@/components/pages/settings/useSettingsVm';
 
 jest.mock('@constants/fonts', () => ({
@@ -28,36 +27,23 @@ jest.mock('@utils/fontHelpers', () => ({
   hasMultipleWeights: () => false,
 }));
 
-const overlayMock = {
-  begin: jest.fn(),
-  end: jest.fn(),
-  isBusy: jest.fn(() => false),
-  freezeBackground: jest.fn(),
-  releaseBackground: jest.fn(),
-  isOpaque: jest.fn(() => true),
-  transact: jest.fn(async (fn: () => void | Promise<void>) => {
-    await fn();
-    return Promise.resolve();
-  }),
-};
+jest.mock('@/state/SettingsContext', () => {
+  const mockUpdateSettings = jest.fn();
+  const mockSettings = {
+    themeId: 'light',
+    accent: 'blue',
+    fontFamily: 'Inter',
+    fontWeight: '400',
+    fontSizeLevel: 3,
+    noteTextAlign: 'left',
+  };
 
-jest.mock('@/components/settings/overlay', () => ({
-  useOverlayTransition: () => overlayMock,
-}));
-
-const updateSettings = jest.fn();
-const settings: Settings = {
-  themeId: 'light',
-  accent: 'blue',
-  fontFamily: 'Inter',
-  fontWeight: '400',
-  fontSizeLevel: 3,
-  noteTextAlign: 'left',
-};
-
-jest.mock('@/state/SettingsContext', () => ({
-  useSettings: () => ({ settings, updateSettings }),
-}));
+  return {
+    __mockUpdateSettings: mockUpdateSettings,
+    __mockSettings: mockSettings,
+    useSettings: () => ({ settings: mockSettings, updateSettings: mockUpdateSettings }),
+  };
+});
 
 jest.mock('@hooks/useTheme', () => () => ({
   colors: { background: '#ffffff', accent: '#000000' },
@@ -121,7 +107,9 @@ defineFeature(feature, (test) => {
     });
 
     and('settings are updated with theme "cream"', () => {
-      expect(updateSettings).toHaveBeenCalledWith(
+      const { __mockUpdateSettings } = jest.requireMock('@/state/SettingsContext');
+
+      expect(__mockUpdateSettings).toHaveBeenCalledWith(
         expect.objectContaining({ themeId: 'cream' }),
       );
     });
