@@ -59,12 +59,12 @@ defineFeature(feature, (test) => {
     appTextMock.mockClear();
   });
 
-  test('Галочка выровнена по вертикальному центру', ({ given, then }) => {
-    given('компонент SelectableRow отрисован', () => {
+  test('Checkmark is vertically centered', ({ given, then }) => {
+    given('SelectableRow component is rendered', () => {
       renderSelectableRow({ fontSize: 18 });
     });
 
-    then('контейнер галочки имеет top 0 и bottom 0', () => {
+    then('Checkmark container has top 0 and bottom 0', () => {
       const checkContainer = rnMock.views.find(
         ({ props, type }) =>
           type === 'View' && StyleSheet.flatten(props.style)?.position === 'absolute',
@@ -77,12 +77,12 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Высота текста стабильна без указания fontSize', ({ given, then }) => {
-    given('компонент SelectableRow отрисован без fontSize', () => {
+  test('Text height stays consistent without fontSize', ({ given, then }) => {
+    given('SelectableRow component is rendered without fontSize', () => {
       renderSelectableRow({ label: 'No font' });
     });
 
-    then('строка лейбла имеет lineHeight равный размеру шрифта плюс отступ', () => {
+    then('Label line has lineHeight equal to font size plus padding', () => {
       const styleProp = appTextMock.mock.calls[0][0].style;
       const flattened = StyleSheet.flatten(styleProp);
 
