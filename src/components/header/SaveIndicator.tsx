@@ -15,27 +15,43 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const runIdRef = useRef(0);
 
   const showFor2s = useCallback(() => {
-    setVisible(true);
+    const currentRunId = runIdRef.current + 1;
+    runIdRef.current = currentRunId;
+
     return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
+      setVisible(true);
+
+      opacity.stopAnimation(() => {
+        opacity.setValue(0);
+
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 350,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.delay(1300),
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 350,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ]).start((result) => {
+          if (runIdRef.current !== currentRunId) {
+            resolve();
+            return;
+          }
+
+          if (result?.finished ?? true) {
+            setVisible(false);
+          }
+          resolve();
+        });
       });
     });
   }, [opacity]);
