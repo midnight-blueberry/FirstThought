@@ -19,12 +19,74 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeOutAnimRef = useRef<Animated.CompositeAnimation | null>(null);
   const pendingResolveRef = useRef<(() => void) | null>(null);
+  const phaseRef = useRef<'hidden' | 'fadingIn' | 'holding' | 'fadingOut'>('hidden');
+  const holdMsRef = useRef(0);
+
+  const scheduleFadeOut = useCallback(() => {
+    if (fadeOutTimerRef.current) {
+      clearTimeout(fadeOutTimerRef.current);
+    }
+    fadeOutTimerRef.current = setTimeout(() => {
+      fadeOutTimerRef.current = null;
+      phaseRef.current = 'fadingOut';
+      fadeOutAnimRef.current = Animated.timing(opacity, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      });
+      fadeOutAnimRef.current.start(({ finished }) => {
+        fadeOutAnimRef.current = null;
+        if (finished) {
+          setVisible(false);
+          phaseRef.current = 'hidden';
+        }
+
+        if (pendingResolveRef.current) {
+          pendingResolveRef.current();
+          pendingResolveRef.current = null;
+        }
+      });
+    }, holdMsRef.current);
+  }, [opacity]);
 
   const showFor = useCallback(
     (durationMs: number) => {
       if (pendingResolveRef.current) {
         pendingResolveRef.current();
         pendingResolveRef.current = null;
+      }
+
+      holdMsRef.current = durationMs;
+
+      const promise = new Promise<void>((resolve) => {
+        pendingResolveRef.current = resolve;
+      });
+
+      if (phaseRef.current === 'holding' && !fadeOutAnimRef.current) {
+        if (fadeOutTimerRef.current) {
+          clearTimeout(fadeOutTimerRef.current);
+        }
+        scheduleFadeOut();
+        return promise;
+      }
+
+      if (phaseRef.current === 'fadingOut') {
+        if (fadeOutTimerRef.current) {
+          clearTimeout(fadeOutTimerRef.current);
+          fadeOutTimerRef.current = null;
+        }
+        if (fadeOutAnimRef.current) {
+          fadeOutAnimRef.current.stop();
+          fadeOutAnimRef.current = null;
+        }
+        opacity.stopAnimation(() => {
+          opacity.setValue(1);
+        });
+        phaseRef.current = 'holding';
+        setVisible(true);
+        scheduleFadeOut();
+        return promise;
       }
 
       if (fadeOutTimerRef.current) {
@@ -39,41 +101,20 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setVisible(true);
 
+      phaseRef.current = 'fadingIn';
       Animated.timing(opacity, {
         toValue: 1,
         duration: 350,
         easing: Easing.inOut(Easing.quad),
         useNativeDriver: true,
-      }).start();
-
-      const promise = new Promise<void>((resolve) => {
-        pendingResolveRef.current = resolve;
+      }).start(() => {
+        phaseRef.current = 'holding';
+        scheduleFadeOut();
       });
-
-      fadeOutTimerRef.current = setTimeout(() => {
-        fadeOutTimerRef.current = null;
-        fadeOutAnimRef.current = Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        });
-        fadeOutAnimRef.current.start(({ finished }) => {
-          fadeOutAnimRef.current = null;
-          if (finished) {
-            setVisible(false);
-          }
-
-          if (pendingResolveRef.current) {
-            pendingResolveRef.current();
-            pendingResolveRef.current = null;
-          }
-        });
-      }, Math.max(0, durationMs - 350));
 
       return promise;
     },
-    [opacity],
+    [opacity, scheduleFadeOut],
   );
 
   const showFor2s = useCallback(() => showFor(2000), [showFor]);
@@ -93,6 +134,7 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
       opacity.setValue(0);
     });
     setVisible(false);
+    phaseRef.current = 'hidden';
     if (pendingResolveRef.current) {
       pendingResolveRef.current();
       pendingResolveRef.current = null;
