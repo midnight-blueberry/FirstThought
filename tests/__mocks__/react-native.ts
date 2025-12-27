@@ -1,3 +1,5 @@
+import React from 'react';
+
 // Лёгкий shim RN для unit-тестов
 export const AccessibilityInfo = {
   addEventListener: () => ({ remove: () => {} }),
@@ -23,10 +25,29 @@ export const Animated = {
   timing: (_: any, __: any) => ({ start: (cb?: () => void) => { if (cb) cb(); } }),
 };
 
+export const UIManager = {
+  measureLayout: jest.fn(),
+};
+
+export const findNodeHandle = jest.fn((ref: any) => {
+  if (ref && typeof ref === 'object' && '__node' in ref) {
+    return (ref as any).__node;
+  }
+  return ref;
+});
+
+export const ScrollView = React.forwardRef<any>((_props, ref) => {
+  React.useImperativeHandle(ref, () => ({}));
+  return null;
+});
+
 export default {
   AccessibilityInfo,
   StyleSheet,
   InteractionManager,
   Animated,
   Easing,
+  UIManager,
+  findNodeHandle,
+  ScrollView,
 };

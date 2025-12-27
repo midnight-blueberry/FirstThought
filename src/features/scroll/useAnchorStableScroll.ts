@@ -80,6 +80,7 @@ export default function useAnchorStableScroll() {
           const diff = newAnchorY - oldAnchorY.current;
           if (diff !== 0) {
             scrollView.scrollTo({ y: scrollY.current + diff, animated: false });
+            scrollY.current += diff;
           }
           inProgress.current = false;
           anchorHandle.current = null;
