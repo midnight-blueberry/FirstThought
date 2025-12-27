@@ -3,7 +3,6 @@ import React from 'react';
 import { act } from 'react-test-renderer';
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import { renderWithProviders } from '@tests/utils/render';
-import { getStickySelectionContext } from '@/features/sticky-position';
 import useSettingsVm from '@/components/pages/settings/useSettingsVm';
 
 jest.mock('@constants/fonts', () => ({
@@ -53,21 +52,56 @@ jest.mock('@hooks/useTheme', () => () => ({
 
 jest.mock('@hooks/useHeaderShadow', () => () => jest.fn());
 
+const showFor2s = jest.fn().mockResolvedValue(undefined);
+const hide = jest.fn();
+
 jest.mock('@components/header/SaveIndicator', () => ({
-  useSaveIndicator: () => ({
-    showFor2s: jest.fn().mockResolvedValue(undefined),
-    hide: jest.fn(),
-  }),
+  useSaveIndicator: () => ({ showFor2s, hide }),
 }));
 
-jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
+let busy = false;
+let overlayMock: {
+  freezeBackground: jest.Mock;
+  releaseBackground: jest.Mock;
+  transact: jest.Mock;
+  isBusy: jest.Mock;
+};
 
-const feature = loadFeature('tests/bdd/theme-change-no-sticky.feature');
+jest.mock('@/components/settings/overlay', () => ({
+  useOverlayTransition: jest.fn(),
+}));
+
+const { useOverlayTransition } = jest.requireMock('@/components/settings/overlay');
+const SAVE_INDICATOR_OVERLAY_DEBOUNCE_MS = 250;
+
+const feature = loadFeature('tests/bdd/save-indicator-overlay.feature');
 
 defineFeature(feature, (test) => {
   let vm: ReturnType<typeof useSettingsVm> | null = null;
   let tree: any;
-  let applySpy: jest.SpyInstance | null = null;
+
+  const resetOverlayMock = () => {
+    busy = false;
+    overlayMock = {
+      freezeBackground: jest.fn(),
+      releaseBackground: jest.fn(),
+      transact: jest.fn(async (cb: () => void | Promise<void>) => {
+        busy = true;
+        try {
+          await cb();
+        } finally {
+          busy = false;
+        }
+      }),
+      isBusy: jest.fn(() => busy),
+    };
+    useOverlayTransition.mockReturnValue(overlayMock);
+  };
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    resetOverlayMock();
+  });
 
   afterEach(async () => {
     if (tree) {
@@ -76,13 +110,18 @@ defineFeature(feature, (test) => {
       });
       tree = null;
     }
-    applySpy?.mockRestore();
-    applySpy = null;
+    jest.clearAllTimers();
+    jest.useRealTimers();
     jest.clearAllMocks();
   });
 
-  test('Changing theme does not trigger sticky apply', ({ given, when, then, and }) => {
-    given('settings VM is rendered', async () => {
+  test('Save indicator is debounced across rapid overlay theme changes', ({
+    given,
+    when,
+    then,
+    and,
+  }) => {
+    given('settings VM is rendered with fake timers', async () => {
       const captureBeforeUpdate = jest.fn();
       const Wrapper = () => {
         vm = useSettingsVm(captureBeforeUpdate);
@@ -92,28 +131,29 @@ defineFeature(feature, (test) => {
       await act(async () => {
         tree = renderWithProviders(React.createElement(Wrapper));
       });
-
-      const ctx = getStickySelectionContext();
-      applySpy = jest.spyOn(ctx!, 'applyWithSticky');
     });
 
-    when('user selects theme "Кремовая"', async () => {
+    when('user quickly selects two themes through overlay transactions', async () => {
       await act(async () => {
         vm!.sectionProps.theme.onSelectTheme('Кремовая');
+        vm!.sectionProps.theme.onSelectTheme('Темная');
         await Promise.resolve();
       });
     });
 
-    then('sticky selection is not applied during theme change', () => {
-      expect(applySpy).toBeTruthy();
-      expect(applySpy).not.toHaveBeenCalled();
+    then('save indicator is shown once after overlay debounce', async () => {
+      expect(showFor2s).not.toHaveBeenCalled();
+
+      await act(async () => {
+        jest.advanceTimersByTime(SAVE_INDICATOR_OVERLAY_DEBOUNCE_MS);
+      });
+
+      expect(showFor2s).toHaveBeenCalledTimes(1);
     });
 
-    and('settings are updated with theme "cream"', () => {
-      const { __mockUpdateSettings } = jest.requireMock('@/state/SettingsContext');
-
-      expect(__mockUpdateSettings).toHaveBeenCalledWith(
-        expect.objectContaining({ themeId: 'cream' }),
+    and('hide is called before overlay transaction begins', () => {
+      expect(hide.mock.invocationCallOrder[0]).toBeLessThan(
+        overlayMock.transact.mock.invocationCallOrder[0],
       );
     });
   });
