@@ -1,9 +1,22 @@
+import React from 'react';
+
 // Лёгкий shim RN для unit-тестов
+export const __mock = {
+  views: [] as any[],
+};
+
 export const AccessibilityInfo = {
   addEventListener: () => ({ remove: () => {} }),
   removeEventListener: () => {},
 };
-export const StyleSheet = { create: (s: any) => s };
+export const StyleSheet: any = { create: (s: any) => s };
+StyleSheet.flatten = (style: any) => {
+  if (!Array.isArray(style)) {
+    return style;
+  }
+
+  return style.reduce((acc, item) => ({ ...acc, ...(item || {}) }), {});
+};
 export const InteractionManager = {
   runAfterInteractions: () => Promise.resolve(),
 };
@@ -11,6 +24,21 @@ export const Easing = {
   inOut: (_: any) => (_t: any) => {},
   cubic: {},
 };
+
+export const Platform = {
+  OS: 'ios',
+  select: (options: Record<string, any>) => options.ios,
+};
+
+const recordView = (type: string, props: any) => {
+  __mock.views.push({ type, props });
+  return props;
+};
+
+export const View = (props: any) =>
+  React.createElement('div', recordView('View', { style: props.style }), props.children);
+export const TouchableOpacity = (props: any) =>
+  React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
 
 class AnimatedValue {
   private _v: number;
@@ -25,8 +53,12 @@ export const Animated = {
 
 export default {
   AccessibilityInfo,
+  __mock,
   StyleSheet,
   InteractionManager,
   Animated,
   Easing,
+  Platform,
+  View,
+  TouchableOpacity,
 };
