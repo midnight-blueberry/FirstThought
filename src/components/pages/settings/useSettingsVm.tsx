@@ -26,7 +26,7 @@ export default function useSettingsVm(
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
-  const { showFor2s } = useSaveIndicator();
+  const { showFor2s, hide } = useSaveIndicator();
   const { settings, updateSettings } = useSettings();
 
   const {
@@ -126,6 +126,7 @@ export default function useSettingsVm(
     nextBackground?: string,
   ) => {
     if (overlay.isBusy()) return;
+    hide();
     setSettingsSnapshot(settings);
     try {
       if (nextBackground) {

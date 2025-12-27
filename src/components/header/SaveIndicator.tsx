@@ -15,25 +15,58 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const runIdRef = useRef(0);
+  const activeAnimRef = useRef<Animated.CompositeAnimation | null>(null);
+  const activeResolveRef = useRef<(() => void) | null>(null);
 
   const showFor2s = useCallback(() => {
+    runIdRef.current += 1;
+    const runId = runIdRef.current;
+
+    if (activeAnimRef.current) {
+      activeAnimRef.current.stop();
+    }
+
+    if (activeResolveRef.current) {
+      activeResolveRef.current();
+      activeResolveRef.current = null;
+    }
+
+    opacity.stopAnimation(() => opacity.setValue(0));
+
     setVisible(true);
+
+    const anim = Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.delay(1300),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]);
+
+    activeAnimRef.current = anim;
+
     return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
+      activeResolveRef.current = resolve;
+
+      anim.start(({ finished }) => {
+        if (!finished) return;
+
+        if (runIdRef.current !== runId) {
+          resolve();
+          return;
+        }
+
+        activeAnimRef.current = null;
+        activeResolveRef.current = null;
         setVisible(false);
         resolve();
       });
@@ -41,6 +74,14 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [opacity]);
 
   const hide = useCallback(() => {
+    runIdRef.current += 1;
+    activeAnimRef.current?.stop();
+
+    if (activeResolveRef.current) {
+      activeResolveRef.current();
+      activeResolveRef.current = null;
+    }
+
     opacity.stopAnimation(() => {
       opacity.setValue(0);
     });
