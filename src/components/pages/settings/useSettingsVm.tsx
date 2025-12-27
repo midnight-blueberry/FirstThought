@@ -132,7 +132,6 @@ export default function useSettingsVm(
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      hide();
       await overlay.transact(async () => {
         try {
           await cb();
@@ -144,9 +143,7 @@ export default function useSettingsVm(
       });
       await showFor2s();
     } catch (e) {
-      showErrorToast(
-        e instanceof Error ? e.message : 'Ошибка сохранения настроек',
-      );
+      showErrorToast(e instanceof Error ? e.message : 'Ошибка сохранения настроек');
     }
   };
 
