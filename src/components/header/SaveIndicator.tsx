@@ -15,35 +15,73 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const runIdRef = useRef(0);
+  const animRef = useRef<Animated.CompositeAnimation | null>(null);
+  const pendingRef = useRef<{ id: number; resolve: () => void } | null>(null);
 
   const showFor2s = useCallback(() => {
+    runIdRef.current += 1;
+    const id = runIdRef.current;
+
+    animRef.current?.stop();
+    animRef.current = null;
+
+    if (pendingRef.current) {
+      pendingRef.current.resolve();
+      pendingRef.current = null;
+    }
+
+    opacity.setValue(0);
     setVisible(true);
-    return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
-      });
+
+    const promise = new Promise<void>((resolve) => {
+      pendingRef.current = { id, resolve };
     });
+
+    const animation = Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.delay(1300),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.inOut(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animRef.current = animation;
+
+    animation.start(() => {
+      if (runIdRef.current !== id) {
+        return;
+      }
+
+      setVisible(false);
+      if (pendingRef.current?.id === id) {
+        pendingRef.current.resolve();
+        pendingRef.current = null;
+      }
+    });
+
+    return promise;
   }, [opacity]);
 
   const hide = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
+    runIdRef.current += 1;
+    animRef.current?.stop();
+    animRef.current = null;
+
+    if (pendingRef.current) {
+      pendingRef.current.resolve();
+      pendingRef.current = null;
+    }
+
+    opacity.setValue(0);
     setVisible(false);
   }, [opacity]);
 
