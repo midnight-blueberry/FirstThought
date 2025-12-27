@@ -12,6 +12,22 @@ export const Easing = {
   cubic: {},
 };
 
+export const UIManager = {
+  measureLayout: jest.fn(),
+};
+
+export const findNodeHandle = (node: any) =>
+  node && typeof node === 'object' && 'nodeHandle' in node
+    ? (node as any).nodeHandle
+    : typeof node === 'number'
+      ? node
+      : 1;
+
+export class ScrollView {
+  // eslint-disable-next-line class-methods-use-this
+  scrollTo(_opts: any) {}
+}
+
 class AnimatedValue {
   private _v: number;
   constructor(v: number) { this._v = v; }
@@ -29,4 +45,7 @@ export default {
   InteractionManager,
   Animated,
   Easing,
+  UIManager,
+  findNodeHandle,
+  ScrollView,
 };
