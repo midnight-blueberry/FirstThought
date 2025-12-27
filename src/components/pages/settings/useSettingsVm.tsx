@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
@@ -26,8 +26,20 @@ export default function useSettingsVm(
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
-  const { showFor2s } = useSaveIndicator();
+  const { showFor2s, hide } = useSaveIndicator();
   const { settings, updateSettings } = useSettings();
+
+  const overlaySaveIndicatorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const overlaySaveIndicatorDelayMs = 250;
+
+  const clearOverlaySaveIndicatorTimeout = () => {
+    if (overlaySaveIndicatorTimeoutRef.current) {
+      clearTimeout(overlaySaveIndicatorTimeoutRef.current);
+      overlaySaveIndicatorTimeoutRef.current = null;
+    }
+  };
 
   const {
     selectedThemeName,
@@ -127,6 +139,8 @@ export default function useSettingsVm(
   ) => {
     if (overlay.isBusy()) return;
     setSettingsSnapshot(settings);
+    clearOverlaySaveIndicatorTimeout();
+    hide();
     try {
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
@@ -140,13 +154,20 @@ export default function useSettingsVm(
           throw error;
         }
       });
-      await showFor2s();
+      clearOverlaySaveIndicatorTimeout();
+      overlaySaveIndicatorTimeoutRef.current = setTimeout(() => {
+        if (!overlay.isBusy()) {
+          void showFor2s();
+        }
+      }, overlaySaveIndicatorDelayMs);
     } catch (e) {
       showErrorToast(
         e instanceof Error ? e.message : 'Ошибка сохранения настроек',
       );
     }
   };
+
+  useEffect(() => () => clearOverlaySaveIndicatorTimeout(), []);
 
   const changeTheme = (name: string) => {
     const patch = buildSettingsPatch(

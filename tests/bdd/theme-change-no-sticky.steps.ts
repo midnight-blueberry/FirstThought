@@ -54,7 +54,10 @@ jest.mock('@hooks/useTheme', () => () => ({
 jest.mock('@hooks/useHeaderShadow', () => () => jest.fn());
 
 jest.mock('@components/header/SaveIndicator', () => ({
-  useSaveIndicator: () => ({ showFor2s: jest.fn().mockResolvedValue(undefined) }),
+  useSaveIndicator: () => ({
+    showFor2s: jest.fn().mockResolvedValue(undefined),
+    hide: jest.fn(),
+  }),
 }));
 
 jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
