@@ -4,3 +4,4 @@ Feature: Theme change uses overlay transaction without sticky scroll
     When user selects theme "Кремовая"
     Then sticky selection is not applied during theme change
     And settings are updated with theme "cream"
+    And save indicator hides before showing save state

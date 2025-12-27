@@ -53,9 +53,16 @@ jest.mock('@hooks/useTheme', () => () => ({
 
 jest.mock('@hooks/useHeaderShadow', () => () => jest.fn());
 
-jest.mock('@components/header/SaveIndicator', () => ({
-  useSaveIndicator: () => ({ showFor2s: jest.fn().mockResolvedValue(undefined) }),
-}));
+jest.mock('@components/header/SaveIndicator', () => {
+  const hide = jest.fn();
+  const showFor2s = jest.fn().mockResolvedValue(undefined);
+
+  return {
+    __mockHide: hide,
+    __mockShowFor2s: showFor2s,
+    useSaveIndicator: () => ({ hide, showFor2s }),
+  };
+});
 
 jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
 
@@ -112,6 +119,20 @@ defineFeature(feature, (test) => {
       expect(__mockUpdateSettings).toHaveBeenCalledWith(
         expect.objectContaining({ themeId: 'cream' }),
       );
+    });
+
+    and('save indicator hides before showing save state', () => {
+      const { __mockHide, __mockShowFor2s } = jest.requireMock(
+        '@components/header/SaveIndicator',
+      );
+
+      expect(__mockHide).toHaveBeenCalled();
+      expect(__mockShowFor2s).toHaveBeenCalled();
+
+      const firstHideCall = __mockHide.mock.invocationCallOrder[0];
+      const firstShowCall = __mockShowFor2s.mock.invocationCallOrder[0];
+
+      expect(firstHideCall).toBeLessThan(firstShowCall);
     });
   });
 });
