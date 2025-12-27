@@ -16,35 +16,64 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
 
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const runIdRef = useRef(0);
+  const resolverRef = useRef<(() => void) | null>(null);
+
   const showFor2s = useCallback(() => {
-    setVisible(true);
+    const currentRunId = runIdRef.current + 1;
+    runIdRef.current = currentRunId;
+    resolverRef.current?.();
+
+    animationRef.current?.stop();
+
     return new Promise<void>((resolve) => {
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(1300),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 350,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setVisible(false);
-        resolve();
+      resolverRef.current = resolve;
+
+      opacity.stopAnimation(() => {
+        opacity.setValue(0);
+        setVisible(true);
+
+        const animation = Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 350,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.delay(1300),
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 350,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ]);
+
+        animationRef.current = animation;
+
+        animation.start(() => {
+          if (runIdRef.current === currentRunId) {
+            setVisible(false);
+          }
+          if (resolverRef.current === resolve) {
+            resolverRef.current = null;
+          }
+          resolve();
+        });
       });
     });
   }, [opacity]);
 
   const hide = useCallback(() => {
+    runIdRef.current += 1;
+    animationRef.current?.stop();
     opacity.stopAnimation(() => {
       opacity.setValue(0);
     });
     setVisible(false);
+    resolverRef.current?.();
+    resolverRef.current = null;
   }, [opacity]);
 
   const value = useMemo(
