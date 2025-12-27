@@ -12,6 +12,16 @@ export const Easing = {
   cubic: {},
 };
 
+export const UIManager = {
+  measureLayout: (_node: any, _relativeTo: any, _onFail: () => void, onSuccess: (x: number, y: number) => void) => {
+    if (onSuccess) {
+      onSuccess(0, 0);
+    }
+  },
+};
+export const findNodeHandle = (node: any) => node ?? 0;
+export const ScrollView = () => null as any;
+
 class AnimatedValue {
   private _v: number;
   constructor(v: number) { this._v = v; }
@@ -29,4 +39,7 @@ export default {
   InteractionManager,
   Animated,
   Easing,
+  UIManager,
+  findNodeHandle,
+  ScrollView,
 };
