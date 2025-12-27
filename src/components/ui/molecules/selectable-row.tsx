@@ -38,6 +38,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   const paddingLeft = hasSwatch
     ? theme.margin.medium + (theme.iconSize.large - theme.iconSize.small) / 2
     : theme.margin.medium;
+  const effectiveFontSize = fontSize ?? theme.fontSize.medium;
 
   return (
     <TouchableOpacity
@@ -89,9 +90,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
                 { translateY: drop },
               ] as TextStyle['transform'],
             },
-            fontSize
-              ? { fontSize, lineHeight: fontSize + theme.padding.medium }
-              : null,
+            {
+              fontSize: effectiveFontSize,
+              lineHeight: effectiveFontSize + theme.padding.medium,
+            },
             labelStyle,
           ]}
         >
@@ -101,10 +103,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
       <View
         style={{
           position: 'absolute',
-          top: theme.padding.medium,
+          top: 0,
+          bottom: 0,
           right: theme.padding.medium,
           width: theme.iconSize.large,
-          height: theme.iconSize.large,
           justifyContent: 'center',
           alignItems: 'center',
         }}
