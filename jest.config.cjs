@@ -3,9 +3,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: __dirname,
-  testMatch: [
-    '<rootDir>/tests/bdd/**/*.steps.ts'
-  ],
+  testMatch: ['<rootDir>/tests/**/*.steps.ts?(x)'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -17,7 +15,6 @@ module.exports = {
     '^@tests/(.*)$': '<rootDir>/tests/$1',
     '^react-native$': '<rootDir>/tests/__mocks__/react-native.ts',
     '^react-native-portalize$': '<rootDir>/tests/__mocks__/react-native-portalize.ts',
-    '^react-test-renderer$': '<rootDir>/tests/mocks/react-test-renderer.ts',
     '^glob$': require.resolve('glob')
   },
   transform: {

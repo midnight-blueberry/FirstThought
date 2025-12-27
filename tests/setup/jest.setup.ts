@@ -9,6 +9,18 @@ declare global {
 }
 
 (global as any).__DEV__ = false;
+(global as any).IS_REACT_ACT_ENVIRONMENT = true;
+
+const suppressedConsoleErrors = ['react-test-renderer is deprecated.'];
+const originalConsoleError = console.error;
+console.error = (...args: any[]) => {
+  const firstArg = args[0];
+  if (typeof firstArg === 'string' && suppressedConsoleErrors.some((msg) => firstArg.includes(msg))) {
+    return;
+  }
+
+  originalConsoleError(...args);
+};
 
 jest.mock('@/components/settings/overlay', () => ({
   useOverlayTransition: () => ({
