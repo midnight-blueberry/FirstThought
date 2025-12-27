@@ -33,6 +33,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
+  const effectiveFontSize = fontSize ?? theme.fontSize.medium;
   const drop = -theme.padding.small / 4;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
@@ -84,14 +85,13 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           style={[
             {
               ...settingsOptionLabelText,
+              fontSize: effectiveFontSize,
+              lineHeight: effectiveFontSize + theme.padding.medium,
               transform: [
                 ...((settingsOptionLabelText.transform as TextStyle['transform']) ?? []),
                 { translateY: drop },
               ] as TextStyle['transform'],
             },
-            fontSize
-              ? { fontSize, lineHeight: fontSize + theme.padding.medium }
-              : null,
             labelStyle,
           ]}
         >
@@ -101,10 +101,10 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
       <View
         style={{
           position: 'absolute',
-          top: theme.padding.medium,
+          top: 0,
+          bottom: 0,
           right: theme.padding.medium,
           width: theme.iconSize.large,
-          height: theme.iconSize.large,
           justifyContent: 'center',
           alignItems: 'center',
         }}
