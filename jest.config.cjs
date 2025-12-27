@@ -4,7 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   rootDir: __dirname,
   testMatch: [
-    '<rootDir>/tests/bdd/**/*.steps.ts'
+    '<rootDir>/tests/bdd/**/*.steps.ts',
+    '<rootDir>/tests/bdd/**/*.steps.tsx'
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   moduleNameMapper: {

@@ -15,11 +15,24 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const runIdRef = useRef(0);
+  const resolveRef = useRef<(() => void) | null>(null);
 
   const showFor2s = useCallback(() => {
+    animationRef.current?.stop?.();
+    resolveRef.current?.();
+    resolveRef.current = null;
+    runIdRef.current += 1;
+    const currentRunId = runIdRef.current;
+    opacity.stopAnimation(() => {
+      opacity.setValue(0);
+    });
+    animationRef.current = null;
     setVisible(true);
     return new Promise<void>((resolve) => {
-      Animated.sequence([
+      resolveRef.current = resolve;
+      const animation = Animated.sequence([
         Animated.timing(opacity, {
           toValue: 1,
           duration: 350,
@@ -33,14 +46,31 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
-      ]).start(() => {
-        setVisible(false);
+      ]);
+
+      animationRef.current = animation;
+      animation.start((result) => {
+        if (currentRunId !== runIdRef.current) {
+          resolve();
+          resolveRef.current = null;
+          return;
+        }
+
+        animationRef.current = null;
+        if (result?.finished !== false) {
+          setVisible(false);
+        }
         resolve();
+        resolveRef.current = null;
       });
     });
   }, [opacity]);
 
   const hide = useCallback(() => {
+    animationRef.current?.stop?.();
+    animationRef.current = null;
+    resolveRef.current?.();
+    resolveRef.current = null;
     opacity.stopAnimation(() => {
       opacity.setValue(0);
     });
