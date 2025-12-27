@@ -132,7 +132,6 @@ export default function useSettingsVm(
       if (nextBackground) {
         overlay.freezeBackground(nextBackground);
       }
-      hide();
       await overlay.transact(async () => {
         try {
           await cb();

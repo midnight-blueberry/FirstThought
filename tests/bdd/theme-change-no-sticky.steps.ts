@@ -60,6 +60,7 @@ jest.mock('@components/header/SaveIndicator', () => {
   return {
     __mockHide: hide,
     __mockShowFor2s: showFor2s,
+    hide,
     useSaveIndicator: () => ({ hide, showFor2s }),
   };
 });

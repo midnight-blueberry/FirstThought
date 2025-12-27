@@ -15,11 +15,29 @@ const SaveIndicatorContext = createContext<SaveIndicatorContextValue | undefined
 export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
+  const runIdRef = useRef(0);
+  const animRef = useRef<Animated.CompositeAnimation | null>(null);
+  const pendingRef = useRef<{ id: number; resolve: () => void } | null>(null);
 
   const showFor2s = useCallback(() => {
+    runIdRef.current += 1;
+    const id = runIdRef.current;
+
+    animRef.current?.stop();
+    animRef.current = null;
+
+    if (pendingRef.current) {
+      pendingRef.current.resolve();
+      pendingRef.current = null;
+    }
+
+    opacity.setValue(0);
     setVisible(true);
+
     return new Promise<void>((resolve) => {
-      Animated.sequence([
+      pendingRef.current = { id, resolve };
+
+      const animation = Animated.sequence([
         Animated.timing(opacity, {
           toValue: 1,
           duration: 350,
@@ -33,17 +51,37 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
-      ]).start(() => {
+      ]);
+
+      animRef.current = animation;
+
+      animation.start(() => {
+        if (runIdRef.current !== id) {
+          return;
+        }
+
         setVisible(false);
-        resolve();
+
+        if (pendingRef.current?.id === id) {
+          pendingRef.current.resolve();
+          pendingRef.current = null;
+        }
       });
     });
   }, [opacity]);
 
   const hide = useCallback(() => {
-    opacity.stopAnimation(() => {
-      opacity.setValue(0);
-    });
+    runIdRef.current += 1;
+
+    animRef.current?.stop();
+    animRef.current = null;
+
+    if (pendingRef.current) {
+      pendingRef.current.resolve();
+      pendingRef.current = null;
+    }
+
+    opacity.setValue(0);
     setVisible(false);
   }, [opacity]);
 
