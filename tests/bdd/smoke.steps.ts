@@ -15,6 +15,8 @@ jest.mock('@constants/fonts/files', () => ({
   },
 }));
 
+jest.mock('@constants/fonts/resolve', () => ({ nearestAvailableWeight: jest.fn(() => 700) }));
+
 const mockedThemes = {
   light: { name: 'Светлая' },
   cream: { name: 'Кремовая' },
@@ -91,6 +93,41 @@ export default (test: any) => {
 
     then('it returns { themeId: "dark" }', () => {
       expect(patch).toEqual({ themeId: 'dark' });
+    });
+  });
+
+  test('buildSettingsPatch normalizes font weight after font family change', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    given('current settings with font family "Inter" and weight "400"', () => {
+      current = {
+        themeId: 'light',
+        accent: '#FFD700',
+        fontFamily: 'Inter',
+        fontWeight: '400',
+        fontSizeLevel: 3,
+        noteTextAlign: 'left',
+      };
+
+      local = {
+        selectedThemeName: mockedThemes.light.name,
+        selectedAccentColor: current.accent,
+        selectedFontName: 'Inter',
+        fontWeight: '400',
+        fontSizeLevel: current.fontSizeLevel,
+        noteTextAlign: current.noteTextAlign,
+      };
+    });
+
+    when('buildSettingsPatch receives local font family "Roboto" with weight "400"', () => {
+      local.selectedFontName = 'Roboto';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { fontFamily: "Roboto", fontWeight: "700" }', () => {
+      expect(patch).toEqual({ fontFamily: 'Roboto', fontWeight: '700' });
     });
   });
 
