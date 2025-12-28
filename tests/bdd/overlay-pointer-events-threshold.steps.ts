@@ -1,10 +1,9 @@
-import { defineFeature, loadFeature } from 'jest-cucumber';
 import { OVERLAY_POINTER_EVENTS_THRESHOLD } from '@/components/settings/overlay/transitionConfig';
 
-const feature = loadFeature('tests/bdd/overlay-pointer-events-threshold.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
-  test('Threshold value matches setting', ({ given, then }) => {
+export default (test: any) => {
+  test('Threshold value matches setting', ({ given, then }: StepDefinitions) => {
     given('overlay transition configuration is available', () => {
       expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBeDefined();
     });
@@ -13,4 +12,4 @@ defineFeature(feature, (test) => {
       expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBe(0.75);
     });
   });
-});
+};

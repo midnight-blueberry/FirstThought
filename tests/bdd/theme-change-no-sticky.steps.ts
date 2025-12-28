@@ -1,10 +1,11 @@
 import React from 'react';
 // @ts-ignore
 import { act } from 'react-test-renderer';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 import { renderWithProviders } from '@tests/utils/render';
 import { getStickySelectionContext } from '@/features/sticky-position';
 import useSettingsVm from '@/components/pages/settings/useSettingsVm';
+
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
 jest.mock('@constants/fonts', () => ({
   fonts: [],
@@ -59,9 +60,7 @@ jest.mock('@components/header/SaveIndicator', () => ({
 
 jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
 
-const feature = loadFeature('tests/bdd/theme-change-no-sticky.feature');
-
-defineFeature(feature, (test) => {
+export default (test: any) => {
   let vm: ReturnType<typeof useSettingsVm> | null = null;
   let tree: any;
   let applySpy: jest.SpyInstance | null = null;
@@ -78,7 +77,7 @@ defineFeature(feature, (test) => {
     jest.clearAllMocks();
   });
 
-  test('Changing theme does not trigger sticky apply', ({ given, when, then, and }) => {
+  test('Changing theme does not trigger sticky apply', ({ given, when, then, and }: StepDefinitions) => {
     given('settings VM is rendered', async () => {
       const captureBeforeUpdate = jest.fn();
       const Wrapper = () => {
@@ -114,4 +113,4 @@ defineFeature(feature, (test) => {
       );
     });
   });
-});
+};

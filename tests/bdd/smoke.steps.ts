@@ -1,8 +1,4 @@
-import { defineFeature, loadFeature } from 'jest-cucumber';
-
-const feature = loadFeature('tests/bdd/smoke.feature');
-
-defineFeature(feature, (test: any) => {
+export default (test: any) => {
   test('basic arithmetic works', ({ given, when, then }: any) => {
     let a = 0;
     let b = 0;
@@ -21,4 +17,4 @@ defineFeature(feature, (test: any) => {
       expect(result).toBe(Number(expected));
     });
   });
-});
+};

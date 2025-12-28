@@ -1,7 +1,6 @@
 import React from 'react';
 // @ts-ignore
 import { act } from 'react-test-renderer';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 import {
   getStickySelectionContext,
   setStickySelectionContext,
@@ -10,9 +9,9 @@ import { clearRegistry, register } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
 
-const feature = loadFeature('tests/bdd/sticky-scroll.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
+export default (test: any) => {
   let scrollRef: { current: { scrollTo: jest.Mock; measure: jest.Mock } } | null = null;
   let tree: any;
   let ctx: ReturnType<typeof getStickySelectionContext>;
@@ -28,7 +27,7 @@ defineFeature(feature, (test) => {
     clearRegistry();
   });
 
-  test('keeps scroll offset after theme change', ({ given, and, when, then }) => {
+  test('keeps scroll offset after theme change', ({ given, and, when, then }: StepDefinitions) => {
     given('a list is rendered with a scroll ref', async () => {
       scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
       const List = () => null;
@@ -73,4 +72,4 @@ defineFeature(feature, (test) => {
       expect(scrollRef!.current.scrollTo).toHaveBeenCalledWith({ y: 170, animated: false });
     });
   });
-});
+};

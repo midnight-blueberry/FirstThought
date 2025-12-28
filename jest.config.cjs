@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   rootDir: __dirname,
   testMatch: [
-    '<rootDir>/tests/bdd/**/*.steps.ts'
+    '<rootDir>/tests/bdd/**/*.feature'
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   moduleNameMapper: {
@@ -21,9 +21,10 @@ module.exports = {
     '^glob$': require.resolve('glob')
   },
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }]
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
+    '\\.(feature)$': '<rootDir>/tests/setup/jest.feature.transform.cjs'
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'feature'],
   modulePathIgnorePatterns: [
     '<rootDir>[/\\\\]ChatGPT[/\\\\]',
     '<rootDir>[/\\\\]vendor[/\\\\]'

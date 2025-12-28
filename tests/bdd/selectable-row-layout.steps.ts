@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 import { StyleSheet } from 'react-native';
 import { __mock as rnMock } from '../__mocks__/react-native';
 import SelectableRow from '@components/ui/molecules/selectable-row';
@@ -37,9 +36,9 @@ jest.mock('@expo/vector-icons/Ionicons', () => {
   };
 });
 
-const feature = loadFeature('tests/bdd/selectable-row-layout.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
+export default (test: any) => {
   const renderSelectableRow = (props: Partial<React.ComponentProps<typeof SelectableRow>>) => {
     rnMock.views.length = 0;
     appTextMock.mockClear();
@@ -59,7 +58,7 @@ defineFeature(feature, (test) => {
     appTextMock.mockClear();
   });
 
-  test('Checkmark is vertically centered', ({ given, then }) => {
+  test('Checkmark is vertically centered', ({ given, then }: StepDefinitions) => {
     given('SelectableRow component is rendered', () => {
       renderSelectableRow({ fontSize: 18 });
     });
@@ -77,7 +76,7 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Text height stays consistent without fontSize', ({ given, then }) => {
+  test('Text height stays consistent without fontSize', ({ given, then }: StepDefinitions) => {
     given('SelectableRow component is rendered without fontSize', () => {
       renderSelectableRow({ label: 'No font' });
     });
@@ -89,4 +88,4 @@ defineFeature(feature, (test) => {
       expect(flattened.lineHeight).toBe(themeMock.fontSize.medium + themeMock.padding.medium);
     });
   });
-});
+};

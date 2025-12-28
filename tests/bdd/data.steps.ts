@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 
 let errorSpy: jest.SpyInstance;
 
@@ -61,16 +60,16 @@ jest.mock('@utils/crypto', () => {
 import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
 import type { DiaryMeta } from '@/types/data';
 
-const feature = loadFeature('tests/bdd/data.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
+export default (test: any) => {
   beforeEach(async () => {
     (AsyncStorage as unknown as { __storage: Map<string, string> }).__storage.clear();
     (SecureStore as unknown as { __store: Map<string, string> }).__store.clear();
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
-  test('adding a diary saves it and it appears in the list', ({ given, when, then }) => {
+  test('adding a diary saves it and it appears in the list', ({ given, when, then }: StepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let list: DiaryMeta[] = [];
 
@@ -90,7 +89,7 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('deleting a diary removes the diary and related entries', ({ given, when, then }) => {
+  test('deleting a diary removes the diary and related entries', ({ given, when, then }: StepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let entryId = '';
 
@@ -111,4 +110,4 @@ defineFeature(feature, (test) => {
       expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
     });
   });
-});
+};
