@@ -70,19 +70,19 @@ defineFeature(feature, (test) => {
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
-  test('добавление дневника сохраняет его и он появляется в списке', ({ given, when, then }) => {
+  test('adding a diary saves it and it appears in the list', ({ given, when, then }) => {
     let diary: DiaryMeta | null = null;
     let list: DiaryMeta[] = [];
 
-    given(/^создан дневник "(.+)"$/, async (title: string) => {
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
       diary = await addDiary(title);
     });
 
-    when('загружен список дневников', async () => {
+    when('the diary list is loaded', async () => {
       list = await loadDiaries();
     });
 
-    then('дневник появляется в списке', () => {
+    then('the diary appears in the list', () => {
       expect(diary).not.toBeNull();
       expect(diary!.title).toBe('My Diary');
       expect(list).toHaveLength(1);
@@ -90,21 +90,21 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('удаление дневника удаляет дневник и связанные записи', ({ given, when, then }) => {
+  test('deleting a diary removes the diary and related entries', ({ given, when, then }) => {
     let diary: DiaryMeta | null = null;
     let entryId = '';
 
-    given(/^создан дневник "(.+)" с записью$/, async (title: string) => {
+    given(/^a diary "(.+)" with an entry is created$/, async (title: string) => {
       diary = await addDiary(title);
       entryId = await addEntry(diary.id, { text: 'hello' });
       expect(await AsyncStorage.getItem(`record_${entryId}`)).not.toBeNull();
     });
 
-    when('дневник удален', async () => {
+    when('the diary is deleted', async () => {
       await deleteDiary(diary!.id);
     });
 
-    then('дневник и связанные данные удалены из хранилища', async () => {
+    then('the diary and related data are removed from storage', async () => {
       const list = await loadDiaries();
       expect(list).toHaveLength(0);
       expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
