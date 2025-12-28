@@ -1,11 +1,10 @@
 import { computeDelta } from '@/features/sticky-position/alignScrollAfterApply';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 
-const feature = loadFeature('tests/bdd/align-scroll-after-apply.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
+export default (test: any) => {
   const registerScenario = (title: string) => {
-    test(title, ({ given, and, when, then }) => {
+    test(title, ({ given, and, when, then }: StepDefinitions) => {
       let prevCenterY = 0;
       let pageY = 0;
       let height = 0;
@@ -35,4 +34,4 @@ defineFeature(feature, (test) => {
 
   registerScenario('computeDelta returns positive delta');
   registerScenario('computeDelta returns negative delta');
-});
+};

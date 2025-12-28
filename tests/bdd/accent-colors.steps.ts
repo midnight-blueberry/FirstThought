@@ -1,10 +1,9 @@
 import { accentColors, defaultAccentColor } from '@/constants/AccentColors';
-import { defineFeature, loadFeature } from 'jest-cucumber';
 
-const feature = loadFeature('tests/bdd/accent-colors.feature');
+type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
-defineFeature(feature, (test) => {
-  test('Accent colors list has six unique items', ({ given, then }) => {
+export default (test: any) => {
+  test('Accent colors list has six unique items', ({ given, then }: StepDefinitions) => {
     given('the accent colors list', () => {
       expect(accentColors).toHaveLength(6);
     });
@@ -23,7 +22,7 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Accent color entries have correct types and format', ({ given, then }) => {
+  test('Accent color entries have correct types and format', ({ given, then }: StepDefinitions) => {
     given('the accent colors list', () => {
       expect(accentColors.length).toBeGreaterThan(0);
     });
@@ -37,7 +36,7 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Accent colors include all expected names', ({ given, then }) => {
+  test('Accent colors include all expected names', ({ given, then }: StepDefinitions) => {
     given('the accent colors list', () => {
       expect(accentColors).toHaveLength(6);
     });
@@ -51,7 +50,7 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test('Default accent color is yellow', ({ given, then }) => {
+  test('Default accent color is yellow', ({ given, then }: StepDefinitions) => {
     given('the accent colors list', () => {
       expect(accentColors).toHaveLength(6);
     });
@@ -62,4 +61,4 @@ defineFeature(feature, (test) => {
       expect(def!.name).toBe('Желтый');
     });
   });
-});
+};
