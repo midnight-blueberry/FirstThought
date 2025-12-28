@@ -1,4 +1,4 @@
-import { computeDelta } from '@/features/sticky-position/alignScrollAfterApply';
+import { alignScrollAfterApply, computeDelta } from '@/features/sticky-position/alignScrollAfterApply';
 
 type StepDefinitions = { given: any; when: any; then: any; and?: any };
 
@@ -34,4 +34,21 @@ export default (test: any) => {
 
   registerScenario('computeDelta returns positive delta');
   registerScenario('computeDelta returns negative delta');
+
+  test('alignScrollAfterApply returns 0 when ref is missing', ({ given, when, then }: StepDefinitions) => {
+    let prevCenterY = 0;
+    let result = 0;
+
+    given(/^previous center Y is (-?\d+)$/, (value: string) => {
+      prevCenterY = Number(value);
+    });
+
+    when('alignScrollAfterApply is called for missing id', async () => {
+      result = await alignScrollAfterApply({ id: 'missing', prevCenterY });
+    });
+
+    then(/^the result equals (-?\d+)$/, (value: string) => {
+      expect(result).toBe(Number(value));
+    });
+  });
 };

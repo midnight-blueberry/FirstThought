@@ -12,3 +12,8 @@ Feature: Align scroll after apply
     And height is 20
     When computeDelta is calculated
     Then the result equals -40
+
+  Scenario: alignScrollAfterApply returns 0 when ref is missing
+    Given previous center Y is 100
+    When alignScrollAfterApply is called for missing id
+    Then the result equals 0
