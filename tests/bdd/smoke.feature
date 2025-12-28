@@ -8,3 +8,8 @@ Feature: Sanity
     Given current settings with theme id light
     When buildSettingsPatch receives local theme name "Темная"
     Then it returns { themeId: "dark" }
+
+  Scenario: buildSettingsPatch returns empty patch when no fields change
+    Given local settings are identical to current settings
+    When buildSettingsPatch receives the identical settings
+    Then it returns {}

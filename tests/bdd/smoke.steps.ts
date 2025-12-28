@@ -93,4 +93,38 @@ export default (test: any) => {
       expect(patch).toEqual({ themeId: 'dark' });
     });
   });
+
+  test('buildSettingsPatch returns empty patch when no fields change', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    given('local settings are identical to current settings', () => {
+      current = {
+        themeId: 'light',
+        accent: '#FFD700',
+        fontFamily: 'Inter',
+        fontWeight: '400',
+        fontSizeLevel: 3,
+        noteTextAlign: 'left',
+      };
+
+      local = {
+        selectedThemeName: mockedThemes.light.name,
+        selectedAccentColor: current.accent,
+        selectedFontName: current.fontFamily,
+        fontWeight: current.fontWeight,
+        fontSizeLevel: current.fontSizeLevel,
+        noteTextAlign: current.noteTextAlign,
+      };
+    });
+
+    when('buildSettingsPatch receives the identical settings', () => {
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns {}', () => {
+      expect(patch).toEqual({});
+    });
+  });
 };
