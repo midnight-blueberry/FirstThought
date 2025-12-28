@@ -7,7 +7,7 @@ import {
   OVERLAY_MAX_OPACITY,
   OVERLAY_MIN_OPACITY,
   OVERLAY_OPAQUE_TIMEOUT_MS,
-  OVERLAY_POINTER_EVENTS_THRESHOLD,
+  getOverlayPointerEvents,
 } from './transitionConfig';
 import { useOverlayAnimation } from './useOverlayAnimation';
 import useTheme from '@hooks/useTheme';
@@ -113,7 +113,7 @@ export const OverlayTransitionProvider: React.FC<{ children: React.ReactNode }> 
 
   useEffect(() => {
     const id = opacity.addListener(({ value }) => {
-      setPe(value > OVERLAY_POINTER_EVENTS_THRESHOLD ? 'auto' : 'none');
+      setPe(getOverlayPointerEvents(value));
     });
     return () => opacity.removeListener(id);
   }, [opacity]);

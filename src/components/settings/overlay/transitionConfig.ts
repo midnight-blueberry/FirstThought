@@ -8,3 +8,5 @@ export const OVERLAY_EASING_IN = Easing.inOut(Easing.cubic);
 export const OVERLAY_EASING_OUT = Easing.inOut(Easing.cubic);
 export const OVERLAY_OPAQUE_TIMEOUT_MS = 300;
 export const OVERLAY_POINTER_EVENTS_THRESHOLD = 0.75;
+export const getOverlayPointerEvents = (opacity: number): 'auto' | 'none' =>
+  opacity > OVERLAY_POINTER_EVENTS_THRESHOLD ? 'auto' : 'none';
