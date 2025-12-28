@@ -1,4 +1,5 @@
 Feature: Crypto helpers
+
   Scenario: Encrypt and decrypt using AES-GCM
     Given a generated encryption key
     When I encrypt a plain message
