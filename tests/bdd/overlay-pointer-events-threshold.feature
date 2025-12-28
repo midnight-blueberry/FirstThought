@@ -1,4 +1,4 @@
-Feature: Порог блокировки pointer events для оверлея
-  Scenario: Значение порога соответствует настройке
-    Given доступна конфигурация переходов оверлея
-    Then порог блокировки pointer events равен 0.75
+Feature: Pointer events block threshold for overlay
+  Scenario: Threshold value matches setting
+    Given overlay transition configuration is available
+    Then pointer events block threshold equals 0.75
