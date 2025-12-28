@@ -1,11 +1,11 @@
 Feature: Data helpers
 
-  Scenario: добавление дневника сохраняет его и он появляется в списке
-    Given создан дневник "My Diary"
-    When загружен список дневников
-    Then дневник появляется в списке
+  Scenario: adding a diary saves it and it appears in the list
+    Given a diary "My Diary" is created
+    When the diary list is loaded
+    Then the diary appears in the list
 
-  Scenario: удаление дневника удаляет дневник и связанные записи
-    Given создан дневник "Diary" с записью
-    When дневник удален
-    Then дневник и связанные данные удалены из хранилища
+  Scenario: deleting a diary removes the diary and related entries
+    Given a diary "Diary" with an entry is created
+    When the diary is deleted
+    Then the diary and related data are removed from storage
