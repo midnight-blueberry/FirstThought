@@ -2,12 +2,18 @@ import { accentColors, defaultAccentColor } from '@/constants/AccentColors';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
-  test('Accent colors list has six unique items', ({ given, then }: StepDefinitions) => {
+  const registerAccentColorsListGiven = (given: StepDefinitions['given']) => {
     given('the accent colors list', () => {
-      expect(accentColors).toHaveLength(6);
+      expect(accentColors).toBeDefined();
     });
+  };
+
+  test('Accent colors list has six unique items', ({ given, then }: StepDefinitions) => {
+    registerAccentColorsListGiven(given);
 
     then('it contains 6 unique items by name and hex', () => {
+      expect(accentColors).toHaveLength(6);
+
       const names = new Set<string>();
       const hexes = new Set<string>();
 
@@ -22,9 +28,7 @@ export default (test: JestCucumberTestFn) => {
   });
 
   test('Accent color entries have correct types and format', ({ given, then }: StepDefinitions) => {
-    given('the accent colors list', () => {
-      expect(accentColors.length).toBeGreaterThan(0);
-    });
+    registerAccentColorsListGiven(given);
 
     then('each entry has string name and hex in #RRGGBB format', () => {
       accentColors.forEach((color) => {
@@ -36,9 +40,7 @@ export default (test: JestCucumberTestFn) => {
   });
 
   test('Accent colors include all expected names', ({ given, then }: StepDefinitions) => {
-    given('the accent colors list', () => {
-      expect(accentColors).toHaveLength(6);
-    });
+    registerAccentColorsListGiven(given);
 
     then('it includes the expected color names', () => {
       const expectedColors = ['Красный', 'Оранжевый', 'Желтый', 'Зеленый', 'Синий', 'Фиолетовый'];
@@ -50,9 +52,7 @@ export default (test: JestCucumberTestFn) => {
   });
 
   test('Default accent color is yellow', ({ given, then }: StepDefinitions) => {
-    given('the accent colors list', () => {
-      expect(accentColors).toHaveLength(6);
-    });
+    registerAccentColorsListGiven(given);
 
     then('the default accent color corresponds to "Желтый"', () => {
       const def = accentColors.find((color) => color.hex === defaultAccentColor);
