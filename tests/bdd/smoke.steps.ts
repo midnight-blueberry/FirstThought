@@ -108,6 +108,30 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('buildSettingsPatch updates accent when selectedAccentColor changes', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with accent "#FFD700"',
+    );
+
+    when('buildSettingsPatch receives local accent "#00FF00"', () => {
+      local.selectedAccentColor = '#00FF00';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { accent: "#00FF00" }', () => {
+      expect(patch).toEqual({ accent: '#00FF00' });
+    });
+  });
+
   test('buildSettingsPatch normalizes font weight after font family change', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
@@ -132,6 +156,30 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('buildSettingsPatch updates note text align', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with note text align "left"',
+    );
+
+    when('buildSettingsPatch receives local note text align "justify"', () => {
+      local.noteTextAlign = 'justify';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { noteTextAlign: "justify" }', () => {
+      expect(patch).toEqual({ noteTextAlign: 'justify' });
+    });
+  });
+
   test('buildSettingsPatch returns empty patch when no fields change', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
@@ -152,6 +200,30 @@ export default (test: JestCucumberTestFn) => {
 
     then('it returns {}', () => {
       expect(patch).toEqual({});
+    });
+  });
+
+  test('buildSettingsPatch clamps lower font size level', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font size level 3',
+    );
+
+    when('buildSettingsPatch receives local font size level 0', () => {
+      local.fontSizeLevel = 0;
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { fontSizeLevel: 1 }', () => {
+      expect(patch).toEqual({ fontSizeLevel: 1 });
     });
   });
 };
