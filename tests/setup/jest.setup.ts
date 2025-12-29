@@ -27,6 +27,13 @@ jest.mock('@/components/settings/overlay', () => ({
   }),
 }));
 
+jest.mock('@constants/fonts/resolve', () => ({
+  nearestAvailableWeight: (family: string, weight: number) =>
+    family === 'Roboto' ? 700 : weight,
+  listAvailableWeights: () => [],
+  fontKey: (family: string, weight: number) => `${family}${weight}`,
+}));
+
 afterEach(() => {
   clearRegistry();
   jest.restoreAllMocks();

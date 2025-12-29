@@ -16,8 +16,6 @@ jest.mock('@constants/fonts/files', () => ({
   },
 }));
 
-jest.mock('@constants/fonts/resolve', () => ({ nearestAvailableWeight: jest.fn(() => 700) }));
-
 const mockedThemes = {
   light: { name: 'Светлая' },
   cream: { name: 'Кремовая' },

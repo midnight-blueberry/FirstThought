@@ -13,12 +13,6 @@ jest.mock('@constants/fonts', () => ({
   defaultFontName: 'Inter',
 }));
 
-jest.mock('@constants/fonts/resolve', () => ({
-  nearestAvailableWeight: (_family: string, weight: number) => weight,
-  listAvailableWeights: () => [],
-  fontKey: (_family: string, weight: number) => `${_family}_${weight}`,
-}));
-
 jest.mock('@utils/fontHelpers', () => ({
   getFontByName: () => ({
     family: 'Inter',
