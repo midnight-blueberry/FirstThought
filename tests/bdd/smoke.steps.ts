@@ -156,6 +156,30 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('buildSettingsPatch normalizes font weight change for the same font family', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font family "Inter" and weight "400"',
+    );
+
+    when('buildSettingsPatch receives local font weight "500"', () => {
+      local.fontWeight = '500';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { fontWeight: "700" }', () => {
+      expect(patch).toEqual({ fontWeight: '700' });
+    });
+  });
+
   test('buildSettingsPatch updates note text align', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];

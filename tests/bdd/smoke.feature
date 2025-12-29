@@ -19,6 +19,11 @@ Feature: Sanity
     When buildSettingsPatch receives local font family "Roboto" with weight "400"
     Then it returns { fontFamily: "Roboto", fontWeight: "700" }
 
+  Scenario: buildSettingsPatch normalizes font weight change for the same font family
+    Given current settings with font family "Inter" and weight "400"
+    When buildSettingsPatch receives local font weight "500"
+    Then it returns { fontWeight: "700" }
+
   Scenario: buildSettingsPatch updates note text align
     Given current settings with note text align "left"
     When buildSettingsPatch receives local note text align "justify"
