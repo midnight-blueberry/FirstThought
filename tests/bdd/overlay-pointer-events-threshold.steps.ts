@@ -5,13 +5,19 @@ import {
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
+  const registerOverlayTransitionConfigAvailableGiven = (
+    given: StepDefinitions['given'],
+  ) => {
+    given('overlay transition configuration is available', () => {
+      expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBeDefined();
+    });
+  };
+
   const registerPointerEventsScenario = (title: string) => {
     test(title, ({ given, when, then }: StepDefinitions) => {
       let result: 'auto' | 'none';
 
-      given('overlay transition configuration is available', () => {
-        expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBeDefined();
-      });
+      registerOverlayTransitionConfigAvailableGiven(given);
 
       when(/^overlay opacity is (-?\d+(?:\.\d+)?)$/, (opacity: string) => {
         result = getOverlayPointerEvents(Number.parseFloat(opacity));
@@ -28,9 +34,7 @@ export default (test: JestCucumberTestFn) => {
   registerPointerEventsScenario('Pointer events enabled above threshold');
 
   test('Threshold value matches setting', ({ given, then }: StepDefinitions) => {
-    given('overlay transition configuration is available', () => {
-      expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBeDefined();
-    });
+    registerOverlayTransitionConfigAvailableGiven(given);
 
     then('pointer events block threshold equals 0.75', () => {
       expect(OVERLAY_POINTER_EVENTS_THRESHOLD).toBe(0.75);
