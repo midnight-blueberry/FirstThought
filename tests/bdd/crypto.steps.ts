@@ -1,26 +1,18 @@
 import { webcrypto } from 'crypto';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
+import * as SecureStore from 'expo-secure-store';
 
 if (!globalThis.crypto) {
   globalThis.crypto = webcrypto as Crypto;
 }
 
-const store = new Map<string, string>();
-
 const generateEncryptionKeyForTest = async () => {
-  store.clear();
+  (SecureStore as unknown as { reset: () => void }).reset();
   const { generateKey } = await import('@utils/crypto');
   await generateKey();
 };
 
-jest.mock('expo-secure-store', () => ({
-  getItemAsync: jest.fn((key: string) => Promise.resolve(store.get(key) ?? null)),
-  setItemAsync: jest.fn((key: string, value: string) => {
-    store.set(key, value);
-    return Promise.resolve();
-  }),
-  AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'after_first_unlock',
-}));
+jest.mock('expo-secure-store', () => require('../mocks/expoSecureStoreMock'));
 
 export default (test: JestCucumberTestFn) => {
   test('Encrypt and decrypt using AES-GCM', ({ given, when, then, and = () => {} }: StepDefinitions) => {
