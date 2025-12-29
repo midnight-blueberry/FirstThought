@@ -9,6 +9,11 @@ Feature: Sanity
     When buildSettingsPatch receives local theme name "Темная"
     Then it returns { themeId: "dark" }
 
+  Scenario: buildSettingsPatch normalizes font weight after font family change
+    Given current settings with font family "Inter" and weight "400"
+    When buildSettingsPatch receives local font family "Roboto" with weight "400"
+    Then it returns { fontFamily: "Roboto", fontWeight: "700" }
+
   Scenario: buildSettingsPatch returns empty patch when no fields change
     Given local settings are identical to current settings
     When buildSettingsPatch receives the identical settings
