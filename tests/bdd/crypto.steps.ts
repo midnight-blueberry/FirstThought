@@ -7,6 +7,12 @@ if (!globalThis.crypto) {
 
 const store = new Map<string, string>();
 
+const generateEncryptionKeyForTest = async () => {
+  store.clear();
+  const { generateKey } = await import('@utils/crypto');
+  await generateKey();
+};
+
 jest.mock('expo-secure-store', () => ({
   getItemAsync: jest.fn((key: string) => Promise.resolve(store.get(key) ?? null)),
   setItemAsync: jest.fn((key: string, value: string) => {
@@ -23,9 +29,7 @@ export default (test: JestCucumberTestFn) => {
     let decrypted = '';
 
     given('a generated encryption key', async () => {
-      store.clear();
-      const { generateKey } = await import('@utils/crypto');
-      await generateKey();
+      await generateEncryptionKeyForTest();
     });
 
     when('I encrypt a plain message', async () => {
@@ -51,9 +55,7 @@ export default (test: JestCucumberTestFn) => {
     let encrypted2 = '';
 
     given('a generated encryption key', async () => {
-      store.clear();
-      const { generateKey } = await import('@utils/crypto');
-      await generateKey();
+      await generateEncryptionKeyForTest();
     });
 
     when('I encrypt the same plain message twice', async () => {
