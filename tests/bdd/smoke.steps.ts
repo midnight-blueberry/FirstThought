@@ -50,14 +50,29 @@ const createBaseSettings = (): {
 };
 
 export default (test: JestCucumberTestFn) => {
+  const registerBaseSettingsGiven = (
+    given: StepDefinitions['given'],
+    assignSettings: (settings: ReturnType<typeof createBaseSettings>) => void,
+    stepText: Parameters<StepDefinitions['given']>[0],
+  ) => {
+    given(stepText, () => {
+      assignSettings(createBaseSettings());
+    });
+  };
+
   test('buildSettingsPatch clamps font size level', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
     let patch: Partial<Settings>;
 
-    given('current settings with font size level 3', () => {
-      ({ current, local } = createBaseSettings());
-    });
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font size level 3',
+    );
 
     when('buildSettingsPatch receives local font size level 999', () => {
       local.fontSizeLevel = 999;
@@ -74,9 +89,14 @@ export default (test: JestCucumberTestFn) => {
     let local: Parameters<typeof buildSettingsPatch>[0];
     let patch: Partial<Settings>;
 
-    given('current settings with theme id light', () => {
-      ({ current, local } = createBaseSettings());
-    });
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with theme id light',
+    );
 
     when('buildSettingsPatch receives local theme name "Темная"', () => {
       local.selectedThemeName = mockedThemes.dark.name;
@@ -93,9 +113,14 @@ export default (test: JestCucumberTestFn) => {
     let local: Parameters<typeof buildSettingsPatch>[0];
     let patch: Partial<Settings>;
 
-    given('current settings with font family "Inter" and weight "400"', () => {
-      ({ current, local } = createBaseSettings());
-    });
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font family "Inter" and weight "400"',
+    );
 
     when('buildSettingsPatch receives local font family "Roboto" with weight "400"', () => {
       local.selectedFontName = 'Roboto';
@@ -112,9 +137,14 @@ export default (test: JestCucumberTestFn) => {
     let local: Parameters<typeof buildSettingsPatch>[0];
     let patch: Partial<Settings>;
 
-    given('local settings are identical to current settings', () => {
-      ({ current, local } = createBaseSettings());
-    });
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'local settings are identical to current settings',
+    );
 
     when('buildSettingsPatch receives the identical settings', () => {
       patch = buildSettingsPatch(local, current);
