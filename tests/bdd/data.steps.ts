@@ -33,18 +33,7 @@ jest.mock('@react-native-async-storage/async-storage', () => {
 });
 
 // Mock SecureStore
-jest.mock('expo-secure-store', () => {
-  const store = new Map<string, string>();
-  return {
-    getItemAsync: jest.fn((key: string) => Promise.resolve(store.get(key) ?? null)),
-    setItemAsync: jest.fn((key: string, value: string) => {
-      store.set(key, value);
-      return Promise.resolve();
-    }),
-    AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'after_first_unlock',
-    __store: store,
-  };
-});
+jest.mock('expo-secure-store', () => require('../mocks/expoSecureStoreMock'));
 
 // Mock crypto helpers to bypass encryption in data tests
 jest.mock('@utils/crypto', () => {
