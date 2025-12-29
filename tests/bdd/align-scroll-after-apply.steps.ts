@@ -2,31 +2,49 @@ import { alignScrollAfterApply, computeDelta } from '@/features/sticky-position/
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
+  type CommonStepDefinitions = Pick<StepDefinitions, 'given' | 'and' | 'then'>;
+
+  type CommonState = {
+    prevCenterY: number;
+    pageY: number;
+    height: number;
+    result: number;
+  };
+
+  const registerCommonSteps = (
+    { given, and = () => {}, then }: CommonStepDefinitions,
+    state: CommonState,
+  ) => {
+    given(/^previous center Y is (-?\d+)$/, (value: string) => {
+      state.prevCenterY = Number(value);
+    });
+
+    and(/^page Y is (-?\d+)$/, (value: string) => {
+      state.pageY = Number(value);
+    });
+
+    and(/^height is (-?\d+)$/, (value: string) => {
+      state.height = Number(value);
+    });
+
+    then(/^the result equals (-?\d+)$/, (value: string) => {
+      expect(state.result).toBe(Number(value));
+    });
+  };
+
   const registerScenario = (title: string) => {
     test(title, ({ given, and = () => {}, when, then }: StepDefinitions) => {
-      let prevCenterY = 0;
-      let pageY = 0;
-      let height = 0;
-      let result = 0;
+      const state: CommonState = {
+        prevCenterY: 0,
+        pageY: 0,
+        height: 0,
+        result: 0,
+      };
 
-      given(/^previous center Y is (-?\d+)$/, (value: string) => {
-        prevCenterY = Number(value);
-      });
-
-      and(/^page Y is (-?\d+)$/, (value: string) => {
-        pageY = Number(value);
-      });
-
-      and(/^height is (-?\d+)$/, (value: string) => {
-        height = Number(value);
-      });
+      registerCommonSteps({ given, and, then }, state);
 
       when('computeDelta is calculated', () => {
-        result = computeDelta(prevCenterY, pageY, height);
-      });
-
-      then(/^the result equals (-?\d+)$/, (value: string) => {
-        expect(result).toBe(Number(value));
+        state.result = computeDelta(state.prevCenterY, state.pageY, state.height);
       });
     });
   };
@@ -34,20 +52,18 @@ export default (test: JestCucumberTestFn) => {
   registerScenario('computeDelta returns positive delta');
   registerScenario('computeDelta returns negative delta');
 
-  test('alignScrollAfterApply returns 0 when ref is missing', ({ given, when, then }: StepDefinitions) => {
-    let prevCenterY = 0;
-    let result = 0;
+  test('alignScrollAfterApply returns 0 when ref is missing', ({ given, and = () => {}, when, then }: StepDefinitions) => {
+    const state: CommonState = {
+      prevCenterY: 0,
+      pageY: 0,
+      height: 0,
+      result: 0,
+    };
 
-    given(/^previous center Y is (-?\d+)$/, (value: string) => {
-      prevCenterY = Number(value);
-    });
+    registerCommonSteps({ given, and, then }, state);
 
     when('alignScrollAfterApply is called for missing id', async () => {
-      result = await alignScrollAfterApply({ id: 'missing', prevCenterY });
-    });
-
-    then(/^the result equals (-?\d+)$/, (value: string) => {
-      expect(result).toBe(Number(value));
+      state.result = await alignScrollAfterApply({ id: 'missing', prevCenterY: state.prevCenterY });
     });
   });
 };
