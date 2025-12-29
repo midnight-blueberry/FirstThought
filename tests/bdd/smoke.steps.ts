@@ -24,6 +24,31 @@ const mockedThemes = {
   dark: { name: 'Темная' },
 } as const;
 
+const createBaseSettings = (): {
+  current: Settings;
+  local: Parameters<typeof buildSettingsPatch>[0];
+} => {
+  const current = {
+    themeId: 'light',
+    accent: '#FFD700',
+    fontFamily: 'Inter',
+    fontWeight: '400',
+    fontSizeLevel: 3,
+    noteTextAlign: 'left',
+  } satisfies Settings;
+
+  const local = {
+    selectedThemeName: mockedThemes.light.name,
+    selectedAccentColor: current.accent,
+    selectedFontName: current.fontFamily,
+    fontWeight: current.fontWeight,
+    fontSizeLevel: current.fontSizeLevel,
+    noteTextAlign: current.noteTextAlign,
+  } satisfies Parameters<typeof buildSettingsPatch>[0];
+
+  return { current, local };
+};
+
 export default (test: JestCucumberTestFn) => {
   test('buildSettingsPatch clamps font size level', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
@@ -31,23 +56,7 @@ export default (test: JestCucumberTestFn) => {
     let patch: Partial<Settings>;
 
     given('current settings with font size level 3', () => {
-      current = {
-        themeId: 'light',
-        accent: '#FFD700',
-        fontFamily: 'Inter',
-        fontWeight: '400',
-        fontSizeLevel: 3,
-        noteTextAlign: 'left',
-      };
-
-      local = {
-        selectedThemeName: mockedThemes.light.name,
-        selectedAccentColor: current.accent,
-        selectedFontName: current.fontFamily,
-        fontWeight: current.fontWeight,
-        fontSizeLevel: current.fontSizeLevel,
-        noteTextAlign: current.noteTextAlign,
-      };
+      ({ current, local } = createBaseSettings());
     });
 
     when('buildSettingsPatch receives local font size level 999', () => {
@@ -66,23 +75,7 @@ export default (test: JestCucumberTestFn) => {
     let patch: Partial<Settings>;
 
     given('current settings with theme id light', () => {
-      current = {
-        themeId: 'light',
-        accent: '#FFD700',
-        fontFamily: 'Inter',
-        fontWeight: '400',
-        fontSizeLevel: 3,
-        noteTextAlign: 'left',
-      };
-
-      local = {
-        selectedThemeName: mockedThemes.light.name,
-        selectedAccentColor: current.accent,
-        selectedFontName: current.fontFamily,
-        fontWeight: current.fontWeight,
-        fontSizeLevel: current.fontSizeLevel,
-        noteTextAlign: current.noteTextAlign,
-      };
+      ({ current, local } = createBaseSettings());
     });
 
     when('buildSettingsPatch receives local theme name "Темная"', () => {
@@ -101,23 +94,7 @@ export default (test: JestCucumberTestFn) => {
     let patch: Partial<Settings>;
 
     given('current settings with font family "Inter" and weight "400"', () => {
-      current = {
-        themeId: 'light',
-        accent: '#FFD700',
-        fontFamily: 'Inter',
-        fontWeight: '400',
-        fontSizeLevel: 3,
-        noteTextAlign: 'left',
-      };
-
-      local = {
-        selectedThemeName: mockedThemes.light.name,
-        selectedAccentColor: current.accent,
-        selectedFontName: 'Inter',
-        fontWeight: '400',
-        fontSizeLevel: current.fontSizeLevel,
-        noteTextAlign: current.noteTextAlign,
-      };
+      ({ current, local } = createBaseSettings());
     });
 
     when('buildSettingsPatch receives local font family "Roboto" with weight "400"', () => {
@@ -136,23 +113,7 @@ export default (test: JestCucumberTestFn) => {
     let patch: Partial<Settings>;
 
     given('local settings are identical to current settings', () => {
-      current = {
-        themeId: 'light',
-        accent: '#FFD700',
-        fontFamily: 'Inter',
-        fontWeight: '400',
-        fontSizeLevel: 3,
-        noteTextAlign: 'left',
-      };
-
-      local = {
-        selectedThemeName: mockedThemes.light.name,
-        selectedAccentColor: current.accent,
-        selectedFontName: current.fontFamily,
-        fontWeight: current.fontWeight,
-        fontSizeLevel: current.fontSizeLevel,
-        noteTextAlign: current.noteTextAlign,
-      };
+      ({ current, local } = createBaseSettings());
     });
 
     when('buildSettingsPatch receives the identical settings', () => {
