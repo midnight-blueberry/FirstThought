@@ -24,6 +24,11 @@ Feature: Sanity
     When buildSettingsPatch receives local font weight "500"
     Then it returns { fontWeight: "700" }
 
+  Scenario: buildSettingsPatch ignores font weight change when normalized weight equals current weight
+    Given current settings with font family "Inter" and weight "400"
+    When buildSettingsPatch receives local font weight "500"
+    Then it returns {}
+
   Scenario: buildSettingsPatch updates note text align
     Given current settings with note text align "left"
     When buildSettingsPatch receives local note text align "justify"

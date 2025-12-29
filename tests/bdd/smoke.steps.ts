@@ -1,6 +1,7 @@
 import { buildSettingsPatch } from '@/components/pages/settings/buildSettingsPatch';
 import type { Settings } from '@/state/SettingsContext';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
+import { nearestAvailableWeight } from '@constants/fonts/resolve';
 
 jest.mock('@theme/buildTheme', () => ({
   themes: {
@@ -177,6 +178,32 @@ export default (test: JestCucumberTestFn) => {
 
     then('it returns { fontWeight: "700" }', () => {
       expect(patch).toEqual({ fontWeight: '700' });
+    });
+  });
+
+  test('buildSettingsPatch ignores font weight change when normalized weight equals current weight', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font family "Inter" and weight "400"',
+    );
+
+    when('buildSettingsPatch receives local font weight "500"', () => {
+      const mocked = nearestAvailableWeight as unknown as jest.Mock;
+      mocked.mockReturnValueOnce(400);
+      local.fontWeight = '500';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns {}', () => {
+      expect(patch).toEqual({});
     });
   });
 
