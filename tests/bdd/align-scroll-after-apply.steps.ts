@@ -1,10 +1,9 @@
 import { alignScrollAfterApply, computeDelta } from '@/features/sticky-position/alignScrollAfterApply';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   const registerScenario = (title: string) => {
-    test(title, ({ given, and, when, then }: StepDefinitions) => {
+    test(title, ({ given, and = () => {}, when, then }: StepDefinitions) => {
       let prevCenterY = 0;
       let pageY = 0;
       let height = 0;

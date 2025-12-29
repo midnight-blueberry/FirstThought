@@ -4,8 +4,7 @@ import { act } from 'react-test-renderer';
 import { renderWithProviders } from '@tests/utils/render';
 import { getStickySelectionContext } from '@/features/sticky-position';
 import useSettingsVm from '@/components/pages/settings/useSettingsVm';
-
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 jest.mock('@constants/fonts', () => ({
   fonts: [],
@@ -60,7 +59,7 @@ jest.mock('@components/header/SaveIndicator', () => ({
 
 jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
 
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   let vm: ReturnType<typeof useSettingsVm> | null = null;
   let tree: any;
   let applySpy: jest.SpyInstance | null = null;
@@ -77,7 +76,7 @@ export default (test: any) => {
     jest.clearAllMocks();
   });
 
-  test('Changing theme does not trigger sticky apply', ({ given, when, then, and }: StepDefinitions) => {
+  test('Changing theme does not trigger sticky apply', ({ given, when, then, and = () => {} }: StepDefinitions) => {
     given('settings VM is rendered', async () => {
       const captureBeforeUpdate = jest.fn();
       const Wrapper = () => {

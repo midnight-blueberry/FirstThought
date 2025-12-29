@@ -59,10 +59,9 @@ jest.mock('@utils/crypto', () => {
 
 import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
 import type { DiaryMeta } from '@/types/data';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   beforeEach(async () => {
     (AsyncStorage as unknown as { __storage: Map<string, string> }).__storage.clear();
     (SecureStore as unknown as { __store: Map<string, string> }).__store.clear();

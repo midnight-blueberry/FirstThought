@@ -3,6 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import { StyleSheet } from 'react-native';
 import { __mock as rnMock } from '../__mocks__/react-native';
 import SelectableRow from '@components/ui/molecules/selectable-row';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 const themeMock = {
   colors: { background: '#ffffff', accent: '#222222', basic: '#111111' },
@@ -36,9 +37,7 @@ jest.mock('@expo/vector-icons/Ionicons', () => {
   };
 });
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   const renderSelectableRow = (props: Partial<React.ComponentProps<typeof SelectableRow>>) => {
     rnMock.views.length = 0;
     appTextMock.mockClear();
