@@ -1,8 +1,7 @@
 import { accentColors, defaultAccentColor } from '@/constants/AccentColors';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   test('Accent colors list has six unique items', ({ given, then }: StepDefinitions) => {
     given('the accent colors list', () => {
       expect(accentColors).toHaveLength(6);

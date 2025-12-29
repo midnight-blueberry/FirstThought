@@ -1,6 +1,5 @@
 import { webcrypto } from 'crypto';
-
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 if (!globalThis.crypto) {
   globalThis.crypto = webcrypto as Crypto;
@@ -17,8 +16,8 @@ jest.mock('expo-secure-store', () => ({
   AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'after_first_unlock',
 }));
 
-export default (test: any) => {
-  test('Encrypt and decrypt using AES-GCM', ({ given, when, then, and }: StepDefinitions) => {
+export default (test: JestCucumberTestFn) => {
+  test('Encrypt and decrypt using AES-GCM', ({ given, when, then, and = () => {} }: StepDefinitions) => {
     const message = 'Secret message';
     let encrypted = '';
     let decrypted = '';
@@ -46,7 +45,7 @@ export default (test: any) => {
     });
   });
 
-  test('Encrypting the same message twice produces different ciphertexts', ({ given, when, then, and }: StepDefinitions) => {
+  test('Encrypting the same message twice produces different ciphertexts', ({ given, when, then, and = () => {} }: StepDefinitions) => {
     const message = 'Secret message';
     let encrypted1 = '';
     let encrypted2 = '';

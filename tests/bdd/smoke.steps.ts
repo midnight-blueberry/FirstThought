@@ -1,5 +1,6 @@
 import { buildSettingsPatch } from '@/components/pages/settings/buildSettingsPatch';
 import type { Settings } from '@/state/SettingsContext';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 jest.mock('@theme/buildTheme', () => ({
   themes: {
@@ -23,9 +24,7 @@ const mockedThemes = {
   dark: { name: 'Темная' },
 } as const;
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   test('buildSettingsPatch clamps font size level', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];

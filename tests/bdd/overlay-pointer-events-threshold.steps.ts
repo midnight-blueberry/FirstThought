@@ -2,10 +2,9 @@ import {
   getOverlayPointerEvents,
   OVERLAY_POINTER_EVENTS_THRESHOLD,
 } from '@/components/settings/overlay/transitionConfig';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   test('Pointer events disabled below threshold', ({ given, when, then }: StepDefinitions) => {
     let result: 'auto' | 'none';
 

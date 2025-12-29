@@ -8,10 +8,9 @@ import {
 import { clearRegistry, register } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
+import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type StepDefinitions = { given: any; when: any; then: any; and?: any };
-
-export default (test: any) => {
+export default (test: JestCucumberTestFn) => {
   let scrollRef: { current: { scrollTo: jest.Mock; measure: jest.Mock } } | null = null;
   let tree: any;
   let ctx: ReturnType<typeof getStickySelectionContext>;
@@ -27,7 +26,7 @@ export default (test: any) => {
     clearRegistry();
   });
 
-  test('keeps scroll offset after theme change', ({ given, and, when, then }: StepDefinitions) => {
+  test('keeps scroll offset after theme change', ({ given, and = () => {}, when, then }: StepDefinitions) => {
     given('a list is rendered with a scroll ref', async () => {
       scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
       const List = () => null;
