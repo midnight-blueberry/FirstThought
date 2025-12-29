@@ -8,6 +8,7 @@ import {
 import { clearRegistry, register } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
+import { unmountTree } from '@tests/utils/unmountTree';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
@@ -16,12 +17,7 @@ export default (test: JestCucumberTestFn) => {
   let ctx: ReturnType<typeof getStickySelectionContext>;
 
   afterEach(async () => {
-    if (tree) {
-      await act(async () => {
-        tree.unmount();
-      });
-      tree = null;
-    }
+    tree = await unmountTree(tree);
     setStickySelectionContext(null);
     clearRegistry();
   });
