@@ -4,6 +4,7 @@ import { act } from 'react-test-renderer';
 import { renderWithProviders } from '@tests/utils/render';
 import { getStickySelectionContext } from '@/features/sticky-position';
 import useSettingsVm from '@/components/pages/settings/useSettingsVm';
+import { unmountTree } from '@tests/utils/unmountTree';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 jest.mock('@constants/fonts', () => ({
@@ -65,12 +66,7 @@ export default (test: JestCucumberTestFn) => {
   let applySpy: jest.SpyInstance | null = null;
 
   afterEach(async () => {
-    if (tree) {
-      await act(async () => {
-        tree.unmount();
-      });
-      tree = null;
-    }
+    tree = await unmountTree(tree);
     applySpy?.mockRestore();
     applySpy = null;
     jest.clearAllMocks();
