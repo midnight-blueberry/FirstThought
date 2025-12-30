@@ -46,8 +46,18 @@ jest.mock('@utils/crypto', () => {
   };
 });
 
-import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
-import type { DiaryMeta } from '@/types/data';
+import {
+  addDiary,
+  addEntry,
+  deleteDiary,
+  deleteEntry,
+  loadDiaries,
+  loadEntry,
+  modifyEntry,
+  moveEntry,
+} from '@/scripts/data';
+import type { DiaryMeta, EntryData } from '@/types/data';
+import { loadEntryIds } from '@/utils/storage';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
@@ -96,6 +106,124 @@ export default (test: JestCucumberTestFn) => {
       expect(list).toHaveLength(0);
       expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
       expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
+    });
+  });
+
+  test('adding an entry saves it, indexes it, and it can be loaded', ({ given, and, when, then }: StepDefinitions) => {
+    let diary: DiaryMeta | null = null;
+    let entryId = '';
+    let storedEntry: EntryData = {};
+    let loadedEntry: EntryData | null = null;
+    let entryIds: string[] = [];
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      diary = await addDiary(title);
+    });
+
+    and(/^an entry with text "(.+)" is added to the diary$/, async (text: string) => {
+      storedEntry = { text, mood: 'calm' };
+      entryId = await addEntry(diary!.id, storedEntry);
+    });
+
+    when('the entry is loaded', async () => {
+      loadedEntry = await loadEntry(entryId);
+      entryIds = await loadEntryIds(diary!.id);
+    });
+
+    then('the loaded entry matches the added data', () => {
+      expect(loadedEntry).toEqual(storedEntry);
+    });
+
+    and('the diary entry index includes the entry id', () => {
+      expect(entryIds).toContain(entryId);
+    });
+  });
+
+  test('modifying an entry updates stored data', ({ given, when, then }: StepDefinitions) => {
+    let diary: DiaryMeta | null = null;
+    let entryId = '';
+    let updated: EntryData | null = null;
+
+    given('a diary with an entry to modify exists', async () => {
+      diary = await addDiary('Editable Diary');
+      entryId = await addEntry(diary!.id, { text: 'Original', mood: 'neutral', tags: ['keep'] });
+    });
+
+    when(/^the entry is modified with new text "(.+)" and mood "(.+)"$/, async (text: string, mood: string) => {
+      await modifyEntry<EntryData>(diary!.id, entryId, { text, mood });
+      updated = await loadEntry<EntryData>(entryId);
+    });
+
+    then('the loaded entry contains the updated data and preserved fields', () => {
+      expect(updated).not.toBeNull();
+      expect(updated!.text).toBe('Updated text');
+      expect(updated!.mood).toBe('happy');
+      expect(updated!.tags).toEqual(['keep']);
+    });
+  });
+
+  test('deleting an entry removes it and updates the index', ({ given, when, then, and }: StepDefinitions) => {
+    let diary: DiaryMeta | null = null;
+    let entryId = '';
+
+    given('a diary with an entry to delete exists', async () => {
+      diary = await addDiary('Diary to delete');
+      entryId = await addEntry(diary!.id, { text: 'To remove' });
+    });
+
+    when('the entry is deleted', async () => {
+      await deleteEntry(diary!.id, entryId);
+    });
+
+    then('the entry cannot be loaded', async () => {
+      expect(await loadEntry(entryId)).toBeNull();
+    });
+
+    and('the diary entry index no longer includes the entry id', async () => {
+      const ids = await loadEntryIds(diary!.id);
+      expect(ids).not.toContain(entryId);
+    });
+  });
+
+  test('moving an entry updates diary indices', ({ given, when, then, and }: StepDefinitions) => {
+    let firstDiary: DiaryMeta | null = null;
+    let secondDiary: DiaryMeta | null = null;
+    let entryId = '';
+
+    given('two diaries exist and one contains an entry', async () => {
+      firstDiary = await addDiary('Source Diary');
+      secondDiary = await addDiary('Destination Diary');
+      entryId = await addEntry(firstDiary.id, { text: 'Movable entry' });
+    });
+
+    when('the entry is moved from the first diary to the second', async () => {
+      await moveEntry(firstDiary!.id, secondDiary!.id, entryId);
+    });
+
+    then('the source diary index no longer lists the entry', async () => {
+      const ids = await loadEntryIds(firstDiary!.id);
+      expect(ids).not.toContain(entryId);
+    });
+
+    and('the destination diary index lists the entry', async () => {
+      const ids = await loadEntryIds(secondDiary!.id);
+      expect(ids).toContain(entryId);
+    });
+  });
+
+  test('loading diaries fails on invalid stored data', ({ given, when, then }: StepDefinitions) => {
+    let loadPromise: Promise<DiaryMeta[]> | null = null;
+
+    given('storage contains invalid diaries data', async () => {
+      await AsyncStorage.setItem('__encrypted_diaries__', '"invalid"');
+    });
+
+    when('diaries are loaded', () => {
+      loadPromise = loadDiaries();
+    });
+
+    then(/^an error is thrown with message "(.+)"$/, async (message: string) => {
+      await expect(loadPromise).rejects.toThrow(message);
     });
   });
 };
