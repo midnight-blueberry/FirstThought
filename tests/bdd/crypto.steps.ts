@@ -82,4 +82,25 @@ export default (test: JestCucumberTestFn) => {
       expect(decrypted2).toBe(state.message);
     });
   });
+
+  test('Decrypting a malformed v2 payload throws a format error', ({ given, when, then }: StepDefinitions) => {
+    const state: { error: unknown } = { error: null };
+
+    registerGeneratedEncryptionKeyStep(given);
+
+    when('I try to decrypt an invalid encrypted payload "v2:AAA"', async () => {
+      try {
+        const { decrypt } = await import('@utils/crypto');
+        await decrypt('v2:AAA');
+      } catch (error) {
+        state.error = error;
+      }
+    });
+
+    then('decryption fails with message "Invalid encrypted payload format."', () => {
+      expect(state.error).toBeInstanceOf(Error);
+      const error = state.error as Error;
+      expect(error.message).toBe('Invalid encrypted payload format.');
+    });
+  });
 };
