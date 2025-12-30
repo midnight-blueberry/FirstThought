@@ -16,3 +16,8 @@ Feature: Crypto helpers
     Given a generated encryption key
     When I try to decrypt an invalid encrypted payload "v2:AAA"
     Then decryption fails with message "Invalid encrypted payload format."
+
+  Scenario: Decrypting a legacy payload throws an unsupported format error
+    Given a generated encryption key
+    When I try to decrypt an invalid encrypted payload "v1:AAA"
+    Then decryption fails with message "Unsupported legacy encryption format. Please clear storage or reinstall the app."
