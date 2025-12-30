@@ -9,6 +9,13 @@ Feature: Data helpers
     When an entry with text "hello" is added to the diary
     Then the saved entry can be loaded
     Then the diary entry index includes the entry id
+
+  Scenario: modifying an entry updates stored data and preserves other fields
+    Given a diary "Diary" is created
+    When an entry with text "hello" and mood "happy" is added to the diary
+    When the entry text is changed to "bye"
+    Then the loaded entry text is "bye"
+    Then the loaded entry mood is "happy"
   Scenario: deleting a diary removes the diary and related entries
     Given a diary "Diary" with an entry is created
     When the diary is deleted

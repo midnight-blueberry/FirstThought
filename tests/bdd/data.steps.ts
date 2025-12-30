@@ -46,7 +46,7 @@ jest.mock('@utils/crypto', () => {
   };
 });
 
-import { addDiary, deleteDiary, loadDiaries, addEntry, loadEntry } from '@/scripts/data';
+import { addDiary, deleteDiary, loadDiaries, addEntry, loadEntry, modifyEntry } from '@/scripts/data';
 import { loadEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
@@ -108,6 +108,45 @@ export default (test: JestCucumberTestFn) => {
     then('the diary entry index includes the entry id', async () => {
       const entryIds = await loadEntryIds(diaryId);
       expect(entryIds).toContain(entryId);
+    });
+  });
+
+  test('modifying an entry updates stored data and preserves other fields', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let entryId = '';
+    let cachedEntry: Awaited<ReturnType<typeof loadEntry>> = null;
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(
+      /^an entry with text "(.+)" and mood "(.+)" is added to the diary$/,
+      async (entryText: string, mood: string) => {
+        entryId = await addEntry(diaryId, { text: entryText, mood });
+      },
+    );
+
+    when(/^the entry text is changed to "(.+)"$/, async (newText: string) => {
+      await modifyEntry(diaryId, entryId, { text: newText });
+    });
+
+    then(/^the loaded entry text is "(.+)"$/, async (expectedText: string) => {
+      const entry = await loadEntry(entryId);
+      cachedEntry = entry;
+      expect(entry).not.toBeNull();
+      expect(entry!.text).toBe(expectedText);
+    });
+
+    then(/^the loaded entry mood is "(.+)"$/, async (expectedMood: string) => {
+      const entry = cachedEntry ?? (await loadEntry(entryId));
+      expect(entry).not.toBeNull();
+      expect(entry!.mood).toBe(expectedMood);
     });
   });
 
