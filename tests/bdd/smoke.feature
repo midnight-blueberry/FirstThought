@@ -19,6 +19,12 @@ Feature: Sanity
     When buildSettingsPatch receives local font family "Roboto" with weight "400"
     Then it returns { fontFamily: "Roboto", fontWeight: "700" }
 
+  Scenario: buildSettingsPatch converts spaced font name to family key for weight normalization
+    Given current settings with font family "Inter" and weight "400"
+    When buildSettingsPatch receives local font family "Bad Script" with weight "400"
+    Then it returns { fontFamily: "Bad Script", fontWeight: "700" }
+    Then nearestAvailableWeight is called with family key "Bad_Script" and weight 400
+
   Scenario: buildSettingsPatch normalizes font weight change for the same font family
     Given current settings with font family "Inter" and weight "400"
     When buildSettingsPatch receives local font weight "500"

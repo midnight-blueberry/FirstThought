@@ -159,6 +159,40 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('buildSettingsPatch converts spaced font name to family key for weight normalization', ({
+    given,
+    when,
+    then,
+  }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with font family "Inter" and weight "400"',
+    );
+
+    when('buildSettingsPatch receives local font family "Bad Script" with weight "400"', () => {
+      mockedNearestAvailableWeight.mockClear();
+      local.selectedFontName = 'Bad Script';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns { fontFamily: "Bad Script", fontWeight: "700" }', () => {
+      expect(patch).toEqual({ fontFamily: 'Bad Script', fontWeight: '700' });
+    });
+
+    then('nearestAvailableWeight is called with family key "Bad_Script" and weight 400', () => {
+      expect(mockedNearestAvailableWeight).toHaveBeenCalledTimes(1);
+      expect(mockedNearestAvailableWeight).toHaveBeenCalledWith('Bad_Script', 400);
+    });
+  });
+
   test('buildSettingsPatch normalizes font weight change for the same font family', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
