@@ -129,4 +129,36 @@ export default (test: JestCucumberTestFn) => {
       },
     );
   });
+
+  test('Encrypting without a stored key generates and stores a new key', ({
+    given,
+    when,
+    then,
+    and = () => {},
+  }: StepDefinitions) => {
+    const state = { message: 'Secret message', encrypted: '' };
+
+    given('no stored encryption key', () => {
+      (SecureStore as unknown as { reset: () => void }).reset();
+      (SecureStore.getItemAsync as jest.Mock).mockClear();
+      (SecureStore.setItemAsync as jest.Mock).mockClear();
+    });
+
+    when('I encrypt a plain message', async () => {
+      const { encrypt } = await import('@utils/crypto');
+      state.encrypted = await encrypt(state.message);
+    });
+
+    then('an encryption key is stored', () => {
+      expect(SecureStore.setItemAsync).toHaveBeenCalled();
+      const store = (SecureStore as unknown as { __store: Map<string, string> }).__store;
+      expect(store.get('enc_key')).toBeTruthy();
+    });
+
+    and('decrypting returns the original message', async () => {
+      const { decrypt } = await import('@utils/crypto');
+      const decrypted = await decrypt(state.encrypted);
+      expect(decrypted).toBe(state.message);
+    });
+  });
 };
