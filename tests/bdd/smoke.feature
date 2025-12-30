@@ -49,6 +49,7 @@ Feature: Sanity
     Given local settings are identical to current settings
     When buildSettingsPatch receives the identical settings
     Then it returns {}
+    And nearestAvailableWeight is not called
 
   Scenario: buildSettingsPatch clamps lower font size level
     Given current settings with font size level 3
