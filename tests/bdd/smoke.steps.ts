@@ -111,6 +111,30 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('buildSettingsPatch ignores unknown theme name', ({ given, when, then }: StepDefinitions) => {
+    let current: Settings;
+    let local: Parameters<typeof buildSettingsPatch>[0];
+    let patch: Partial<Settings>;
+
+    registerBaseSettingsGiven(
+      given,
+      ({ current: currentSettings, local: localSettings }) => {
+        current = currentSettings;
+        local = localSettings;
+      },
+      'current settings with theme id light',
+    );
+
+    when('buildSettingsPatch receives local theme name "Unknown Theme"', () => {
+      local.selectedThemeName = 'Unknown Theme';
+      patch = buildSettingsPatch(local, current);
+    });
+
+    then('it returns {}', () => {
+      expect(patch).toEqual({});
+    });
+  });
+
   test('buildSettingsPatch updates accent when selectedAccentColor changes', ({ given, when, then }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];

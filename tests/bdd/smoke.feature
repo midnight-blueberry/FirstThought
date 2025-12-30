@@ -9,6 +9,11 @@ Feature: Sanity
     When buildSettingsPatch receives local theme name "Темная"
     Then it returns { themeId: "dark" }
 
+  Scenario: buildSettingsPatch ignores unknown theme name
+    Given current settings with theme id light
+    When buildSettingsPatch receives local theme name "Unknown Theme"
+    Then it returns {}
+
   Scenario: buildSettingsPatch updates accent when selectedAccentColor changes
     Given current settings with accent "#FFD700"
     When buildSettingsPatch receives local accent "#00FF00"
