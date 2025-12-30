@@ -290,7 +290,12 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
-  test('buildSettingsPatch returns empty patch when no fields change', ({ given, when, then }: StepDefinitions) => {
+  test('buildSettingsPatch returns empty patch when no fields change', ({
+    given,
+    when,
+    then,
+    and = () => {},
+  }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
     let patch: Partial<Settings>;
@@ -305,11 +310,16 @@ export default (test: JestCucumberTestFn) => {
     );
 
     when('buildSettingsPatch receives the identical settings', () => {
+      mockedNearestAvailableWeight.mockClear();
       patch = buildSettingsPatch(local, current);
     });
 
     then('it returns {}', () => {
       expect(patch).toEqual({});
+    });
+
+    and('nearestAvailableWeight is not called', () => {
+      expect(mockedNearestAvailableWeight).not.toHaveBeenCalled();
     });
   });
 
