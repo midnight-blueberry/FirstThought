@@ -16,7 +16,7 @@
     "long-files-detector": "node scripts/tools/list-long-ts.cjs",
     "check-dependencies": "npx expo install --check",
     "expo-doctor": "npx -y expo-doctor",
-    "basic-checks": "npm run check-dependencies && npm run lint && npm run typecheck && npm run expo-doctor"
+    "basic-checks": "npm run check-dependencies && npm run lint && npm run typecheck && npm run expo-doctor && npm run unit-tests"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.1.2",
