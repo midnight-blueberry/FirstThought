@@ -161,4 +161,37 @@ export default (test: JestCucumberTestFn) => {
       expect(decrypted).toBe(state.message);
     });
   });
+
+  test('Encrypting without a stored key fails when key generation is not persisted', ({
+    given,
+    and = () => {},
+    when,
+    then,
+  }: StepDefinitions) => {
+    const state: { message: string; error: unknown } = { message: 'Secret message', error: null };
+
+    given('no stored encryption key', () => {
+      (SecureStore as unknown as { reset: () => void }).reset();
+      (SecureStore.getItemAsync as jest.Mock).mockClear();
+      (SecureStore.setItemAsync as jest.Mock).mockClear();
+    });
+
+    and('SecureStore setItemAsync does not persist the key', () => {
+      (SecureStore.setItemAsync as jest.Mock).mockImplementationOnce(() => Promise.resolve());
+    });
+
+    when('I try to encrypt a plain message', async () => {
+      try {
+        const { encrypt } = await import('@utils/crypto');
+        await encrypt(state.message);
+      } catch (error) {
+        state.error = error;
+      }
+    });
+
+    then('encryption fails with message "Failed to generate encryption key."', () => {
+      expect(state.error).toBeInstanceOf(Error);
+      expect((state.error as Error).message).toBe('Failed to generate encryption key.');
+    });
+  });
 };
