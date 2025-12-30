@@ -50,6 +50,8 @@ import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
+type CoreStepDefinitions = Pick<StepDefinitions, 'given' | 'when' | 'then'>;
+
 export default (test: JestCucumberTestFn) => {
   beforeEach(async () => {
     (AsyncStorage as unknown as { __storage: Map<string, string> }).__storage.clear();
@@ -57,7 +59,7 @@ export default (test: JestCucumberTestFn) => {
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
-  test('adding a diary saves it and it appears in the list', ({ given, when, then }: StepDefinitions) => {
+  test('adding a diary saves it and it appears in the list', ({ given, when, then }: CoreStepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let list: DiaryMeta[] = [];
 
@@ -77,7 +79,7 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
-  test('deleting a diary removes the diary and related entries', ({ given, when, then }: StepDefinitions) => {
+  test('deleting a diary removes the diary and related entries', ({ given, when, then }: CoreStepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let entryId = '';
 
