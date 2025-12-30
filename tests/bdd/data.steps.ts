@@ -46,7 +46,8 @@ jest.mock('@utils/crypto', () => {
   };
 });
 
-import { addDiary, deleteDiary, loadDiaries, addEntry } from '@/scripts/data';
+import { addDiary, deleteDiary, loadDiaries, addEntry, loadEntry } from '@/scripts/data';
+import { loadEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
@@ -76,6 +77,37 @@ export default (test: JestCucumberTestFn) => {
       expect(diary!.title).toBe('My Diary');
       expect(list).toHaveLength(1);
       expect(list[0].id).toBe(diary!.id);
+    });
+  });
+
+  test('adding an entry saves it, indexes it, and it can be loaded', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let entryId = '';
+    let text = '';
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(/^an entry with text "(.+)" is added to the diary$/, async (entryText: string) => {
+      text = entryText;
+      entryId = await addEntry(diaryId, { text });
+    });
+
+    then('the saved entry can be loaded', async () => {
+      const entry = await loadEntry(entryId);
+      expect(entry).not.toBeNull();
+      expect(entry!.text).toBe(text);
+    });
+
+    then('the diary entry index includes the entry id', async () => {
+      const entryIds = await loadEntryIds(diaryId);
+      expect(entryIds).toContain(entryId);
     });
   });
 
