@@ -103,4 +103,30 @@ export default (test: JestCucumberTestFn) => {
       expect(error.message).toBe('Invalid encrypted payload format.');
     });
   });
+
+  test('Decrypting a legacy payload throws an unsupported format error', ({ given, when, then }: StepDefinitions) => {
+    const state: { error: unknown } = { error: null };
+
+    registerGeneratedEncryptionKeyStep(given);
+
+    when('I try to decrypt an invalid encrypted payload "v1:AAA"', async () => {
+      try {
+        const { decrypt } = await import('@utils/crypto');
+        await decrypt('v1:AAA');
+      } catch (error) {
+        state.error = error;
+      }
+    });
+
+    then(
+      'decryption fails with message "Unsupported legacy encryption format. Please clear storage or reinstall the app."',
+      () => {
+        expect(state.error).toBeInstanceOf(Error);
+        const error = state.error as Error;
+        expect(error.message).toBe(
+          'Unsupported legacy encryption format. Please clear storage or reinstall the app.',
+        );
+      },
+    );
+  });
 };
