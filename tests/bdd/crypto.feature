@@ -27,3 +27,9 @@ Feature: Crypto helpers
     When I encrypt a plain message
     Then an encryption key is stored
     And decrypting returns the original message
+
+  Scenario: Encrypting without a stored key fails when key generation is not persisted
+    Given no stored encryption key
+    And SecureStore setItemAsync does not persist the key
+    When I try to encrypt a plain message
+    Then encryption fails with message "Failed to generate encryption key."
