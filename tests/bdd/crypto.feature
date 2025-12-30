@@ -21,3 +21,9 @@ Feature: Crypto helpers
     Given a generated encryption key
     When I try to decrypt an invalid encrypted payload "v1:AAA"
     Then decryption fails with message "Unsupported legacy encryption format. Please clear storage or reinstall the app."
+
+  Scenario: Encrypting without a stored key generates and stores a new key
+    Given no stored encryption key
+    When I encrypt a plain message
+    Then an encryption key is stored
+    And decrypting returns the original message
