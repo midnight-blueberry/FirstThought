@@ -294,7 +294,6 @@ export default (test: JestCucumberTestFn) => {
     given,
     when,
     then,
-    and = () => {},
   }: StepDefinitions) => {
     let current: Settings;
     let local: Parameters<typeof buildSettingsPatch>[0];
@@ -318,7 +317,7 @@ export default (test: JestCucumberTestFn) => {
       expect(patch).toEqual({});
     });
 
-    and('nearestAvailableWeight is not called', () => {
+    then('nearestAvailableWeight is not called', () => {
       expect(mockedNearestAvailableWeight).not.toHaveBeenCalled();
     });
   });

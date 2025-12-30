@@ -3,4 +3,4 @@ Feature: Theme change uses overlay transaction without sticky scroll
     Given settings VM is rendered
     When user selects theme "Кремовая"
     Then sticky selection is not applied during theme change
-    And settings are updated with theme "cream"
+    Then settings are updated with theme "cream"

@@ -4,13 +4,13 @@ Feature: Crypto helpers
     Given a generated encryption key
     When I encrypt a plain message
     Then the encrypted text should be different and versioned
-    And decrypting returns the original message
+    Then decrypting returns the original message
 
   Scenario: Encrypting the same message twice produces different ciphertexts
     Given a generated encryption key
     When I encrypt the same plain message twice
     Then the encrypted texts should be different and versioned
-    And decrypting both returns the original message
+    Then decrypting both returns the original message
 
   Scenario: Decrypting a malformed v2 payload throws a format error
     Given a generated encryption key
@@ -26,10 +26,10 @@ Feature: Crypto helpers
     Given no stored encryption key
     When I encrypt a plain message
     Then an encryption key is stored
-    And decrypting returns the original message
+    Then decrypting returns the original message
 
   Scenario: Encrypting without a stored key fails when key generation is not persisted
     Given no stored encryption key
-    And SecureStore setItemAsync does not persist the key
+    Given SecureStore setItemAsync does not persist the key
     When I try to encrypt a plain message
     Then encryption fails with message "Failed to generate encryption key."

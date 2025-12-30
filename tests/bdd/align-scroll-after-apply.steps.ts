@@ -14,25 +14,22 @@ export default (test: JestCucumberTestFn) => {
     });
   };
 
-  const registerComputeDeltaInputs = (
-    and: NonNullable<StepDefinitions['and']>,
-    state: { pageY: number; height: number },
-  ) => {
-    and(/^page Y is (-?\d+)$/, (value: string) => {
+  const registerComputeDeltaInputs = (given: StepDefinitions['given'], state: { pageY: number; height: number }) => {
+    given(/^page Y is (-?\d+)$/, (value: string) => {
       state.pageY = Number(value);
     });
 
-    and(/^height is (-?\d+)$/, (value: string) => {
+    given(/^height is (-?\d+)$/, (value: string) => {
       state.height = Number(value);
     });
   };
 
   const registerComputeDeltaScenario = (title: string) => {
-    test(title, ({ given, and = () => {}, when, then }: StepDefinitions) => {
+    test(title, ({ given, when, then }: StepDefinitions) => {
       const state = { prevCenterY: 0, pageY: 0, height: 0, result: 0 };
 
       registerPrevCenterYStep(given, state);
-      registerComputeDeltaInputs(and, state);
+      registerComputeDeltaInputs(given, state);
 
       when('computeDelta is calculated', () => {
         state.result = computeDelta(state.prevCenterY, state.pageY, state.height);
