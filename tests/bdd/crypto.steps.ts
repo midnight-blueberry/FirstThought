@@ -42,7 +42,7 @@ export default (test: JestCucumberTestFn) => {
     });
   };
 
-  test('Encrypt and decrypt using AES-GCM', ({ given, when, then, and = () => {} }: StepDefinitions) => {
+  test('Encrypt and decrypt using AES-GCM', ({ given, when, then }: StepDefinitions) => {
     const state = { message: 'Secret message', encrypted: '', decrypted: '' };
 
     registerGeneratedEncryptionKeyStep(given);
@@ -54,14 +54,14 @@ export default (test: JestCucumberTestFn) => {
 
     registerEncryptedTextVersionCheck(then, state);
 
-    and('decrypting returns the original message', async () => {
+    then('decrypting returns the original message', async () => {
       const { decrypt } = await import('@utils/crypto');
       state.decrypted = await decrypt(state.encrypted);
       expect(state.decrypted).toBe(state.message);
     });
   });
 
-  test('Encrypting the same message twice produces different ciphertexts', ({ given, when, then, and = () => {} }: StepDefinitions) => {
+  test('Encrypting the same message twice produces different ciphertexts', ({ given, when, then }: StepDefinitions) => {
     const state = { message: 'Secret message', encrypted1: '', encrypted2: '' };
 
     registerGeneratedEncryptionKeyStep(given);
@@ -74,7 +74,7 @@ export default (test: JestCucumberTestFn) => {
 
     registerEncryptedTextsVersionCheck(then, state);
 
-    and('decrypting both returns the original message', async () => {
+    then('decrypting both returns the original message', async () => {
       const { decrypt } = await import('@utils/crypto');
       const decrypted1 = await decrypt(state.encrypted1);
       const decrypted2 = await decrypt(state.encrypted2);
@@ -130,12 +130,7 @@ export default (test: JestCucumberTestFn) => {
     );
   });
 
-  test('Encrypting without a stored key generates and stores a new key', ({
-    given,
-    when,
-    then,
-    and = () => {},
-  }: StepDefinitions) => {
+  test('Encrypting without a stored key generates and stores a new key', ({ given, when, then }: StepDefinitions) => {
     const state = { message: 'Secret message', encrypted: '' };
 
     given('no stored encryption key', () => {
@@ -155,19 +150,14 @@ export default (test: JestCucumberTestFn) => {
       expect(store.get('enc_key')).toBeTruthy();
     });
 
-    and('decrypting returns the original message', async () => {
+    then('decrypting returns the original message', async () => {
       const { decrypt } = await import('@utils/crypto');
       const decrypted = await decrypt(state.encrypted);
       expect(decrypted).toBe(state.message);
     });
   });
 
-  test('Encrypting without a stored key fails when key generation is not persisted', ({
-    given,
-    and = () => {},
-    when,
-    then,
-  }: StepDefinitions) => {
+  test('Encrypting without a stored key fails when key generation is not persisted', ({ given, when, then }: StepDefinitions) => {
     const state: { message: string; error: unknown } = { message: 'Secret message', error: null };
 
     given('no stored encryption key', () => {
@@ -176,7 +166,7 @@ export default (test: JestCucumberTestFn) => {
       (SecureStore.setItemAsync as jest.Mock).mockClear();
     });
 
-    and('SecureStore setItemAsync does not persist the key', () => {
+    given('SecureStore setItemAsync does not persist the key', () => {
       (SecureStore.setItemAsync as jest.Mock).mockImplementationOnce(() => Promise.resolve());
     });
 

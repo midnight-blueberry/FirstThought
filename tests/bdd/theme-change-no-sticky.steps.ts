@@ -72,7 +72,7 @@ export default (test: JestCucumberTestFn) => {
     jest.clearAllMocks();
   });
 
-  test('Changing theme does not trigger sticky apply', ({ given, when, then, and = () => {} }: StepDefinitions) => {
+  test('Changing theme does not trigger sticky apply', ({ given, when, then }: StepDefinitions) => {
     given('settings VM is rendered', async () => {
       const captureBeforeUpdate = jest.fn();
       const Wrapper = () => {
@@ -100,7 +100,7 @@ export default (test: JestCucumberTestFn) => {
       expect(applySpy).not.toHaveBeenCalled();
     });
 
-    and('settings are updated with theme "cream"', () => {
+    then('settings are updated with theme "cream"', () => {
       const { __mockUpdateSettings } = jest.requireMock('@/state/SettingsContext');
 
       expect(__mockUpdateSettings).toHaveBeenCalledWith(

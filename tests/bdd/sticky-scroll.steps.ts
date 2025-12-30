@@ -22,7 +22,7 @@ export default (test: JestCucumberTestFn) => {
     clearRegistry();
   });
 
-  test('keeps scroll offset after theme change', ({ given, and = () => {}, when, then }: StepDefinitions) => {
+  test('keeps scroll offset after theme change', ({ given, when, then }: StepDefinitions) => {
     given('a list is rendered with a scroll ref', async () => {
       scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
       const List = () => null;
@@ -32,7 +32,7 @@ export default (test: JestCucumberTestFn) => {
       });
     });
 
-    and('a sticky selection context is available', () => {
+    given('a sticky selection context is available', () => {
       ctx = getStickySelectionContext();
       expect(ctx).toBeTruthy();
     });
@@ -47,17 +47,17 @@ export default (test: JestCucumberTestFn) => {
       });
     });
 
-    and('the scroll position is 150', () => {
+    when('the scroll position is 150', () => {
       ctx!.onScroll(makeScrollEvent(150));
     });
 
-    and('the theme dark item is registered at position 210', () => {
+    when('the theme dark item is registered at position 210', () => {
       register('theme:dark', {
         current: { measureInWindow: (cb: any) => cb(0, 210, 0, 20) },
       } as any);
     });
 
-    and('sticky selection is applied', async () => {
+    when('sticky selection is applied', async () => {
       await act(async () => {
         await ctx!.applyWithSticky(async () => {});
       });
