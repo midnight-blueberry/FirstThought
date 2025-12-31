@@ -55,6 +55,44 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('calcFontSizeLevel clamps to maximum 5', ({ given, when, then }: StepDefinitions) => {
+    let themeSmallPx = 100;
+    let defaultFontSize = 16;
+    let result: number | null = null;
+
+    given('theme small font size 100 and default font size 16', () => {
+      themeSmallPx = 100;
+      defaultFontSize = 16;
+    });
+
+    when('I calculate the font size level', () => {
+      result = calcFontSizeLevel(themeSmallPx, defaultFontSize);
+    });
+
+    then('it equals 5', () => {
+      expect(result).toBe(5);
+    });
+  });
+
+  test('calcFontSizeLevel returns 3 at default font size', ({ given, when, then }: StepDefinitions) => {
+    let themeSmallPx = 12;
+    let defaultFontSize = 16;
+    let result: number | null = null;
+
+    given('theme small font size 12 and default font size 16', () => {
+      themeSmallPx = 12;
+      defaultFontSize = 16;
+    });
+
+    when('I calculate the font size level', () => {
+      result = calcFontSizeLevel(themeSmallPx, defaultFontSize);
+    });
+
+    then('it equals 3', () => {
+      expect(result).toBe(3);
+    });
+  });
+
   test('nextIconSize increases all icon sizes by 8 at level 5', ({ given, when, then }: StepDefinitions) => {
     let sizes = { xsmall: 1, small: 2, medium: 3, large: 4, xlarge: 5 };
     let result = { xsmall: 0, small: 0, medium: 0, large: 0, xlarge: 0 };
@@ -69,6 +107,23 @@ export default (test: JestCucumberTestFn) => {
 
     then('icon sizes equal xsmall 9 small 10 medium 11 large 12 xlarge 13', () => {
       expect(result).toEqual({ xsmall: 9, small: 10, medium: 11, large: 12, xlarge: 13 });
+    });
+  });
+
+  test('nextIconSize decreases sizes by 1 at level 1', ({ given, when, then }: StepDefinitions) => {
+    let sizes = { xsmall: 9, small: 10, medium: 11, large: 12, xlarge: 13 };
+    let result = { xsmall: 0, small: 0, medium: 0, large: 0, xlarge: 0 };
+
+    given('icon sizes xsmall 9 small 10 medium 11 large 12 xlarge 13', () => {
+      sizes = { xsmall: 9, small: 10, medium: 11, large: 12, xlarge: 13 };
+    });
+
+    when('I apply icon size level 1', () => {
+      result = nextIconSize(1, sizes);
+    });
+
+    then('icon sizes equal xsmall 1 small 2 medium 3 large 4 xlarge 5', () => {
+      expect(result).toEqual({ xsmall: 1, small: 2, medium: 3, large: 4, xlarge: 5 });
     });
   });
 };
