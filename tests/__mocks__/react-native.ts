@@ -30,6 +30,15 @@ export const Platform = {
   select: (options: Record<string, any>) => options.ios,
 };
 
+export const ToastAndroid = {
+  SHORT: 'short',
+  show: jest.fn(),
+};
+
+export const Alert = {
+  alert: jest.fn(),
+};
+
 const recordView = (type: string, props: any) => {
   __mock.views.push({ type, props });
   return props;
@@ -59,6 +68,8 @@ export default {
   Animated,
   Easing,
   Platform,
+  ToastAndroid,
+  Alert,
   View,
   TouchableOpacity,
 };
