@@ -2,15 +2,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { entryIdsKey, loadEntryIds, saveEntryIds } from '@/utils/storage';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-const encryptMock = jest.fn(async (plain: string) => `cipher:${plain}`);
-const decryptMock = jest.fn(async (cipher: string) => cipher);
-
 jest.mock('@react-native-async-storage/async-storage', () => require('../mocks/asyncStorageMock'));
 
 jest.mock('@utils/crypto', () => ({
-  encrypt: encryptMock,
-  decrypt: decryptMock,
+  encrypt: jest.fn(async (plain: string) => `cipher:${plain}`),
+  decrypt: jest.fn(async (cipher: string) => cipher),
 }));
+
+import * as crypto from '@utils/crypto';
+
+const encryptMock = crypto.encrypt as unknown as jest.Mock;
+const decryptMock = crypto.decrypt as unknown as jest.Mock;
 
 type CoreSteps = Pick<StepDefinitions, 'given' | 'when' | 'then'>;
 
@@ -89,10 +91,11 @@ export default (test: JestCucumberTestFn) => {
       (cipher: string, diaryId: string, decrypted: string) => {
         state.diaryId = diaryId;
         state.cipher = cipher;
-        state.expected = JSON.parse(decrypted);
+        const decryptedJson = decrypted.replace(/\\"/g, '"');
+        state.expected = JSON.parse(decryptedJson);
         const storage = AsyncStorage as unknown as AsyncStorageMock;
         storage.__storage.set(entryIdsKey(state.diaryId), cipher);
-        decryptMock.mockResolvedValueOnce(decrypted);
+        decryptMock.mockResolvedValueOnce(decryptedJson);
       },
     );
 
@@ -118,7 +121,7 @@ export default (test: JestCucumberTestFn) => {
 
     given(/^entry ids "(.+)" for diary "(.+)"$/, (ids: string, diaryId: string) => {
       state.diaryId = diaryId;
-      state.ids = JSON.parse(ids);
+      state.ids = JSON.parse(ids.replace(/\\"/g, '"'));
       encryptMock.mockResolvedValueOnce(state.cipher);
     });
 
