@@ -20,10 +20,20 @@ StyleSheet.flatten = (style: any) => {
 export const InteractionManager = {
   runAfterInteractions: () => Promise.resolve(),
 };
+export const UIManager = {
+  measureLayout: jest.fn(),
+};
 export const Easing = {
   inOut: (_: any) => (_t: any) => {},
   cubic: {},
 };
+
+export function findNodeHandle(ref: any): number | null {
+  if (ref == null) return null;
+  if (typeof ref === 'number') return ref;
+
+  return 1;
+}
 
 export const Platform = {
   OS: 'ios',
@@ -65,6 +75,7 @@ export default {
   __mock,
   StyleSheet,
   InteractionManager,
+  UIManager,
   Animated,
   Easing,
   Platform,
@@ -72,4 +83,5 @@ export default {
   Alert,
   View,
   TouchableOpacity,
+  findNodeHandle,
 };
