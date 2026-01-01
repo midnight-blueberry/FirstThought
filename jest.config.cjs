@@ -18,7 +18,8 @@ module.exports = {
     '^react-native$': '<rootDir>/tests/__mocks__/react-native.ts',
     '^react-native-portalize$': '<rootDir>/tests/__mocks__/react-native-portalize.ts',
     '^react-test-renderer$': '<rootDir>/tests/mocks/react-test-renderer.ts',
-    '^glob$': require.resolve('glob')
+    '^glob$': require.resolve('glob'),
+    '\\.(ttf|otf|png|jpg|jpeg|gif|webp|svg)$': '<rootDir>/tests/__mocks__/assetMock.js'
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
