@@ -55,6 +55,7 @@ import {
   deleteEntry,
   modifyEntry,
   moveEntry,
+  saveEntry,
 } from '@/scripts/data';
 import { loadEntryIds, saveEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
@@ -371,6 +372,38 @@ export default (test: JestCucumberTestFn) => {
 
     then(/^moving the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
       const resolvedMessage = expectedMessage.replace('<fromDiaryId>', firstDiaryId).replace(/\\"/g, '"');
+      await expect(movePromise).rejects.toThrow(resolvedMessage);
+    });
+  });
+
+  test('moving an already-present entry to a diary fails with a diary-specific error', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let movePromise: ReturnType<typeof moveEntry>;
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    given(/^entry "(.+)" exists in both diary indices$/, async (entryId: string) => {
+      await saveEntryIds(firstDiaryId, [entryId]);
+      await saveEntryIds(secondDiaryId, [entryId]);
+      await saveEntry(entryId, { text: 'hello' });
+    });
+
+    when(/^moving entry "(.+)" from the first diary to the second diary$/, (entryId: string) => {
+      movePromise = moveEntry(firstDiaryId, secondDiaryId, entryId);
+    });
+
+    then(/^moving the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace('<toDiaryId>', secondDiaryId).replace(/\\"/g, '"');
       await expect(movePromise).rejects.toThrow(resolvedMessage);
     });
   });

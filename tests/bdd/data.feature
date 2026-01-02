@@ -45,6 +45,12 @@ Feature: Data helpers
     When moving entry "missing_entry" from the first diary to the second diary
     Then moving the entry fails with message "Entry \"missing_entry\" not found in diary \"<fromDiaryId>\""
 
+  Scenario: moving an already-present entry to a diary fails with a diary-specific error
+    Given diaries "First Diary" and "Second Diary" are created
+    Given entry "shared_entry" exists in both diary indices
+    When moving entry "shared_entry" from the first diary to the second diary
+    Then moving the entry fails with message "Entry \"shared_entry\" already exists in diary \"<toDiaryId>\""
+
   Scenario: modifying an entry without a stored record fails
     Given a diary "Diary" is created
     When the diary contains an indexed entry without a record
