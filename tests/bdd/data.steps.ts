@@ -197,7 +197,9 @@ export default (test: JestCucumberTestFn) => {
     });
 
     then(/^modifying the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
-      const resolvedMessage = expectedMessage.replace('<diaryId>', diaryId);
+      const resolvedMessage = expectedMessage
+        .replace('<diaryId>', diaryId)
+        .replace(/\\"/g, '"');
       await expect(modifyPromise).rejects.toThrow(resolvedMessage);
     });
   });
@@ -282,7 +284,8 @@ export default (test: JestCucumberTestFn) => {
     });
 
     then(/^modifying the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
-      await expect(modifyPromise).rejects.toThrow(expectedMessage);
+      const resolvedMessage = expectedMessage.replace(/\\"/g, '"');
+      await expect(modifyPromise).rejects.toThrow(resolvedMessage);
     });
   });
 
