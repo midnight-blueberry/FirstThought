@@ -57,7 +57,7 @@ import {
   moveEntry,
   saveEntry,
 } from '@/scripts/data';
-import { loadEntryIds, saveEntryIds } from '@/utils/storage';
+import { entryIdsKey, loadEntryIds, saveEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
@@ -326,6 +326,47 @@ export default (test: JestCucumberTestFn) => {
       expect(list).toHaveLength(0);
       expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
       expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
+    });
+  });
+
+  test('deleting a diary with multiple entries removes all entry records', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let firstEntryId = '';
+    let secondEntryId = '';
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(/^the first entry with text "(.+)" is added to the diary$/, async (text: string) => {
+      firstEntryId = await addEntry(diaryId, { text });
+    });
+
+    when(/^the second entry with text "(.+)" is added to the diary$/, async (text: string) => {
+      secondEntryId = await addEntry(diaryId, { text });
+    });
+
+    when('the diary is deleted', async () => {
+      await deleteDiary(diaryId);
+    });
+
+    then('the diary does not appear in the diary list', async () => {
+      const list = await loadDiaries();
+      expect(list.find(({ id }) => id === diaryId)).toBeUndefined();
+    });
+
+    then('both entry records are removed from storage', async () => {
+      expect(await AsyncStorage.getItem(`record_${firstEntryId}`)).toBeNull();
+      expect(await AsyncStorage.getItem(`record_${secondEntryId}`)).toBeNull();
+    });
+
+    then('the diary entry index is removed from storage', async () => {
+      expect(await AsyncStorage.getItem(entryIdsKey(diaryId))).toBeNull();
     });
   });
 

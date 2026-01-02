@@ -41,6 +41,15 @@ Feature: Data helpers
     When the diary is deleted
     Then the diary and related data are removed from storage
 
+  Scenario: deleting a diary with multiple entries removes all entry records
+    Given a diary "Diary" is created
+    When the first entry with text "one" is added to the diary
+    When the second entry with text "two" is added to the diary
+    When the diary is deleted
+    Then the diary does not appear in the diary list
+    Then both entry records are removed from storage
+    Then the diary entry index is removed from storage
+
   Scenario: deleting one diary does not remove entries from another diary
     Given diaries "First Diary" and "Second Diary" are created
     When an entry with text "keep" is added to the second diary
