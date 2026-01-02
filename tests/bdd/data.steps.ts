@@ -56,7 +56,7 @@ import {
   modifyEntry,
   moveEntry,
 } from '@/scripts/data';
-import { loadEntryIds } from '@/utils/storage';
+import { loadEntryIds, saveEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
@@ -179,6 +179,31 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('modifying a missing entry fails with a diary-specific error', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let modifyPromise: Promise<void>;
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(/^modifying entry "(.+)" in the diary$/, (entryId: string) => {
+      modifyPromise = modifyEntry(diaryId, entryId, { text: 'updated' });
+    });
+
+    then(/^modifying the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage
+        .replace('<diaryId>', diaryId)
+        .replace(/\\"/g, '"');
+      await expect(modifyPromise).rejects.toThrow(resolvedMessage);
+    });
+  });
+
   test('deleting an entry removes it from storage and diary index', ({
     given,
     when,
@@ -234,6 +259,33 @@ export default (test: JestCucumberTestFn) => {
       expect(list).toHaveLength(0);
       expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
       expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
+    });
+  });
+
+  test('modifying an entry without a stored record fails', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let modifyPromise: Promise<void>;
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when('the diary contains an indexed entry without a record', async () => {
+      await saveEntryIds(diaryId, ['ghost_entry']);
+    });
+
+    when(/^modifying entry "(.+)" in the diary$/, (entryId: string) => {
+      modifyPromise = modifyEntry(diaryId, entryId, { text: 'updated' });
+    });
+
+    then(/^modifying the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace(/\\"/g, '"');
+      await expect(modifyPromise).rejects.toThrow(resolvedMessage);
     });
   });
 
