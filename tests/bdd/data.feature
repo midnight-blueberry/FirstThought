@@ -41,6 +41,12 @@ Feature: Data helpers
     When the diary is deleted
     Then the diary and related data are removed from storage
 
+  Scenario: deleting one diary does not remove other diaries
+    Given diaries "First Diary" and "Second Diary" are created
+    When the first diary is deleted
+    Then the second diary still appears in the diary list
+    Then the first diary does not appear in the diary list
+
   Scenario: moving an entry between diaries updates indices
     Given diaries "First Diary" and "Second Diary" are created
     Given an entry with text "hello" is added to the first diary
