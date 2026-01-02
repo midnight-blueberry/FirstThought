@@ -16,6 +16,13 @@ Feature: Data helpers
     When the entry text is changed to "bye"
     Then the loaded entry text is "bye"
     Then the loaded entry mood is "happy"
+  Scenario: deleting an entry removes it from storage and diary index
+    Given a diary "Diary" is created
+    When an entry with text "hello" is added to the diary
+    When the entry is deleted from the diary
+    Then the entry record is removed from storage
+    Then the diary entry index does not include the entry id
+    Then the entry cannot be loaded
   Scenario: deleting a diary removes the diary and related entries
     Given a diary "Diary" with an entry is created
     When the diary is deleted
