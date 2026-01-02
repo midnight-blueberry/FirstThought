@@ -36,6 +36,11 @@ Feature: Data helpers
     Then the second diary index includes the entry id
     Then the saved entry data can still be loaded
 
+  Scenario: loading an entry throws when stored entry data is invalid
+    Given invalid entry data is stored
+    When an entry is loaded by id "broken_entry"
+    Then loading the entry fails with message "Invalid entry data for id \"broken_entry\""
+
   Scenario: loading diaries throws when stored data is invalid
     Given invalid diary data is stored
     When the diary list is loaded
