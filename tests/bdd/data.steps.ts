@@ -46,7 +46,15 @@ jest.mock('@utils/crypto', () => {
   };
 });
 
-import { addDiary, deleteDiary, loadDiaries, addEntry, loadEntry, modifyEntry } from '@/scripts/data';
+import {
+  addDiary,
+  deleteDiary,
+  loadDiaries,
+  addEntry,
+  loadEntry,
+  modifyEntry,
+  moveEntry,
+} from '@/scripts/data';
 import { loadEntryIds } from '@/utils/storage';
 import type { DiaryMeta } from '@/types/data';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
@@ -169,6 +177,45 @@ export default (test: JestCucumberTestFn) => {
       expect(list).toHaveLength(0);
       expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
       expect(await AsyncStorage.getItem(`__enc_entry_ids_${diary!.id}`)).toBeNull();
+    });
+  });
+
+  test('moving an entry between diaries updates indices', ({ given, when, then }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let entryId = '';
+    let entryText = '';
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    given(/^an entry with text "(.+)" is added to the first diary$/, async (text: string) => {
+      entryText = text;
+      entryId = await addEntry(firstDiaryId, { text });
+    });
+
+    when('the entry is moved to the second diary', async () => {
+      await moveEntry(firstDiaryId, secondDiaryId, entryId);
+    });
+
+    then('the first diary index does not include the entry id', async () => {
+      const firstDiaryIds = await loadEntryIds(firstDiaryId);
+      expect(firstDiaryIds).not.toContain(entryId);
+    });
+
+    then('the second diary index includes the entry id', async () => {
+      const secondDiaryIds = await loadEntryIds(secondDiaryId);
+      expect(secondDiaryIds).toContain(entryId);
+    });
+
+    then('the saved entry data can still be loaded', async () => {
+      const entry = await loadEntry(entryId);
+      expect(entry).not.toBeNull();
+      expect(entry!.text).toBe(entryText);
     });
   });
 };
