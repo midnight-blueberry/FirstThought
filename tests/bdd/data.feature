@@ -41,6 +41,13 @@ Feature: Data helpers
     When the diary is deleted
     Then the diary and related data are removed from storage
 
+  Scenario: deleting one diary does not remove entries from another diary
+    Given diaries "First Diary" and "Second Diary" are created
+    When an entry with text "keep" is added to the second diary
+    When the first diary is deleted
+    Then the entry in the second diary can be loaded
+    Then the second diary entry index includes the entry id
+
   Scenario: deleting one diary does not remove other diaries
     Given diaries "First Diary" and "Second Diary" are created
     When the first diary is deleted
