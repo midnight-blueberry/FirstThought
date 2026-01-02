@@ -50,3 +50,8 @@ Feature: Data helpers
     Given invalid diary data is stored
     When the diary list is loaded
     Then loading diaries fails with message "Invalid diaries data"
+
+  Scenario: loading an entry throws when stored data is invalid
+    Given invalid entry data is stored for entry "bad_entry"
+    When the entry "bad_entry" is loaded
+    Then loading the entry fails with message "Invalid entry data for id \"bad_entry\""

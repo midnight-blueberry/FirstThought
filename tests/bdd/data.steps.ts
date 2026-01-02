@@ -89,6 +89,27 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('loading an entry throws when stored data is invalid', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let loadPromise: ReturnType<typeof loadEntry>;
+
+    given('invalid entry data is stored for entry "bad_entry"', async () => {
+      await AsyncStorage.setItem('record_bad_entry', JSON.stringify('oops'));
+    });
+
+    when(/^the entry "(.+)" is loaded$/, (entryId: string) => {
+      loadPromise = loadEntry(entryId);
+    });
+
+    then(/^loading the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace(/\\"/g, '"');
+      await expect(loadPromise).rejects.toThrow(resolvedMessage);
+    });
+  });
+
   test('adding a diary saves it and it appears in the list', ({ given, when, then }: CoreStepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let list: DiaryMeta[] = [];
