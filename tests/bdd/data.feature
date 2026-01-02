@@ -23,6 +23,10 @@ Feature: Data helpers
     Then the entry record is removed from storage
     Then the diary entry index does not include the entry id
     Then the entry cannot be loaded
+  Scenario: modifying a missing entry fails with a diary-specific error
+    Given a diary "Diary" is created
+    When modifying entry "missing_entry" in the diary
+    Then modifying the entry fails with message "Entry \"missing_entry\" not found in diary \"<diaryId>\""
   Scenario: deleting a diary removes the diary and related entries
     Given a diary "Diary" with an entry is created
     When the diary is deleted
@@ -35,6 +39,12 @@ Feature: Data helpers
     Then the first diary index does not include the entry id
     Then the second diary index includes the entry id
     Then the saved entry data can still be loaded
+
+  Scenario: modifying an entry without a stored record fails
+    Given a diary "Diary" is created
+    When the diary contains an indexed entry without a record
+    When modifying entry "ghost_entry" in the diary
+    Then modifying the entry fails with message "Record \"ghost_entry\" not found"
 
   Scenario: loading diaries throws when stored data is invalid
     Given invalid diary data is stored
