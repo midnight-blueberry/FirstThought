@@ -278,13 +278,12 @@ export default (test: JestCucumberTestFn) => {
     });
 
     when(/^an entry with text "(.+)" is added to the diary$/, async (entryText: string) => {
-      const entryId = await addEntry(diaryId, { text: entryText });
-      if (!firstEntryId) {
-        firstEntryId = entryId;
-      } else {
-        secondEntryId = entryId;
-        secondEntryText = entryText;
-      }
+      firstEntryId = await addEntry(diaryId, { text: entryText });
+    });
+
+    when(/^an entry with text "(.+)" is added to the diary$/, async (entryText: string) => {
+      secondEntryId = await addEntry(diaryId, { text: entryText });
+      secondEntryText = entryText;
     });
 
     when('the first entry is deleted from the diary', async () => {
