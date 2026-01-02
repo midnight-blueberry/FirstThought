@@ -125,15 +125,16 @@ export async function moveEntry(
     throw new Error(`Entry "${entryId}" not found in diary "${fromDiaryId}"`);
   }
 
+  const toIds = await loadEntryIds(toDiaryId);
+  if (toIds.includes(entryId)) {
+    throw new Error(`Entry "${entryId}" already exists in diary "${toDiaryId}"`);
+  }
+
   // Удаляем из исходного
   const updatedFrom = fromIds.filter(id => id !== entryId);
   await saveEntryIds(fromDiaryId, updatedFrom);
 
   // Добавляем в целевой дневник
-  const toIds = await loadEntryIds(toDiaryId);
-  if (toIds.includes(entryId)) {
-    throw new Error(`Entry "${entryId}" already exists in diary "${toDiaryId}"`);
-  }
   toIds.push(entryId);
   await saveEntryIds(toDiaryId, toIds);
 }

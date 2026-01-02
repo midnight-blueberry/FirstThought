@@ -51,6 +51,14 @@ Feature: Data helpers
     When moving entry "shared_entry" from the first diary to the second diary
     Then moving the entry fails with message "Entry \"shared_entry\" already exists in diary \"<toDiaryId>\""
 
+  Scenario: moving an already-present entry does not change diary indices
+    Given diaries "First Diary" and "Second Diary" are created
+    Given entry "shared_entry" exists in both diary indices
+    When moving entry "shared_entry" from the first diary to the second diary
+    Then moving the entry fails with message "Entry \"shared_entry\" already exists in diary \"<toDiaryId>\""
+    Then the first diary index still includes entry "shared_entry"
+    Then the second diary index still includes entry "shared_entry"
+
   Scenario: modifying an entry without a stored record fails
     Given a diary "Diary" is created
     When the diary contains an indexed entry without a record
