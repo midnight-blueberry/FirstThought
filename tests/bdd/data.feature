@@ -40,6 +40,11 @@ Feature: Data helpers
     Then the second diary index includes the entry id
     Then the saved entry data can still be loaded
 
+  Scenario: moving a missing entry between diaries fails with a diary-specific error
+    Given diaries "First Diary" and "Second Diary" are created
+    When moving entry "missing_entry" from the first diary to the second diary
+    Then moving the entry fails with message "Entry \"missing_entry\" not found in diary \"<fromDiaryId>\""
+
   Scenario: modifying an entry without a stored record fails
     Given a diary "Diary" is created
     When the diary contains an indexed entry without a record

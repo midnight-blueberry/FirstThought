@@ -348,4 +348,30 @@ export default (test: JestCucumberTestFn) => {
       expect(entry!.text).toBe(entryText);
     });
   });
+
+  test('moving a missing entry between diaries fails with a diary-specific error', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let movePromise: ReturnType<typeof moveEntry>;
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    when(/^moving entry "(.+)" from the first diary to the second diary$/, (entryId: string) => {
+      movePromise = moveEntry(firstDiaryId, secondDiaryId, entryId);
+    });
+
+    then(/^moving the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace('<fromDiaryId>', firstDiaryId).replace(/\\"/g, '"');
+      await expect(movePromise).rejects.toThrow(resolvedMessage);
+    });
+  });
 };
