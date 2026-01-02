@@ -23,6 +23,15 @@ Feature: Data helpers
     Then the entry record is removed from storage
     Then the diary entry index does not include the entry id
     Then the entry cannot be loaded
+
+  Scenario: deleting one of multiple entries preserves the other entry
+    Given a diary "Diary" is created
+    When an entry with text "first" is added to the diary
+    When an entry with text "second" is added to the diary
+    When the first entry is deleted from the diary
+    Then the diary entry index does not include the first entry id
+    Then the diary entry index includes the second entry id
+    Then the second saved entry can be loaded
   Scenario: modifying a missing entry fails with a diary-specific error
     Given a diary "Diary" is created
     When modifying entry "missing_entry" in the diary

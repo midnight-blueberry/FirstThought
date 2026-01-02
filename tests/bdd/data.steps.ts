@@ -262,6 +262,52 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('deleting one of multiple entries preserves the other entry', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let firstEntryId = '';
+    let secondEntryId = '';
+    let secondEntryText = '';
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(/^an entry with text "(.+)" is added to the diary$/, async (entryText: string) => {
+      const entryId = await addEntry(diaryId, { text: entryText });
+      if (!firstEntryId) {
+        firstEntryId = entryId;
+      } else {
+        secondEntryId = entryId;
+        secondEntryText = entryText;
+      }
+    });
+
+    when('the first entry is deleted from the diary', async () => {
+      await deleteEntry(diaryId, firstEntryId);
+    });
+
+    then('the diary entry index does not include the first entry id', async () => {
+      const entryIds = await loadEntryIds(diaryId);
+      expect(entryIds).not.toContain(firstEntryId);
+    });
+
+    then('the diary entry index includes the second entry id', async () => {
+      const entryIds = await loadEntryIds(diaryId);
+      expect(entryIds).toContain(secondEntryId);
+    });
+
+    then('the second saved entry can be loaded', async () => {
+      const entry = await loadEntry(secondEntryId);
+      expect(entry).not.toBeNull();
+      expect(entry!.text).toBe(secondEntryText || 'second');
+    });
+  });
+
   test('deleting a diary removes the diary and related entries', ({ given, when, then }: CoreStepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let entryId = '';
