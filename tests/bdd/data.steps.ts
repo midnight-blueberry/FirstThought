@@ -407,4 +407,53 @@ export default (test: JestCucumberTestFn) => {
       await expect(movePromise).rejects.toThrow(resolvedMessage);
     });
   });
+
+  test('moving an already-present entry does not change diary indices', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let movePromise: ReturnType<typeof moveEntry>;
+    let sharedEntryId = '';
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    given(/^entry "(.+)" exists in both diary indices$/, async (entryId: string) => {
+      sharedEntryId = entryId;
+      await saveEntryIds(firstDiaryId, [entryId]);
+      await saveEntryIds(secondDiaryId, [entryId]);
+      await saveEntry(entryId, { text: 'hello' });
+    });
+
+    when(/^moving entry "(.+)" from the first diary to the second diary$/, (entryId: string) => {
+      movePromise = moveEntry(firstDiaryId, secondDiaryId, entryId);
+    });
+
+    then(/^moving the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace('<toDiaryId>', secondDiaryId).replace(/\\"/g, '"');
+      await expect(movePromise).rejects.toThrow(resolvedMessage);
+
+      const firstDiaryIds = await loadEntryIds(firstDiaryId);
+      const secondDiaryIds = await loadEntryIds(secondDiaryId);
+      expect(firstDiaryIds).toContain(sharedEntryId);
+      expect(secondDiaryIds).toContain(sharedEntryId);
+    });
+
+    then(/^the first diary index still includes entry "(.+)"$/, async (entryId: string) => {
+      const firstDiaryIds = await loadEntryIds(firstDiaryId);
+      expect(firstDiaryIds).toContain(entryId);
+    });
+
+    then(/^the second diary index still includes entry "(.+)"$/, async (entryId: string) => {
+      const secondDiaryIds = await loadEntryIds(secondDiaryId);
+      expect(secondDiaryIds).toContain(entryId);
+    });
+  });
 };
