@@ -484,6 +484,52 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('moving a missing entry does not change diary indices', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let firstEntryId = '';
+    let secondEntryId = '';
+    let movePromise: ReturnType<typeof moveEntry>;
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    given(/^an entry with text "(.+)" is added to the first diary$/, async (text: string) => {
+      firstEntryId = await addEntry(firstDiaryId, { text });
+    });
+
+    given(/^an entry with text "(.+)" is added to the second diary$/, async (text: string) => {
+      secondEntryId = await addEntry(secondDiaryId, { text });
+    });
+
+    when(/^moving entry "(.+)" from the first diary to the second diary$/, (entryId: string) => {
+      movePromise = moveEntry(firstDiaryId, secondDiaryId, entryId);
+    });
+
+    then(/^moving the entry fails with message "(.+)"$/, async (expectedMessage: string) => {
+      const resolvedMessage = expectedMessage.replace('<fromDiaryId>', firstDiaryId).replace(/\\"/g, '"');
+      await expect(movePromise).rejects.toThrow(resolvedMessage);
+    });
+
+    then('the first diary entry index still includes the first entry id', async () => {
+      const entryIds = await loadEntryIds(firstDiaryId);
+      expect(entryIds).toContain(firstEntryId);
+    });
+
+    then('the second diary entry index still includes the second entry id', async () => {
+      const entryIds = await loadEntryIds(secondDiaryId);
+      expect(entryIds).toContain(secondEntryId);
+    });
+  });
+
   test('moving an already-present entry to a diary fails with a diary-specific error', ({
     given,
     when,
