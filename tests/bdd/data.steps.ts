@@ -52,6 +52,7 @@ import {
   loadDiaries,
   addEntry,
   loadEntry,
+  deleteEntry,
   modifyEntry,
   moveEntry,
 } from '@/scripts/data';
@@ -155,6 +156,42 @@ export default (test: JestCucumberTestFn) => {
       const entry = cachedEntry ?? (await loadEntry(entryId));
       expect(entry).not.toBeNull();
       expect(entry!.mood).toBe(expectedMood);
+    });
+  });
+
+  test('deleting an entry removes it from storage and diary index', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let diaryId = '';
+    let entryId = '';
+
+    given(/^a diary "(.+)" is created$/, async (title: string) => {
+      const diary = await addDiary(title);
+      diaryId = diary.id;
+    });
+
+    when(/^an entry with text "(.+)" is added to the diary$/, async (entryText: string) => {
+      entryId = await addEntry(diaryId, { text: entryText });
+    });
+
+    when('the entry is deleted from the diary', async () => {
+      await deleteEntry(diaryId, entryId);
+    });
+
+    then('the entry record is removed from storage', async () => {
+      expect(await AsyncStorage.getItem(`record_${entryId}`)).toBeNull();
+    });
+
+    then('the diary entry index does not include the entry id', async () => {
+      const entryIds = await loadEntryIds(diaryId);
+      expect(entryIds).not.toContain(entryId);
+    });
+
+    then('the entry cannot be loaded', async () => {
+      const entry = await loadEntry(entryId);
+      expect(entry).toBeNull();
     });
   });
 
