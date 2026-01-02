@@ -329,6 +329,32 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('deleting one diary does not remove other diaries', ({ given, when, then }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let list: DiaryMeta[] = [];
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    when('the first diary is deleted', async () => {
+      await deleteDiary(firstDiaryId);
+      list = await loadDiaries();
+    });
+
+    then('the second diary still appears in the diary list', async () => {
+      expect(list.some((diary) => diary.id === secondDiaryId)).toBe(true);
+    });
+
+    then('the first diary does not appear in the diary list', async () => {
+      expect(list.some((diary) => diary.id === firstDiaryId)).toBe(false);
+    });
+  });
+
   test('modifying an entry without a stored record fails', ({
     given,
     when,
