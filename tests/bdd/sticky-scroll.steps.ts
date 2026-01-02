@@ -67,4 +67,59 @@ export default (test: JestCucumberTestFn) => {
       expect(scrollRef!.current.scrollTo).toHaveBeenCalledWith({ y: 170, animated: false });
     });
   });
+
+  test('keeps idle state when theme position matches pressed position', ({
+    given,
+    when,
+    then,
+  }: StepDefinitions) => {
+    given('a list is rendered with a scroll ref', async () => {
+      scrollRef = { current: { scrollTo: jest.fn(), measure: jest.fn() } };
+      const List = () => null;
+
+      await act(async () => {
+        tree = renderWithProviders(React.createElement(List), { scrollRef });
+      });
+    });
+
+    given('a sticky selection context is available', () => {
+      ctx = getStickySelectionContext();
+      expect(ctx).toBeTruthy();
+    });
+
+    when('a pressed item is registered at position 190', async () => {
+      const pressedRef = {
+        current: { measureInWindow: (cb: any) => cb(0, 190, 0, 20) },
+      } as any;
+
+      await act(async () => {
+        await ctx!.registerPress('theme:dark', pressedRef);
+      });
+    });
+
+    when('the scroll position is 150', () => {
+      ctx!.onScroll(makeScrollEvent(150));
+    });
+
+    when('the theme dark item is registered at position 190', () => {
+      register('theme:dark', {
+        current: { measureInWindow: (cb: any) => cb(0, 190, 0, 20) },
+      } as any);
+    });
+
+    when('sticky selection is applied', async () => {
+      await act(async () => {
+        await ctx!.applyWithSticky(async () => {});
+      });
+    });
+
+    then('the scroll ref is not scrolled', () => {
+      expect(scrollRef!.current.scrollTo).not.toHaveBeenCalled();
+    });
+
+    then('the sticky selection context is idle with no selection', () => {
+      expect(ctx!.status.current).toBe('idle');
+      expect(ctx!.state.id).toBeNull();
+    });
+  });
 };
