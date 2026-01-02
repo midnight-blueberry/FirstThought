@@ -69,6 +69,26 @@ export default (test: JestCucumberTestFn) => {
     await SecureStore.setItemAsync('enc_key', 'dummy');
   });
 
+  test('loading diaries throws when stored data is invalid', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let loadPromise: Promise<DiaryMeta[]>;
+
+    given('invalid diary data is stored', async () => {
+      await AsyncStorage.setItem('__encrypted_diaries__', JSON.stringify({ invalid: true }));
+    });
+
+    when('the diary list is loaded', () => {
+      loadPromise = loadDiaries();
+    });
+
+    then('loading diaries fails with message "Invalid diaries data"', async () => {
+      await expect(loadPromise).rejects.toThrow('Invalid diaries data');
+    });
+  });
+
   test('adding a diary saves it and it appears in the list', ({ given, when, then }: CoreStepDefinitions) => {
     let diary: DiaryMeta | null = null;
     let list: DiaryMeta[] = [];
