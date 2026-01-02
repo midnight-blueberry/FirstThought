@@ -329,6 +329,43 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('deleting one diary does not remove entries from another diary', ({
+    given,
+    when,
+    then,
+  }: CoreStepDefinitions) => {
+    let firstDiaryId = '';
+    let secondDiaryId = '';
+    let entryId = '';
+    let entryText = '';
+
+    given(/^diaries "(.+)" and "(.+)" are created$/, async (firstTitle: string, secondTitle: string) => {
+      const diaryA = await addDiary(firstTitle);
+      const diaryB = await addDiary(secondTitle);
+      firstDiaryId = diaryA.id;
+      secondDiaryId = diaryB.id;
+    });
+
+    when(/^an entry with text "(.+)" is added to the second diary$/, async (text: string) => {
+      entryText = text;
+      entryId = await addEntry(secondDiaryId, { text });
+    });
+
+    when('the first diary is deleted', async () => {
+      await deleteDiary(firstDiaryId);
+    });
+
+    then('the entry in the second diary can be loaded', async () => {
+      const entry = await loadEntry(entryId);
+      expect(entry).toEqual({ text: entryText });
+    });
+
+    then('the second diary entry index includes the entry id', async () => {
+      const entryIds = await loadEntryIds(secondDiaryId);
+      expect(entryIds).toContain(entryId);
+    });
+  });
+
   test('deleting one diary does not remove other diaries', ({ given, when, then }: CoreStepDefinitions) => {
     let firstDiaryId = '';
     let secondDiaryId = '';
