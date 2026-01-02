@@ -20,3 +20,11 @@ Feature: Data helpers
     Given a diary "Diary" with an entry is created
     When the diary is deleted
     Then the diary and related data are removed from storage
+
+  Scenario: moving an entry between diaries updates indices
+    Given diaries "First Diary" and "Second Diary" are created
+    Given an entry with text "hello" is added to the first diary
+    When the entry is moved to the second diary
+    Then the first diary index does not include the entry id
+    Then the second diary index includes the entry id
+    Then the saved entry data can still be loaded
