@@ -6,6 +6,12 @@ Feature: Save indicator
     Then a fade-out timer is scheduled for 1000 milliseconds
     Then the returned promise resolves after 1000 milliseconds elapse
 
+  Scenario: showFor2s schedules fade out for 2000 milliseconds
+    Given the save indicator provider is rendered
+    When showFor2s is called
+    Then a fade-out timer is scheduled for 2000 milliseconds
+    Then the returned promise resolves after 2000 milliseconds elapse
+
   Scenario: subsequent showFor reschedules fade out without extra fade-in
     Given the save indicator provider is rendered
     When showFor is called with 1000 milliseconds
