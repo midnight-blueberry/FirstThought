@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 // @ts-ignore
 import { act } from 'react-test-renderer';
 
-import { SaveIndicatorProvider, useSaveIndicator } from '@/components/header/SaveIndicator';
+import SaveIndicator, { SaveIndicatorProvider, useSaveIndicator } from '@/components/header/SaveIndicator';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 import { renderWithProviders } from '@tests/utils/render';
 import { unmountTree } from '@tests/utils/unmountTree';
@@ -43,7 +43,12 @@ export default (test: JestCucumberTestFn) => {
       React.createElement(
         SaveIndicatorProvider,
         null,
-        React.createElement(Capture, null),
+        React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(SaveIndicator, null),
+          React.createElement(Capture, null),
+        ),
       ),
     );
   };
@@ -123,6 +128,38 @@ export default (test: JestCucumberTestFn) => {
       });
 
       await expect(firstPromise).resolves.toBeUndefined();
+    });
+  });
+
+  test('save indicator component is visible only while showing', ({ given, when, then }: StepDefinitions) => {
+    given('the save indicator provider is rendered', () => {
+      expect(context).not.toBeNull();
+    });
+
+    then('the save indicator icon is not rendered', () => {
+      expect(tree!.root.findAllByType('Ionicons')).toHaveLength(0);
+    });
+
+    when('showFor is called with 1000 milliseconds to display the icon', async () => {
+      await act(async () => {
+        firstPromise = context!.showFor(1000);
+        expect(tree!.root.findAllByType('Ionicons')).toHaveLength(1);
+      });
+    });
+
+    then('the save indicator icon is rendered', () => {
+      expect(tree!.root.findAllByType('Ionicons')).toHaveLength(1);
+    });
+
+    when('1000 milliseconds elapse', async () => {
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+        expect(tree!.root.findAllByType('Ionicons')).toHaveLength(0);
+      });
+    });
+
+    then('the save indicator icon is not rendered anymore', () => {
+      expect(tree!.root.findAllByType('Ionicons')).toHaveLength(0);
     });
   });
 

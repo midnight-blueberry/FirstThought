@@ -6,6 +6,14 @@ Feature: Save indicator
     Then a fade-out timer is scheduled for 1000 milliseconds
     Then the returned promise resolves after 1000 milliseconds elapse
 
+  Scenario: save indicator component is visible only while showing
+    Given the save indicator provider is rendered
+    Then the save indicator icon is not rendered
+    When showFor is called with 1000 milliseconds to display the icon
+    Then the save indicator icon is rendered
+    When 1000 milliseconds elapse
+    Then the save indicator icon is not rendered anymore
+
   Scenario: showFor2s schedules fade out for 2000 milliseconds
     Given the save indicator provider is rendered
     When showFor2s is called
