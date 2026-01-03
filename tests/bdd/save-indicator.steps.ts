@@ -126,6 +126,31 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
+  test('showFor2s schedules fade out for 2000 milliseconds', ({ given, when, then }: StepDefinitions) => {
+    given('the save indicator provider is rendered', () => {
+      expect(context).not.toBeNull();
+    });
+
+    when('showFor2s is called', async () => {
+      await act(async () => {
+        firstPromise = context!.showFor2s();
+      });
+    });
+
+    then('a fade-out timer is scheduled for 2000 milliseconds', () => {
+      expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 2000);
+      expect(jest.getTimerCount()).toBe(1);
+    });
+
+    then('the returned promise resolves after 2000 milliseconds elapse', async () => {
+      await act(async () => {
+        jest.advanceTimersByTime(2000);
+      });
+
+      await expect(firstPromise).resolves.toBeUndefined();
+    });
+  });
+
   test('showFor during active fade-out stops animation and reschedules hold', ({ given, when, then }: StepDefinitions) => {
     given('the save indicator provider is rendered', () => {
       expect(context).not.toBeNull();
