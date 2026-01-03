@@ -47,7 +47,6 @@ export default (test: JestCucumberTestFn) => {
   beforeAll(() => {
     const valuePrototype = (Animated.Value as unknown as { prototype: Animated.Value }).prototype as any;
     if (typeof valuePrototype.stopAnimation !== 'function') {
-      // eslint-disable-next-line no-param-reassign
       valuePrototype.stopAnimation = function stopAnimation(callback?: (value: number) => void) {
         callback?.(this._value ?? 0);
       };
