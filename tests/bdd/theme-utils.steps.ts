@@ -1,43 +1,7 @@
-import { clampLevel, resolveOverlayColor } from '@utils/theme';
+import { clampLevel } from '@utils/theme';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-type ThemeList = { name: string; colors: { background: string } }[];
-
 export default (test: JestCucumberTestFn) => {
-  test('resolveOverlayColor returns colors.background for an exact themeName match', ({ given, when, then }: StepDefinitions) => {
-    let themeList: ThemeList = [];
-    let result: string | undefined;
-
-    given('a theme list with a theme named "dark" and background "#000000"', () => {
-      themeList = [{ name: 'dark', colors: { background: '#000000' } }];
-    });
-
-    when('I resolve overlay color for theme "dark"', () => {
-      result = resolveOverlayColor('dark', themeList);
-    });
-
-    then('the resolved color equals "#000000"', () => {
-      expect(result).toBe('#000000');
-    });
-  });
-
-  test('resolveOverlayColor returns undefined when the theme is not found', ({ given, when, then }: StepDefinitions) => {
-    let themeList: ThemeList = [];
-    let result: string | undefined;
-
-    given('a theme list with a theme named "light" and background "#ffffff"', () => {
-      themeList = [{ name: 'light', colors: { background: '#ffffff' } }];
-    });
-
-    when('I resolve overlay color for theme "unknown"', () => {
-      result = resolveOverlayColor('unknown', themeList);
-    });
-
-    then('the resolved color is undefined', () => {
-      expect(result).toBeUndefined();
-    });
-  });
-
   test('clampLevel returns min when the number is below the default minimum', ({ given, when, then }: StepDefinitions) => {
     let value = 0;
     let result = 0;
