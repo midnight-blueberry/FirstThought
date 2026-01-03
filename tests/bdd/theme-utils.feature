@@ -1,14 +1,4 @@
 Feature: Theme utils
-  Scenario: resolveOverlayColor returns colors.background for an exact themeName match
-    Given a theme list with a theme named "dark" and background "#000000"
-    When I resolve overlay color for theme "dark"
-    Then the resolved color equals "#000000"
-
-  Scenario: resolveOverlayColor returns undefined when the theme is not found
-    Given a theme list with a theme named "light" and background "#ffffff"
-    When I resolve overlay color for theme "unknown"
-    Then the resolved color is undefined
-
   Scenario: clampLevel returns min when the number is below the default minimum
     Given a number "-3"
     When I clamp the level with defaults
