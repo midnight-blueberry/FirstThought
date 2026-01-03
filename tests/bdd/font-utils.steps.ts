@@ -1,4 +1,4 @@
-import { calcFontSizeLevel, getBaseFontName, nextIconSize, toFamilyKey } from '@/utils/font';
+import { nextIconSize, toFamilyKey } from '@/utils/font';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
@@ -16,80 +16,6 @@ export default (test: JestCucumberTestFn) => {
 
     then('it equals "Bad_Script"', () => {
       expect(result).toBe('Bad_Script');
-    });
-  });
-
-  test('getBaseFontName strips weight suffix and converts underscores to spaces', ({ given, when, then }: StepDefinitions) => {
-    let fontName = '';
-    let result = '';
-
-    given('a theme font name "Bad_Script-400-italic"', () => {
-      fontName = 'Bad_Script-400-italic';
-    });
-
-    when('I get the base font name', () => {
-      result = getBaseFontName(fontName);
-    });
-
-    then('it equals "Bad Script"', () => {
-      expect(result).toBe('Bad Script');
-    });
-  });
-
-  test('calcFontSizeLevel clamps to minimum 1', ({ given, when, then }: StepDefinitions) => {
-    let themeSmallPx = 0;
-    let defaultFontSize = 16;
-    let result: number | null = null;
-
-    given('theme small font size 0 and default font size 16', () => {
-      themeSmallPx = 0;
-      defaultFontSize = 16;
-    });
-
-    when('I calculate the font size level', () => {
-      result = calcFontSizeLevel(themeSmallPx, defaultFontSize);
-    });
-
-    then('it equals 1', () => {
-      expect(result).toBe(1);
-    });
-  });
-
-  test('calcFontSizeLevel clamps to maximum 5', ({ given, when, then }: StepDefinitions) => {
-    let themeSmallPx = 100;
-    let defaultFontSize = 16;
-    let result: number | null = null;
-
-    given('theme small font size 100 and default font size 16', () => {
-      themeSmallPx = 100;
-      defaultFontSize = 16;
-    });
-
-    when('I calculate the font size level', () => {
-      result = calcFontSizeLevel(themeSmallPx, defaultFontSize);
-    });
-
-    then('it equals 5', () => {
-      expect(result).toBe(5);
-    });
-  });
-
-  test('calcFontSizeLevel returns 3 at default font size', ({ given, when, then }: StepDefinitions) => {
-    let themeSmallPx = 12;
-    let defaultFontSize = 16;
-    let result: number | null = null;
-
-    given('theme small font size 12 and default font size 16', () => {
-      themeSmallPx = 12;
-      defaultFontSize = 16;
-    });
-
-    when('I calculate the font size level', () => {
-      result = calcFontSizeLevel(themeSmallPx, defaultFontSize);
-    });
-
-    then('it equals 3', () => {
-      expect(result).toBe(3);
     });
   });
 

@@ -6,22 +6,8 @@ export type IconSizeToken = {
   xlarge: number;
 };
 
-import { clampLevel } from './theme';
-
-export function getBaseFontName(themeFontName: string): string {
-  return themeFontName
-    .replace(/-\d+(?:-italic)?$/, '')
-    .replace(/_/g, ' ');
-}
-
 export const toFamilyKey = (name: string) =>
   name.replace(/-\d+(?:-italic)?$/, '').replace(/ /g, '_');
-
-export function calcFontSizeLevel(themeSmallPx: number, fontDefaultSize: number): 1|2|3|4|5 {
-  const base = fontDefaultSize - 4;
-  const level = Math.round((themeSmallPx - base) / 2) + 3;
-  return clampLevel(level) as 1|2|3|4|5;
-}
 
 export function nextIconSize(level: number, sizes: IconSizeToken): IconSizeToken {
   const iconDelta = (level - 3) * 4;
