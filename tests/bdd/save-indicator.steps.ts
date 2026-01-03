@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 // @ts-ignore
 import { act } from 'react-test-renderer';
 
@@ -41,13 +41,17 @@ export default (test: JestCucumberTestFn) => {
   const renderProvider = () => {
     tree = renderWithProviders(
       React.createElement(
-        SaveIndicatorProvider,
+        View,
         null,
         React.createElement(
-          React.Fragment,
+          SaveIndicatorProvider,
           null,
-          React.createElement(SaveIndicator, null),
-          React.createElement(Capture, null),
+          React.createElement(
+            React.Fragment,
+            null,
+            React.createElement(SaveIndicator, null),
+            React.createElement(Capture, null),
+          ),
         ),
       ),
     );
