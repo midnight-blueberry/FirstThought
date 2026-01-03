@@ -20,3 +20,13 @@ Feature: Save indicator
     When hide is called
     Then the current promise resolves immediately
     Then no fade-out timers remain active
+
+  Scenario: showFor during active fade-out stops animation and reschedules hold
+    Given the save indicator provider is rendered
+    And fade-out completion is handled manually
+    When showFor is called with 1000 milliseconds
+    And the fade-out timer elapses while the fade-out animation keeps running
+    When showFor is called again with 2000 milliseconds during fade-out
+    Then the in-flight fade-out animation is stopped and opacity resets to 1
+    Then a single fade-out timer is active for 2000 milliseconds
+    Then no additional fade-in animation is triggered

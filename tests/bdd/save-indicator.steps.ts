@@ -28,6 +28,10 @@ export default (test: JestCucumberTestFn) => {
   let timingSpy: jest.SpyInstance;
   let setTimeoutSpy: jest.SpyInstance;
   let timingConfigs: TimingConfig[] = [];
+  let manualFadeOutCompletion = false;
+  let fadeOutStops: jest.Mock[] = [];
+  let opacitySetValueSpy: jest.SpyInstance | null = null;
+  let fadeInConfigsBeforeSecondShow: number | null = null;
 
   const Capture = () => {
     context = useSaveIndicator();
@@ -55,19 +59,28 @@ export default (test: JestCucumberTestFn) => {
 
   beforeEach(() => {
     jest.useFakeTimers();
+    manualFadeOutCompletion = false;
+    fadeOutStops = [];
+    opacitySetValueSpy = null;
+    fadeInConfigsBeforeSecondShow = null;
     timingConfigs = [];
     setTimeoutSpy = jest.spyOn(global, 'setTimeout');
     timingSpy = jest.spyOn(Animated, 'timing').mockImplementation((value: any, config: TimingConfig) => {
       timingConfigs.push(config);
+      const stop = jest.fn();
       const start = jest.fn((callback?: (result: { finished: boolean }) => void) => {
+        if (config?.toValue === 0 && manualFadeOutCompletion) {
+          return;
+        }
+
         callback?.({ finished: true });
       });
 
-      return {
-        start,
-        stop: jest.fn(),
-        reset: jest.fn(),
-      } as unknown as Animated.CompositeAnimation;
+      if (config?.toValue === 0) {
+        fadeOutStops.push(stop);
+      }
+
+      return { start, stop, reset: jest.fn() } as unknown as Animated.CompositeAnimation;
     });
 
     renderProvider();
@@ -80,6 +93,9 @@ export default (test: JestCucumberTestFn) => {
     firstPromise = null;
     secondPromise = null;
     timingConfigs = [];
+    fadeOutStops = [];
+    opacitySetValueSpy?.mockRestore();
+    fadeInConfigsBeforeSecondShow = null;
     tree = await unmountTree(tree);
     jest.clearAllTimers();
     jest.useRealTimers();
@@ -107,6 +123,56 @@ export default (test: JestCucumberTestFn) => {
       });
 
       await expect(firstPromise).resolves.toBeUndefined();
+    });
+  });
+
+  test('showFor during active fade-out stops animation and reschedules hold', ({ given, when, then }: StepDefinitions) => {
+    given('the save indicator provider is rendered', () => {
+      expect(context).not.toBeNull();
+    });
+
+    given('fade-out completion is handled manually', () => {
+      manualFadeOutCompletion = true;
+    });
+
+    when('showFor is called with 1000 milliseconds', async () => {
+      await act(async () => {
+        firstPromise = context!.showFor(1000);
+      });
+
+      fadeInConfigsBeforeSecondShow = timingConfigs.filter((config) => config?.toValue === 1).length;
+    });
+
+    when('the fade-out timer elapses while the fade-out animation keeps running', async () => {
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(fadeOutStops[0]).toBeDefined();
+      expect(fadeOutStops[0]).not.toHaveBeenCalled();
+    });
+
+    when('showFor is called again with 2000 milliseconds during fade-out', async () => {
+      opacitySetValueSpy = jest.spyOn(context!.opacity, 'setValue');
+
+      await act(async () => {
+        secondPromise = context!.showFor(2000);
+      });
+    });
+
+    then('the in-flight fade-out animation is stopped and opacity resets to 1', () => {
+      expect(fadeOutStops[0]).toHaveBeenCalledTimes(1);
+      expect(opacitySetValueSpy).toHaveBeenCalledWith(1);
+    });
+
+    then('a single fade-out timer is active for 2000 milliseconds', () => {
+      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 2000);
+      expect(jest.getTimerCount()).toBe(1);
+    });
+
+    then('no additional fade-in animation is triggered', () => {
+      const fadeInCalls = timingConfigs.filter((config) => config?.toValue === 1);
+      expect(fadeInCalls).toHaveLength(fadeInConfigsBeforeSecondShow!);
     });
   });
 
