@@ -5,7 +5,7 @@ import {
   getStickySelectionContext,
   setStickySelectionContext,
 } from '@/features/sticky-position/StickySelectionContext';
-import { clearRegistry, register } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
 import { unmountTree } from '@tests/utils/unmountTree';
@@ -19,7 +19,7 @@ export default (test: JestCucumberTestFn) => {
   afterEach(async () => {
     tree = await unmountTree(tree);
     setStickySelectionContext(null);
-    clearRegistry();
+    unregister('theme:dark');
   });
 
   test('keeps scroll offset after theme change', ({ given, when, then }: StepDefinitions) => {

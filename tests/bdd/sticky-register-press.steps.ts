@@ -5,7 +5,6 @@ import {
   getStickySelectionContext,
   setStickySelectionContext,
 } from '@/features/sticky-position/StickySelectionContext';
-import { clearRegistry } from '@/features/sticky-position/registry';
 import { renderWithProviders } from '@tests/utils/render';
 import { unmountTree } from '@tests/utils/unmountTree';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
@@ -19,7 +18,6 @@ export default (test: JestCucumberTestFn) => {
   afterEach(async () => {
     tree = await unmountTree(tree);
     setStickySelectionContext(null);
-    clearRegistry();
     global.requestAnimationFrame = originalRequestAnimationFrame;
   });
 
