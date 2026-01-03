@@ -45,13 +45,6 @@ export const fonts = (Object.keys(FONT_FILES) as FontFamily[]).map(family => {
 
 export const defaultFontName: string = 'Comfortaa';
 
-export const getNextFontWeight = (family: string, currentWeight: FontWeight) => {
-  const name = family.replace(/_/g, ' ');
-  const font = getFontByName(fonts, name);
-  const next = adjustWeight(font, currentWeight, 1);
-  return next ?? currentWeight;
-};
-
 export function resolveFontFace(
   familyName: string,
   weight: FontWeight,
