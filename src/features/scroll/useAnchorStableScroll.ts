@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useRef } from 'react';
+import React, { createContext, useCallback, useRef } from 'react';
 import type { RefObject } from 'react';
 import {
   UIManager,
@@ -15,10 +15,6 @@ interface AnchorContextValue {
 }
 
 export const AnchorStableScrollContext = createContext<AnchorContextValue | null>(null);
-
-export function useAnchorStableScrollContext() {
-  return useContext(AnchorStableScrollContext);
-}
 
 export default function useAnchorStableScroll() {
   const scrollRef = useRef<ScrollView>(null);
