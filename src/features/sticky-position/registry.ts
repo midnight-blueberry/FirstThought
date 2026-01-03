@@ -14,7 +14,3 @@ export function unregister(id: string): void {
 export function getRef(id: string): RefObject<View | null> | undefined {
   return registry.get(id);
 }
-
-export function clearRegistry(): void {
-  registry.clear();
-}

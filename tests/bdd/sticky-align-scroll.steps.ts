@@ -1,10 +1,10 @@
 import { alignScrollAfterApply } from '@/features/sticky-position/alignScrollAfterApply';
-import { clearRegistry, register } from '@/features/sticky-position/registry';
+import { register, unregister } from '@/features/sticky-position/registry';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 export default (test: JestCucumberTestFn) => {
   afterEach(() => {
-    clearRegistry();
+    unregister('theme:dark');
   });
 
   test('returns delta for registered ref', ({ given, when, then }: StepDefinitions) => {
@@ -42,7 +42,7 @@ export default (test: JestCucumberTestFn) => {
     const state = { result: 0 };
 
     given(/^no ref is registered for theme missing$/, () => {
-      clearRegistry();
+      unregister('theme:missing');
     });
 
     when(

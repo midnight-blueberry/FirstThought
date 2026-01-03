@@ -5,7 +5,6 @@ import {
   getStickySelectionContext,
   setStickySelectionContext,
 } from '@/features/sticky-position/StickySelectionContext';
-import { clearRegistry } from '@/features/sticky-position/registry';
 import { makeScrollEvent } from '@tests/utils/makeScrollEvent';
 import { renderWithProviders } from '@tests/utils/render';
 import { unmountTree } from '@tests/utils/unmountTree';
@@ -20,7 +19,6 @@ export default (test: JestCucumberTestFn) => {
   afterEach(async () => {
     tree = await unmountTree(tree);
     setStickySelectionContext(null);
-    clearRegistry();
   });
 
   test('resets selection when applyWithSticky fails', ({

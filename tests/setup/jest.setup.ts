@@ -1,5 +1,4 @@
 import { afterEach, jest } from '@jest/globals';
-import { clearRegistry } from '@/features/sticky-position/registry';
 
 global.requestAnimationFrame = (cb: any) => cb(0);
 
@@ -28,7 +27,6 @@ jest.mock('@/components/settings/overlay', () => ({
 }));
 
 afterEach(() => {
-  clearRegistry();
   jest.restoreAllMocks();
 });
 
