@@ -64,10 +64,19 @@ class AnimatedValue {
   constructor(v: number) { this._v = v; }
   setValue(v: number) { this._v = v; }
   getValue() { return this._v; }
+  stopAnimation(cb?: (value?: number) => void) {
+    if (cb) cb(this._v);
+  }
 }
 export const Animated = {
   Value: AnimatedValue,
-  timing: (_: any, __: any) => ({ start: (cb?: () => void) => { if (cb) cb(); } }),
+  timing: jest.fn((_: any, __: any) => ({ start: jest.fn((cb?: () => void) => { if (cb) cb(); }) })),
+  sequence: jest.fn((animations: any[]) => ({ animations })),
+  loop: jest.fn((animation: any, config?: any) => ({
+    animation,
+    config,
+    start: jest.fn((cb?: () => void) => { if (cb) cb(); }),
+  })),
 };
 
 export default {
