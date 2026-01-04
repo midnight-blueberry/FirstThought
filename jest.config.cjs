@@ -9,6 +9,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@screens/(.*)$': '<rootDir>/src/screens/$1',
     '^@components/(.*)$': '<rootDir>/src/components/$1',
     '^@constants/(.*)$': '<rootDir>/src/constants/$1',
     '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
