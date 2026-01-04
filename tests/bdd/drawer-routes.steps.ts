@@ -43,6 +43,8 @@ jest.mock('@screens/settings', () => {
 
 const { DrawerActions } = jest.requireMock('@react-navigation/native');
 const { default: MockedSaveIndicator } = jest.requireMock('@components/header/SaveIndicator');
+const { default: MockedHomePageScreen } = jest.requireMock('@screens/home-page');
+const { default: MockedSettingsScreen } = jest.requireMock('@screens/settings');
 const { drawerRoutes } = require('@/navigation/drawer/routes') as {
   drawerRoutes: typeof import('@/navigation/drawer/routes').drawerRoutes;
 };
@@ -89,6 +91,8 @@ export default (test: JestCucumberTestFn) => {
       expect(routes).toHaveLength(2);
       expect(routes[0].name).toBe('Home');
       expect(routes[1].name).toBe('Settings');
+      expect(routes[0].component).toBe(MockedHomePageScreen);
+      expect(routes[1].component).toBe(MockedSettingsScreen);
     });
 
     then('Home route renders correct options with header components', () => {
