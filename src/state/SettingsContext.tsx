@@ -49,21 +49,6 @@ const SettingsContext = createContext<Ctx>({
   setFontWeight: () => defaultSettings,
 });
 
-let updateRef = (p: Partial<Settings>) => defaultSettings;
-export function updateSettings(p: Partial<Settings>) {
-  return updateRef(p);
-}
-
-let setFamilyRef = (family: string) => defaultSettings;
-export function setFontFamily(family: string) {
-  return setFamilyRef(family);
-}
-
-let setWeightRef = (weight: number) => defaultSettings;
-export function setFontWeight(weight: number) {
-  return setWeightRef(weight);
-}
-
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const stateRef = useRef(settings);
@@ -74,7 +59,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
     return stateRef.current;
   }, []);
-  updateRef = apply;
   const changeFamily = useCallback(
     (nextFamily: string) => {
       const key = toFamilyKey(nextFamily);
@@ -97,8 +81,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     },
     [apply],
   );
-  setFamilyRef = changeFamily;
-  setWeightRef = changeWeight;
 
   useEffect(() => {
     void (async () => {
@@ -141,5 +123,3 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 export function useSettings() {
   return useContext(SettingsContext);
 }
-
-export { SettingsContext };
