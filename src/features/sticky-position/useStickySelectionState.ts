@@ -56,9 +56,6 @@ export function useStickySelectionState(
             stateRef.current.ref = node;
             stateRef.current.prevCenterY = y + h / 2;
             stateRef.current.ts = Date.now();
-            if (__DEV__) {
-              console.log('StickySelection', stateRef.current);
-            }
             statusRef.current = 'idle';
             resolve();
           });
