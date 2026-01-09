@@ -58,6 +58,10 @@ export const View = (props: any) =>
   React.createElement('div', recordView('View', { style: props.style }), props.children);
 export const TouchableOpacity = (props: any) =>
   React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
+export const StatusBar = (props: any) => {
+  recordView('StatusBar', props);
+  return React.createElement('div', null);
+};
 
 class AnimatedValue {
   private _v: number;
@@ -92,5 +96,6 @@ export default {
   Alert,
   View,
   TouchableOpacity,
+  StatusBar,
   findNodeHandle,
 };
