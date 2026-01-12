@@ -1,29 +1,36 @@
 import useHeaderConfig from '@/hooks/useHeaderConfig';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
-
-type Theme = {
-  iconSize: { medium: number };
-  padding: { large: number };
-  colors: { headerBackground: string };
-};
+import { lightColors, sizes } from '@constants/theme';
+import { headerTypography } from '@theme/tokens/typography';
+import { DefaultTheme } from 'styled-components/native';
 
 type HeaderConfig = { height: number; backgroundColor: string };
 
+const baseTheme: DefaultTheme = {
+  name: 'Test',
+  colors: lightColors,
+  ...sizes,
+  fontName: 'Test',
+  fontWeight: '500',
+  noteTextAlign: 'left',
+  barStyle: 'dark-content',
+  isDark: false,
+  headerShadowVisible: false,
+  typography: { header: headerTypography },
+};
+
 export default (test: JestCucumberTestFn) => {
   test('calculates header height from theme and top inset', ({ given, when, then }: StepDefinitions) => {
-    let theme: Theme = {
-      iconSize: { medium: 0 },
-      padding: { large: 0 },
-      colors: { headerBackground: '' },
-    };
+    let theme: DefaultTheme = baseTheme;
     let topInset = 0;
     let result: HeaderConfig = { height: 0, backgroundColor: '' };
 
     given('a theme with medium icon size 24 and large padding 8', () => {
       theme = {
-        iconSize: { medium: 24 },
-        padding: { large: 8 },
-        colors: { headerBackground: '#000000' },
+        ...baseTheme,
+        iconSize: { ...baseTheme.iconSize, medium: 24 },
+        padding: { ...baseTheme.padding, large: 8 },
+        colors: { ...baseTheme.colors, headerBackground: '#000000' },
       };
     });
 
@@ -41,19 +48,16 @@ export default (test: JestCucumberTestFn) => {
   });
 
   test('returns header background color from theme', ({ given, when, then }: StepDefinitions) => {
-    let theme: Theme = {
-      iconSize: { medium: 0 },
-      padding: { large: 0 },
-      colors: { headerBackground: '' },
-    };
+    let theme: DefaultTheme = baseTheme;
     let topInset = 0;
     let result: HeaderConfig = { height: 0, backgroundColor: '' };
 
     given('a theme header background "#123456"', () => {
       theme = {
-        iconSize: { medium: 24 },
-        padding: { large: 8 },
-        colors: { headerBackground: '#123456' },
+        ...baseTheme,
+        iconSize: { ...baseTheme.iconSize, medium: 24 },
+        padding: { ...baseTheme.padding, large: 8 },
+        colors: { ...baseTheme.colors, headerBackground: '#123456' },
       };
     });
 
