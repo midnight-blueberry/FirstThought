@@ -1,7 +1,7 @@
 import { buildInputFieldStyles } from '@/components/ui/molecules/input-field.styles';
 import { buildTheme } from '@/theme/buildTheme';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
 import type { DefaultTheme } from 'styled-components/native';
 
 type BuildOptions = {
@@ -24,7 +24,14 @@ export default (test: JestCucumberTestFn) => {
   test('Filled variant uses disabled background and no border', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme;
     let options: BuildOptions;
-    let containerStyles: ReturnType<typeof StyleSheet.flatten>;
+    let containerStyles: ViewStyle | undefined;
+
+    const requireContainerStyles = () => {
+      if (!containerStyles) {
+        throw new Error('Container styles were not built.');
+      }
+      return containerStyles;
+    };
 
     given('a default theme', () => {
       theme = buildTheme();
@@ -37,22 +44,29 @@ export default (test: JestCucumberTestFn) => {
 
     when('I build the input field styles', () => {
       const styles = buildInputFieldStyles(theme, options);
-      containerStyles = StyleSheet.flatten(styles.container);
+      containerStyles = StyleSheet.flatten(styles.container) as ViewStyle;
     });
 
     then('the container background color equals the theme disabled color', () => {
-      expect(containerStyles.backgroundColor).toBe(theme.colors.disabled);
+      expect(requireContainerStyles().backgroundColor).toBe(theme.colors.disabled);
     });
 
     then('the container border width equals 0', () => {
-      expect(containerStyles.borderWidth).toBe(0);
+      expect(requireContainerStyles().borderWidth).toBe(0);
     });
   });
 
   test('Outline focused state uses accent border and transparent background', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme;
     let options: BuildOptions;
-    let containerStyles: ReturnType<typeof StyleSheet.flatten>;
+    let containerStyles: ViewStyle | undefined;
+
+    const requireContainerStyles = () => {
+      if (!containerStyles) {
+        throw new Error('Container styles were not built.');
+      }
+      return containerStyles;
+    };
 
     given('a default theme', () => {
       theme = buildTheme();
@@ -69,22 +83,29 @@ export default (test: JestCucumberTestFn) => {
 
     when('I build the input field styles', () => {
       const styles = buildInputFieldStyles(theme, options);
-      containerStyles = StyleSheet.flatten(styles.container);
+      containerStyles = StyleSheet.flatten(styles.container) as ViewStyle;
     });
 
     then('the container border color equals the theme accent color', () => {
-      expect(containerStyles.borderColor).toBe(theme.colors.accent);
+      expect(requireContainerStyles().borderColor).toBe(theme.colors.accent);
     });
 
     then('the container background color equals transparent', () => {
-      expect(containerStyles.backgroundColor).toBe('transparent');
+      expect(requireContainerStyles().backgroundColor).toBe('transparent');
     });
   });
 
   test('Outline non-editable state uses disabled colors', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme;
     let options: BuildOptions;
-    let containerStyles: ReturnType<typeof StyleSheet.flatten>;
+    let containerStyles: ViewStyle | undefined;
+
+    const requireContainerStyles = () => {
+      if (!containerStyles) {
+        throw new Error('Container styles were not built.');
+      }
+      return containerStyles;
+    };
 
     given('a default theme', () => {
       theme = buildTheme();
@@ -101,23 +122,37 @@ export default (test: JestCucumberTestFn) => {
 
     when('I build the input field styles', () => {
       const styles = buildInputFieldStyles(theme, options);
-      containerStyles = StyleSheet.flatten(styles.container);
+      containerStyles = StyleSheet.flatten(styles.container) as ViewStyle;
     });
 
     then('the container background color equals the theme disabled color', () => {
-      expect(containerStyles.backgroundColor).toBe(theme.colors.disabled);
+      expect(requireContainerStyles().backgroundColor).toBe(theme.colors.disabled);
     });
 
     then('the container border color equals the theme disabled color', () => {
-      expect(containerStyles.borderColor).toBe(theme.colors.disabled);
+      expect(requireContainerStyles().borderColor).toBe(theme.colors.disabled);
     });
   });
 
   test('Small size uses small metrics', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme;
     let options: BuildOptions;
-    let containerStyles: ReturnType<typeof StyleSheet.flatten>;
-    let inputStyles: ReturnType<typeof StyleSheet.flatten>;
+    let containerStyles: ViewStyle | undefined;
+    let inputStyles: TextStyle | undefined;
+
+    const requireContainerStyles = () => {
+      if (!containerStyles) {
+        throw new Error('Container styles were not built.');
+      }
+      return containerStyles;
+    };
+
+    const requireInputStyles = () => {
+      if (!inputStyles) {
+        throw new Error('Input styles were not built.');
+      }
+      return inputStyles;
+    };
 
     given('a default theme', () => {
       theme = buildTheme();
@@ -130,20 +165,20 @@ export default (test: JestCucumberTestFn) => {
 
     when('I build the input field styles', () => {
       const styles = buildInputFieldStyles(theme, options);
-      containerStyles = StyleSheet.flatten(styles.container);
-      inputStyles = StyleSheet.flatten(styles.input);
+      containerStyles = StyleSheet.flatten(styles.container) as ViewStyle;
+      inputStyles = StyleSheet.flatten(styles.input) as TextStyle;
     });
 
     then('the container height equals the theme small button size', () => {
-      expect(containerStyles.height).toBe(theme.buttonSizes.small);
+      expect(requireContainerStyles().height).toBe(theme.buttonSizes.small);
     });
 
     then('the container horizontal padding equals the theme medium padding', () => {
-      expect(containerStyles.paddingHorizontal).toBe(theme.padding.medium);
+      expect(requireContainerStyles().paddingHorizontal).toBe(theme.padding.medium);
     });
 
     then('the input font size equals the theme small font size', () => {
-      expect(inputStyles.fontSize).toBe(theme.fontSize.small);
+      expect(requireInputStyles().fontSize).toBe(theme.fontSize.small);
     });
   });
 };
