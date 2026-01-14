@@ -21,7 +21,7 @@ export default (test: JestCucumberTestFn) => {
   let scrollOffset: number;
   let setOptionsMock: jest.Mock;
   let scrollHandler: ((event: NativeSyntheticEvent<NativeScrollEvent>) => void) | null;
-  let tree: renderer.ReactTestRenderer | null;
+  let tree: ReturnType<typeof renderer.create> | null;
 
   const mockModules = () => {
     jest.doMock('expo-router', () => ({
