@@ -23,11 +23,11 @@ jest.mock('@react-navigation/drawer', () => {
   return {
     DrawerContentScrollView: (props: DrawerProps) => {
       lastScrollViewProps = props;
-      return React.createElement('DrawerContentScrollView', props, props.children);
+      return React.createElement(React.Fragment, null, props.children);
     },
     DrawerItemList: (props: DrawerProps) => {
       lastItemListProps = props;
-      return React.createElement('DrawerItemList', props);
+      return null;
     },
   };
 });
