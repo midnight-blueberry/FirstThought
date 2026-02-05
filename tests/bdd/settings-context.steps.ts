@@ -27,14 +27,16 @@ export default (test: JestCucumberTestFn) => {
     return null;
   };
 
-  const renderSettings = () => {
-    tree = renderWithProviders(
-      React.createElement(
-        SettingsProvider,
-        null,
-        React.createElement(TestConsumer),
-      ),
-    );
+  const renderSettings = async () => {
+    await act(async () => {
+      tree = renderWithProviders(
+        React.createElement(
+          SettingsProvider,
+          null,
+          React.createElement(TestConsumer),
+        ),
+      );
+    });
   };
 
   beforeEach(() => {
@@ -51,8 +53,8 @@ export default (test: JestCucumberTestFn) => {
   });
 
   const registerRenderedGiven = (given: StepDefinitions['given']) => {
-    given('settings context is rendered', () => {
-      renderSettings();
+    given('settings context is rendered', async () => {
+      await renderSettings();
     });
   };
 
@@ -67,6 +69,7 @@ export default (test: JestCucumberTestFn) => {
             fontSizeLevel: Number(fontSizeLevel),
           });
         });
+        await act(async () => {});
       },
     );
   };
@@ -77,6 +80,7 @@ export default (test: JestCucumberTestFn) => {
       await act(async () => {
         lastResult = settingsApi!.setFontFamily(family);
       });
+      await act(async () => {});
     });
   };
 
@@ -86,6 +90,7 @@ export default (test: JestCucumberTestFn) => {
       await act(async () => {
         lastResult = settingsApi!.setFontWeight(Number(weight));
       });
+      await act(async () => {});
     });
   };
 
