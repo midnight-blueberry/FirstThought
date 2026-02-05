@@ -35,11 +35,11 @@ jest.mock('@react-navigation/drawer', () => {
     createDrawerNavigator: () => ({
       Navigator: (props: Record<string, unknown>) => {
         lastNavigatorProps = props;
-        return React.createElement('Navigator', props, props.children);
+        return React.createElement(React.Fragment, null, props.children);
       },
       Screen: (props: Record<string, unknown>) => {
         lastScreenProps.push(props);
-        return React.createElement('Screen', props);
+        return null;
       },
     }),
   };
