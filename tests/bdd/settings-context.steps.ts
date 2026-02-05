@@ -7,14 +7,6 @@ import { unmountTree } from '@tests/utils/unmountTree';
 
 jest.mock('@react-native-async-storage/async-storage', () => require('@tests/mocks/asyncStorageMock'));
 
-jest.mock('react', () => {
-  const actual = jest.requireActual('react');
-  return {
-    ...actual,
-    useState: (initialValue: unknown) => [initialValue, jest.fn()],
-  };
-});
-
 const settingsContext = require('@/state/SettingsContext') as typeof import('@/state/SettingsContext');
 const { SettingsProvider, useSettings } = settingsContext;
 
@@ -101,6 +93,8 @@ export default (test: JestCucumberTestFn) => {
     then(/^returned settings include accent "([^"]+)"$/, (accent: string) => {
       expect(lastResult).not.toBeNull();
       expect(lastResult!.accent).toBe(accent);
+      expect(settingsApi).not.toBeNull();
+      expect(settingsApi!.settings.accent).toBe(accent);
     });
   };
 
@@ -108,6 +102,8 @@ export default (test: JestCucumberTestFn) => {
     then(/^returned settings include font size level (\d+)$/, (fontSizeLevel: string) => {
       expect(lastResult).not.toBeNull();
       expect(lastResult!.fontSizeLevel).toBe(Number(fontSizeLevel));
+      expect(settingsApi).not.toBeNull();
+      expect(settingsApi!.settings.fontSizeLevel).toBe(Number(fontSizeLevel));
     });
   };
 
@@ -115,6 +111,8 @@ export default (test: JestCucumberTestFn) => {
     then(/^returned settings include font family "([^"]+)"$/, (family: string) => {
       expect(lastResult).not.toBeNull();
       expect(lastResult!.fontFamily).toBe(family);
+      expect(settingsApi).not.toBeNull();
+      expect(settingsApi!.settings.fontFamily).toBe(family);
     });
   };
 
@@ -122,6 +120,8 @@ export default (test: JestCucumberTestFn) => {
     then(/^returned settings include font weight "([^"]+)"$/, (weight: string) => {
       expect(lastResult).not.toBeNull();
       expect(lastResult!.fontWeight).toBe(weight);
+      expect(settingsApi).not.toBeNull();
+      expect(settingsApi!.settings.fontWeight).toBe(weight);
     });
   };
 
