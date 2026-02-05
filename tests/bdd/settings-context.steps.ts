@@ -1,6 +1,7 @@
 import React from 'react';
 import { act } from 'react-test-renderer';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
+import { setItem, getItem, removeItem, reset } from '@tests/mocks/asyncStorageMock';
 import { renderWithProviders } from '@tests/utils/render';
 import { unmountTree } from '@tests/utils/unmountTree';
 
@@ -15,9 +16,6 @@ jest.mock('react', () => {
 });
 
 const settingsContext = require('@/state/SettingsContext') as typeof import('@/state/SettingsContext');
-const AsyncStorage =
-  require('@react-native-async-storage/async-storage') as typeof import('@react-native-async-storage/async-storage');
-
 const { SettingsProvider, useSettings } = settingsContext;
 
 type Settings = import('@/state/SettingsContext').Settings;
@@ -27,10 +25,10 @@ export default (test: JestCucumberTestFn) => {
   let settingsApi: ReturnType<typeof useSettings> | null = null;
   let lastResult: Settings | null = null;
 
-  const setItemMock = AsyncStorage.setItem as jest.Mock;
-  const getItemMock = AsyncStorage.getItem as jest.Mock;
-  const removeItemMock = AsyncStorage.removeItem as jest.Mock;
-  const resetStorage = AsyncStorage.reset as () => void;
+  const setItemMock = setItem as jest.Mock;
+  const getItemMock = getItem as jest.Mock;
+  const removeItemMock = removeItem as jest.Mock;
+  const resetStorage = reset;
 
   const TestConsumer = () => {
     settingsApi = useSettings();
