@@ -47,20 +47,23 @@ export default (test: JestCucumberTestFn) => {
     return hookState;
   };
 
-  const getRightNode = () => {
+  const getRightNode = (): React.ReactElement<{ onPress?: () => void; children?: React.ReactNode }> => {
     const state = getHookState();
     if (!state.rightNode || !React.isValidElement(state.rightNode)) {
       throw new Error('Right node is not available');
     }
-    return state.rightNode as React.ReactElement;
+    return state.rightNode as React.ReactElement<{ onPress?: () => void; children?: React.ReactNode }>;
   };
 
   const getRightIconName = () => {
     const rightNode = getRightNode();
-    const iconElement = rightNode.props.children;
-    if (!React.isValidElement(iconElement)) {
+    const iconChild = React.Children.toArray(rightNode.props.children).find((child) =>
+      React.isValidElement(child),
+    );
+    if (!iconChild || !React.isValidElement(iconChild)) {
       throw new Error('Icon element is not available');
     }
+    const iconElement = iconChild as React.ReactElement<{ name?: string }>;
     return iconElement.props.name as string;
   };
 
@@ -114,9 +117,12 @@ export default (test: JestCucumberTestFn) => {
     });
 
     when('I press the clear button', async () => {
-      const rightNode = getRightNode();
+      const onPress = getRightNode().props.onPress;
+      if (typeof onPress !== 'function') {
+        throw new Error('Right node onPress is not available');
+      }
       await act(async () => {
-        rightNode.props.onPress();
+        onPress();
       });
     });
 
@@ -183,9 +189,12 @@ export default (test: JestCucumberTestFn) => {
     });
 
     when('I toggle secure visibility', async () => {
-      const rightNode = getRightNode();
+      const onPress = getRightNode().props.onPress;
+      if (typeof onPress !== 'function') {
+        throw new Error('Right node onPress is not available');
+      }
       await act(async () => {
-        rightNode.props.onPress();
+        onPress();
       });
     });
 
