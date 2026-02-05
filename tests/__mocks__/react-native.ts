@@ -49,6 +49,10 @@ export const Alert = {
   alert: jest.fn(),
 };
 
+export const Dimensions = {
+  get: jest.fn(() => ({ width: 0, height: 0 })),
+};
+
 const recordView = (type: string, props: any) => {
   __mock.views.push({ type, props });
   return props;
@@ -94,6 +98,7 @@ export default {
   Platform,
   ToastAndroid,
   Alert,
+  Dimensions,
   View,
   TouchableOpacity,
   StatusBar,
