@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
-let mockScreenWidth = 0;
 let mockTopInset = 0;
 
 const baseHeaderStyle = { backgroundColor: '#123456' };
@@ -18,16 +17,6 @@ const DrawerContent = () => null;
 
 let lastNavigatorProps: Record<string, unknown> | null = null;
 let lastScreenProps: Array<Record<string, unknown>> = [];
-
-jest.mock('react-native', () => {
-  const actual = require('@tests/__mocks__/react-native');
-  return {
-    ...actual,
-    Dimensions: {
-      get: jest.fn(() => ({ width: mockScreenWidth, height: 800 })),
-    },
-  };
-});
 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({
@@ -63,7 +52,8 @@ jest.mock('@/navigation/drawer', () => ({
   drawerScreenOptions,
 }));
 
-const useHeaderConfig = require('@hooks/useHeaderConfig').default as jest.Mock;
+const RN = require('react-native') as any;
+const useHeaderConfig = require('@hooks/useHeaderConfig') as jest.Mock;
 const DrawerNavigator = require('@/navigation/DrawerNavigator').default;
 
 export default (test: JestCucumberTestFn) => {
@@ -71,7 +61,7 @@ export default (test: JestCucumberTestFn) => {
     const theme = { colors: { background: '#000000' } } as any;
 
     given(/^screen width is (\d+)$/, (value: string) => {
-      mockScreenWidth = Number(value);
+      RN.Dimensions.get.mockImplementation(() => ({ width: Number(value), height: 800 }));
     });
 
     given(/^safe area top inset is (\d+)$/, (value: string) => {
@@ -117,7 +107,7 @@ export default (test: JestCucumberTestFn) => {
     const theme = { colors: { background: '#000000' } } as any;
 
     given(/^screen width is (\d+)$/, (value: string) => {
-      mockScreenWidth = Number(value);
+      RN.Dimensions.get.mockImplementation(() => ({ width: Number(value), height: 800 }));
     });
 
     given(/^safe area top inset is (\d+)$/, (value: string) => {
