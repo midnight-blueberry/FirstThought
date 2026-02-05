@@ -1,10 +1,9 @@
 import React from 'react';
-import { act } from 'react-test-renderer';
+import * as RealRenderer from 'react-test-renderer/cjs/react-test-renderer.development.js';
 import { useInputFieldState } from '@/components/ui/molecules/use-input-field';
 import type { InputFieldProps } from '@/components/ui/molecules/input-field';
+import { StickySelectionProvider } from '@/features/sticky-position';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
-import { renderWithProviders } from '@tests/utils/render';
-import { unmountTree } from '@tests/utils/unmountTree';
 
 jest.mock('@hooks/useTheme', () => () => ({
   iconSize: { small: 16 },
@@ -15,7 +14,9 @@ jest.mock('@expo/vector-icons/Ionicons', () => 'Ionicons');
 
 type HookState = ReturnType<typeof useInputFieldState> | null;
 
-type Tree = ReturnType<typeof renderWithProviders> | null;
+const act = RealRenderer.act;
+
+type Tree = ReturnType<typeof RealRenderer.create> | null;
 
 export default (test: JestCucumberTestFn) => {
   let tree: Tree = null;
@@ -36,7 +37,13 @@ export default (test: JestCucumberTestFn) => {
 
   const renderState = async () => {
     await act(async () => {
-      tree = renderWithProviders(React.createElement(TestComponent));
+      tree = RealRenderer.create(
+        React.createElement(
+          StickySelectionProvider,
+          null,
+          React.createElement(TestComponent),
+        ),
+      );
     });
   };
 
@@ -68,7 +75,9 @@ export default (test: JestCucumberTestFn) => {
   };
 
   afterEach(async () => {
-    tree = await unmountTree(tree);
+    await act(async () => {
+      tree?.unmount();
+    });
     propsUnderTest = null;
     hookState = null;
     onChangeText = null;
