@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
 import { __mock as rnMock } from '../__mocks__/react-native';
 import Divider from '@components/ui/atoms/divider';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
@@ -13,7 +13,7 @@ const themeMock = {
 
 jest.mock('@hooks/useTheme', () => jest.fn(() => themeMock));
 
-type DividerStyle = ReturnType<typeof StyleSheet.flatten>;
+type DividerStyle = ViewStyle;
 
 export default (test: JestCucumberTestFn) => {
   const renderDivider = (style?: React.ComponentProps<typeof Divider>['style']) => {
@@ -29,7 +29,7 @@ export default (test: JestCucumberTestFn) => {
   const getDividerStyle = (): DividerStyle => {
     const view = rnMock.views.find(({ type }) => type === 'View');
     expect(view).toBeDefined();
-    return StyleSheet.flatten(view?.props.style);
+    return StyleSheet.flatten<ViewStyle>(view!.props.style as any);
   };
 
   test('renders default divider styles', ({ given, then }: StepDefinitions) => {
