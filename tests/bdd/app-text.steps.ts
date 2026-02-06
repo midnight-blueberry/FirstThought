@@ -14,7 +14,7 @@ const themeMock = {
 let settingsFontFamily = 'Roboto Slab';
 let settingsFontWeight = '500';
 let propFontFamily: string | undefined;
-let propFontWeight: string | undefined;
+let propFontWeight: React.ComponentProps<typeof AppText>['fontWeight'];
 
 const resolveFontMock = resolveFont as jest.MockedFunction<typeof resolveFont>;
 
