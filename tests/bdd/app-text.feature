@@ -5,7 +5,7 @@ Feature: AppText
     When AppText is rendered
     Then resolveFont is called with family key "Roboto_Slab"
     Then resolveFont is called with weight 500
-    Then rendered Text style has fontFamily "font_Roboto_Slab_500"
+    Then rendered Text style has fontFamily "font:Roboto_Slab:500"
     Then rendered Text style has color "#111111"
     Then rendered Text style has fontSize 18
 
@@ -17,4 +17,4 @@ Feature: AppText
     When AppText is rendered
     Then resolveFont is called with family key "Nata_Sans"
     Then resolveFont is called with weight 700
-    Then rendered Text style has fontFamily "font_Nata_Sans_700"
+    Then rendered Text style has fontFamily "font:Nata_Sans:700"

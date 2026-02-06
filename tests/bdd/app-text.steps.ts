@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { StyleSheet } from 'react-native';
-import AppText from '@components/ui/atoms/AppText';
+import type { AppTextProps } from '@components/ui/atoms/AppText';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 import { __mock as rnMock } from '../__mocks__/react-native';
 import { resolveFont } from '@/constants/fonts/resolve';
@@ -14,7 +14,7 @@ const themeMock = {
 let settingsFontFamily = 'Roboto Slab';
 let settingsFontWeight = '500';
 let propFontFamily: string | undefined;
-let propFontWeight: React.ComponentProps<typeof AppText>['fontWeight'];
+let propFontWeight: AppTextProps['fontWeight'];
 
 const resolveFontMock = resolveFont as jest.MockedFunction<typeof resolveFont>;
 
@@ -31,15 +31,44 @@ jest.mock('@/state/SettingsContext', () => ({
 
 jest.mock('@/constants/fonts/resolve', () => ({
   resolveFont: jest.fn((familyKey: string, weight: number) => ({
-    key: `font_${familyKey}_${weight}`,
+    key: `font:${familyKey}:${weight}`,
   })),
 }));
+
+jest.mock('styled-components/native', () => {
+  const React = require('react');
+  const { Text } = require('react-native');
+
+  const styled = {
+    Text: (..._args: any[]) => {
+      const StyledText = (props: any) =>
+        React.createElement(
+          Text,
+          {
+            ...props,
+            style: [
+              {
+                color: props.textColor,
+                fontSize: props.fontSize,
+                fontFamily: props.fontFamily,
+              },
+              props.style,
+            ],
+          },
+          props.children,
+        );
+      return StyledText;
+    },
+  };
+
+  return { __esModule: true, default: styled, DefaultTheme: {} };
+});
 
 export default (test: JestCucumberTestFn) => {
   const renderAppText = () => {
     rnMock.views.length = 0;
 
-    const props: React.ComponentProps<typeof AppText> = {
+    const props: AppTextProps = {
       children: 'Sample',
     };
 
@@ -51,6 +80,7 @@ export default (test: JestCucumberTestFn) => {
       props.fontWeight = propFontWeight;
     }
 
+    const { default: AppText } = require('@components/ui/atoms/AppText');
     ReactDOMServer.renderToStaticMarkup(React.createElement(AppText, props));
   };
 
@@ -86,11 +116,11 @@ export default (test: JestCucumberTestFn) => {
       expect(weight).toBe(500);
     });
 
-    then('rendered Text style has fontFamily "font_Roboto_Slab_500"', () => {
+    then('rendered Text style has fontFamily "font:Roboto_Slab:500"', () => {
       const textView = rnMock.views.find(({ type }) => type === 'Text');
       expect(textView).toBeDefined();
       const flattened = StyleSheet.flatten(textView!.props.style);
-      expect(flattened.fontFamily).toBe('font_Roboto_Slab_500');
+      expect(flattened.fontFamily).toBe('font:Roboto_Slab:500');
     });
 
     then('rendered Text style has color "#111111"', () => {
@@ -141,11 +171,11 @@ export default (test: JestCucumberTestFn) => {
       expect(weight).toBe(700);
     });
 
-    then('rendered Text style has fontFamily "font_Nata_Sans_700"', () => {
+    then('rendered Text style has fontFamily "font:Nata_Sans:700"', () => {
       const textView = rnMock.views.find(({ type }) => type === 'Text');
       expect(textView).toBeDefined();
       const flattened = StyleSheet.flatten(textView!.props.style);
-      expect(flattened.fontFamily).toBe('font_Nata_Sans_700');
+      expect(flattened.fontFamily).toBe('font:Nata_Sans:700');
     });
   });
 };
