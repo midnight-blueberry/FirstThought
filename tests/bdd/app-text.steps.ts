@@ -31,7 +31,7 @@ jest.mock('@/state/SettingsContext', () => ({
 
 jest.mock('@/constants/fonts/resolve', () => ({
   resolveFont: jest.fn((familyKey: string, weight: number) => ({
-    key: `font:${familyKey}:${weight}`,
+    key: `font_${familyKey}_${weight}`,
   })),
 }));
 
@@ -86,11 +86,11 @@ export default (test: JestCucumberTestFn) => {
       expect(weight).toBe(500);
     });
 
-    then('rendered Text style has fontFamily "font:Roboto_Slab:500"', () => {
+    then('rendered Text style has fontFamily "font_Roboto_Slab_500"', () => {
       const textView = rnMock.views.find(({ type }) => type === 'Text');
       expect(textView).toBeDefined();
       const flattened = StyleSheet.flatten(textView!.props.style);
-      expect(flattened.fontFamily).toBe('font:Roboto_Slab:500');
+      expect(flattened.fontFamily).toBe('font_Roboto_Slab_500');
     });
 
     then('rendered Text style has color "#111111"', () => {
@@ -141,11 +141,11 @@ export default (test: JestCucumberTestFn) => {
       expect(weight).toBe(700);
     });
 
-    then('rendered Text style has fontFamily "font:Nata_Sans:700"', () => {
+    then('rendered Text style has fontFamily "font_Nata_Sans_700"', () => {
       const textView = rnMock.views.find(({ type }) => type === 'Text');
       expect(textView).toBeDefined();
       const flattened = StyleSheet.flatten(textView!.props.style);
-      expect(flattened.fontFamily).toBe('font:Nata_Sans:700');
+      expect(flattened.fontFamily).toBe('font_Nata_Sans_700');
     });
   });
 };
