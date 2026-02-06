@@ -60,6 +60,15 @@ const recordView = (type: string, props: any) => {
 
 export const View = (props: any) =>
   React.createElement('div', recordView('View', { style: props.style }), props.children);
+export const Text = (props: any) =>
+  React.createElement(
+    'div',
+    recordView('Text', {
+      style: props.style,
+      maxFontSizeMultiplier: props.maxFontSizeMultiplier,
+    }),
+    props.children,
+  );
 export const TouchableOpacity = (props: any) =>
   React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
 export const StatusBar = (props: any) => {
@@ -100,6 +109,7 @@ export default {
   Alert,
   Dimensions,
   View,
+  Text,
   TouchableOpacity,
   StatusBar,
   findNodeHandle,
