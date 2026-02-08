@@ -20,7 +20,12 @@ const themeMock = {
 
 jest.mock('@hooks/useTheme', () => jest.fn(() => themeMock));
 
-jest.mock('@expo/vector-icons/Ionicons', () => 'Ionicons');
+jest.mock('@expo/vector-icons/Ionicons', () => {
+  const React = require('react');
+  const Ionicons = (props: any) =>
+    React.createElement('span', { 'data-ionicon': props?.name });
+  return { __esModule: true, default: Ionicons };
+});
 
 jest.mock('@components/ui/atoms', () => {
   const React = require('react');
