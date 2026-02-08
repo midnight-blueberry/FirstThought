@@ -71,6 +71,18 @@ export const TextInput = (props: any) =>
   React.createElement('div', recordView('TextInput', { style: props.style }), props.children);
 export const TouchableOpacity = (props: any) =>
   React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
+export const Pressable = (props: any) =>
+  React.createElement(
+    'div',
+    recordView('Pressable', {
+      style: props.style,
+      disabled: props.disabled,
+      accessibilityRole: props.accessibilityRole,
+      accessibilityState: props.accessibilityState,
+      testID: props.testID,
+    }),
+    props.children,
+  );
 export const StatusBar = (props: any) => {
   recordView('StatusBar', props);
   return React.createElement('div', null);
@@ -112,6 +124,7 @@ export default {
   Text,
   TextInput,
   TouchableOpacity,
+  Pressable,
   StatusBar,
   findNodeHandle,
 };
