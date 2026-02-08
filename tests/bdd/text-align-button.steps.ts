@@ -31,18 +31,6 @@ jest.mock('@components/ui/atoms', () => {
   };
 });
 
-jest.mock('react-native', () => {
-  const React = require('react');
-  const base = require('../__mocks__/react-native');
-  return {
-    ...base,
-    TouchableOpacity: (props: any) => {
-      base.__mock.views.push({ type: 'TouchableOpacity', props });
-      return React.createElement('div', null, props.children);
-    },
-  };
-});
-
 type RenderState = {
   variant: React.ComponentProps<typeof TextAlignButton>['variant'];
   selected: boolean;

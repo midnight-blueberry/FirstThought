@@ -69,8 +69,18 @@ export const Text = (props: any) => {
 };
 export const TextInput = (props: any) =>
   React.createElement('div', recordView('TextInput', { style: props.style }), props.children);
-export const TouchableOpacity = (props: any) =>
-  React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
+export const TouchableOpacity = (props: any) => {
+  const recordedProps = {
+    style: props.style,
+    onPress: props.onPress,
+    onPressIn: props.onPressIn,
+    hitSlop: props.hitSlop,
+    disabled: props.disabled,
+    testID: props.testID,
+  };
+  recordView('TouchableOpacity', recordedProps);
+  return React.createElement('div', { style: props.style }, props.children);
+};
 export const Pressable = (props: any) => {
   const flattenedStyle = StyleSheet.flatten(props.style);
   const role = props.accessibilityRole;
