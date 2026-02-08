@@ -67,6 +67,8 @@ export const Text = (props: any) => {
   });
   return React.createElement('div', null, props.children);
 };
+export const TextInput = (props: any) =>
+  React.createElement('div', recordView('TextInput', { style: props.style }), props.children);
 export const TouchableOpacity = (props: any) =>
   React.createElement('div', recordView('TouchableOpacity', { style: props.style }), props.children);
 export const StatusBar = (props: any) => {
@@ -108,6 +110,7 @@ export default {
   Dimensions,
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   StatusBar,
   findNodeHandle,
