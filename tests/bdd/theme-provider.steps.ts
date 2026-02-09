@@ -1,4 +1,13 @@
-let settings = {
+type ThemeId = 'light' | 'cream' | 'dark';
+
+let settings: {
+  themeId: ThemeId;
+  accent: string;
+  fontFamily: string;
+  fontWeight: number;
+  fontSizeLevel: number;
+  noteTextAlign: string;
+} = {
   themeId: 'light',
   accent: '#000000',
   fontFamily: 'System',
