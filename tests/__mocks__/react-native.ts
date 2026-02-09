@@ -81,6 +81,16 @@ export const TouchableOpacity = (props: any) => {
   recordView('TouchableOpacity', recordedProps);
   return React.createElement('div', { style: props.style }, props.children);
 };
+export const ScrollView = (props: any) => {
+  recordView('ScrollView', {
+    style: props.style,
+    contentContainerStyle: props.contentContainerStyle,
+    onScroll: props.onScroll,
+    scrollIndicatorInsets: props.scrollIndicatorInsets,
+    scrollEventThrottle: props.scrollEventThrottle,
+  });
+  return React.createElement('div', { style: props.style }, props.children);
+};
 export const Pressable = (props: any) => {
   const flattenedStyle = StyleSheet.flatten(props.style);
   const role = props.accessibilityRole;
@@ -152,6 +162,7 @@ export default {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
   Pressable,
   StatusBar,
   findNodeHandle,
