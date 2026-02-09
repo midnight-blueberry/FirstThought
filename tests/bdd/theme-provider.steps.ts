@@ -66,9 +66,7 @@ export default (test: JestCucumberTestFn) => {
       receivedTheme = undefined;
       (buildTheme as jest.Mock).mockClear();
       renderer.create(
-        <ThemeProvider>
-          <React.Fragment />
-        </ThemeProvider>,
+        React.createElement(ThemeProvider, null, React.createElement(React.Fragment, null)),
       );
     });
 
