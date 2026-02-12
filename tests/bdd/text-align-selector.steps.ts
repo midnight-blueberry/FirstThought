@@ -83,15 +83,35 @@ export default (test: JestCucumberTestFn) => {
       .find((node: { props: { variant?: string } }) => node.props.variant === variant);
   };
 
+
+  const withSuppressedDeprecatedRendererWarning = <T,>(callback: () => T): T => {
+    const originalConsoleError = console.error;
+    console.error = (...args: unknown[]) => {
+      const hasDeprecatedMessage = args.some(arg => String(arg).includes('react-test-renderer is deprecated'));
+      if (hasDeprecatedMessage) {
+        return;
+      }
+      originalConsoleError(...args);
+    };
+
+    try {
+      return callback();
+    } finally {
+      console.error = originalConsoleError;
+    }
+  };
+
   const renderSelector = async () => {
     pendingRegisterPress = createDeferred();
     registerPressSpy.mockImplementation(() => pendingRegisterPress?.promise ?? Promise.resolve());
 
     await Renderer.act(async () => {
-      tree = Renderer.create(React.createElement(TextAlignSelector, {
-        noteTextAlign,
-        onChange: onChangeSpy,
-      }));
+      tree = withSuppressedDeprecatedRendererWarning(() =>
+        Renderer.create(React.createElement(TextAlignSelector, {
+          noteTextAlign,
+          onChange: onChangeSpy,
+        })),
+      );
     });
   };
 
