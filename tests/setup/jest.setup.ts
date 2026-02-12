@@ -1,3 +1,4 @@
+import React from 'react';
 import { afterEach, jest } from '@jest/globals';
 
 global.requestAnimationFrame = (cb: any) => cb(0);
@@ -10,6 +11,7 @@ declare global {
 (global as any).__DEV__ = false;
 
 jest.mock('@/components/settings/overlay', () => ({
+  OverlayTransitionProvider: ({ children }: { children?: React.ReactNode }) => children ?? null,
   useOverlayTransition: () => ({
     begin: () => Promise.resolve(),
     end: () => Promise.resolve(),

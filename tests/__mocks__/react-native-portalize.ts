@@ -1,4 +1,9 @@
 import React from 'react';
+
 export const Portal = ({ children }: { children?: React.ReactNode }) =>
   React.createElement(React.Fragment, null, children);
-export default { Portal };
+
+export const PortalProvider = ({ children }: { children?: React.ReactNode }) =>
+  React.createElement(React.Fragment, null, children);
+
+export default { Portal, PortalProvider };
