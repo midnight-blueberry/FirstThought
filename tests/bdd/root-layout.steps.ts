@@ -18,6 +18,34 @@ let preventAutoHideAsyncMock: jest.Mock;
 let hideAsyncMock: jest.Mock;
 let setBackgroundColorAsyncMock: jest.Mock;
 
+const globalWithActFlag = globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean };
+globalWithActFlag.IS_REACT_ACT_ENVIRONMENT = true;
+
+const withSuppressedReactTestRendererWarnings = <T,>(callback: () => T): T => {
+  const originalConsoleError = console.error;
+  console.error = (...args: unknown[]) => {
+    const shouldSuppress = args.some(arg => {
+      const msg = String(arg);
+      return (
+        msg.includes('react-test-renderer is deprecated') ||
+        msg.includes('The current testing environment is not configured to support act')
+      );
+    });
+
+    if (shouldSuppress) {
+      return;
+    }
+
+    originalConsoleError(...args);
+  };
+
+  try {
+    return callback();
+  } finally {
+    console.error = originalConsoleError;
+  }
+};
+
 const setupModuleMocks = () => {
   jest.resetModules();
 
@@ -119,7 +147,9 @@ const renderRootLayout = async () => {
   const RootLayout = require('../../src/screens/root-layout').default;
 
   await actFn(async () => {
-    renderResult = createFn(reactModule.createElement(RootLayout));
+    renderResult = withSuppressedReactTestRendererWarnings(() =>
+      createFn(reactModule.createElement(RootLayout)),
+    );
   });
 };
 
