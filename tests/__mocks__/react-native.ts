@@ -117,6 +117,8 @@ export const Pressable = (props: any) => {
     accessibilityRole: props.accessibilityRole,
     accessibilityState: props.accessibilityState,
     testID: props.testID,
+    onPressIn: props.onPressIn,
+    onPress: props.onPress,
   });
 
   return React.createElement('div', domProps, props.children);
@@ -135,8 +137,13 @@ class AnimatedValue {
     if (cb) cb(this._v);
   }
 }
+
+const AnimatedView = (props: any) =>
+  React.createElement('div', recordView('Animated.View', { style: props.style }), props.children);
+
 export const Animated = {
   Value: AnimatedValue,
+  View: AnimatedView,
   timing: jest.fn((_: any, __: any) => ({ start: jest.fn((cb?: () => void) => { if (cb) cb(); }) })),
   sequence: jest.fn((animations: any[]) => ({ animations })),
   loop: jest.fn((animation: any, config?: any) => ({
