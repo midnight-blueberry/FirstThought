@@ -91,6 +91,18 @@ export const ScrollView = (props: any) => {
   });
   return React.createElement('div', { style: props.style }, props.children);
 };
+export const FlatList = (props: any) => {
+  recordView('FlatList', {
+    data: props.data,
+    renderItem: props.renderItem,
+    keyExtractor: props.keyExtractor,
+    contentContainerStyle: props.contentContainerStyle,
+    onScroll: props.onScroll,
+    scrollEventThrottle: props.scrollEventThrottle,
+    style: props.style,
+  });
+  return React.createElement('div', { style: props.style }, props.children);
+};
 export const Pressable = (props: any) => {
   const flattenedStyle = StyleSheet.flatten(props.style);
   const role = props.accessibilityRole;
@@ -170,6 +182,7 @@ export default {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  FlatList,
   Pressable,
   StatusBar,
   findNodeHandle,
