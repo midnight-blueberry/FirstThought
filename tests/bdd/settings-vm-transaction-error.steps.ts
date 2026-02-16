@@ -70,6 +70,32 @@ jest.mock('@components/header/SaveIndicator', () => ({
 
 jest.mock('@utils/showErrorToast', () => ({ showErrorToast: jest.fn() }));
 
+const withSuppressedBoomWarning = async (run: () => Promise<void>) => {
+  const originalWarn = console.warn;
+
+  console.warn = (...args: unknown[]) => {
+    const shouldSuppress = args.some((arg) => {
+      if (arg instanceof Error) {
+        return arg.message === 'boom';
+      }
+
+      return typeof arg === 'string' && arg.includes('Error: boom');
+    });
+
+    if (shouldSuppress) {
+      return;
+    }
+
+    originalWarn(...args);
+  };
+
+  try {
+    await run();
+  } finally {
+    console.warn = originalWarn;
+  }
+};
+
 export default (test: JestCucumberTestFn) => {
   let vm: ReturnType<typeof useSettingsVm> | null = null;
   let tree: any;
@@ -115,10 +141,12 @@ export default (test: JestCucumberTestFn) => {
     });
 
     when('user selects accent "#00FF00"', async () => {
-      await act(async () => {
-        vm!.sectionProps.accent.onSelectAccent('#00FF00');
-        await Promise.resolve();
-        await Promise.resolve();
+      await withSuppressedBoomWarning(async () => {
+        await act(async () => {
+          vm!.sectionProps.accent.onSelectAccent('#00FF00');
+          await Promise.resolve();
+          await Promise.resolve();
+        });
       });
     });
 
