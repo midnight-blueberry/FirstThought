@@ -15,8 +15,13 @@ import type {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import type { SectionKey } from '@types';
 
-export default function SettingsContainer() {
+interface SettingsContainerProps {
+  visibleSectionKeys?: ReadonlyArray<SectionKey>;
+}
+
+export default function SettingsContainer({ visibleSectionKeys }: SettingsContainerProps) {
   const anchor = useAnchorStableScroll();
   const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
   const { hide } = useSaveIndicator();
@@ -48,6 +53,7 @@ export default function SettingsContainer() {
       <AnchorStableScrollContext.Provider value={anchor.contextValue}>
         <SettingsContent
           sectionProps={vm.sectionProps}
+          visibleSectionKeys={visibleSectionKeys}
           theme={vm.theme}
           overlayVisible={vm.overlayVisible}
           overlayColor={vm.overlayColor}
