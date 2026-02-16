@@ -66,7 +66,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
         selected && { borderColor: theme.colors.accent },
       ]}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         {hasSwatch && (
           <View
             style={{
@@ -85,6 +85,8 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           style={[
             {
               ...settingsOptionLabelText,
+              flex: 1,
+              flexShrink: 1,
               fontSize: effectiveFontSize,
               lineHeight: effectiveFontSize + theme.padding.medium,
               transform: [
