@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { StatusBar } from 'react-native';
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import useTheme from '@hooks/useTheme';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function useHeaderThemeSync({ transparent }: Props = {}) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const theme = useTheme();
   const { background } = theme.colors;
   const { isDark } = theme;
