@@ -87,4 +87,19 @@ export default (test: JestCucumberTestFn) => {
       expect(flattened.lineHeight).toBe(themeMock.fontSize.medium + themeMock.padding.medium);
     });
   });
+
+
+  test('Label can shrink to keep full text visible', ({ given, then }: StepDefinitions) => {
+    given('SelectableRow component is rendered', () => {
+      renderSelectableRow({ fontSize: 18 });
+    });
+
+    then('Label style includes flexShrink 1', () => {
+      const styleProp = appTextMock.mock.calls[0][0].style;
+      const flattened = StyleSheet.flatten(styleProp);
+
+      expect(flattened.flexShrink).toBe(1);
+    });
+  });
+
 };
