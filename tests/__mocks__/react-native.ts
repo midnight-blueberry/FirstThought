@@ -18,7 +18,7 @@ StyleSheet.flatten = (style: any) => {
   return style.reduce((acc, item) => ({ ...acc, ...(item || {}) }), {});
 };
 export const InteractionManager = {
-  runAfterInteractions: () => Promise.resolve(),
+  runAfterInteractions: (task?: () => any) => Promise.resolve(task?.()),
 };
 export const UIManager = {
   measureLayout: jest.fn(),
