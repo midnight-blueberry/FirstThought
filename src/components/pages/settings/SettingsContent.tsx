@@ -9,12 +9,13 @@ import {
 } from 'react-native';
 import { Overlay } from '@components/ui/atoms';
 import { sections } from '@settings/sections.config';
-import type { SectionPropsMap } from '@types';
+import type { SectionKey, SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
 import { useStickySelection } from '@/features/sticky-position';
 
 interface SettingsContentProps {
   sectionProps: SectionPropsMap;
+  visibleSectionKeys?: ReadonlyArray<SectionKey>;
   theme: DefaultTheme;
   overlayVisible: boolean;
   overlayColor: string;
@@ -26,6 +27,7 @@ interface SettingsContentProps {
 
 function SettingsContent({
   sectionProps,
+  visibleSectionKeys,
   theme,
   overlayVisible,
   overlayColor,
@@ -59,6 +61,10 @@ function SettingsContent({
         scrollIndicatorInsets={scrollIndicatorInsets}
       >
         {sections.map((section) => {
+          if (visibleSectionKeys && !visibleSectionKeys.includes(section.key)) {
+            return null;
+          }
+
           const Component = section.Component as React.ComponentType<
             ComponentProps<typeof section.Component>
           >;
@@ -78,6 +84,7 @@ function SettingsContent({
 
 const propsAreEqual = (prev: SettingsContentProps, next: SettingsContentProps) =>
   prev.sectionProps === next.sectionProps &&
+  prev.visibleSectionKeys === next.visibleSectionKeys &&
   prev.theme === next.theme &&
   prev.overlayVisible === next.overlayVisible &&
   prev.overlayColor === next.overlayColor &&
