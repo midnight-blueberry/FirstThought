@@ -9,7 +9,9 @@ export function computeDelta(prevCenterY: number, pageY: number, height: number)
 }
 
 export async function alignScrollAfterApply({ id, prevCenterY }: AlignScrollAfterApplyParams): Promise<number> {
-  await InteractionManager.runAfterInteractions();
+  await new Promise<void>((resolve) => {
+    InteractionManager.runAfterInteractions(() => resolve());
+  });
   await raf();
   await raf();
   const ref = getRef(id)?.current;
