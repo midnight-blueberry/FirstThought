@@ -32,7 +32,7 @@ export default (test: JestCucumberTestFn) => {
       useCallback: (fn: (...args: any[]) => any) => fn,
     }));
 
-    jest.doMock('expo-router', () => ({
+    jest.doMock('@react-navigation/native', () => ({
       __esModule: true,
       useNavigation: () => ({ setOptions: setOptionsMock }),
     }));
