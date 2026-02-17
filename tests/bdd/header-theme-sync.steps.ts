@@ -4,7 +4,7 @@ import renderer from 'react-test-renderer';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 type Theme = {
-  colors: { background: string };
+  colors: { background: string; basic: string };
   isDark: boolean;
 };
 
@@ -56,7 +56,7 @@ export default (test: JestCucumberTestFn) => {
   };
 
   beforeEach(() => {
-    currentTheme = { colors: { background: '#000000' }, isDark: false };
+    currentTheme = { colors: { background: '#000000', basic: '#000' }, isDark: false };
     setOptionsMock = jest.fn();
     transparent = false;
     jest.resetModules();
@@ -72,7 +72,7 @@ export default (test: JestCucumberTestFn) => {
 
   test('applies light theme header options and status bar style', ({ given, when, then }: StepDefinitions) => {
     given('a light theme with background "#ABCDEF"', () => {
-      currentTheme = { colors: { background: '#ABCDEF' }, isDark: false };
+      currentTheme = { colors: { background: '#ABCDEF', basic: '#000' }, isDark: false };
     });
 
     when('the header theme sync component is rendered', async () => {
@@ -111,7 +111,7 @@ export default (test: JestCucumberTestFn) => {
 
   test('applies dark theme header options when transparent is true', ({ given, when, then }: StepDefinitions) => {
     given('a dark theme with background "#111111"', () => {
-      currentTheme = { colors: { background: '#111111' }, isDark: true };
+      currentTheme = { colors: { background: '#111111', basic: '#fff' }, isDark: true };
     });
 
     when('the header theme sync component is rendered with transparent', async () => {

@@ -72,7 +72,7 @@ export default function SettingsScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: currentTitle,
-      headerLeft: () => <IconButton icon="chevron-back" onPress={onHeaderBackPress} />,
+      headerLeft: () => <IconButton icon="chevron-back" color="basic" onPress={onHeaderBackPress} />,
     });
   }, [currentTitle, navigation, onHeaderBackPress]);
 
