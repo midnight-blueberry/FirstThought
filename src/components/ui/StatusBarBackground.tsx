@@ -21,7 +21,6 @@ const StatusBarBackground = () => {
         right: 0,
         height: top,
         backgroundColor: theme.colors.headerBackground,
-        zIndex: 1,
       }}
     />
   );

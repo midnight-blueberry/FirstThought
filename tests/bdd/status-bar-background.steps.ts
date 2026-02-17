@@ -86,8 +86,5 @@ export default (test: JestCucumberTestFn) => {
       expect(lastViewStyle?.right).toBe(0);
     });
 
-    then('the View style has zIndex 1', () => {
-      expect(lastViewStyle?.zIndex).toBe(1);
-    });
   });
 };

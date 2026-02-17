@@ -14,4 +14,3 @@ Feature: Status bar background
     Then the View style has top 0
     Then the View style has left 0
     Then the View style has right 0
-    Then the View style has zIndex 1
