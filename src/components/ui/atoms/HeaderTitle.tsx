@@ -8,7 +8,10 @@ const HeaderTitle: React.FC<HeaderTitleProps> = ({ children, tintColor }) => {
   return (
     <AppText
       numberOfLines={1}
+      ellipsizeMode="tail"
       style={{
+        flexShrink: 1,
+        minWidth: 0,
         fontSize: theme.typography.header.headerTitleSize,
         color: tintColor ?? theme.colors.headerForeground,
       }}
