@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { StatusBar } from 'react-native';
-import { useNavigation } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import useTheme from '@hooks/useTheme';
 
 interface Props {
