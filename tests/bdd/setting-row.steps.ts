@@ -7,9 +7,21 @@ import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 const themeMock = {
   margin: { small: 6, medium: 12 },
+  padding: { small: 4, medium: 8 },
+  iconSize: { large: 20 },
+  colors: { basic: '#111111' },
+  borderWidth: { medium: 2 },
+  borderRadius: 10,
 };
 
 jest.mock('@hooks/useTheme', () => jest.fn(() => themeMock));
+
+jest.mock('@expo/vector-icons/Ionicons', () => {
+  const React = require('react');
+  const Ionicons = (props: any) =>
+    React.createElement('span', { 'data-ionicon': props?.name });
+  return { __esModule: true, default: Ionicons };
+});
 
 jest.mock('@components/ui/atoms', () => {
   const React = require('react');
@@ -72,3 +84,4 @@ export default (test: JestCucumberTestFn) => {
     },
   );
 };
+

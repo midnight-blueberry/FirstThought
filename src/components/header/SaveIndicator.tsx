@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+﻿import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
@@ -161,21 +161,21 @@ const SaveIndicator: React.FC = () => {
   const { visible, opacity } = useSaveIndicator();
   const theme = useTheme();
 
-  if (!visible) {
-    return null;
-  }
-
   return (
     <Animated.View
       pointerEvents="none"
       style={[
         styles.container,
-        { opacity, right: theme.padding.large, top: theme.padding.large },
+        {
+          opacity: visible ? opacity : 0,
+          width: theme.buttonSizes.small,
+          height: theme.buttonSizes.small,
+        },
       ]}
     >
       <Ionicons
         name="save-outline"
-        size={theme.iconSize.medium}
+        size={theme.iconSize.large}
         color={theme.colors.headerForeground}
       />
     </Animated.View>
@@ -184,8 +184,11 @@ const SaveIndicator: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
 export default SaveIndicator;
+
+

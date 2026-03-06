@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import SettingsContainer from '@components/pages/settings/SettingsContainer';
@@ -6,6 +6,7 @@ import PageContainer from '@components/common/PageContainer';
 import useHeaderThemeSync from '@components/header/useHeaderThemeSync';
 import { IconButton } from '@components/ui/atoms';
 import { SettingRow } from '@components/ui/molecules';
+import useTheme from '@hooks/useTheme';
 import type { SectionKey } from '@types';
 
 type SettingsView = 'menu' | 'appAppearance' | 'notesAppearance';
@@ -21,21 +22,26 @@ const APP_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = [
 
 const NOTES_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = ['align', 'preview'];
 
+const MENU_TITLE = 'Настройки';
+const APP_APPEARANCE_TITLE = 'Внешний вид приложения';
+const NOTES_APPEARANCE_TITLE = 'Внешний вид заметок';
+
 export default function SettingsScreen() {
   const statusBar = useHeaderThemeSync({ transparent: false });
+  const theme = useTheme();
   const navigation = useNavigation();
   const [view, setView] = React.useState<SettingsView>('menu');
 
   const currentTitle = React.useMemo(() => {
     if (view === 'appAppearance') {
-      return 'Внешний вид приложения';
+      return APP_APPEARANCE_TITLE;
     }
 
     if (view === 'notesAppearance') {
-      return 'Внешний вид заметок';
+      return NOTES_APPEARANCE_TITLE;
     }
 
-    return 'Настройки';
+    return MENU_TITLE;
   }, [view]);
 
   const handleBackPress = React.useCallback(() => {
@@ -72,20 +78,36 @@ export default function SettingsScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: currentTitle,
-      headerLeft: () => <IconButton icon="chevron-back" onPress={onHeaderBackPress} />,
+      headerBackVisible: false,
+      headerLeft: () => (
+        <View style={{ width: theme.buttonSizes.small, height: theme.buttonSizes.small }}>
+          <IconButton
+            icon="chevron-back"
+            color="headerForeground"
+            onPress={onHeaderBackPress}
+            style={{
+              width: '100%',
+              height: '100%',
+              paddingHorizontal: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </View>
+      ),
     });
-  }, [currentTitle, navigation, onHeaderBackPress]);
+  }, [currentTitle, navigation, onHeaderBackPress, theme.buttonSizes.small]);
 
   const menu = (
-    <View style={styles.menu}>
+    <View style={[styles.menu, { paddingHorizontal: theme.padding.xlarge }]}>
       <SettingRow
-        title="Внешний вид приложения"
+        title={APP_APPEARANCE_TITLE}
         onPress={() => {
           setView('appAppearance');
         }}
       />
       <SettingRow
-        title="Внешний вид заметок"
+        title={NOTES_APPEARANCE_TITLE}
         onPress={() => {
           setView('notesAppearance');
         }}
@@ -114,3 +136,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+
+
+
+
+
+

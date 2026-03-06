@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+﻿import React, { useContext } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -34,6 +34,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
   const drop = -theme.padding.small / 4;
+  const selectedLabelLift = selected ? theme.padding.small / 4 : 0;
   const effectiveFontSize = fontSize ?? theme.fontSize.medium;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
@@ -91,7 +92,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
               lineHeight: effectiveFontSize + theme.padding.medium,
               transform: [
                 ...((settingsOptionLabelText.transform as TextStyle['transform']) ?? []),
-                { translateY: drop },
+                { translateY: drop - selectedLabelLift },
               ] as TextStyle['transform'],
             },
             labelStyle,
@@ -126,3 +127,4 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
 };
 
 export default SelectableRow;
+
