@@ -88,13 +88,13 @@ export default function SettingsScreen() {
   const menu = (
     <View style={styles.menu}>
       <SettingRow
-        title="\u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f"
+        title={'\u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f'}
         onPress={() => {
           setView('appAppearance');
         }}
       />
       <SettingRow
-        title="\u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434 \u0437\u0430\u043c\u0435\u0442\u043e\u043a"
+        title={'\u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434 \u0437\u0430\u043c\u0435\u0442\u043e\u043a'}
         onPress={() => {
           setView('notesAppearance');
         }}
