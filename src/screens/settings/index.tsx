@@ -1,10 +1,11 @@
 import React from 'react';
-import { BackHandler, StyleSheet, View } from 'react-native';
+import { Animated, BackHandler, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SettingsContainer from '@components/pages/settings/SettingsContainer';
 import PageContainer from '@components/common/PageContainer';
+import { useSaveIndicator } from '@components/header/SaveIndicator';
 import useHeaderThemeSync from '@components/header/useHeaderThemeSync';
 import { AppText, IconButton } from '@components/ui/atoms';
 import { SettingRow } from '@components/ui/molecules';
@@ -30,7 +31,7 @@ export default function SettingsScreen() {
   const { top } = useSafeAreaInsets();
   const navigation = useNavigation();
   const [view, setView] = React.useState<SettingsView>('menu');
-  const showSaveIcon = view !== 'menu';
+  const { visible: isSaveVisible, opacity: saveOpacity } = useSaveIndicator();
 
   const headerSideSize = React.useMemo(() => theme.buttonSizes.small, [theme.buttonSizes.small]);
 
@@ -140,12 +141,14 @@ export default function SettingsScreen() {
           </View>
 
           <View style={[styles.headerSide, { width: headerSideSize, height: headerSideSize }]}>
-            {showSaveIcon ? (
-              <Ionicons
-                name="save-outline"
-                size={theme.iconSize.large}
-                color={theme.colors.headerForeground}
-              />
+            {isSaveVisible ? (
+              <Animated.View pointerEvents="none" style={{ opacity: saveOpacity }}>
+                <Ionicons
+                  name="save-outline"
+                  size={theme.iconSize.large}
+                  color={theme.colors.headerForeground}
+                />
+              </Animated.View>
             ) : null}
           </View>
         </View>
