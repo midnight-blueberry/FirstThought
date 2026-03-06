@@ -6,6 +6,7 @@ import PageContainer from '@components/common/PageContainer';
 import useHeaderThemeSync from '@components/header/useHeaderThemeSync';
 import { IconButton } from '@components/ui/atoms';
 import { SettingRow } from '@components/ui/molecules';
+import useTheme from '@hooks/useTheme';
 import type { SectionKey } from '@types';
 
 type SettingsView = 'menu' | 'appAppearance' | 'notesAppearance';
@@ -20,11 +21,17 @@ const APP_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = [
 ];
 
 const NOTES_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = ['align', 'preview'];
+const HEADER_BUTTON_HORIZONTAL_PADDING = 16;
 
 export default function SettingsScreen() {
   const statusBar = useHeaderThemeSync({ transparent: false });
+  const theme = useTheme();
   const navigation = useNavigation();
   const [view, setView] = React.useState<SettingsView>('menu');
+  const headerSideWidth = React.useMemo(
+    () => theme.iconSize.large + HEADER_BUTTON_HORIZONTAL_PADDING * 2,
+    [theme.iconSize.large],
+  );
 
   const currentTitle = React.useMemo(() => {
     if (view === 'appAppearance') {
@@ -72,9 +79,22 @@ export default function SettingsScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: currentTitle,
-      headerLeft: () => <IconButton icon="chevron-back" onPress={onHeaderBackPress} />,
+      headerLeftContainerStyle: {
+        minWidth: headerSideWidth,
+      },
+      headerTitleContainerStyle: {
+        left: headerSideWidth,
+        right: headerSideWidth,
+      },
+      headerLeft: () => (
+        <IconButton
+          icon="chevron-back"
+          onPress={onHeaderBackPress}
+          style={styles.headerButton}
+        />
+      ),
     });
-  }, [currentTitle, navigation, onHeaderBackPress]);
+  }, [currentTitle, headerSideWidth, navigation, onHeaderBackPress]);
 
   const menu = (
     <View style={styles.menu}>
@@ -112,5 +132,8 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   menu: {
     flex: 1,
+  },
+  headerButton: {
+    paddingHorizontal: HEADER_BUTTON_HORIZONTAL_PADDING,
   },
 });
