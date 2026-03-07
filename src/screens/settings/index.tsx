@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import SettingsContainer from '@components/pages/settings/SettingsContainer';
@@ -23,8 +23,8 @@ const APP_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = [
 const NOTES_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = ['align', 'preview'];
 
 const MENU_TITLE = 'Настройки';
-const APP_APPEARANCE_TITLE = 'Внешний вид приложения';
-const NOTES_APPEARANCE_TITLE = 'Внешний вид заметок';
+const APP_APPEARANCE_TITLE = 'Общее';
+const NOTES_APPEARANCE_TITLE = 'Заметки';
 
 export default function SettingsScreen() {
   const statusBar = useHeaderThemeSync({ transparent: false });
@@ -136,10 +136,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
-
-
-
-
-

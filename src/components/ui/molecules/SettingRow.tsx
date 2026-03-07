@@ -27,7 +27,7 @@ const SettingRow: React.FC<SettingRowProps> = ({
   const Wrapper = onPress ? Pressable : View;
   const rightContent =
     right ?? <Ionicons name="chevron-forward" size={theme.iconSize.large} color={theme.colors.basic} />;
-  const titleShift = theme.padding.small / 4;
+  const titleLineHeight = Math.ceil(theme.iconSize.large * 1.1);
 
   return (
     <Wrapper
@@ -48,24 +48,13 @@ const SettingRow: React.FC<SettingRowProps> = ({
         justifyContent: 'center',
       }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {icon ? <View style={{ marginRight: theme.margin.medium }}>{icon}</View> : null}
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <AppText
-            variant="medium"
-            style={{
-              includeFontPadding: false,
-              textAlignVertical: 'center',
-              transform: [{ translateY: titleShift }],
-            }}
-          >
+        <View style={{ flex: 1 }}>
+          <AppText variant="medium" style={{ lineHeight: titleLineHeight, includeFontPadding: true }}>
             {title}
           </AppText>
-          {subtitle ? (
-            <AppText variant="small" style={{ includeFontPadding: false, textAlignVertical: 'center' }}>
-              {subtitle}
-            </AppText>
-          ) : null}
+          {subtitle ? <AppText variant="small">{subtitle}</AppText> : null}
         </View>
       </View>
       <View
