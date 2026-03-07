@@ -58,9 +58,7 @@ export default (test: JestCucumberTestFn) => {
     let theme: DefaultTheme;
     let baseHeaderStyle: Record<string, unknown>;
     let homePageHeaderTitle: string;
-    let homePageHeaderElevation: number;
     let settingsPageHeaderTitle: string;
-    let settingsPageHeaderElevation: number;
     let routes: ReturnType<typeof drawerRoutes>;
 
     given('a drawer routes config', () => {
@@ -71,9 +69,7 @@ export default (test: JestCucumberTestFn) => {
       } as DefaultTheme;
       baseHeaderStyle = { backgroundColor: '#101010' };
       homePageHeaderTitle = 'Home header';
-      homePageHeaderElevation = 4;
       settingsPageHeaderTitle = 'Settings header';
-      settingsPageHeaderElevation = 2;
     });
 
     when('I build drawer routes', () => {
@@ -81,9 +77,7 @@ export default (test: JestCucumberTestFn) => {
         theme,
         baseHeaderStyle,
         homePageHeaderTitle,
-        homePageHeaderElevation,
         settingsPageHeaderTitle,
-        settingsPageHeaderElevation,
       });
     });
 
@@ -102,10 +96,7 @@ export default (test: JestCucumberTestFn) => {
       expect(options.title).toBe(homePageHeaderTitle);
       expect(options.drawerIcon).toBe('drawer-icon-home');
       expect(options.headerTintColor).toBe(theme.colors.headerForeground);
-      expect(options.headerStyle).toEqual({
-        ...baseHeaderStyle,
-        elevation: homePageHeaderElevation,
-      });
+      expect(options.headerStyle).toEqual(baseHeaderStyle);
 
       const headerLeft = options.headerLeft?.();
       expect(React.isValidElement(headerLeft)).toBe(true);
@@ -126,10 +117,7 @@ export default (test: JestCucumberTestFn) => {
       expect(options.title).toBe(settingsPageHeaderTitle);
       expect(options.drawerIcon).toBe('drawer-icon-settings');
       expect(options.headerTintColor).toBe(theme.colors.headerForeground);
-      expect(options.headerStyle).toEqual({
-        ...baseHeaderStyle,
-        elevation: settingsPageHeaderElevation,
-      });
+      expect(options.headerStyle).toEqual(baseHeaderStyle);
 
       const headerLeft = options.headerLeft?.();
       expect(React.isValidElement(headerLeft)).toBe(true);

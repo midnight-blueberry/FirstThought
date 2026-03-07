@@ -10,6 +10,12 @@ jest.mock('@hooks/useTheme', () =>
     colors: {
       background: '#123456',
     },
+    margin: {
+      small: 4,
+    },
+    padding: {
+      xlarge: 16,
+    },
   })),
 );
 
@@ -43,6 +49,10 @@ export default (test: JestCucumberTestFn) => {
 
     then('the container background color equals "#123456"', () => {
       expect(style?.backgroundColor).toBe('#123456');
+    });
+
+    then('the container top padding equals 16', () => {
+      expect(style?.paddingTop).toBe(16);
     });
 
     then('the container flex equals 1', () => {

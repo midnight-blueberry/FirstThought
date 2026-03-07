@@ -18,17 +18,13 @@ const Drawer = createDrawerNavigator<DrawerParamList>();
 type Props = {
   theme: DefaultTheme;
   homePageHeaderTitle: string;
-  homePageHeaderElevation: number;
   settingsPageHeaderTitle: string;
-  settingsPageHeaderElevation: number;
 };
 
 export default function DrawerNavigator({
   theme,
   homePageHeaderTitle,
-  homePageHeaderElevation,
   settingsPageHeaderTitle,
-  settingsPageHeaderElevation,
 }: Props) {
   const { top } = useSafeAreaInsets();
   const baseHeaderStyle = useHeaderConfig(theme, top);
@@ -47,9 +43,7 @@ export default function DrawerNavigator({
         theme,
         baseHeaderStyle,
         homePageHeaderTitle,
-        homePageHeaderElevation,
         settingsPageHeaderTitle,
-        settingsPageHeaderElevation,
       }).map((route) => (
         <Drawer.Screen key={route.name} {...(route as any)} />
       ))}

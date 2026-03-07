@@ -1,10 +1,17 @@
-import useHeaderConfig from '@/hooks/useHeaderConfig';
+﻿import useHeaderConfig from '@/hooks/useHeaderConfig';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 import { lightColors, sizes } from '@constants/theme';
 import { headerTypography } from '@theme/tokens/typography';
 import { DefaultTheme } from 'styled-components/native';
 
-type HeaderConfig = { height: number; backgroundColor: string };
+type HeaderConfig = {
+  height: number;
+  backgroundColor: string;
+  borderBottomColor: string;
+  borderBottomWidth: number;
+  elevation: number;
+  shadowOpacity: number;
+};
 
 const baseTheme: DefaultTheme = {
   name: 'Test',
@@ -23,7 +30,14 @@ export default (test: JestCucumberTestFn) => {
   test('calculates header height from theme and top inset', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme = baseTheme;
     let topInset = 0;
-    let result: HeaderConfig = { height: 0, backgroundColor: '' };
+    let result: HeaderConfig = {
+      height: 0,
+      backgroundColor: '',
+      borderBottomColor: '',
+      borderBottomWidth: 0,
+      elevation: 0,
+      shadowOpacity: 0,
+    };
 
     given('a theme with medium icon size 24 and large padding 8', () => {
       theme = {
@@ -39,7 +53,7 @@ export default (test: JestCucumberTestFn) => {
     });
 
     when('I build the header config', () => {
-      result = useHeaderConfig(theme, topInset);
+      result = useHeaderConfig(theme, topInset) as HeaderConfig;
     });
 
     then('the header height is 50', () => {
@@ -47,26 +61,62 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 
-  test('returns header background color from theme', ({ given, when, then }: StepDefinitions) => {
+  test('returns header visual style from theme', ({ given, when, then }: StepDefinitions) => {
     let theme: DefaultTheme = baseTheme;
     let topInset = 0;
-    let result: HeaderConfig = { height: 0, backgroundColor: '' };
+    let result: HeaderConfig = {
+      height: 0,
+      backgroundColor: '',
+      borderBottomColor: '',
+      borderBottomWidth: 0,
+      elevation: 0,
+      shadowOpacity: 0,
+    };
 
     given('a theme header background "#123456"', () => {
       theme = {
-        ...baseTheme,
-        iconSize: { ...baseTheme.iconSize, medium: 24 },
-        padding: { ...baseTheme.padding, large: 8 },
-        colors: { ...baseTheme.colors, headerBackground: '#123456' },
+        ...theme,
+        colors: { ...theme.colors, headerBackground: '#123456' },
+      };
+    });
+
+    given('a theme basic color "#222222"', () => {
+      theme = {
+        ...theme,
+        colors: { ...theme.colors, basic: '#222222' },
+      };
+    });
+
+    given('a theme border width medium 3', () => {
+      theme = {
+        ...theme,
+        borderWidth: { ...theme.borderWidth, medium: 3 },
       };
     });
 
     when('I build the header config', () => {
-      result = useHeaderConfig(theme, topInset);
+      result = useHeaderConfig(theme, topInset) as HeaderConfig;
     });
 
     then('the header background color is "#123456"', () => {
       expect(result.backgroundColor).toBe('#123456');
     });
+
+    then('the header border bottom color is "#222222"', () => {
+      expect(result.borderBottomColor).toBe('#222222');
+    });
+
+    then('the header border bottom width is 3', () => {
+      expect(result.borderBottomWidth).toBe(3);
+    });
+
+    then('the header elevation is 0', () => {
+      expect(result.elevation).toBe(0);
+    });
+
+    then('the header shadow opacity is 0', () => {
+      expect(result.shadowOpacity).toBe(0);
+    });
   });
 };
+

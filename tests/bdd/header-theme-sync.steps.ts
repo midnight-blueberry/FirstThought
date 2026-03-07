@@ -82,9 +82,10 @@ export default (test: JestCucumberTestFn) => {
 
     then('navigation options set header background to "#ABCDEF"', () => {
       expect(setOptionsMock).toHaveBeenCalledWith({
-        headerStyle: { backgroundColor: '#ABCDEF' },
         headerTransparent: false,
         headerTintColor: '#000',
+        headerShadowVisible: false,
+        headerShown: true,
       });
     });
 
@@ -121,9 +122,16 @@ export default (test: JestCucumberTestFn) => {
 
     then('navigation options set header background to "transparent"', () => {
       expect(setOptionsMock).toHaveBeenCalledWith({
-        headerStyle: { backgroundColor: 'transparent' },
         headerTransparent: true,
         headerTintColor: '#fff',
+        headerShadowVisible: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: 'transparent',
+          borderBottomWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
       });
     });
 
