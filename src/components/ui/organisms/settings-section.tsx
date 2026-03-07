@@ -28,7 +28,9 @@ export default function Section({ title, children }: SectionProps) {
 const createStyles = (theme: DefaultTheme) =>
   StyleSheet.create({
     label: {
+      marginTop: theme.padding.xlarge,
       marginBottom: theme.margin.medium,
+      includeFontPadding: false,
     },
     section: {
       marginBottom: theme.margin.medium,
