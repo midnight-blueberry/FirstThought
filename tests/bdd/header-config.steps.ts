@@ -87,10 +87,10 @@ export default (test: JestCucumberTestFn) => {
       };
     });
 
-    given('a theme border width medium 3', () => {
+    given('a theme border width small 2', () => {
       theme = {
         ...theme,
-        borderWidth: { ...theme.borderWidth, medium: 3 },
+        borderWidth: { ...theme.borderWidth, small: 2 },
       };
     });
 
@@ -106,8 +106,8 @@ export default (test: JestCucumberTestFn) => {
       expect(result.borderBottomColor).toBe('#222222');
     });
 
-    then('the header border bottom width is 3', () => {
-      expect(result.borderBottomWidth).toBe(3);
+    then('the header border bottom width is 2', () => {
+      expect(result.borderBottomWidth).toBe(2);
     });
 
     then('the header elevation is 0', () => {

@@ -15,7 +15,6 @@ const PageContainer: React.FC<PageContainerProps> = ({ children, style, ...rest 
         styles.container,
         {
           backgroundColor: theme.colors.background,
-          paddingTop: theme.padding.xlarge,
         },
         style,
       ]}

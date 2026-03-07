@@ -101,7 +101,7 @@ export default function SettingsScreen() {
   const menuItemSpacing = theme.padding.xlarge;
 
   const menu = (
-    <View style={[styles.menu, { paddingHorizontal: theme.padding.xlarge }]}>
+    <View style={[styles.menu, { paddingHorizontal: theme.padding.xlarge, paddingTop: theme.padding.xlarge }]}>
       <SettingRow
         title={APP_APPEARANCE_TITLE}
         style={{ marginBottom: menuItemSpacing }}
@@ -140,4 +140,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
 

@@ -56,6 +56,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
       contentContainerStyle={{
         paddingLeft: itemSpacing,
         paddingRight: itemSpacing,
+        paddingTop: itemSpacing,
       }}
       onScroll={onScroll}
       scrollEventThrottle={16}
@@ -72,3 +73,4 @@ const styles = StyleSheet.create({
 });
 
 export default DiaryList;
+

@@ -7,7 +7,7 @@ export default function useHeaderConfig(theme: DefaultTheme, topInset: number) {
     height: headerHeight,
     backgroundColor: theme.colors.headerBackground,
     borderBottomColor: theme.colors.basic,
-    borderBottomWidth: theme.borderWidth.medium,
+    borderBottomWidth: theme.borderWidth.small,
     elevation: 0,
     shadowOpacity: 0,
   };
