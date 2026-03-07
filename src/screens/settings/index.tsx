@@ -98,16 +98,20 @@ export default function SettingsScreen() {
     });
   }, [currentTitle, navigation, onHeaderBackPress, theme.buttonSizes.small]);
 
+  const menuItemSpacing = theme.padding.xlarge;
+
   const menu = (
     <View style={[styles.menu, { paddingHorizontal: theme.padding.xlarge }]}>
       <SettingRow
         title={APP_APPEARANCE_TITLE}
+        style={{ marginBottom: menuItemSpacing }}
         onPress={() => {
           setView('appAppearance');
         }}
       />
       <SettingRow
         title={NOTES_APPEARANCE_TITLE}
+        style={{ marginBottom: 0 }}
         onPress={() => {
           setView('notesAppearance');
         }}
@@ -136,3 +140,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+

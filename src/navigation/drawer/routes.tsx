@@ -17,18 +17,14 @@ type DrawerRoutesConfig = {
   theme: DefaultTheme;
   baseHeaderStyle: Record<string, unknown>;
   homePageHeaderTitle: string;
-  homePageHeaderElevation: number;
   settingsPageHeaderTitle: string;
-  settingsPageHeaderElevation: number;
 };
 
 export const drawerRoutes = ({
   theme,
   baseHeaderStyle,
   homePageHeaderTitle,
-  homePageHeaderElevation,
   settingsPageHeaderTitle,
-  settingsPageHeaderElevation,
 }: DrawerRoutesConfig) =>
   [
     {
@@ -46,10 +42,7 @@ export const drawerRoutes = ({
           />
         ),
         headerRight: () => <IconButton icon="search" onPress={() => null} />,
-        headerStyle: {
-          ...baseHeaderStyle,
-          elevation: homePageHeaderElevation,
-        },
+        headerStyle: baseHeaderStyle,
         headerTintColor: theme.colors.headerForeground,
       }),
     },
@@ -68,10 +61,7 @@ export const drawerRoutes = ({
           />
         ),
         headerRight: () => <SaveIndicator />,
-        headerStyle: {
-          ...baseHeaderStyle,
-          elevation: settingsPageHeaderElevation,
-        },
+        headerStyle: baseHeaderStyle,
         headerTintColor: theme.colors.headerForeground,
       }),
     },

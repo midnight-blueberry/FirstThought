@@ -57,9 +57,7 @@ function RootContent() {
     void SystemUI.setBackgroundColorAsync(theme.colors.background);
   }, [theme.colors.background]);
   const [homePageHeaderTitle] = useState(() => 'Мои дневники');
-  const [homePageHeaderElevation] = useState(0);
   const [settingsPageHeaderTitle] = useState(() => 'Настройки');
-  const [settingsPageHeaderElevation] = useState(0);
 
   const onLayoutRootView = useCallback(() => {
     void SplashScreen.hideAsync();
@@ -77,9 +75,7 @@ function RootContent() {
         <DrawerNavigator
           theme={theme}
           homePageHeaderTitle={homePageHeaderTitle}
-          homePageHeaderElevation={homePageHeaderElevation}
           settingsPageHeaderTitle={settingsPageHeaderTitle}
-          settingsPageHeaderElevation={settingsPageHeaderElevation}
         />
       </SafeAreaView>
     </SafeAreaProvider>

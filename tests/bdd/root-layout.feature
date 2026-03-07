@@ -15,7 +15,5 @@ Feature: RootLayout initialization
     Then DrawerNavigator is rendered
     Then DrawerNavigator receives homePageHeaderTitle "Мои дневники"
     Then DrawerNavigator receives settingsPageHeaderTitle "Настройки"
-    Then DrawerNavigator receives homePageHeaderElevation 0
-    Then DrawerNavigator receives settingsPageHeaderElevation 0
     When I trigger the root SafeAreaView layout
     Then SplashScreen.hideAsync is called once

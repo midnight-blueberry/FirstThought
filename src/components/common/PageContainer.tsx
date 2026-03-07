@@ -8,9 +8,17 @@ interface PageContainerProps extends ViewProps {
 
 const PageContainer: React.FC<PageContainerProps> = ({ children, style, ...rest }) => {
   const theme = useTheme();
+
   return (
     <View
-      style={[styles.container, { backgroundColor: theme.colors.background }, style]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          paddingTop: theme.padding.xlarge,
+        },
+        style,
+      ]}
       {...rest}
     >
       {children}

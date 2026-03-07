@@ -2,6 +2,7 @@ Feature: PageContainer
   Scenario: PageContainer uses theme background color and default flex
     Given PageContainer is rendered without custom style
     Then the container background color equals "#123456"
+    Then the container top padding equals 16
     Then the container flex equals 1
     Then the rendered markup contains "Child"
 

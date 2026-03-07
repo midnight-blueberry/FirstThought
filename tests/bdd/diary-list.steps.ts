@@ -6,7 +6,7 @@ import { __mock as rnMock } from '../__mocks__/react-native';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 const themeMock = {
-  padding: { large: 20, medium: 10, small: 6 },
+  padding: { large: 20, medium: 10, small: 6, xlarge: 16 },
   margin: { medium: 12, large: 16 },
   borderRadius: 8,
   borderWidth: { medium: 4 },
@@ -99,14 +99,14 @@ export default (test: JestCucumberTestFn) => {
         expect(flatListProps.data).toEqual(data);
       });
 
-      then('FlatList content container paddingLeft is 10', () => {
+      then('FlatList content container paddingLeft is 16', () => {
         const flattened = StyleSheet.flatten(flatListProps.contentContainerStyle);
-        expect(flattened.paddingLeft).toBe(10);
+        expect(flattened.paddingLeft).toBe(16);
       });
 
-      then('FlatList content container paddingRight is 6', () => {
+      then('FlatList content container paddingRight is 16', () => {
         const flattened = StyleSheet.flatten(flatListProps.contentContainerStyle);
-        expect(flattened.paddingRight).toBe(6);
+        expect(flattened.paddingRight).toBe(16);
       });
 
       then('FlatList scrollEventThrottle is 16', () => {
@@ -140,7 +140,7 @@ export default (test: JestCucumberTestFn) => {
       });
 
       then(
-        'item container style has padding 20 and backgroundColor "#FAFAFA" and borderRadius 8 and borderColor "#AABBCC" and borderWidth 4 and marginBottom 12',
+        'item container style has padding 20 and backgroundColor "#FAFAFA" and borderRadius 8 and borderColor "#AABBCC" and borderWidth 4 and marginBottom 16',
         () => {
           const itemView = rnMock.views[0];
           const flattened = StyleSheet.flatten(itemView.props.style);
@@ -149,7 +149,7 @@ export default (test: JestCucumberTestFn) => {
           expect(flattened.borderRadius).toBe(8);
           expect(flattened.borderColor).toBe('#AABBCC');
           expect(flattened.borderWidth).toBe(4);
-          expect(flattened.marginBottom).toBe(12);
+          expect(flattened.marginBottom).toBe(16);
         },
       );
 

@@ -79,9 +79,7 @@ export default (test: JestCucumberTestFn) => {
         React.createElement(DrawerNavigator, {
           theme,
           homePageHeaderTitle: 'Home',
-          homePageHeaderElevation: 1,
           settingsPageHeaderTitle: 'Settings',
-          settingsPageHeaderElevation: 2,
         }),
       );
     });
@@ -125,9 +123,7 @@ export default (test: JestCucumberTestFn) => {
         React.createElement(DrawerNavigator, {
           theme,
           homePageHeaderTitle: 'Home',
-          homePageHeaderElevation: 1,
           settingsPageHeaderTitle: 'Settings',
-          settingsPageHeaderElevation: 2,
         }),
       );
     });
@@ -139,3 +135,4 @@ export default (test: JestCucumberTestFn) => {
     });
   });
 };
+

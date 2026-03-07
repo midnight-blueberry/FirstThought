@@ -21,6 +21,7 @@ type DiaryListProps = {
 
 const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryListProps) => {
   const theme = useTheme();
+  const itemSpacing = theme.padding.xlarge;
 
   const renderItem = ({ item }: { item: Diary }) => (
     <View
@@ -32,7 +33,7 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
           borderRadius: theme.borderRadius,
           borderColor: theme.colors.accent,
           borderWidth: theme.borderWidth.medium,
-          marginBottom: theme.margin.medium,
+          marginBottom: itemSpacing,
         },
       ]}
     >
@@ -53,8 +54,8 @@ const DiaryList: React.FC<DiaryListProps> = ({ data, onScroll, style }: DiaryLis
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       contentContainerStyle={{
-        paddingLeft: theme.padding.medium,
-        paddingRight: theme.padding.small,
+        paddingLeft: itemSpacing,
+        paddingRight: itemSpacing,
       }}
       onScroll={onScroll}
       scrollEventThrottle={16}

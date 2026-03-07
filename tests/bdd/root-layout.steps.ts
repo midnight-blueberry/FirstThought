@@ -215,14 +215,6 @@ export default (test: JestCucumberTestFn) => {
         expect(lastDrawerNavigatorProps?.settingsPageHeaderTitle).toBe('Настройки');
       });
 
-      then('DrawerNavigator receives homePageHeaderElevation 0', () => {
-        expect(lastDrawerNavigatorProps?.homePageHeaderElevation).toBe(0);
-      });
-
-      then('DrawerNavigator receives settingsPageHeaderElevation 0', () => {
-        expect(lastDrawerNavigatorProps?.settingsPageHeaderElevation).toBe(0);
-      });
-
       when('I trigger the root SafeAreaView layout', async () => {
         const onLayout = lastSafeAreaViewProps?.onLayout as undefined | (() => void);
         expect(onLayout).toBeDefined();
@@ -238,3 +230,4 @@ export default (test: JestCucumberTestFn) => {
     },
   );
 };
+

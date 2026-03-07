@@ -10,18 +10,27 @@ interface Props {
 export default function useHeaderThemeSync({ transparent }: Props = {}) {
   const navigation = useNavigation();
   const theme = useTheme();
-  const { background } = theme.colors;
   const { isDark } = theme;
   const barStyle = isDark ? 'light-content' : 'dark-content';
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerStyle: { backgroundColor: transparent ? 'transparent' : background },
       headerTransparent: !!transparent,
       headerTintColor: isDark ? '#fff' : '#000',
+      headerShadowVisible: false,
+      headerShown: true,
+      ...(transparent
+        ? {
+            headerStyle: {
+              backgroundColor: 'transparent',
+              borderBottomWidth: 0,
+              elevation: 0,
+              shadowOpacity: 0,
+            },
+          }
+        : null),
     });
-  }, [navigation, background, isDark, transparent]);
+  }, [navigation, isDark, transparent]);
 
   return <StatusBar translucent barStyle={barStyle} />;
 }
-
