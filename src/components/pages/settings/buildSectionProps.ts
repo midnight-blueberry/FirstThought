@@ -7,6 +7,7 @@ export interface BuildArgs {
   selectedThemeName: string;
   selectedAccentColor: string;
   selectedFontName: string;
+  fontListSizeLevel: number;
   fontSizeLevel: number;
   fontWeight: DefaultTheme['fontWeight'];
   noteTextAlign: DefaultTheme['noteTextAlign'];
@@ -45,7 +46,7 @@ export default function buildSectionProps(
     font: {
       selectedFontName: a.selectedFontName,
       onSelectFont: a.onSelectFont,
-      fontSizeLevel: a.fontSizeLevel,
+      fontSizeLevel: a.fontListSizeLevel,
     },
     fontSize: {
       fontSizeLevel: a.fontSizeLevel,

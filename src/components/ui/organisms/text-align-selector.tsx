@@ -12,9 +12,11 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
   const { registerPress } = useStickySelection();
   const leftRef = useRef<View>(null);
   const justifyRef = useRef<View>(null);
+
   useEffect(() => {
     register('align:left', leftRef);
     register('align:justify', justifyRef);
+
     return () => {
       unregister('align:left');
       unregister('align:justify');
@@ -22,7 +24,7 @@ const TextAlignSelector: React.FC<TextAlignSelectorProps> = ({ noteTextAlign, on
   }, []);
 
   return (
-    <Section title="Выравнивание текста в заметках">
+    <Section title="Выравнивание текста">
       <View
         style={{
           flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { DefaultTheme } from 'styled-components/native';
 import useTheme from '@hooks/useTheme';
 import { AppText } from '@components/ui/atoms';
@@ -16,6 +16,7 @@ interface PreviewNoteProps {
   fontName?: string;
   fontWeight?: DefaultTheme['fontWeight'];
   fontSizeLevel?: number;
+  sticky?: boolean;
 }
 
 const PreviewNote: React.FC<PreviewNoteProps> = ({
@@ -24,8 +25,10 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({
   fontName,
   fontWeight,
   fontSizeLevel,
+  sticky = false,
 }) => {
   const theme = useTheme();
+  const styles = React.useMemo(() => createStyles(theme, colors), [theme, colors]);
   const { settings } = useSettings();
   const resolvedFontName = fontName ?? settings.noteFontFamily ?? settings.fontFamily;
   const resolvedFontWeight =
@@ -39,32 +42,27 @@ const PreviewNote: React.FC<PreviewNoteProps> = ({
     parseInt(String(resolvedFontWeight), 10),
   );
 
-  return (
-    <Section>
-      <View
+  const content = (
+    <View style={[styles.card, sticky ? styles.stickyCard : styles.defaultCard]}>
+      <AppText
+        color="basic"
         style={{
-          marginTop: theme.margin.large,
-          borderColor: colors.accent,
-          borderWidth: theme.borderWidth.medium,
-          borderRadius: theme.borderRadius,
-          padding: theme.padding.medium,
-          alignSelf: 'stretch',
+          textAlign: noteTextAlign,
+          fontFamily: key,
+          fontSize,
+          lineHeight: fontSize + 8,
         }}
       >
-        <AppText
-          color="basic"
-          style={{
-            textAlign: noteTextAlign,
-            fontFamily: key,
-            fontSize,
-            lineHeight: fontSize + 8,
-          }}
-        >
-          Так будет выглядеть ваша заметка в выбранном формате
-        </AppText>
-      </View>
-    </Section>
+        Так будет выглядеть ваша заметка в выбранном формате
+      </AppText>
+    </View>
   );
+
+  if (sticky) {
+    return content;
+  }
+
+  return <Section>{content}</Section>;
 };
 
 const propsAreEqual = (prev: PreviewNoteProps, next: PreviewNoteProps) =>
@@ -72,6 +70,25 @@ const propsAreEqual = (prev: PreviewNoteProps, next: PreviewNoteProps) =>
   prev.colors === next.colors &&
   prev.fontName === next.fontName &&
   prev.fontWeight === next.fontWeight &&
-  prev.fontSizeLevel === next.fontSizeLevel;
+  prev.fontSizeLevel === next.fontSizeLevel &&
+  prev.sticky === next.sticky;
 
 export default React.memo(PreviewNote, propsAreEqual);
+
+const createStyles = (theme: DefaultTheme, colors: DefaultTheme['colors']) =>
+  StyleSheet.create({
+    card: {
+      borderColor: colors.accent,
+      borderWidth: theme.borderWidth.medium,
+      borderRadius: theme.borderRadius,
+      padding: theme.padding.medium,
+      alignSelf: 'stretch',
+      backgroundColor: colors.background ?? theme.colors?.background ?? 'transparent',
+    },
+    defaultCard: {
+      marginTop: theme.margin.large,
+    },
+    stickyCard: {
+      marginTop: 0,
+    },
+  });
