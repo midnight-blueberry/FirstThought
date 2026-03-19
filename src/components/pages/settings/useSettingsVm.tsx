@@ -14,6 +14,7 @@ import {
   buildSettingsPatch,
   useSettingsHandlers,
 } from '@/components/pages/settings';
+import type { SettingsMode } from '@/components/pages/settings/buildSettingsPatch';
 import { useOverlayTransition } from '@/components/settings/overlay';
 import { useSaveIndicator } from '@components/header/SaveIndicator';
 import { showErrorToast } from '@utils/showErrorToast';
@@ -21,8 +22,25 @@ import { getStickySelectionContext } from '@/features/sticky-position';
 import { useSettingsDirty } from './useSettingsDirty';
 
 export default function useSettingsVm(
+  mode: SettingsMode,
   captureBeforeUpdate: () => void,
+): SettingsVm;
+export default function useSettingsVm(
+  captureBeforeUpdate: () => void,
+): SettingsVm;
+export default function useSettingsVm(
+  modeOrCaptureBeforeUpdate: SettingsMode | (() => void),
+  captureBeforeUpdateArg?: () => void,
 ): SettingsVm {
+  const mode =
+    typeof modeOrCaptureBeforeUpdate === 'function'
+      ? 'appAppearance'
+      : modeOrCaptureBeforeUpdate;
+  const captureBeforeUpdate =
+    typeof modeOrCaptureBeforeUpdate === 'function'
+      ? modeOrCaptureBeforeUpdate
+      : (captureBeforeUpdateArg ?? (() => {}));
+  const isNotesAppearance = mode === 'notesAppearance';
   const theme = useTheme();
   const handleScroll = useHeaderShadow();
   const overlay = useOverlayTransition();
@@ -40,11 +58,21 @@ export default function useSettingsVm(
     setFontWeightState,
     fontSizeLevel,
     setFontSizeLevel,
+    noteFontName,
+    setNoteFontName,
+    noteFontWeight,
+    setNoteFontWeightState,
+    noteFontSizeLevel,
+    setNoteFontSizeLevel,
     noteTextAlign,
     setNoteTextAlign,
     settingsVersion,
     setSettingsVersion,
   } = useLocalSettingsState(settings);
+
+  const activeFontName = isNotesAppearance ? noteFontName : selectedFontName;
+  const activeFontWeight = isNotesAppearance ? noteFontWeight : fontWeight;
+  const activeFontSizeLevel = isNotesAppearance ? noteFontSizeLevel : fontSizeLevel;
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const settingsSnapshot = useRef<Settings | null>(null);
@@ -62,12 +90,13 @@ export default function useSettingsVm(
     {
       selectedThemeName,
       selectedAccentColor,
-      selectedFontName,
-      fontWeight,
-      fontSizeLevel,
+      selectedFontName: activeFontName,
+      fontWeight: activeFontWeight,
+      fontSizeLevel: activeFontSizeLevel,
       noteTextAlign,
     },
     settings,
+    mode,
   );
 
   const resetToSnapshot = (s: Settings) => {
@@ -76,6 +105,9 @@ export default function useSettingsVm(
     setSelectedFontName(s.fontFamily);
     setFontWeightState(s.fontWeight);
     setFontSizeLevel(s.fontSizeLevel);
+    setNoteFontName(s.noteFontFamily ?? s.fontFamily);
+    setNoteFontWeightState(s.noteFontWeight ?? s.fontWeight);
+    setNoteFontSizeLevel(s.noteFontSizeLevel ?? s.fontSizeLevel);
     setNoteTextAlign(s.noteTextAlign);
   };
 
@@ -85,6 +117,9 @@ export default function useSettingsVm(
     setSelectedFontName,
     setFontWeightState,
     setFontSizeLevel,
+    setNoteFontName,
+    setNoteFontWeightState,
+    setNoteFontSizeLevel,
     setNoteTextAlign,
     setSettingsVersion,
   });
@@ -164,12 +199,13 @@ export default function useSettingsVm(
       {
         selectedThemeName: name,
         selectedAccentColor,
-        selectedFontName,
-        fontWeight,
-        fontSizeLevel,
+        selectedFontName: activeFontName,
+        fontWeight: activeFontWeight,
+        fontSizeLevel: activeFontSizeLevel,
         noteTextAlign,
       },
       settings,
+      mode,
     );
     const nextBg = themes[(patch.themeId ?? settings.themeId)].colors.background;
     void withOverlayTransaction(
@@ -186,12 +222,13 @@ export default function useSettingsVm(
       {
         selectedThemeName,
         selectedAccentColor: color,
-        selectedFontName,
-        fontWeight,
-        fontSizeLevel,
+        selectedFontName: activeFontName,
+        fontWeight: activeFontWeight,
+        fontSizeLevel: activeFontSizeLevel,
         noteTextAlign,
       },
       settings,
+      mode,
     );
     void withSettingsTransaction(async () => {
       handlers.onSelectAccent(color);
@@ -206,16 +243,25 @@ export default function useSettingsVm(
         selectedThemeName,
         selectedAccentColor,
         selectedFontName: name,
-        fontWeight,
-        fontSizeLevel,
+        fontWeight: activeFontWeight,
+        fontSizeLevel: activeFontSizeLevel,
         noteTextAlign,
       },
       settings,
+      mode,
     );
     void withSettingsTransaction(async () => {
-      handlers.onSelectFontFamily(name);
+      if (isNotesAppearance) {
+        handlers.onSelectNoteFontFamily(name);
+      } else {
+        handlers.onSelectFontFamily(name);
+      }
       const next = updateSettings(patch);
-      handlers.onChangeFontWeight(next.fontWeight);
+      if (isNotesAppearance) {
+        handlers.onChangeNoteFontWeight(next.noteFontWeight ?? next.fontWeight);
+      } else {
+        handlers.onChangeFontWeight(next.fontWeight);
+      }
     });
   };
 
@@ -224,16 +270,21 @@ export default function useSettingsVm(
       {
         selectedThemeName,
         selectedAccentColor,
-        selectedFontName,
+        selectedFontName: activeFontName,
         fontWeight: weight as FontWeight,
-        fontSizeLevel,
+        fontSizeLevel: activeFontSizeLevel,
         noteTextAlign,
       },
       settings,
+      mode,
     );
     void withSettingsTransaction(async () => {
       const next = updateSettings(patch);
-      handlers.onChangeFontWeight(next.fontWeight);
+      if (isNotesAppearance) {
+        handlers.onChangeNoteFontWeight(next.noteFontWeight ?? next.fontWeight);
+      } else {
+        handlers.onChangeFontWeight(next.fontWeight);
+      }
     });
   };
 
@@ -242,16 +293,25 @@ export default function useSettingsVm(
       {
         selectedThemeName,
         selectedAccentColor,
-        selectedFontName,
-        fontWeight,
+        selectedFontName: activeFontName,
+        fontWeight: activeFontWeight,
         fontSizeLevel: level,
         noteTextAlign,
       },
       settings,
+      mode,
     );
-    const nextLevel = patch.fontSizeLevel ?? settings.fontSizeLevel;
+    const nextLevel = isNotesAppearance
+      ? patch.noteFontSizeLevel ?? settings.noteFontSizeLevel
+      : patch.fontSizeLevel ?? settings.fontSizeLevel;
     void withSettingsTransaction(async () => {
-      handlers.onChangeFontSizeLevel(nextLevel);
+      if (isNotesAppearance) {
+        handlers.onChangeNoteFontSizeLevel(
+          nextLevel ?? settings.noteFontSizeLevel ?? settings.fontSizeLevel,
+        );
+      } else {
+        handlers.onChangeFontSizeLevel(nextLevel ?? settings.fontSizeLevel);
+      }
       updateSettings(patch);
     });
   };
@@ -261,12 +321,13 @@ export default function useSettingsVm(
       {
         selectedThemeName,
         selectedAccentColor,
-        selectedFontName,
-        fontWeight,
-        fontSizeLevel,
+        selectedFontName: activeFontName,
+        fontWeight: activeFontWeight,
+        fontSizeLevel: activeFontSizeLevel,
         noteTextAlign: align,
       },
       settings,
+      mode,
     );
     void withSettingsTransaction(async () => {
       handlers.onChangeNoteTextAlign(align);
@@ -274,25 +335,25 @@ export default function useSettingsVm(
     });
   };
 
-  const handleIncFontSize = () => changeFontSize(fontSizeLevel + 1);
-  const handleDecFontSize = () => changeFontSize(fontSizeLevel - 1);
+  const handleIncFontSize = () => changeFontSize(activeFontSizeLevel + 1);
+  const handleDecFontSize = () => changeFontSize(activeFontSizeLevel - 1);
   const handleIncWeight = () => {
-    const meta = getFontByName(fonts, selectedFontName);
+    const meta = getFontByName(fonts, activeFontName);
     const variantMap = FONT_VARIANTS[meta.family];
     const weights = variantMap
       ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
       : [400];
-    const idx = weights.indexOf(Number(fontWeight));
+    const idx = weights.indexOf(Number(activeFontWeight));
     const next = weights[(idx + 1) % weights.length];
     changeFontWeight(String(next) as FontWeight);
   };
   const handleDecWeight = () => {
-    const meta = getFontByName(fonts, selectedFontName);
+    const meta = getFontByName(fonts, activeFontName);
     const variantMap = FONT_VARIANTS[meta.family];
     const weights = variantMap
       ? Object.keys(variantMap).map(Number).sort((a, b) => a - b)
       : [400];
-    const idx = weights.indexOf(Number(fontWeight));
+    const idx = weights.indexOf(Number(activeFontWeight));
     const next = weights[(idx - 1 + weights.length) % weights.length];
     changeFontWeight(String(next) as FontWeight);
   };
@@ -302,9 +363,9 @@ export default function useSettingsVm(
       ...buildSectionProps({
         selectedThemeName,
         selectedAccentColor,
-        selectedFontName,
-        fontSizeLevel,
-        fontWeight,
+        selectedFontName: activeFontName,
+        fontSizeLevel: activeFontSizeLevel,
+        fontWeight: activeFontWeight,
         noteTextAlign,
         sizeBlinkIndex: null,
         sizeBlinkAnim: null,
@@ -319,15 +380,27 @@ export default function useSettingsVm(
         onDecWeight: handleDecWeight,
         onAlign: changeAlign,
       }),
-      preview: { noteTextAlign, colors: theme.colors },
+      preview: {
+        noteTextAlign,
+        colors: theme.colors,
+        fontName: settings.noteFontFamily ?? settings.fontFamily,
+        fontWeight: settings.noteFontWeight ?? settings.fontWeight,
+        fontSizeLevel: settings.noteFontSizeLevel ?? settings.fontSizeLevel,
+      },
     }),
     [
       selectedThemeName,
       selectedAccentColor,
-      selectedFontName,
-      fontSizeLevel,
-      fontWeight,
+      activeFontName,
+      activeFontSizeLevel,
+      activeFontWeight,
       noteTextAlign,
+      settings.noteFontFamily,
+      settings.noteFontWeight,
+      settings.noteFontSizeLevel,
+      settings.fontFamily,
+      settings.fontWeight,
+      settings.fontSizeLevel,
       theme.colors,
     ],
   );

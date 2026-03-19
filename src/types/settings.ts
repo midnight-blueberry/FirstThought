@@ -10,6 +10,9 @@ export interface AppSettings {
   fontSizeLevel: number;
   fontName: string;
   fontWeight: DefaultTheme['fontWeight'];
+  noteFontSizeLevel: number;
+  noteFontName: string;
+  noteFontWeight: DefaultTheme['fontWeight'];
   iconSize: DefaultTheme['iconSize'];
   noteTextAlign: DefaultTheme['noteTextAlign'];
 }
@@ -20,6 +23,9 @@ export interface SavedSettings {
   fontName?: string;
   fontWeight?: DefaultTheme['fontWeight'];
   fontSizeLevel?: number;
+  noteFontName?: string;
+  noteFontWeight?: DefaultTheme['fontWeight'];
+  noteFontSizeLevel?: number;
   iconSize?: DefaultTheme['iconSize'];
   noteTextAlign?: DefaultTheme['noteTextAlign'];
 }
@@ -51,6 +57,7 @@ export interface FontSizeSelectorProps {
 }
 
 export interface FontWeightSelectorProps {
+  fontName?: string;
   fontWeight: DefaultTheme['fontWeight'];
   onIncrease: () => void;
   onDecrease: () => void;

@@ -15,6 +15,15 @@ export function useLocalSettingsState(settings: Settings) {
     settings.fontWeight,
   );
   const [fontSizeLevel, setFontSizeLevel] = useState(settings.fontSizeLevel);
+  const [noteFontName, setNoteFontName] = useState(
+    settings.noteFontFamily ?? settings.fontFamily,
+  );
+  const [noteFontWeight, setNoteFontWeightState] = useState<FontWeight>(
+    settings.noteFontWeight ?? settings.fontWeight,
+  );
+  const [noteFontSizeLevel, setNoteFontSizeLevel] = useState(
+    settings.noteFontSizeLevel ?? settings.fontSizeLevel,
+  );
   const [noteTextAlign, setNoteTextAlign] = useState(settings.noteTextAlign);
   const [settingsVersion, setSettingsVersion] = useState(0);
 
@@ -29,6 +38,12 @@ export function useLocalSettingsState(settings: Settings) {
     setFontWeightState,
     fontSizeLevel,
     setFontSizeLevel,
+    noteFontName,
+    setNoteFontName,
+    noteFontWeight,
+    setNoteFontWeightState,
+    noteFontSizeLevel,
+    setNoteFontSizeLevel,
     noteTextAlign,
     setNoteTextAlign,
     settingsVersion,

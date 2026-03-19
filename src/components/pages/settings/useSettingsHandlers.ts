@@ -9,6 +9,9 @@ export type SettingsHandlers = {
   onSelectFontFamily: (name: string) => void;
   onChangeFontWeight: (w: FontWeight) => void;
   onChangeFontSizeLevel: (lvl: number) => void;
+  onSelectNoteFontFamily: (name: string) => void;
+  onChangeNoteFontWeight: (w: FontWeight) => void;
+  onChangeNoteFontSizeLevel: (lvl: number) => void;
   onChangeNoteTextAlign: (align: Settings['noteTextAlign']) => void;
 };
 
@@ -18,6 +21,9 @@ export function useSettingsHandlers(deps: {
   setSelectedFontName: (v: string) => void;
   setFontWeightState: (v: FontWeight) => void;
   setFontSizeLevel: (v: number) => void;
+  setNoteFontName?: (v: string) => void;
+  setNoteFontWeightState?: (v: FontWeight) => void;
+  setNoteFontSizeLevel?: (v: number) => void;
   setNoteTextAlign: (v: Settings['noteTextAlign']) => void;
   setSettingsVersion?: (updater: (x: number) => number) => void;
 }): SettingsHandlers {
@@ -27,6 +33,9 @@ export function useSettingsHandlers(deps: {
     setSelectedFontName,
     setFontWeightState,
     setFontSizeLevel,
+    setNoteFontName,
+    setNoteFontWeightState,
+    setNoteFontSizeLevel,
     setNoteTextAlign,
     setSettingsVersion,
   } = deps;
@@ -75,6 +84,30 @@ export function useSettingsHandlers(deps: {
     [incVersion, setFontSizeLevel],
   );
 
+  const onSelectNoteFontFamily = useCallback(
+    (name: string) => {
+      setNoteFontName?.(name);
+      incVersion();
+    },
+    [incVersion, setNoteFontName],
+  );
+
+  const onChangeNoteFontWeight = useCallback(
+    (w: FontWeight) => {
+      setNoteFontWeightState?.(w);
+      incVersion();
+    },
+    [incVersion, setNoteFontWeightState],
+  );
+
+  const onChangeNoteFontSizeLevel = useCallback(
+    (lvl: number) => {
+      setNoteFontSizeLevel?.(lvl);
+      incVersion();
+    },
+    [incVersion, setNoteFontSizeLevel],
+  );
+
   const onChangeNoteTextAlign = useCallback(
     (align: Settings['noteTextAlign']) => {
       setNoteTextAlign(align);
@@ -89,6 +122,9 @@ export function useSettingsHandlers(deps: {
     onSelectFontFamily,
     onChangeFontWeight,
     onChangeFontSizeLevel,
+    onSelectNoteFontFamily,
+    onChangeNoteFontWeight,
+    onChangeNoteFontSizeLevel,
     onChangeNoteTextAlign,
   };
 }

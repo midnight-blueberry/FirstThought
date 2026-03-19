@@ -20,6 +20,9 @@ export interface Settings {
   fontFamily: string;
   fontWeight: FontWeight;
   fontSizeLevel: number;
+  noteFontFamily?: string;
+  noteFontWeight?: FontWeight;
+  noteFontSizeLevel?: number;
   noteTextAlign: DefaultTheme['noteTextAlign'];
 }
 
@@ -32,6 +35,9 @@ const defaultSettings: Settings = {
   fontFamily: defaultFontName,
   fontWeight: defaultFont.defaultWeight,
   fontSizeLevel: 3,
+  noteFontFamily: defaultFontName,
+  noteFontWeight: defaultFont.defaultWeight,
+  noteFontSizeLevel: 3,
   noteTextAlign: 'left',
 };
 
@@ -96,10 +102,22 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 Number(saved.fontWeight ?? 400),
               )
             : 400;
+          const savedNoteFamily = saved.noteFontFamily ?? saved.fontFamily ?? defaultFontName;
+          const savedNoteKey = toFamilyKey(savedNoteFamily);
+          const noteWeights = listAvailableWeights(savedNoteKey);
+          const normalizedNote = noteWeights.length
+            ? nearestAvailableWeight(
+                savedNoteKey,
+                Number(saved.noteFontWeight ?? saved.fontWeight ?? 400),
+              )
+            : 400;
           apply({
             ...saved,
             fontFamily: saved.fontFamily ?? defaultFontName,
             fontWeight: String(normalized) as FontWeight,
+            noteFontFamily: savedNoteFamily,
+            noteFontWeight: String(normalizedNote) as FontWeight,
+            noteFontSizeLevel: saved.noteFontSizeLevel ?? saved.fontSizeLevel ?? 3,
           });
         }
       } catch {}
