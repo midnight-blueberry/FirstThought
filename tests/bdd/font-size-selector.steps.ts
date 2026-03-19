@@ -6,6 +6,9 @@ import FontSizeSelector from '@components/ui/organisms/font-size-selector';
 import type { JestCucumberTestFn, StepDefinitions } from '@tests/bdd/bddTypes';
 
 const themeMock = {
+  padding: {
+    xlarge: 16,
+  },
   margin: {
     small: 4,
     medium: 8,

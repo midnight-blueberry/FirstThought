@@ -29,7 +29,10 @@ export default (test: JestCucumberTestFn) => {
   let setTimeoutSpy: jest.SpyInstance;
   let timingConfigs: TimingConfig[] = [];
   let manualFadeOutCompletion = false;
+  let manualFadeInCompletion = false;
   let fadeOutStops: jest.Mock[] = [];
+  let fadeInStops: jest.Mock[] = [];
+  let fadeInCallbacks: Array<((result: { finished: boolean }) => void) | undefined> = [];
   let opacitySetValueSpy: jest.SpyInstance | null = null;
   let fadeInConfigsBeforeSecondShow: number | null = null;
 
@@ -60,7 +63,10 @@ export default (test: JestCucumberTestFn) => {
   beforeEach(() => {
     jest.useFakeTimers();
     manualFadeOutCompletion = false;
+    manualFadeInCompletion = false;
     fadeOutStops = [];
+    fadeInStops = [];
+    fadeInCallbacks = [];
     opacitySetValueSpy = null;
     fadeInConfigsBeforeSecondShow = null;
     timingConfigs = [];
@@ -69,6 +75,11 @@ export default (test: JestCucumberTestFn) => {
       timingConfigs.push(config);
       const stop = jest.fn();
       const start = jest.fn((callback?: (result: { finished: boolean }) => void) => {
+        if (config?.toValue === 1 && manualFadeInCompletion) {
+          fadeInCallbacks.push(callback);
+          return;
+        }
+
         if (config?.toValue === 0 && manualFadeOutCompletion) {
           return;
         }
@@ -78,6 +89,10 @@ export default (test: JestCucumberTestFn) => {
 
       if (config?.toValue === 0) {
         fadeOutStops.push(stop);
+      }
+
+      if (config?.toValue === 1) {
+        fadeInStops.push(stop);
       }
 
       return { start, stop, reset: jest.fn() } as unknown as Animated.CompositeAnimation;
@@ -94,6 +109,8 @@ export default (test: JestCucumberTestFn) => {
     secondPromise = null;
     timingConfigs = [];
     fadeOutStops = [];
+    fadeInStops = [];
+    fadeInCallbacks = [];
     opacitySetValueSpy?.mockRestore();
     fadeInConfigsBeforeSecondShow = null;
     tree = await unmountTree(tree);
@@ -258,6 +275,47 @@ export default (test: JestCucumberTestFn) => {
 
     then('no fade-out timers remain active', () => {
       expect(jest.getTimerCount()).toBe(0);
+    });
+  });
+
+  test('hide during active fade-in ignores stale animation callback', ({ given, when, then }: StepDefinitions) => {
+    given('the save indicator provider is rendered', () => {
+      expect(context).not.toBeNull();
+    });
+
+    given('fade-in completion is handled manually', () => {
+      manualFadeInCompletion = true;
+    });
+
+    when('showFor is called with 1000 milliseconds', async () => {
+      await act(async () => {
+        firstPromise = context!.showFor(1000);
+      });
+    });
+
+    when('hide is called before fade-in completes', async () => {
+      await act(async () => {
+        context!.hide();
+      });
+    });
+
+    when('the interrupted fade-in callback runs with unfinished result', async () => {
+      await act(async () => {
+        fadeInCallbacks[0]?.({ finished: false });
+      });
+    });
+
+    then('the current promise resolves immediately', async () => {
+      await expect(firstPromise).resolves.toBeUndefined();
+    });
+
+    then('no fade-out timers remain active', () => {
+      expect(fadeInStops[0]).toHaveBeenCalledTimes(1);
+      expect(jest.getTimerCount()).toBe(0);
+    });
+
+    then('the indicator remains hidden', () => {
+      expect(context!.visible).toBe(false);
     });
   });
 };
