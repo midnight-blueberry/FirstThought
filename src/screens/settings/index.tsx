@@ -1,5 +1,6 @@
 import React from 'react';
 import { BackHandler, StyleSheet, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import SettingsContainer from '@components/pages/settings/SettingsContainer';
 import PageContainer from '@components/common/PageContainer';
@@ -104,6 +105,7 @@ export default function SettingsScreen() {
     <View style={[styles.menu, { paddingHorizontal: theme.padding.xlarge, paddingTop: theme.padding.xlarge }]}>
       <SettingRow
         title={APP_APPEARANCE_TITLE}
+        icon={<Ionicons name="settings-outline" size={theme.iconSize.large} color={theme.colors.basic} />}
         style={{ marginBottom: menuItemSpacing }}
         onPress={() => {
           setView('appAppearance');
@@ -111,6 +113,7 @@ export default function SettingsScreen() {
       />
       <SettingRow
         title={NOTES_APPEARANCE_TITLE}
+        icon={<Ionicons name="document-text-outline" size={theme.iconSize.large} color={theme.colors.basic} />}
         style={{ marginBottom: 0 }}
         onPress={() => {
           setView('notesAppearance');
