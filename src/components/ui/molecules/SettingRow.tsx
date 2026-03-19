@@ -45,7 +45,7 @@ const SettingRow: React.FC<SettingRowProps> = ({
           paddingRight: theme.iconSize.large + theme.padding.medium * 2,
           paddingVertical: theme.padding.medium,
           borderColor: theme.colors.basic,
-          borderWidth: theme.borderWidth.medium,
+          borderWidth: theme.borderWidth.small,
           borderRadius: theme.borderRadius,
           marginBottom: theme.margin.small,
           justifyContent: 'center',
