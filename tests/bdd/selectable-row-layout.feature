@@ -6,6 +6,7 @@ Feature: Layout of selectable row
   Scenario: Text height stays consistent without fontSize
     Given SelectableRow component is rendered without fontSize
     Then Label line has lineHeight equal to font size plus padding
+    And Label style does not shift text vertically
 
 
   Scenario: Label can shrink to keep full text visible

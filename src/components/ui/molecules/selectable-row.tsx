@@ -33,8 +33,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
 }) => {
   const theme = useTheme();
   const anchorCtx = useContext(AnchorStableScrollContext);
-  const drop = -theme.padding.small / 4;
-  const selectedLabelLift = selected ? theme.padding.small / 4 : 0;
+  const checkmarkLift = -theme.padding.small / 4;
   const effectiveFontSize = fontSize ?? theme.fontSize.medium;
   const hasSwatch = !!swatchColor;
   const paddingLeft = hasSwatch
@@ -90,10 +89,6 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
               flexShrink: 1,
               fontSize: effectiveFontSize,
               lineHeight: effectiveFontSize + theme.padding.medium,
-              transform: [
-                ...((settingsOptionLabelText.transform as TextStyle['transform']) ?? []),
-                { translateY: drop - selectedLabelLift },
-              ] as TextStyle['transform'],
             },
             labelStyle,
           ]}
@@ -118,7 +113,7 @@ const SelectableRow: React.FC<SelectableRowProps> = ({
           color={theme.colors.accent}
           style={{
             opacity: selected ? 1 : 0,
-            transform: [{ translateY: drop }],
+            transform: [{ translateY: checkmarkLift }],
           }}
         />
       </View>

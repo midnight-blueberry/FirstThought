@@ -86,6 +86,13 @@ export default (test: JestCucumberTestFn) => {
 
       expect(flattened.lineHeight).toBe(themeMock.fontSize.medium + themeMock.padding.medium);
     });
+
+    then('Label style does not shift text vertically', () => {
+      const styleProp = appTextMock.mock.calls[0][0].style;
+      const flattened = StyleSheet.flatten(styleProp);
+
+      expect(flattened.transform).toBeUndefined();
+    });
   });
 
 
