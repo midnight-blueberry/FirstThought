@@ -27,6 +27,16 @@ Feature: Save indicator
     Then the current promise resolves immediately
     Then no fade-out timers remain active
 
+  Scenario: hide during active fade-in ignores stale animation callback
+    Given the save indicator provider is rendered
+    Given fade-in completion is handled manually
+    When showFor is called with 1000 milliseconds
+    When hide is called before fade-in completes
+    When the interrupted fade-in callback runs with unfinished result
+    Then the current promise resolves immediately
+    Then no fade-out timers remain active
+    Then the indicator remains hidden
+
   Scenario: showFor during active fade-out stops animation and reschedules hold
     Given the save indicator provider is rendered
     Given fade-out completion is handled manually

@@ -1,4 +1,4 @@
-﻿import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useTheme from '@hooks/useTheme';
@@ -17,16 +17,23 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
   const fadeOutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fadeInAnimRef = useRef<Animated.CompositeAnimation | null>(null);
   const fadeOutAnimRef = useRef<Animated.CompositeAnimation | null>(null);
   const pendingResolveRef = useRef<(() => void) | null>(null);
+  const requestIdRef = useRef(0);
   const phaseRef = useRef<'hidden' | 'fadingIn' | 'holding' | 'fadingOut'>('hidden');
   const holdMsRef = useRef(0);
 
-  const scheduleFadeOut = useCallback(() => {
+  const scheduleFadeOut = useCallback((requestId: number) => {
     if (fadeOutTimerRef.current) {
       clearTimeout(fadeOutTimerRef.current);
     }
+
     fadeOutTimerRef.current = setTimeout(() => {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
       fadeOutTimerRef.current = null;
       phaseRef.current = 'fadingOut';
       fadeOutAnimRef.current = Animated.timing(opacity, {
@@ -35,12 +42,15 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
         easing: Easing.inOut(Easing.quad),
         useNativeDriver: true,
       });
+
       fadeOutAnimRef.current.start(({ finished }) => {
         fadeOutAnimRef.current = null;
-        if (finished) {
-          setVisible(false);
-          phaseRef.current = 'hidden';
+        if (!finished || requestId !== requestIdRef.current) {
+          return;
         }
+
+        setVisible(false);
+        phaseRef.current = 'hidden';
 
         if (pendingResolveRef.current) {
           pendingResolveRef.current();
@@ -58,6 +68,7 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       holdMsRef.current = durationMs;
+      const requestId = ++requestIdRef.current;
 
       const promise = new Promise<void>((resolve) => {
         pendingResolveRef.current = resolve;
@@ -67,7 +78,23 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
         if (fadeOutTimerRef.current) {
           clearTimeout(fadeOutTimerRef.current);
         }
-        scheduleFadeOut();
+
+        scheduleFadeOut(requestId);
+        return promise;
+      }
+
+      if (phaseRef.current === 'fadingIn') {
+        if (fadeInAnimRef.current) {
+          fadeInAnimRef.current.stop();
+          fadeInAnimRef.current = null;
+        }
+
+        opacity.stopAnimation(() => {
+          opacity.setValue(1);
+        });
+        phaseRef.current = 'holding';
+        setVisible(true);
+        scheduleFadeOut(requestId);
         return promise;
       }
 
@@ -76,16 +103,18 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
           clearTimeout(fadeOutTimerRef.current);
           fadeOutTimerRef.current = null;
         }
+
         if (fadeOutAnimRef.current) {
           fadeOutAnimRef.current.stop();
           fadeOutAnimRef.current = null;
         }
+
         opacity.stopAnimation(() => {
           opacity.setValue(1);
         });
         phaseRef.current = 'holding';
         setVisible(true);
-        scheduleFadeOut();
+        scheduleFadeOut(requestId);
         return promise;
       }
 
@@ -100,16 +129,22 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       setVisible(true);
-
       phaseRef.current = 'fadingIn';
-      Animated.timing(opacity, {
+      fadeInAnimRef.current = Animated.timing(opacity, {
         toValue: 1,
         duration: 350,
         easing: Easing.inOut(Easing.quad),
         useNativeDriver: true,
-      }).start(() => {
+      });
+
+      fadeInAnimRef.current.start(({ finished }) => {
+        fadeInAnimRef.current = null;
+        if (!finished || requestId !== requestIdRef.current) {
+          return;
+        }
+
         phaseRef.current = 'holding';
-        scheduleFadeOut();
+        scheduleFadeOut(requestId);
       });
 
       return promise;
@@ -120,9 +155,16 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
   const showFor2s = useCallback(() => showFor(2000), [showFor]);
 
   const hide = useCallback(() => {
+    requestIdRef.current += 1;
+
     if (fadeOutTimerRef.current) {
       clearTimeout(fadeOutTimerRef.current);
       fadeOutTimerRef.current = null;
+    }
+
+    if (fadeInAnimRef.current) {
+      fadeInAnimRef.current.stop();
+      fadeInAnimRef.current = null;
     }
 
     if (fadeOutAnimRef.current) {
@@ -135,6 +177,7 @@ export const SaveIndicatorProvider: React.FC<{ children: React.ReactNode }> = ({
     });
     setVisible(false);
     phaseRef.current = 'hidden';
+
     if (pendingResolveRef.current) {
       pendingResolveRef.current();
       pendingResolveRef.current = null;
@@ -154,6 +197,7 @@ export function useSaveIndicator() {
   if (!ctx) {
     throw new Error('useSaveIndicator must be used within SaveIndicatorProvider');
   }
+
   return ctx;
 }
 
@@ -190,5 +234,3 @@ const styles = StyleSheet.create({
 });
 
 export default SaveIndicator;
-
-

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { fonts, FONT_VARIANTS, type FontWeight } from '@constants/fonts';
 import type { DefaultTheme } from 'styled-components/native';
@@ -48,6 +48,11 @@ export default function useSettingsVm(
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const settingsSnapshot = useRef<Settings | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => () => {
+    isMountedRef.current = false;
+  }, []);
 
   const setSettingsSnapshot = (s: Settings) => {
     settingsSnapshot.current = JSON.parse(JSON.stringify(s)) as Settings;
@@ -112,6 +117,9 @@ export default function useSettingsVm(
       if (error) {
         throw error;
       }
+      if (!isMountedRef.current) {
+        return;
+      }
       await showFor2s();
     } catch (e) {
       overlay.releaseBackground();
@@ -140,6 +148,9 @@ export default function useSettingsVm(
           throw error;
         }
       });
+      if (!isMountedRef.current) {
+        return;
+      }
       await showFor2s();
     } catch (e) {
       showErrorToast(
