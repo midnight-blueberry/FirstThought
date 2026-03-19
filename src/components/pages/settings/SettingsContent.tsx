@@ -6,8 +6,10 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Animated,
+  View,
 } from 'react-native';
 import { Overlay } from '@components/ui/atoms';
+import PreviewNote from '@components/ui/organisms/preview-note';
 import { sections } from '@settings/sections.config';
 import type { SectionKey, SectionPropsMap } from '@types';
 import { DefaultTheme } from 'styled-components/native';
@@ -38,6 +40,7 @@ function SettingsContent({
 }: SettingsContentProps) {
   const styles = React.useMemo(() => createStyles(theme), [theme]);
   const { onScroll: stickyOnScroll } = useStickySelection();
+  const showStickyPreview = visibleSectionKeys?.includes('preview') ?? false;
   const handleScroll = React.useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       stickyOnScroll(e);
@@ -59,9 +62,21 @@ function SettingsContent({
         onScroll={handleScroll}
         scrollEventThrottle={16}
         scrollIndicatorInsets={scrollIndicatorInsets}
+        stickyHeaderIndices={showStickyPreview ? [0] : undefined}
       >
+        {showStickyPreview ? (
+          <View style={styles.stickyPreviewShell}>
+            <View style={styles.stickyPreviewInner}>
+              <PreviewNote {...sectionProps.preview} sticky />
+            </View>
+          </View>
+        ) : null}
         {sections.map((section) => {
           if (visibleSectionKeys && !visibleSectionKeys.includes(section.key)) {
+            return null;
+          }
+
+          if (showStickyPreview && section.key === 'preview') {
             return null;
           }
 
@@ -104,6 +119,19 @@ const createStyles = (theme: DefaultTheme) =>
       flexGrow: 1,
       paddingHorizontal: theme.padding.xlarge,
       paddingBottom: theme.padding.xlarge,
+    },
+    stickyPreviewShell: {
+      marginHorizontal: -theme.padding.xlarge,
+      marginBottom: theme.margin.medium,
+      paddingHorizontal: theme.padding.xlarge,
+      paddingTop: theme.padding.medium ?? 0,
+      paddingBottom: theme.padding.medium ?? 0,
+      backgroundColor: theme.colors?.headerBackground ?? 'transparent',
+      borderBottomColor: theme.colors?.basic ?? 'transparent',
+      borderBottomWidth: theme.borderWidth?.small ?? 0,
+    },
+    stickyPreviewInner: {
+      width: '100%',
     },
     label: {
       marginBottom: theme.margin.medium,

@@ -5,6 +5,7 @@ const createBuildArgs = (selectedFontName: string): BuildArgs => ({
   selectedThemeName: 'Light',
   selectedAccentColor: '#000000',
   selectedFontName,
+  fontListSizeLevel: 3,
   fontSizeLevel: 0,
   fontWeight: '400',
   noteTextAlign: 'left',
@@ -54,6 +55,29 @@ export default (test: JestCucumberTestFn) => {
 
     then('the font weight control is enabled', () => {
       expect(result.fontWeight.disabled).toBe(false);
+    });
+  });
+
+  test('Uses general font size for font list and note font size for size control', ({ given, when, then }: StepDefinitions) => {
+    let args: BuildArgs;
+    let result: ReturnType<typeof buildSectionProps>;
+
+    given('selected font name is "Roboto Slab"', () => {
+      args = createBuildArgs('Roboto Slab');
+      args.fontListSizeLevel = 2;
+      args.fontSizeLevel = 5;
+    });
+
+    when('I build section props', () => {
+      result = buildSectionProps(args);
+    });
+
+    then('the font list uses general font size level 2', () => {
+      expect(result.font.fontSizeLevel).toBe(2);
+    });
+
+    then('the font size control uses note font size level 5', () => {
+      expect(result.fontSize.fontSizeLevel).toBe(5);
     });
   });
 };
