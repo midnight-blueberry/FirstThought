@@ -7,6 +7,7 @@ import type { Settings } from '@/state/SettingsContext';
 import type { FontWeight } from '@constants/fonts';
 
 export type SettingsPatch = Partial<Settings>;
+export type SettingsMode = 'appAppearance' | 'notesAppearance';
 
 export function buildSettingsPatch(
   local: {
@@ -18,40 +19,70 @@ export function buildSettingsPatch(
     noteTextAlign: DefaultTheme['noteTextAlign'];
   },
   current: Settings,
+  mode: SettingsMode = 'appAppearance',
 ): SettingsPatch {
   const patch: SettingsPatch = {};
 
-  const themeId =
-    (Object.keys(themes) as ThemeName[]).find(
-      (k) => themes[k].name === local.selectedThemeName,
-    ) ?? current.themeId;
-  if (themeId !== current.themeId) {
-    patch.themeId = themeId;
+  if (mode === 'appAppearance') {
+    const themeId =
+      (Object.keys(themes) as ThemeName[]).find(
+        (k) => themes[k].name === local.selectedThemeName,
+      ) ?? current.themeId;
+    if (themeId !== current.themeId) {
+      patch.themeId = themeId;
+    }
+
+    if (local.selectedAccentColor !== current.accent) {
+      patch.accent = local.selectedAccentColor;
+    }
   }
 
-  if (local.selectedAccentColor !== current.accent) {
-    patch.accent = local.selectedAccentColor;
-  }
+  const currentFontName =
+    mode === 'notesAppearance'
+      ? current.noteFontFamily ?? current.fontFamily
+      : current.fontFamily;
+  const currentFontWeight =
+    mode === 'notesAppearance'
+      ? current.noteFontWeight ?? current.fontWeight
+      : current.fontWeight;
+  const currentFontSizeLevel =
+    mode === 'notesAppearance'
+      ? current.noteFontSizeLevel ?? current.fontSizeLevel
+      : current.fontSizeLevel;
 
-  const familyChanged = local.selectedFontName !== current.fontFamily;
-  const weightChanged = local.fontWeight !== current.fontWeight;
+  const familyChanged = local.selectedFontName !== currentFontName;
+  const weightChanged = local.fontWeight !== currentFontWeight;
   if (familyChanged || weightChanged) {
     const familyKey = toFamilyKey(local.selectedFontName);
     const normalizedWeight = nearestAvailableWeight(
       familyKey,
       Number(local.fontWeight),
     );
-    if (familyChanged) {
-      patch.fontFamily = local.selectedFontName;
-    }
-    if (familyChanged || normalizedWeight !== Number(current.fontWeight)) {
-      patch.fontWeight = String(normalizedWeight) as FontWeight;
+
+    if (mode === 'notesAppearance') {
+      if (familyChanged) {
+        patch.noteFontFamily = local.selectedFontName;
+      }
+      if (familyChanged || normalizedWeight !== Number(currentFontWeight)) {
+        patch.noteFontWeight = String(normalizedWeight) as FontWeight;
+      }
+    } else {
+      if (familyChanged) {
+        patch.fontFamily = local.selectedFontName;
+      }
+      if (familyChanged || normalizedWeight !== Number(currentFontWeight)) {
+        patch.fontWeight = String(normalizedWeight) as FontWeight;
+      }
     }
   }
 
   const sizeLevel = clampLevel(local.fontSizeLevel);
-  if (sizeLevel !== current.fontSizeLevel) {
-    patch.fontSizeLevel = sizeLevel;
+  if (sizeLevel !== currentFontSizeLevel) {
+    if (mode === 'notesAppearance') {
+      patch.noteFontSizeLevel = sizeLevel;
+    } else {
+      patch.fontSizeLevel = sizeLevel;
+    }
   }
 
   if (local.noteTextAlign !== current.noteTextAlign) {

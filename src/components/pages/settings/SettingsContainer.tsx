@@ -16,14 +16,19 @@ import type {
   NativeScrollEvent,
 } from 'react-native';
 import type { SectionKey } from '@types';
+import type { SettingsMode } from './buildSettingsPatch';
 
 interface SettingsContainerProps {
+  mode: SettingsMode;
   visibleSectionKeys?: ReadonlyArray<SectionKey>;
 }
 
-export default function SettingsContainer({ visibleSectionKeys }: SettingsContainerProps) {
+export default function SettingsContainer({
+  mode,
+  visibleSectionKeys,
+}: SettingsContainerProps) {
   const anchor = useAnchorStableScroll();
-  const vm = useSettingsVm(anchor.contextValue.captureBeforeUpdate);
+  const vm = useSettingsVm(mode, anchor.contextValue.captureBeforeUpdate);
   const { hide } = useSaveIndicator();
   const overlay = useOverlayTransition();
 

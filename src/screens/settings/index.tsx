@@ -21,7 +21,13 @@ const APP_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = [
   'fontWeight',
 ];
 
-const NOTES_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = ['align', 'preview'];
+const NOTES_APPEARANCE_SECTION_KEYS: ReadonlyArray<SectionKey> = [
+  'font',
+  'fontSize',
+  'fontWeight',
+  'align',
+  'preview',
+];
 
 const MENU_TITLE = 'Настройки';
 const APP_APPEARANCE_TITLE = 'Общее';
@@ -128,10 +134,16 @@ export default function SettingsScreen() {
       <PageContainer>
         {view === 'menu' ? menu : null}
         {view === 'appAppearance' ? (
-          <SettingsContainer visibleSectionKeys={APP_APPEARANCE_SECTION_KEYS} />
+          <SettingsContainer
+            mode="appAppearance"
+            visibleSectionKeys={APP_APPEARANCE_SECTION_KEYS}
+          />
         ) : null}
         {view === 'notesAppearance' ? (
-          <SettingsContainer visibleSectionKeys={NOTES_APPEARANCE_SECTION_KEYS} />
+          <SettingsContainer
+            mode="notesAppearance"
+            visibleSectionKeys={NOTES_APPEARANCE_SECTION_KEYS}
+          />
         ) : null}
       </PageContainer>
     </>

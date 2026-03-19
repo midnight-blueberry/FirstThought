@@ -4,21 +4,27 @@ import useTheme from '@hooks/useTheme';
 import { AppText, SelectorRow, BarIndicator } from '@components/ui/atoms';
 import Section from './settings-section';
 import type { FontWeightSelectorProps } from '@types';
+import { defaultFontName } from '@constants/fonts';
 import { listAvailableWeights } from '@/constants/fonts/resolve';
 import { toFamilyKey } from '@utils/font';
-import { useSettings } from '@/state/SettingsContext';
 import { useStickySelection } from '@/features/sticky-position';
 import { register, unregister } from '@/features/sticky-position/registry';
 
-const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blinkAnim }) => {
+const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({
+  fontName,
+  fontWeight,
+  onSelect,
+  blinkAnim,
+  disabled,
+}) => {
   const theme = useTheme();
-  const { settings } = useSettings();
-  const weights = listAvailableWeights(toFamilyKey(settings.fontFamily));
-  const isSingle = weights.length === 1;
+  const currentFontName = fontName ?? defaultFontName;
+  const weights = listAvailableWeights(toFamilyKey(currentFontName));
+  const isSingle = disabled || weights.length <= 1;
   const columnsCount = isSingle ? 5 : weights.length;
   const currentIndex = isSingle
     ? 0
-    : Math.max(0, weights.indexOf(Number(settings.fontWeight)));
+    : Math.max(0, weights.indexOf(Number(fontWeight)));
   const incDisabled = isSingle || currentIndex >= weights.length - 1;
   const decDisabled = isSingle || currentIndex <= 0;
   const { registerPress } = useStickySelection();
@@ -91,6 +97,8 @@ const FontWeightSelector: React.FC<FontWeightSelectorProps> = ({ onSelect, blink
 };
 
 const propsAreEqual = (prev: FontWeightSelectorProps, next: FontWeightSelectorProps) =>
+  prev.fontName === next.fontName &&
+  prev.fontWeight === next.fontWeight &&
   prev.onSelect === next.onSelect &&
   prev.blinkAnim === next.blinkAnim &&
   prev.disabled === next.disabled;
